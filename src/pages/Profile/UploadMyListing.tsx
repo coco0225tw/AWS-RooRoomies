@@ -29,7 +29,7 @@ const PreviewImages = styled(PreviewMainImage)``;
 const SubmitBtn = styled.div`
   padding: 10px;
 `;
-function MyListing() {
+function UploadMyListing() {
   const [mainImgUrl, setMainImgUrl] = useState<string>();
   const [imagesUrl, setImagesUrl] = useState<string[]>();
   const [imagesBlob, setImagesBlob] = useState<Blob[]>();
@@ -78,4 +78,4 @@ function MyListing() {
   );
 }
 
-export default MyListing;
+export default UploadMyListing;

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import firebase from '../../utils/firebase';
-import MyListing from './MyListing';
+import UploadMyListing from './UploadMyListing';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@ const Wrapper = styled.div`
 function Profile() {
   return (
     <Wrapper>
-      <MyListing />
+      <UploadMyListing />
     </Wrapper>
   );
 }
