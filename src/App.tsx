@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { query, getFirestore, getDocs, collection } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
+import { Outlet } from 'react-router-dom';
 const firebaseConfig = {
   apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
   authDomain: 'rooroomies.firebaseapp.com',
@@ -25,11 +26,11 @@ function App() {
     // getDoc();
   }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>successfully build</p>
-      </header>
-    </div>
+    <Fragment>
+      {/* <Reset />
+      <GlobalStyle /> */}
+      <Outlet />
+    </Fragment>
   );
 }
 
