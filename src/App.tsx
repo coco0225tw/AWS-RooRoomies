@@ -2,18 +2,30 @@ import { initializeApp } from 'firebase/app';
 import { query, getFirestore, getDocs, collection } from 'firebase/firestore';
 import React, { useEffect, Fragment } from 'react';
 import { Outlet } from 'react-router-dom';
-const firebaseConfig = {
-  apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
-  authDomain: 'rooroomies.firebaseapp.com',
-  projectId: 'rooroomies',
-  storageBucket: 'rooroomies.appspot.com',
-  messagingSenderId: '902090494840',
-  appId: '1:902090494840:web:b89eee21700f2fb39e2e8d',
-};
+import { createGlobalStyle } from 'styled-components';
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const GlobalStyle = createGlobalStyle`
+  * {
+    box-sizing: border-box;
+    border: solid 1px black;
+  }
 
+  body {
+    font-family: NotoSansTC;
+    overflow-x: hidden;
+    padding: 0;
+    margin: 0;
+  }
+
+  html {
+    padding: 0;
+    margin: 0;
+  }
+  #root {
+    min-height: 100vh;
+    padding: 140px 0 115px;
+    position: relative;
+`;
 function App() {
   useEffect(() => {
     // async function getDoc() {
@@ -27,8 +39,8 @@ function App() {
   }, []);
   return (
     <Fragment>
-      {/* <Reset />
-      <GlobalStyle /> */}
+      {/* <Reset /> */}
+      <GlobalStyle />
       <Outlet />
     </Fragment>
   );

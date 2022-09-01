@@ -11,9 +11,9 @@ root.render(
     <Routes>
       <Route path="/" element={<App />}>
         {/* <Route index element={<Home />} /> */}
-        <Route path="listings/:id" element={<Listing />} />
+        <Route path="listing/:id" element={<Listing />} />
         <Route path="profile" element={<Profile />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Route>
     </Routes>
   </BrowserRouter>,
