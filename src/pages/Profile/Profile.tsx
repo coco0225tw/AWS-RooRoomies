@@ -1,9 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { initializeApp } from 'firebase/app';
-import { query, getFirestore, getDocs, collection, doc, updateDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
+import firebase from '../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -19,7 +16,7 @@ const UploadMainImage = styled.input.attrs({
   type: 'file',
   accept: 'image/*',
 })``;
-const UploadImage = styled.input.attrs({
+const UploadImages = styled.input.attrs({
   type: 'file',
   multiple: true,
 })``;
@@ -28,27 +25,14 @@ const PreviewMainImage = styled.img`
   width: 30vw;
 `;
 
+const PreviewImages = styled(PreviewMainImage)``;
 const SubmitBtn = styled.div`
   padding: 10px;
 `;
 function Profile() {
-  const firebaseConfig = {
-    apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
-    authDomain: 'rooroomies.firebaseapp.com',
-    projectId: 'rooroomies',
-    storageBucket: 'rooroomies.appspot.com',
-    messagingSenderId: '902090494840',
-    appId: '1:902090494840:web:b89eee21700f2fb39e2e8d',
-  };
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
-  const storageRef = ref(storage);
-  const listingId = 'Gxj1G1AFiPZFRzW3gkOq';
-  const listingRef = doc(db, 'listings', listingId);
-  const imagesRef = ref(storage, `${listingId}/mainImage`);
   const [mainImgUrl, setMainImgUrl] = useState<string>();
-  const [imageUrl, setImageUrl] = useState<string[]>();
+  const [imagesUrl, setImagesUrl] = useState<string[]>();
+  const [imagesBlob, setImagesBlob] = useState<Blob[]>();
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
 
   function previewMainImage(e: React.ChangeEvent<HTMLInputElement>) {
@@ -60,31 +44,35 @@ function Profile() {
     }
   }
 
-  //   function previewImage(e: React.ChangeEvent<HTMLInputElement>) {
-  //     let target = e.target as HTMLInputElement;
-  //     let files = target.files;
-  //     if ((files as FileList)[0]) {
-  //       setMainImgUrl(URL.createObjectURL((files as FileList)[0]));
-  //       setMainImgBlob((files as FileList)[0]);
-  //     }
-  //   }
-  async function uploadMainImage() {
-    await uploadBytes(imagesRef, mainImgBlob!).then(() => {
-      console.log('Uploaded a blob or file!');
-    });
-    await getDownloadURL(imagesRef).then(async (url) => {
-      await updateDoc(listingRef, {
-        mainImage: url,
-      });
-    });
+  function previewImages(e: React.ChangeEvent<HTMLInputElement>) {
+    let target = e.target as HTMLInputElement;
+    let files = target.files;
+    function loopImages(files: FileList) {
+      const fl = files.length;
+      let arr = [];
+      let blobArr = [];
+      for (let i = 0; i < fl; i++) {
+        let file = files[i];
+        arr.push(URL.createObjectURL(file));
+        blobArr.push(file);
+      }
+      setImagesUrl(arr);
+      setImagesBlob(blobArr);
+    }
+    loopImages(files!);
+  }
+  async function uploadAllImages() {
+    await firebase.uploadMainImage(mainImgBlob!);
+    await firebase.uploadImages(imagesBlob as []);
   }
   return (
     <Wrapper>
       <Title>上傳圖片</Title>
       <UploadMainImage onChange={(e) => previewMainImage(e)} />
-      <PreviewMainImage src={mainImgUrl as string} />
-      <UploadImage />
-      <SubmitBtn onClick={uploadMainImage}>送出</SubmitBtn>
+      {mainImgUrl && <PreviewMainImage src={mainImgUrl as string} />}
+      <UploadImages onChange={(e) => previewImages(e)} />
+      {imagesUrl && imagesUrl.map((url, index) => <PreviewImages key={`previewImages${index}`} src={url as string} />)}
+      <SubmitBtn onClick={uploadAllImages}>送出</SubmitBtn>
     </Wrapper>
   );
 }
