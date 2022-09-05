@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
 
@@ -68,15 +69,45 @@ const addressFormGroups = [
   { label: '樓', key: 'floor' },
 ];
 function ListingAddr() {
+  const dispatch = useDispatch();
+  interface addressType {
+    countyname: string;
+    townname: string;
+    roadOrStreetNameOrVillage: string;
+    roadSection: string;
+    lane: string;
+    alley: string;
+    number: string;
+    floor: string;
+  }
+
+  const initialAddrState = {
+    countyname: '',
+    townname: '',
+    roadOrStreetNameOrVillage: '',
+    roadSection: '',
+    lane: '',
+    alley: '',
+    number: '',
+    floor: '',
+  };
+  const [addrState, setAddrState] = useState<addressType>(initialAddrState);
+
+  function submit(addrState: addressType) {
+    console.log('送出');
+    console.log(addrState);
+    dispatch({ type: 'UPLOAD_ADDR', payload: { addrState } });
+  }
   return (
     <Wrapper>
       <h2>輸入地址</h2>
       {addressFormGroups.map(({ label, key }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          <FormCheckInput />
+          <FormCheckInput onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })} />
         </FormGroup>
       ))}
+      <div onClick={() => submit(addrState!)}>送出</div>
     </Wrapper>
   );
 }

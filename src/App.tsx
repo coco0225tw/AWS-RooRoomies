@@ -3,7 +3,8 @@ import { query, getFirestore, getDocs, collection } from 'firebase/firestore';
 import React, { useEffect, Fragment } from 'react';
 import { Outlet } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
-
+import { Provider } from 'react-redux';
+import store from './redux/store';
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -38,11 +39,11 @@ function App() {
     // getDoc();
   }, []);
   return (
-    <Fragment>
+    <Provider store={store}>
       {/* <Reset /> */}
       <GlobalStyle />
       <Outlet />
-    </Fragment>
+    </Provider>
   );
 }
 

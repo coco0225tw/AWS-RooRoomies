@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
 import UploadMainImageAndImages from './UploadMainImageAndImages';
@@ -17,13 +19,12 @@ const Wrapper = styled.div`
   width: 80%;
   height: 100%;
 `;
-const rentRoomDetailsFormGroups = [
-  { label: '月租', key: 'rent' },
-  { label: '大小', key: 'sq' },
-  { label: '規格', key: 'from' },
-  { label: '人數', key: 'from' },
-];
+
 function UploadMyListing() {
+  const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
+  const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
+  console.log(getAddr);
+  console.log(getRoommatesCondition);
   return (
     <Wrapper>
       <h1>上傳物件</h1>
@@ -34,6 +35,7 @@ function UploadMyListing() {
       <SetBookingTimes />
       <RoommatesCondition />
       <Facility />
+      <div>上傳</div>
     </Wrapper>
   );
 }

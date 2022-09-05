@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
 import UploadMainImageAndImages from './UploadMainImageAndImages';
@@ -258,6 +259,33 @@ const roommatesConditionFormGroups = [
   },
 ];
 function RoommatesCondition() {
+  const dispatch = useDispatch();
+  const initialRoommatesState = {
+    gender: '',
+    bringFriendToStay: '',
+    hygiene: '',
+    livingHabit: '',
+    genderFriendly: '',
+    pet: '',
+    smoke: '',
+    career: '',
+  };
+  interface roommatesConditionType {
+    gender: string;
+    bringFriendToStay: string;
+    hygiene: string;
+    livingHabit: string;
+    genderFriendly: string;
+    pet: string;
+    smoke: string;
+    career: string;
+  }
+  const [roommatesState, setRoommatesStateState] = useState<roommatesConditionType>(initialRoommatesState);
+  function submit(roommatesState: roommatesConditionType) {
+    console.log('送出');
+    console.log(roommatesState);
+    dispatch({ type: 'UPLOAD_ROOMMATESCONDITION', payload: { roommatesState } });
+  }
   return (
     <Wrapper>
       <h1>室友條件</h1>
@@ -267,7 +295,13 @@ function RoommatesCondition() {
           {options ? (
             options.map((option) => (
               <FormCheck key={option.value}>
-                <FormCheckInput type="radio" name={label} />
+                <FormCheckInput
+                  onChange={(e) => {
+                    if (e.target.checked) setRoommatesStateState({ ...roommatesState, [key]: option.value });
+                  }}
+                  type="radio"
+                  name={label}
+                />
                 <FormCheckLabel>{option.text}</FormCheckLabel>
                 {/* <FormText>{option.text}</FormText> */}
               </FormCheck>
@@ -277,6 +311,7 @@ function RoommatesCondition() {
           )}
         </FormGroup>
       ))}
+      <div onClick={() => submit(roommatesState!)}>送出</div>
     </Wrapper>
   );
 }
