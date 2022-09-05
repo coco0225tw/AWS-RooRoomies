@@ -26,10 +26,10 @@ function Map() {
     async function getGeocode() {
       await fetch(getGeocodeUrl).then((res) => {
         res.json().then((data) => {
-          const coordinates = new google.maps.LatLng({
-            lat: data.results[0].geometry.location.lat as number,
-            lng: data.results[0].geometry.location.lng as number,
-          });
+          // const coordinates = new google.maps.LatLng({
+          //   lat: data.results[0].geometry.location.lat as number,
+          //   lng: data.results[0].geometry.location.lng as number,
+          // });
           //   setAddrState(coordinates);
         });
       });
@@ -48,7 +48,7 @@ function Map() {
         });
       });
     }
-    getRestaurant();
+    // getRestaurant();
   }, []);
   return (
     <>

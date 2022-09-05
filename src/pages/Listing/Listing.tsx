@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import Map from './Map';
 import firebase from '../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
@@ -52,6 +53,7 @@ function Listing() {
       <MainImage src={listingInfo?.mainImage} />
       <div>其他照片</div>
       {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
+      <Map></Map>
     </Wrapper>
   );
 }
