@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
-import firebase from '../../utils/firebase';
+import firebase from '../../../utils/firebase';
 
 const Wrapper = styled.div`
   display: flex;

@@ -2,10 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
-import UploadMainImageAndImages from './UploadMainImageAndImages';
-import SetBookingTimes from './SetBookingTimes';
-import ListingAddr from './ListingAddr';
-import ListingTitle from './ListingTitle';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

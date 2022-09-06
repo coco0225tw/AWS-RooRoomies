@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import firebase from '../../utils/firebase';
+import firebase from '../../../utils/firebase';
 import UploadMyListing from './UploadMyListing';
 const Wrapper = styled.div`
   display: flex;

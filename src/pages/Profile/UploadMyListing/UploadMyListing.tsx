@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/rootReducer';
+import { RootState } from '../../../redux/rootReducer';
 import '../../utils/Calendar.css';
 import styled from 'styled-components';
 import UploadMainImageAndImages from './UploadMainImageAndImages';
