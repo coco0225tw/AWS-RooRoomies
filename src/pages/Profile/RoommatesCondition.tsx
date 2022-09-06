@@ -258,6 +258,13 @@ const roommatesConditionFormGroups = [
     key: 'career',
   },
 ];
+
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+`;
+
 function RoommatesCondition() {
   const dispatch = useDispatch();
   const initialRoommatesState = {
@@ -311,7 +318,7 @@ function RoommatesCondition() {
           )}
         </FormGroup>
       ))}
-      <div onClick={() => submit(roommatesState!)}>送出</div>
+      <SubmitBtn onClick={() => submit(roommatesState!)}>送出</SubmitBtn>
     </Wrapper>
   );
 }

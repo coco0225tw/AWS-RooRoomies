@@ -29,7 +29,9 @@ const PreviewMainImage = styled.img`
 
 const PreviewImages = styled(PreviewMainImage)``;
 const SubmitBtn = styled.div`
-  padding: 10px;
+  background-color: grey;
+  color: white;
+  cursor: pointer;
 `;
 
 function UploadMainImageAndImages() {

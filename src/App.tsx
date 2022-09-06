@@ -8,7 +8,7 @@ import store from './redux/store';
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
-    border: solid 1px black;
+    // border: solid 1px black;
   }
 
   body {

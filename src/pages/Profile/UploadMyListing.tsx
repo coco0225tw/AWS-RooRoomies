@@ -20,11 +20,23 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+  padding: 10px;
+`;
+
 function UploadMyListing() {
   const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
   const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
-  console.log(getAddr);
-  console.log(getRoommatesCondition);
+  const getFacility = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
+
+  function setDoc() {
+    console.log(getAddr);
+    console.log(getRoommatesCondition);
+    console.log(getFacility);
+  }
   return (
     <Wrapper>
       <h1>上傳物件</h1>
@@ -35,7 +47,7 @@ function UploadMyListing() {
       <SetBookingTimes />
       <RoommatesCondition />
       <Facility />
-      <div>上傳</div>
+      <SubmitBtn onClick={() => setDoc()}>上傳</SubmitBtn>
     </Wrapper>
   );
 }

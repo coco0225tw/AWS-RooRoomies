@@ -136,7 +136,6 @@ const EndTime = styled(TimeInput)``;
 function SetBookingTimes() {
   type tileDisabledType = { date: Date };
   const [selectedDays, setSelectedDays] = useState<Date[]>([]);
-  // const [selectedTimes, setSelectedTimes] = useState<{ date: string; startTime: string; endTime: string }[]>([]);
   const [selectedTimes, setSelectedTimes] = useState<{ date: { startTime: string; endTime: string }[] }>();
 
   const tileDisabled = ({ date }: tileDisabledType) => {

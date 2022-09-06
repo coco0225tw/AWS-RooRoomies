@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import firebase from '../../utils/firebase';
 import UploadMyListing from './UploadMyListing';
@@ -253,7 +254,36 @@ const facilityFormGroups = [
     ],
   },
 ];
+
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+`;
+
 function Facility() {
+  const dispatch = useDispatch();
+  interface facilityType {
+    deposit: string;
+    extraFee: string[];
+    facility: string[];
+    furniture: string[];
+    parking: string[];
+    rules: string[];
+  }
+  const initialFacilityEmptyState = {
+    deposit: '',
+    extraFee: [],
+    facility: [],
+    furniture: [],
+    parking: [],
+    rules: [],
+  };
+  const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
+  function submit() {
+    dispatch({ type: 'UPLOAD_FACILITY', payload: { facilityState } });
+  }
+
   return (
     <Wrapper>
       <h1>設施</h1>
@@ -263,16 +293,41 @@ function Facility() {
           {options ? (
             options.map((option) => (
               <FormCheck key={option.value}>
-                <FormCheckInput type="checkbox" name={label} />
+                <FormCheckInput
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setFacilityState({
+                        ...facilityState,
+                        [key]: [...facilityState[key as keyof typeof facilityState], option.value],
+                      });
+                    } else {
+                      setFacilityState({
+                        ...facilityState,
+                        [key]: (facilityState[key as keyof typeof facilityState] as string[]).filter(
+                          (el) => el !== option.value
+                        ),
+                      });
+                    }
+                  }}
+                  type="checkbox"
+                  name={label}
+                />
                 <FormCheckLabel>{option.text}</FormCheckLabel>
-                {/* <FormText>{option.text}</FormText> */}
               </FormCheck>
             ))
           ) : (
-            <FormControl />
+            <FormControl
+              onBlur={(e) => {
+                setFacilityState({
+                  ...facilityState,
+                  [key]: e.target.value,
+                });
+              }}
+            />
           )}
         </FormGroup>
       ))}
+      <SubmitBtn onClick={() => submit()}>送出</SubmitBtn>
     </Wrapper>
   );
 }

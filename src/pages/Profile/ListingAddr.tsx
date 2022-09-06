@@ -58,6 +58,11 @@ const FormCheckInput = styled.input`
   height: 19px;
 `;
 
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+`;
 const addressFormGroups = [
   { label: '縣市', key: 'countyname' },
   { label: '鄉鎮市區', key: 'townname' },
@@ -107,7 +112,7 @@ function ListingAddr() {
           <FormCheckInput onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })} />
         </FormGroup>
       ))}
-      <div onClick={() => submit(addrState!)}>送出</div>
+      <SubmitBtn onClick={() => submit(addrState!)}>送出</SubmitBtn>
     </Wrapper>
   );
 }

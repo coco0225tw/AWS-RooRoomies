@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 const Wrapper = styled.div`
   display: flex;
@@ -55,6 +56,19 @@ const FormCheckInput = styled.input`
   height: 19px;
 `;
 function ListingTitle() {
+  const dispatch = useDispatch();
+  interface addressType {
+    title: string;
+    totalSq: string;
+    form: string;
+  }
+
+  const initialAddrState = {
+    title: '',
+    totalSq: '',
+    form: '',
+  };
+  const [titleState, setTitleState] = useState<addressType>(initialAddrState);
   return (
     <Wrapper>
       <h2>輸入名稱</h2>
