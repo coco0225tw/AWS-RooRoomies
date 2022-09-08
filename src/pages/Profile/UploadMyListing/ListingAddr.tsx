@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import '../../utils/Calendar.css';
 import styled from 'styled-components';
-
+import addressType from '../../../redux/UploadAddr/UploadAddrType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,16 +74,16 @@ const addressFormGroups = [
 ];
 function ListingAddr() {
   const dispatch = useDispatch();
-  interface addressType {
-    countyname: string;
-    townname: string;
-    roadOrStreetNameOrVillage: string;
-    roadSection: string;
-    lane: string;
-    alley: string;
-    number: string;
-    floor: string;
-  }
+  // interface addressType {
+  //   countyname: string;
+  //   townname: string;
+  //   roadOrStreetNameOrVillage: string;
+  //   roadSection: string;
+  //   lane: string;
+  //   alley: string;
+  //   number: string;
+  //   floor: string;
+  // }
 
   const initialAddrState = {
     countyname: '',
@@ -112,7 +111,8 @@ function ListingAddr() {
           <FormCheckInput onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })} />
         </FormGroup>
       ))}
-      <SubmitBtn onClick={() => submit(addrState!)}>送出</SubmitBtn>
+      <SubmitBtn onClick={() => submit(addrState!)}>儲存</SubmitBtn>
+      <SubmitBtn>下一頁</SubmitBtn>
     </Wrapper>
   );
 }

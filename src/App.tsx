@@ -26,18 +26,14 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     padding: 140px 0 115px;
     position: relative;
+  }
+  a {
+    color: inherit; /* blue colors for links too */
+    text-decoration: none
+  }
 `;
 function App() {
-  useEffect(() => {
-    // async function getDoc() {
-    //   const q = query(collection(db, 'users'));
-    //   const querySnapshot = await getDocs(q);
-    //   querySnapshot.forEach((doc) => {
-    //     console.log(doc.id, ' => ', doc.data());
-    //   });
-    // }
-    // getDoc();
-  }, []);
+  useEffect(() => {}, []);
   return (
     <Provider store={store}>
       {/* <Reset /> */}

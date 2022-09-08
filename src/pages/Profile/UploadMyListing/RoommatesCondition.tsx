@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import '../../utils/Calendar.css';
 import styled from 'styled-components';
+import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -273,16 +273,6 @@ function RoommatesCondition() {
     smoke: '',
     career: '',
   };
-  interface roommatesConditionType {
-    gender: string;
-    bringFriendToStay: string;
-    hygiene: string;
-    livingHabit: string;
-    genderFriendly: string;
-    pet: string;
-    smoke: string;
-    career: string;
-  }
   const [roommatesState, setRoommatesStateState] = useState<roommatesConditionType>(initialRoommatesState);
   function submit(roommatesState: roommatesConditionType) {
     console.log('送出');
@@ -306,7 +296,6 @@ function RoommatesCondition() {
                   name={label}
                 />
                 <FormCheckLabel>{option.text}</FormCheckLabel>
-                {/* <FormText>{option.text}</FormText> */}
               </FormCheck>
             ))
           ) : (
@@ -315,6 +304,7 @@ function RoommatesCondition() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(roommatesState!)}>送出</SubmitBtn>
+      <SubmitBtn>下一頁</SubmitBtn>
     </Wrapper>
   );
 }

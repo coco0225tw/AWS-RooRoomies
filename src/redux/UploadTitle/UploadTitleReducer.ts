@@ -1,18 +1,15 @@
 import titleType from './UploadTitleType';
-type Action = { type: 'UPLOAD_FACILITY'; payload: { facilityState: titleType } };
+type Action = { type: 'UPLOAD_TITLE'; payload: { titleState: titleType } };
 
-const facilityEmptyState = {
-  deposit: '',
-  extraFee: [],
-  facility: [],
-  furniture: [],
-  parking: [],
-  rules: [],
+const titleEmptyState = {
+  title: '',
+  totalSq: '',
+  form: '',
 };
-export default function UploadFacility(state = facilityEmptyState, action: Action) {
+export default function UploadTitle(state = titleEmptyState, action: Action) {
   switch (action.type) {
-    case 'UPLOAD_FACILITY':
-      return action.payload.facilityState;
+    case 'UPLOAD_TITLE':
+      return action.payload.titleState;
     default:
       return state;
   }

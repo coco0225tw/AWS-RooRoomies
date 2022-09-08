@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import titleType from '../../../redux/UploadTitle/UploadTitleType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -8,6 +9,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
+  background-color: lightgrey;
 `;
 
 const FormLegend = styled.legend`
@@ -55,37 +57,47 @@ const FormCheckInput = styled.input`
   flex-grow: 1;
   height: 19px;
 `;
+
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+`;
 function ListingTitle() {
   const dispatch = useDispatch();
-  interface addressType {
-    title: string;
-    totalSq: string;
-    form: string;
-  }
+  // interface titleType {
+  //   title: string;
+  //   totalSq: string;
+  //   form: string;
+  // }
 
-  const initialAddrState = {
+  const initialTitleState = {
     title: '',
     totalSq: '',
     form: '',
   };
-  const [titleState, setTitleState] = useState<addressType>(initialAddrState);
+  const titleFormGroups = [
+    { label: '名稱', key: 'title' },
+    { label: '坪數', key: 'totalSq' },
+    { label: '規格 ', key: 'form' },
+  ];
+  const [titleState, setTitleState] = useState<titleType>(initialTitleState);
+  function submit(titleState: titleType) {
+    console.log('送出');
+    console.log(titleState);
+    dispatch({ type: 'UPLOAD_TITLE', payload: { titleState } });
+  }
   return (
     <Wrapper>
-      <h2>輸入名稱</h2>
-      <FormGroup key={`title`}>
-        <FormLabel>名稱</FormLabel>
-        <FormCheckInput />
-      </FormGroup>
-      <h2>輸入坪數</h2>
-      <FormGroup key={`totalSq`}>
-        <FormLabel>坪數</FormLabel>
-        <FormCheckInput />
-      </FormGroup>
-      <h2>輸入規格</h2>
-      <FormGroup key={`form`}>
-        <FormLabel>規格</FormLabel>
-        <FormCheckInput />
-      </FormGroup>
+      <h2>輸入基本資訊</h2>
+      {titleFormGroups.map(({ label, key }) => (
+        <FormGroup key={key}>
+          <FormLabel>{label}</FormLabel>
+          <FormCheckInput onChange={(e) => setTitleState({ ...titleState, [key]: e.target.value })} />
+        </FormGroup>
+      ))}
+      <SubmitBtn onClick={() => submit(titleState)}>儲存</SubmitBtn>
+      <SubmitBtn>下一頁</SubmitBtn>
     </Wrapper>
   );
 }

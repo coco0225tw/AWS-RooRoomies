@@ -4,19 +4,31 @@ import styled from 'styled-components';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Map from './Map';
-import firebase from '../../utils/firebase';
+import { firebase } from '../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 100%;
+  width: 80%;
   height: 100%;
+  margin: auto;
+`;
+
+const SectionWrapper = styled.div`
+  display: flex;
+  width: 100%;
+`;
+const ImagesWrapper = styled(SectionWrapper)``;
+const OtherImagesWrapper = styled(SectionWrapper)`
+  flex-wrap: wrap;
+  overflow-y: hidden;
 `;
 const MainImage = styled.img.attrs((props) => ({
   src: props.src,
 }))`
-  width: 30vw;
+  width: 50%;
+  object-fit: cover;
 `;
 const Images = styled(MainImage)``;
 function Listing() {
@@ -24,8 +36,10 @@ function Listing() {
   type ListingType = {
     mainImage: string;
     images: string[];
-    id: string;
+    title: string;
   };
+
+  const Title = styled.div``;
   const [listingInfo, setListingInfo] = useState<ListingType>();
 
   type tileDisabledType = { date: Date };
@@ -47,12 +61,19 @@ function Listing() {
   }, [id]);
   return (
     <Wrapper>
-      <div>房源id:{listingInfo?.id}</div>
+      <div>房源id:{id}</div>
+      <ImagesWrapper>
+        <MainImage src={listingInfo?.mainImage} />
+        <OtherImagesWrapper>
+          {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
+        </OtherImagesWrapper>
+      </ImagesWrapper>
+      <Title>{listingInfo?.title}</Title>
       <Calendar tileDisabled={tileDisabled} />
       <div>主要照片</div>
-      <MainImage src={listingInfo?.mainImage} />
+
       <div>其他照片</div>
-      {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
+
       <Map></Map>
     </Wrapper>
   );

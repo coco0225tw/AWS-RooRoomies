@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import firebase from '../../../utils/firebase';
-import UploadMyListing from './UploadMyListing';
+import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -10,6 +9,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
+  background-color: lightgrey;
 `;
 
 const FormLegend = styled.legend`
@@ -263,14 +263,14 @@ const SubmitBtn = styled.div`
 
 function Facility() {
   const dispatch = useDispatch();
-  interface facilityType {
-    deposit: string;
-    extraFee: string[];
-    facility: string[];
-    furniture: string[];
-    parking: string[];
-    rules: string[];
-  }
+  // interface facilityType {
+  //   deposit: string;
+  //   extraFee: string[];
+  //   facility: string[];
+  //   furniture: string[];
+  //   parking: string[];
+  //   rules: string[];
+  // }
   const initialFacilityEmptyState = {
     deposit: '',
     extraFee: [],
@@ -328,6 +328,7 @@ function Facility() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit()}>送出</SubmitBtn>
+      <SubmitBtn>下一頁</SubmitBtn>
     </Wrapper>
   );
 }

@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
-import '../../utils/Calendar.css';
 import styled from 'styled-components';
-import firebase from '../../../utils/firebase';
-
+import { firebase } from '../../../utils/firebase';
+import { useSelector, useDispatch } from 'react-redux';
+import titleType from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -10,9 +10,8 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
+  background-color: lightgrey;
 `;
-
-const Title = styled.div``;
 
 const UploadMainImage = styled.input.attrs({
   type: 'file',
@@ -35,10 +34,16 @@ const SubmitBtn = styled.div`
 `;
 
 function UploadMainImageAndImages() {
+  const dispatch = useDispatch();
   const [mainImgUrl, setMainImgUrl] = useState<string>();
   const [imagesUrl, setImagesUrl] = useState<string[]>();
   const [imagesBlob, setImagesBlob] = useState<Blob[]>();
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
+  const [images, setImages] = useState<[string, string[]]>();
+  // interface mainImageAndImagesType {
+  //   mainImage: string;
+  //   images: string[];
+  // }
   function previewMainImage(e: React.ChangeEvent<HTMLInputElement>) {
     let target = e.target as HTMLInputElement;
     let files = target.files;
@@ -66,11 +71,11 @@ function UploadMainImageAndImages() {
     loopImages(files!);
   }
   async function uploadAllImages() {
-    Promise.all([firebase.uploadMainImage(mainImgBlob!), firebase.uploadImages(imagesBlob as [])]).then(() =>
-      console.log('successfully Uploaded')
-    );
+    let images = { mainImage: mainImgBlob, images: imagesBlob };
+    // let res = await Promise.all([firebase.uploadMainImage(mainImgBlob!), firebase.uploadImages(imagesBlob as [])]);
+    console.log(images);
+    dispatch({ type: 'UPLOAD_IMAGES', payload: { images } });
   }
-
   return (
     <Wrapper>
       <h2>上傳圖片</h2>
@@ -78,7 +83,8 @@ function UploadMainImageAndImages() {
       {mainImgUrl && <PreviewMainImage src={mainImgUrl as string} />}
       <UploadImages onChange={(e) => previewImages(e)} />
       {imagesUrl && imagesUrl.map((url, index) => <PreviewImages key={`previewImages${index}`} src={url as string} />)}
-      <SubmitBtn onClick={uploadAllImages}>送出</SubmitBtn>
+      <SubmitBtn onClick={uploadAllImages}>儲存</SubmitBtn>
+      <SubmitBtn>下一頁</SubmitBtn>
     </Wrapper>
   );
 }
