@@ -19,10 +19,20 @@ const SectionWrapper = styled.div`
   display: flex;
   width: 100%;
 `;
-const ImagesWrapper = styled(SectionWrapper)``;
+const ImagesWrapper = styled(SectionWrapper)`
+  height: 50vh;
+`;
 const OtherImagesWrapper = styled(SectionWrapper)`
   flex-wrap: wrap;
-  overflow-y: hidden;
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
+`;
+const TitleWrapper = styled(SectionWrapper)`
+  flex-wrap: wrap;
+  height: 100%;
+  overflow: scroll;
+  overflow-x: hidden;
 `;
 const MainImage = styled.img.attrs((props) => ({
   src: props.src,
@@ -39,7 +49,9 @@ function Listing() {
     title: string;
   };
 
-  const Title = styled.div``;
+  const Title = styled.div`
+    font-size: 40px;
+  `;
   const [listingInfo, setListingInfo] = useState<ListingType>();
 
   type tileDisabledType = { date: Date };
@@ -61,6 +73,7 @@ function Listing() {
   }, [id]);
   return (
     <Wrapper>
+      <Title>{listingInfo?.title}</Title>
       <div>房源id:{id}</div>
       <ImagesWrapper>
         <MainImage src={listingInfo?.mainImage} />
@@ -68,7 +81,7 @@ function Listing() {
           {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
         </OtherImagesWrapper>
       </ImagesWrapper>
-      <Title>{listingInfo?.title}</Title>
+
       <Calendar tileDisabled={tileDisabled} />
       <div>主要照片</div>
 

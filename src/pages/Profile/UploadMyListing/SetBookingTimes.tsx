@@ -169,17 +169,12 @@ function SetBookingTimes() {
   function clickTime(date: Date, index: number) {
     const startTime = { startTime: '123' };
 
-    const time = { date: date, startTime: selectedTimeRef.current[index]?.value };
-    console.log(selectedTimeRef.current);
-    console.log(selectedTimeRef.current[index]?.value);
+    const time = { date: date, startTime: selectedTimeRef.current[index]?.value, isBooked: false };
     const generatedDate =
       date.getFullYear() + '-' + ('0' + (date.getMonth() + 1)).slice(-2) + '-' + ('0' + date.getDate()).slice(-2);
-    setSelectedTimes([...(selectedTimes as { date: Date; startTime: string }[]), time]);
-    const selectedTimesLength = [...(selectedTimes as { date: Date; startTime: string }[]), time].length;
-    // selectedTimeRef.current.value = Array(selectedTimesLength).fill(HTMLInputElement);
+    setSelectedTimes([...(selectedTimes as { date: Date; startTime: string; isBooked: boolean }[]), time]);
   }
   function submit(selectedTimes: bookingTimesType) {
-    // console.log(selectedTimes);
     dispatch({ type: 'UPLOAD_TIMES', payload: { selectedTimes } });
   }
   return (
