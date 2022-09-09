@@ -84,7 +84,7 @@ const firebase = {
     const listingsQuery = query(
       collection(db, 'listings'),
       orderBy(uploadedTimeField, descending),
-      startAfter(lastDoc),
+      startAfter(lastDoc), //BUGFIX-者理會有ERROR(最後一頁)
       limit(homePageListingSize)
     );
     const querySnapshot = await getDocs(listingsQuery);

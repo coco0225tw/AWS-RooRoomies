@@ -5,6 +5,9 @@ import { Outlet } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+
+import Header from './components/Header';
+import Footer from './components/Footer';
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
@@ -24,7 +27,7 @@ const GlobalStyle = createGlobalStyle`
   }
   #root {
     min-height: 100vh;
-    padding: 140px 0 115px;
+    // padding: 140px 0 115px;
     position: relative;
   }
   a {
@@ -56,7 +59,9 @@ function App() {
     <Provider store={store}>
       {/* <Reset /> */}
       <GlobalStyle />
+      <Header />
       <Outlet />
+      <Footer />
     </Provider>
   );
 }

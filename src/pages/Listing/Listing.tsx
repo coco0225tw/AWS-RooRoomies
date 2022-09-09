@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Map from './Map';
+import CalendarContainer from '../../components/Calendar';
 import { firebase } from '../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
@@ -34,6 +35,10 @@ const TitleWrapper = styled(SectionWrapper)`
   overflow: scroll;
   overflow-x: hidden;
 `;
+
+const DividedCalendarSection = styled(SectionWrapper)`
+  // flex-direction: row;
+`;
 const MainImage = styled.img.attrs((props) => ({
   src: props.src,
 }))`
@@ -41,6 +46,21 @@ const MainImage = styled.img.attrs((props) => ({
   object-fit: cover;
 `;
 const Images = styled(MainImage)``;
+
+const InformationWrapper = styled(SectionWrapper)`
+  flex-direction: row;
+`;
+const Title = styled.div`
+  font-size: 40px;
+  //width: 100%;
+`;
+const AddrSection = styled(SectionWrapper)``;
+const StickyCalendarContainer = styled.div`
+  flex-grow: 1;
+  position: sticky;
+  // width: 100%;
+  // background-color: brown;
+`;
 function Listing() {
   const { id } = useParams<string>();
   type ListingType = {
@@ -49,9 +69,6 @@ function Listing() {
     title: string;
   };
 
-  const Title = styled.div`
-    font-size: 40px;
-  `;
   const [listingInfo, setListingInfo] = useState<ListingType>();
 
   type tileDisabledType = { date: Date };
@@ -73,7 +90,6 @@ function Listing() {
   }, [id]);
   return (
     <Wrapper>
-      <Title>{listingInfo?.title}</Title>
       <div>房源id:{id}</div>
       <ImagesWrapper>
         <MainImage src={listingInfo?.mainImage} />
@@ -81,12 +97,18 @@ function Listing() {
           {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
         </OtherImagesWrapper>
       </ImagesWrapper>
-
-      <Calendar tileDisabled={tileDisabled} />
-      <div>主要照片</div>
-
-      <div>其他照片</div>
-
+      <DividedCalendarSection>
+        <InformationWrapper>
+          <Title>{listingInfo?.title}</Title>
+          {/* <AddrSection></AddrSection> */}
+          <StickyCalendarContainer>
+            <CalendarContainer>
+              <Calendar tileDisabled={tileDisabled} />
+            </CalendarContainer>
+          </StickyCalendarContainer>
+        </InformationWrapper>
+        <StickyCalendarContainer></StickyCalendarContainer>
+      </DividedCalendarSection>
       <Map></Map>
     </Wrapper>
   );

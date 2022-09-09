@@ -44,6 +44,7 @@ const Time = styled.div``;
 const Rent = styled.div``;
 
 const Addr = styled.div``;
+const PeopleAmount = styled.div``;
 function Listing(data: DocumentData) {
   return (
     <Wrapper>
@@ -57,6 +58,7 @@ function Listing(data: DocumentData) {
           縣市:{data?.data.countyName}
           地區:{data?.data.townName}
         </Addr>
+        <PeopleAmount>人數:{data?.data.peopleAmount}</PeopleAmount>
         <Time>{data?.data?.uploadedTime?.toDate().toDateString()}</Time>
       </CardWrapper>
     </Wrapper>
