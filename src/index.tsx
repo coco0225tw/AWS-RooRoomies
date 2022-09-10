@@ -6,6 +6,7 @@ import App from './App';
 import Listing from './pages/Listing/Listing';
 import Profile from './pages/Profile/Profile';
 import Home from './pages/Home/Home';
+import SignIn from './pages/Signin/Signin';
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <BrowserRouter>
@@ -14,6 +15,7 @@ root.render(
         <Route index element={<Home />} />
         <Route path="listing/:id" element={<Listing />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="signin" element={<SignIn />} />
         <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="*/*" element={<Navigate to="/" replace />} />
       </Route>

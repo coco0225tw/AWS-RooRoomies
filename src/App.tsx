@@ -11,7 +11,7 @@ import Footer from './components/Footer';
 const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
-    border: solid 1px black;
+    // border: solid 1px black;
   }
 
   body {
@@ -54,7 +54,9 @@ const GlobalStyle = createGlobalStyle`
   } 
 `;
 function App() {
-  useEffect(() => {}, []);
+  useEffect(() => {
+    console.log('uuid');
+  }, []);
   return (
     <Provider store={store}>
       {/* <Reset /> */}

@@ -63,6 +63,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 
 const RoomCards = styled.div`
@@ -109,6 +114,7 @@ function RentRoomDetails() {
   }
   function submit(roomState: roomDetailsType) {
     dispatch({ type: 'UPLOAD_ROOMS', payload: { roomState } });
+    console.log('送出房間');
   }
   return (
     <Wrapper>
@@ -141,7 +147,7 @@ function RentRoomDetails() {
       </RoomCards>
       <SubmitBtn onClick={() => addRooms()}>+加入房間+</SubmitBtn>
       <SubmitBtn onClick={() => submit(roomState)}>儲存</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

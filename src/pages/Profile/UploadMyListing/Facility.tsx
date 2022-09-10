@@ -259,6 +259,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 
 function Facility() {
@@ -282,6 +287,7 @@ function Facility() {
   const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
   function submit() {
     dispatch({ type: 'UPLOAD_FACILITY', payload: { facilityState } });
+    console.log('送出設施');
   }
 
   return (
@@ -328,7 +334,7 @@ function Facility() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit()}>送出</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

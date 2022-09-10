@@ -259,6 +259,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 
 function RoommatesCondition() {
@@ -275,9 +280,8 @@ function RoommatesCondition() {
   };
   const [roommatesState, setRoommatesStateState] = useState<roommatesConditionType>(initialRoommatesState);
   function submit(roommatesState: roommatesConditionType) {
-    console.log('送出');
-    console.log(roommatesState);
     dispatch({ type: 'UPLOAD_ROOMMATESCONDITION', payload: { roommatesState } });
+    console.log('送出室友條件');
   }
   return (
     <Wrapper>
@@ -304,7 +308,7 @@ function RoommatesCondition() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(roommatesState!)}>送出</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

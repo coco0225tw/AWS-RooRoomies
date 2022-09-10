@@ -7,7 +7,7 @@ export default function UploadTimes(state = timeEmptyState, action: Action) {
     case 'UPLOAD_TIMES':
       return action.payload.selectedTimes;
     default:
-      console.log('default');
+      // console.log('default');
       return state;
   }
 }

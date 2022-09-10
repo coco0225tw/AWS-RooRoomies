@@ -62,7 +62,7 @@ function UploadMyListing() {
       peopleAmount: findPeopleAmount,
       startRent: findStartRent.rent,
       endRent: findEndRent.rent,
-      // moveInDate: 'timestamp',//補上
+      moveInDate: new Date(2022, 12, 1), //補上
       // form: getTitle.form,
       // mainImage: getImages[0],
 
@@ -70,10 +70,11 @@ function UploadMyListing() {
       floor: getAddr.floor,
       // sq: getTitle.totalSq,
       // addr: 'string', //補上
-      // environmentDescription: 'string', //補上
+      environmentDescription: '預設描述', //補上
       rentRoomDetails: getRooms,
       facility: getFacility,
       roommatesConditions: getRoommatesCondition,
+      latLng: { lat: 25.026221, lng: 121.560623 }, //預設北醫
     };
     firebase.setNewListingDocField(newListingRef, listingData, getBookingTimes, getImages.mainImage, getImages.images);
   }

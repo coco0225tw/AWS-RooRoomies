@@ -72,9 +72,8 @@ function UploadMainImageAndImages() {
   }
   async function uploadAllImages() {
     let images = { mainImage: mainImgBlob, images: imagesBlob };
-    // let res = await Promise.all([firebase.uploadMainImage(mainImgBlob!), firebase.uploadImages(imagesBlob as [])]);
-    console.log(images);
     dispatch({ type: 'UPLOAD_IMAGES', payload: { images } });
+    console.log('送出圖片');
   }
   return (
     <Wrapper>

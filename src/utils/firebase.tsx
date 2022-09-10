@@ -16,6 +16,13 @@ import {
   addDoc,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 const firebaseConfig = {
   apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
   authDomain: 'rooroomies.firebaseapp.com',
@@ -25,7 +32,7 @@ const firebaseConfig = {
   appId: '1:902090494840:web:b89eee21700f2fb39e2e8d',
 };
 const app = initializeApp(firebaseConfig);
-
+const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const storageRef = ref(storage);
@@ -40,7 +47,6 @@ const newListingRef = doc(listingCollection);
 const bookingTimesCollection = 'bookingTimes';
 const timestamp = serverTimestamp();
 const firebase = {
-  // latestDoc: null,
   async setNewListingDocField(
     newListingRef: any,
     fieldData: any,
@@ -120,6 +126,31 @@ const firebase = {
     let promiseRes = await Promise.all(promises);
     return promiseRes;
   },
+  async createNewUser(email: string, password: string) {
+    try {
+      const newUser = await createUserWithEmailAndPassword(auth, email, password);
+      return newUser;
+      console.log(newUser);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  },
+  async signOutUser() {
+    await signOut(auth);
+  },
+  async signInUser(email: string, password: string) {
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      console.log(user);
+    } catch (error: any) {
+      console.log(error.message);
+    }
+  },
+  async getBookingTimesSubColForListing(listingId: string) {
+    const subColRef = collection(db, 'listings', listingId, 'bookingTimes');
+    const querySnapshot = await getDocs(subColRef);
+    return querySnapshot;
+  },
 };
 
 export {
@@ -135,4 +166,6 @@ export {
   newListingRef,
   firebase,
   timestamp,
+  auth,
+  onAuthStateChanged,
 };

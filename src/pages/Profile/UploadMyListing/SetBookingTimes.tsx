@@ -132,6 +132,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 const TimeInput = styled.input.attrs({
   type: 'time',
@@ -177,6 +182,7 @@ function SetBookingTimes() {
   }
   function submit(selectedTimes: bookingTimesType) {
     dispatch({ type: 'UPLOAD_TIMES', payload: { selectedTimes } });
+    console.log('送出時間');
   }
   return (
     <Wrapper>
@@ -204,7 +210,7 @@ function SetBookingTimes() {
       {/* {selectedDays && <StartTime ref={selectedTimeRef}></StartTime>} */}
 
       <SubmitBtn onClick={() => submit(selectedTimes)}>儲存</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

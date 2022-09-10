@@ -7,7 +7,7 @@ export default function UploadRooms(state = [], action: Action) {
     case 'UPLOAD_ROOMS':
       return action.payload.roomState;
     default:
-      console.log('default');
+      // console.log('default');
       return state;
   }
 }

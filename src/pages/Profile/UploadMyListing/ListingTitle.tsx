@@ -62,6 +62,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 function ListingTitle() {
   const dispatch = useDispatch();
@@ -83,9 +88,8 @@ function ListingTitle() {
   ];
   const [titleState, setTitleState] = useState<titleType>(initialTitleState);
   function submit(titleState: titleType) {
-    console.log('送出');
-    console.log(titleState);
     dispatch({ type: 'UPLOAD_TITLE', payload: { titleState } });
+    console.log('送出基本資料');
   }
   return (
     <Wrapper>
@@ -97,7 +101,7 @@ function ListingTitle() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(titleState)}>儲存</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

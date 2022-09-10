@@ -1,13 +1,12 @@
 import styled from 'styled-components';
 const CalendarContainer = styled.div`
   /* ~~~ container styles ~~~ */
-  //max-width: 600px;
-  margin: auto;
+  //width: auto;
+  // margin: auto;
   margin-top: 20px;
   background-color: #a8886b;
   padding: 10px;
   border-radius: 3px;
-
   /* ~~~ button styles ~~~ */
   button {
     background-color: #82542b;

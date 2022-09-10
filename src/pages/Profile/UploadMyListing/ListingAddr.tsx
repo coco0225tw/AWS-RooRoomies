@@ -61,6 +61,11 @@ const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
 `;
 const addressFormGroups = [
   { label: '縣市', key: 'countyname' },
@@ -98,9 +103,8 @@ function ListingAddr() {
   const [addrState, setAddrState] = useState<addressType>(initialAddrState);
 
   function submit(addrState: addressType) {
-    console.log('送出');
-    console.log(addrState);
     dispatch({ type: 'UPLOAD_ADDR', payload: { addrState } });
+    console.log('送出地址');
   }
   return (
     <Wrapper>
@@ -112,7 +116,7 @@ function ListingAddr() {
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(addrState!)}>儲存</SubmitBtn>
-      <SubmitBtn>下一頁</SubmitBtn>
+      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }
