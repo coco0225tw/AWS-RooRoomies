@@ -63,11 +63,11 @@ const FormLabel = styled.label`
   }
 `;
 const FormInput = styled.input.attrs((props) => ({
-  //   type: props.id.includes("Picture")
-  //     ? "file"
-  //     : props.id.includes("Password")
-  //     ? "password"
-  //     : "text",
+  // type: props.id.includes("Picture")
+  //   ? "file"
+  //   : props.id.includes("Password")
+  //   ? "password"
+  //   : "text",
   // ${props.id.includes("Password") && 'autocomplete: off'}
 }))`
   margin-left: 20px;
@@ -116,11 +116,10 @@ const SwitchBtn = styled.div<IsActiveBtnProps>`
 
 const LoginOptionGroup = ['登入', '建立新帳號'];
 const registerFormGroup = [
-  //   { label: '使用者名稱', key: 'regName' },
+  { label: '使用者名稱', key: 'regName' },
   { label: '信箱', key: 'regEmail' },
   { label: '密碼', key: 'regPassword' },
-  //   { label: '確認密碼', key: 'regConfirm_Password' },
-  //   { label: '上傳使用者照片', key: 'regPicture' },
+  { label: '上傳使用者照片', key: 'regPicture' },
 ];
 const signInFormGroup = [
   { label: '信箱', key: 'signInEmail' },
@@ -160,13 +159,18 @@ function SignIn() {
   const [signInInfo, setSignInInfo] = useState<signInInfoType>(initialSignInInfo);
 
   const regSubmit = async function () {
-    setRegInfo({ regEmail: regInfoRef.current[0].value, regPassword: regInfoRef.current[1].value });
-    let newUser = await firebase.createNewUser(regInfoRef.current[0].value, regInfoRef.current[1].value);
-    console.log('註冊');
+    setRegInfo({ regEmail: regInfoRef.current[1].value, regPassword: regInfoRef.current[2].value });
+    let newUser = await firebase.createNewUser(regInfoRef.current[1].value, regInfoRef.current[2].value);
+    await firebase.setNewUserDocField(
+      newUser?.user.uid as string,
+      regInfoRef.current[1].value,
+      regInfoRef.current[0].value,
+      regInfoRef.current[3].files![0]
+    );
   };
   const signInSubmit = async function () {
     setSignInInfo({ signInEmail: signInInfoRef.current[0].value, signInPassword: signInInfoRef.current[1].value });
-    let newUser = await firebase.signInUser(signInInfoRef.current[0].value, signInInfoRef.current[1].value);
+    let newUser = await firebase.signInUser(signInInfoRef.current[0]!.value, signInInfoRef.current[1]!.value);
     console.log('登入');
   };
 
@@ -190,23 +194,10 @@ function SignIn() {
 
   return (
     <Wrapper>
-      {/* <SwitchBtns>
-        {LoginOptionGroup.map((option, index) => (
-          <SwitchBtn
-            key={`switchBtn${index}`}
-            $isActive={index === activeOptionIndex}
-            onClick={() => {
-              setActiveOptionIndex(index);
-            }}
-          >
-            {option}
-          </SwitchBtn>
-        ))}
-      </SwitchBtns> */}
       <Form>
         <div>現在登入的人：{user?.email}</div>
         <h1>登入</h1>
-        {registerFormGroup.map(({ label, key }, index) => (
+        {signInFormGroup.map(({ label, key }, index) => (
           <FormGroup key={key}>
             <FormLabel>{label}</FormLabel>
             <FormInput ref={(el) => ((signInInfoRef.current[index] as any) = el)}></FormInput>
@@ -214,10 +205,15 @@ function SignIn() {
         ))}
         <SubmitBtn onClick={() => signInSubmit()}>登入</SubmitBtn>
         <h1>註冊</h1>
-        {signInFormGroup.map(({ label, key }, index) => (
+        {registerFormGroup.map(({ label, key }, index) => (
           <FormGroup key={key}>
             <FormLabel>{label}</FormLabel>
-            <FormInput ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormInput>
+
+            {key.includes('Picture') ? (
+              <FormInput type="file" ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormInput>
+            ) : (
+              <FormInput ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormInput>
+            )}
           </FormGroup>
         ))}
         <SubmitBtn onClick={() => regSubmit()}>註冊</SubmitBtn>

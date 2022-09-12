@@ -5,6 +5,7 @@ function Map() {
   let map: google.maps.Map;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: GoogleMapKey,
+    // libraries: ['places'],
   });
   const mapStyles = {
     height: '50vh',
@@ -34,7 +35,7 @@ function Map() {
         });
       });
     }
-    getGeocode();
+    // getGeocode();
 
     async function getRestaurant() {
       await fetch(getRestaurantUrl).then((res) => {

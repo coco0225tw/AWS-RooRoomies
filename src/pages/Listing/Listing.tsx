@@ -33,10 +33,11 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   overflow-x: hidden;
 `;
 const TitleWrapper = styled(SectionWrapper)`
-  flex-wrap: wrap;
-  height: 100%;
-  overflow: scroll;
-  overflow-x: hidden;
+  // flex-wrap: wrap;
+  // height: 100%;
+  // overflow: scroll;
+  // overflow-x: hidden;
+  flex-direction: column;
 `;
 
 const DividedCalendarSection = styled(SectionWrapper)`
@@ -84,6 +85,10 @@ function Listing() {
     mainImage: string;
     images: string[];
     title: string;
+    countyName: string;
+    townName: string;
+    form: string;
+    environmentDescription: string;
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -106,9 +111,15 @@ function Listing() {
   function clickDate(date: Date) {
     setSelectedDate(date);
   }
+  async function bookedTime(id: string, docId: string) {
+    console.log(docId);
+    console.log(id);
+    await firebase.bookedTime(id, docId);
+  }
   useEffect(() => {
     async function getListing() {
       const data = (await firebase.getListing(id!)) as ListingType;
+      console.log(data);
       setListingInfo(data);
     }
 
@@ -117,7 +128,7 @@ function Listing() {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
         times.forEach((doc) => {
           listingTimesArr.push(doc);
-          console.log(doc.data().date.toDate());
+          // console.log(doc.data().date.toDate());
         });
         setBookingTimesInfo(listingTimesArr);
 
@@ -135,7 +146,7 @@ function Listing() {
         }
         let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
           let date = s.data().date.toDate();
-          console.log(date);
+          // console.log(date);
           return date;
         });
         setAbleBookingTimes(enableDates);
@@ -155,8 +166,17 @@ function Listing() {
       </ImagesWrapper>
       <DividedCalendarSection>
         <InformationWrapper>
-          <Title>{listingInfo?.title}</Title>
-          {/* <AddrSection></AddrSection> */}
+          <TitleWrapper>
+            <Title>{listingInfo?.title}</Title>
+            <AddrSection>
+              {listingInfo?.countyName}
+              {listingInfo?.townName}
+              <br />
+              {listingInfo?.form}
+              <br />
+              {listingInfo?.environmentDescription}
+            </AddrSection>
+          </TitleWrapper>
           <StickyCalendarContainer>
             <CalendarContainer>
               <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
@@ -169,16 +189,28 @@ function Listing() {
                     ('0' + (selectedDate.getMonth() + 1)).slice(-2) +
                     '-' +
                     ('0' + selectedDate.getDate()).slice(-2)}
-                  {/* {selectedDate.toDateString()} */}
                 </SelectedDate>
               )}
               {selectedDate &&
                 bookingTimesInfo
-                  .filter((el) => el.data().date.toDate().getTime() !== selectedDate.getTime())
+                  .filter(
+                    (el) => el.data().date.toDate().getTime() !== selectedDate.getTime() && el.data().isBooked === false
+                  )
                   .map((el, index) => (
                     <SectionWrapper key={`selectedTimes_${index}`}>
                       <div>{el.data().startTime}</div>
-                      <SubmitBtn>預約</SubmitBtn>
+                      <SubmitBtn onClick={() => bookedTime(id as string, el.id)}>預約</SubmitBtn>
+                    </SectionWrapper>
+                  ))}
+              {selectedDate &&
+                bookingTimesInfo
+                  .filter(
+                    (el) => el.data().date.toDate().getTime() !== selectedDate.getTime() && el.data().isBooked === true
+                  )
+                  .map((el, index) => (
+                    <SectionWrapper key={`selectedTimes_${index}`}>
+                      <div>{el.data().startTime}</div>
+                      <div>已預約</div>
                     </SectionWrapper>
                   ))}
             </Times>

@@ -1,7 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
-import { firebase } from '../../utils/firebase';
-import { getFirestore, getDocs, updateDoc, doc, addDoc, collection, Timestamp, onSnapshot } from 'firebase/firestore';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
+import { firebase, db, timestamp } from '../../utils/firebase';
+import {
+  getFirestore,
+  getDocs,
+  updateDoc,
+  doc,
+  addDoc,
+  collection,
+  Timestamp,
+  onSnapshot,
+  QueryDocumentSnapshot,
+  DocumentData,
+  orderBy,
+  query,
+  FieldValue,
+  serverTimestamp,
+} from 'firebase/firestore';
 const Wrapper = styled.div`
   top: 40vh;
   //   bottom: 0vh
@@ -45,10 +62,12 @@ const UserInfo = styled.div``;
 const UserName = styled.div`
   font-size: 4px;
 `;
-const UserPic = styled.div`
+const UserPic = styled.div<{ pic: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50px;
+  background-image: url(${(props) => props.pic});
+  background-size: cover;
 `;
 const UserMessage = styled.div`
   flex-grow: 1;
@@ -73,34 +92,52 @@ const SubmitBtn = styled.div`
 `;
 
 function ChatRooms() {
-  const [allMessages, setAllMessages] = useState();
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  interface Msg {
+    userMsg: string;
+    sendTime: number;
+    userName: string;
+    userId: string;
+    userPic: string;
+  }
+  const msgInputRef = useRef<HTMLInputElement>(null);
+  const [allMessages, setAllMessages] = useState<DocumentData[]>();
+  async function senMsg() {
+    const msg: Msg = {
+      userMsg: msgInputRef.current!.value,
+      sendTime: Date.now(),
+      userName: userInfo.name,
+      userId: userInfo.uid,
+      userPic: userInfo.image,
+    };
+    await firebase.sendMessage('D4f902RqCnFxfmzLVt0h', allMessages, msg);
+  }
   useEffect(() => {
-    async function getAllMessages() {
-      const data = await firebase.getMessagesSubCollection('D4f902RqCnFxfmzLVt0h');
-      console.log(data);
-    }
-    getAllMessages();
+    const chatRoomQuery = doc(db, 'chatRooms', 'D4f902RqCnFxfmzLVt0h');
+    const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
+      console.log('send');
+      setAllMessages(snapshot.data()!.msg);
+    });
   }, []);
   return (
     <Wrapper>
       <SectionWrapper>
         <MessagesArea>
-          {Array(10)
-            .fill(undefined)
-            .map((el, index) => (
+          {allMessages &&
+            allMessages.map((el, index) => (
               <Message key={`message${index}`}>
                 <UserInfo>
-                  <UserPic>圖片</UserPic>
-                  <UserName>名字</UserName>
+                  <UserPic pic={el.userPic}></UserPic>
+                  <UserName>{el.userName}</UserName>
                 </UserInfo>
-                <UserMessage>訊息</UserMessage>
-                <SendTime>時間</SendTime>
+                <UserMessage>{el.userMsg}</UserMessage>
+                {/* <SendTime>{el.sendTime.toDate().toDateString()}</SendTime> */}
               </Message>
             ))}
         </MessagesArea>
         <InputArea>
-          <InputMessageBox placeholder={'輸入訊息'}></InputMessageBox>
-          <SubmitBtn>送出</SubmitBtn>
+          <InputMessageBox placeholder={'輸入訊息'} ref={msgInputRef}></InputMessageBox>
+          <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
         </InputArea>
       </SectionWrapper>
     </Wrapper>

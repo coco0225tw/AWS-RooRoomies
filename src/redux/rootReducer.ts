@@ -6,7 +6,7 @@ import UploadTitle from './UploadTitle/UploadTitleReducer';
 import UploadImages from './UploadMainImageAndImages/UploadMainImageAndImagesReducer';
 import UploadRooms from './UploadRoomsDetails/UploadRoomsDetailsReducer';
 import UploadTimes from './UploadBookingTimes/UploadBookingTimesReducer';
-
+import GetAuth from './GetAuth/GetAuthReducer';
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
   UploadRoommatesConditionReducer: UploadRoommatesCondition,
@@ -15,6 +15,7 @@ const rootReducer = combineReducers({
   UploadImagesReducer: UploadImages,
   UploadRoomsReducer: UploadRooms,
   UploadTimesReducer: UploadTimes,
+  GetAuthReducer: GetAuth,
 });
 
 export default rootReducer;

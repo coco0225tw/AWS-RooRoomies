@@ -14,6 +14,8 @@ import {
   DocumentData,
   serverTimestamp,
   addDoc,
+  onSnapshot,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import {
@@ -42,8 +44,9 @@ const descending = 'desc';
 const listingId = 'Gxj1G1AFiPZFRzW3gkOq'; //預設
 const mainImageRef = ref(storage, `${listingId}/mainImage`);
 const listingCollection = collection(db, 'listings');
+const userCollection = collection(db, 'users');
 const newListingRef = doc(listingCollection);
-
+const newUserRef = doc(userCollection);
 const bookingTimesCollection = 'bookingTimes';
 const timestamp = serverTimestamp();
 const firebase = {
@@ -126,11 +129,17 @@ const firebase = {
     let promiseRes = await Promise.all(promises);
     return promiseRes;
   },
+  async uploadUserImage(image: Blob, userId: string) {
+    const userImagesRef = ref(storage, `${userId}/image`);
+    let url = await uploadBytes(userImagesRef, image).then((uploadResult) => {
+      return getDownloadURL(uploadResult.ref);
+    });
+    return url;
+  },
   async createNewUser(email: string, password: string) {
     try {
       const newUser = await createUserWithEmailAndPassword(auth, email, password);
       return newUser;
-      console.log(newUser);
     } catch (error: any) {
       console.log(error.message);
     }
@@ -151,6 +160,49 @@ const firebase = {
     const querySnapshot = await getDocs(subColRef);
     return querySnapshot;
   },
+  async bookedTime(listingId: string, timeDocId: string) {
+    const subColRef = doc(db, 'listings', listingId, 'bookingTimes', timeDocId);
+    await updateDoc(subColRef, {
+      isBooked: true,
+    });
+  },
+  async setNewUserDocField(uid: string, email: string, name: string, image: Blob) {
+    const url = await this.uploadUserImage(image, uid);
+    await setDoc(doc(db, 'users', uid), {
+      name: name,
+      email: email,
+      image: url,
+    });
+  },
+  getMessagesSubCollection(chatRoomId: string) {
+    const subColRef = collection(db, 'chatRooms', chatRoomId, 'messages');
+    // const querySnapshot= await db.collection('chatRooms').doc(chatRoomId).collection('messages')
+    let allMessages: DocumentData[] = [];
+    const getAllMessages = onSnapshot(subColRef, (snapshot) => {
+      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+        allMessages.push(doc.data());
+        console.log(allMessages);
+      });
+      console.log(allMessages);
+    });
+    console.log(allMessages);
+  },
+  async getUserDocFromFirebase(uid: string) {
+    const userRef = doc(db, 'users', uid);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      console.log(docSnap.data());
+      return docSnap;
+    } else {
+      window.alert('No such document!');
+    }
+  },
+  async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {
+    const chatRoomRef = doc(db, 'chatRooms', chatRoomId);
+    await updateDoc(chatRoomRef, {
+      msg: [...oldMsg, newMsg],
+    });
+  },
 };
 
 export {
@@ -167,5 +219,6 @@ export {
   firebase,
   timestamp,
   auth,
+  newUserRef,
   onAuthStateChanged,
 };
