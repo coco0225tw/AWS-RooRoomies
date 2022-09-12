@@ -6,6 +6,7 @@ import App from './App';
 import Listing from './pages/Listing/Listing';
 import Profile from './pages/Profile/Profile';
 import Home from './pages/Home/Home';
+// import SignIn from './pages/Signin/Signin';
 import SignIn from './pages/Signin/Signin';
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(

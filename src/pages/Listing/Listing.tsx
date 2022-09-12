@@ -8,7 +8,14 @@ import CalendarContainer from '../../components/Calendar';
 import { firebase } from '../../utils/firebase';
 import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
+import RoommatesCondition from './RoommatesCondition';
+import Facility from './Facility';
+import RoomDetails from './RoomDetails';
+
+import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import bookingTimesType from '../../redux/UploadBookingTimes/UploadBookingTimesType';
+import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import facilityType from '../../redux/UploadFacility/UploadFacilityType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,10 +45,13 @@ const TitleWrapper = styled(SectionWrapper)`
   // overflow: scroll;
   // overflow-x: hidden;
   flex-direction: column;
+  // align-items: flex-start;
 `;
 
 const DividedCalendarSection = styled(SectionWrapper)`
-  // flex-direction: row;
+  flex-direction: row;
+  align-items: flex-start;
+  // background-color: grey;
 `;
 const MainImage = styled.img.attrs((props) => ({
   src: props.src,
@@ -67,6 +77,7 @@ const StickyCalendarContainer = styled.div`
   // position: sticky;
   // width: 100%;
   // background-color: brown;
+  // background-color: black;
 `;
 
 const Times = styled.div``;
@@ -89,6 +100,9 @@ function Listing() {
     townName: string;
     form: string;
     environmentDescription: string;
+    roommatesConditions: roommatesConditionType;
+    facility: facilityType;
+    rentRoomDetails: roomDetailsType;
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -119,7 +133,7 @@ function Listing() {
   useEffect(() => {
     async function getListing() {
       const data = (await firebase.getListing(id!)) as ListingType;
-      console.log(data);
+      // console.log(data);
       setListingInfo(data);
     }
 
@@ -176,6 +190,9 @@ function Listing() {
               <br />
               {listingInfo?.environmentDescription}
             </AddrSection>
+            <RoommatesCondition roommatesConditions={listingInfo?.roommatesConditions}></RoommatesCondition>
+            <Facility facility={listingInfo?.facility}></Facility>
+            <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
           </TitleWrapper>
           <StickyCalendarContainer>
             <CalendarContainer>
@@ -216,7 +233,6 @@ function Listing() {
             </Times>
           </StickyCalendarContainer>
         </InformationWrapper>
-        <StickyCalendarContainer></StickyCalendarContainer>
       </DividedCalendarSection>
       <Map></Map>
     </Wrapper>

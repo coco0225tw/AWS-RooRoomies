@@ -5,21 +5,21 @@ const Wrapper = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: flex-start;
-  width: 100%;
-  height: 20vh;
+  width: 80%;
+  height: 100%;
   margin: auto;
 `;
 
-const Title = styled.div`
-  font-size: 30px;
+const SideBarWrapper = styled.div`
+  width: 30%;
+  padding: 20px;
 `;
-function Footer() {
+function Setting() {
   return (
     <Wrapper>
-      <h1>條件</h1>
-      <Title>Footer</Title>
+      <div>設定</div>
     </Wrapper>
   );
 }
 
-export default Footer;
+export default Setting;

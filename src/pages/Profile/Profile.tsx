@@ -1,7 +1,14 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { firebase } from '../../utils/firebase';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
 import UploadMyListing from './UploadMyListing/UploadMyListing';
+import Setting from './Setting/Setting';
+import FollowedList from './FollowedList/FollowedList';
+import CompareList from './CompareList/CompareList';
+import AllHouseHunting from './AllHouseHunting/AllHouseHunting';
+import AboutMe from './AboutMe/AboutMe';
 import SideBarTab from './SideBarTab';
 const Wrapper = styled.div`
   display: flex;
@@ -18,13 +25,21 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 function Profile() {
+  const dispatch = useDispatch();
+  const getTab = useSelector((state: RootState) => state.SelectTabReducer);
+  const tab = getTab.tab;
+  // console.log(getTab);
   return (
     <Wrapper>
       <SideBarWrapper>
         <SideBarTab />
       </SideBarWrapper>
-
-      <UploadMyListing />
+      {getTab.tab === 'aboutMe' && <AboutMe />}
+      {getTab.tab === 'allHouseHunting' && <AllHouseHunting />}
+      {getTab.tab === 'compareList' && <CompareList />}
+      {getTab.tab === 'followedList' && <FollowedList />}
+      {getTab.tab === 'uploadMyListing' && <UploadMyListing />}
+      {getTab.tab === 'setting' && <Setting />}
     </Wrapper>
   );
 }

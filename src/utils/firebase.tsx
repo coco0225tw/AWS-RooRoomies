@@ -191,7 +191,7 @@ const firebase = {
     const userRef = doc(db, 'users', uid);
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
-      console.log(docSnap.data());
+      // console.log(docSnap.data());
       return docSnap;
     } else {
       window.alert('No such document!');

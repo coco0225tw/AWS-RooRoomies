@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
 import { firebase } from '../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
@@ -22,31 +23,38 @@ const Img = styled.img`
   border-radius: 50%;
 `;
 function SideBarTab() {
+  const dispatch = useDispatch();
+  function clickTab(tabString: string) {
+    const tab = {
+      tab: tabString,
+    };
+    dispatch({ type: 'SELECT_TYPE', payload: { tab } });
+  }
   return (
     <Wrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>關於我</Tab>
+        <Tab onClick={() => clickTab('aboutMe')}>關於我</Tab>
       </TabWrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>所有看房消息</Tab>
+        <Tab onClick={() => clickTab('allHouseHunting')}>所有看房消息</Tab>
       </TabWrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>比較列表</Tab>
+        <Tab onClick={() => clickTab('compareList')}>比較列表</Tab>
       </TabWrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>追蹤列表</Tab>
+        <Tab onClick={() => clickTab('followedList')}>追蹤列表</Tab>
       </TabWrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>管理物件</Tab>
+        <Tab onClick={() => clickTab('uploadMyListing')}>管理物件</Tab>
       </TabWrapper>
       <TabWrapper>
         <Img></Img>
-        <Tab>設定</Tab>
+        <Tab onClick={() => clickTab('setting')}>設定</Tab>
       </TabWrapper>
     </Wrapper>
   );

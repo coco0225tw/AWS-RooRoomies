@@ -7,6 +7,7 @@ import { createGlobalStyle } from 'styled-components';
 import { Provider } from 'react-redux';
 import store from './redux/store';
 import { firebase, auth, onAuthStateChanged } from './utils/firebase';
+import { RootState } from './redux/rootReducer';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ChatRooms from './components/ChatRooms/ChatRooms';
@@ -58,28 +59,27 @@ const GlobalStyle = createGlobalStyle`
 `;
 function User() {
   const dispatch = useDispatch();
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
-      console.log(currentUser?.uid);
+      // console.log(currentUser?.uid);
       if (currentUser) {
         getUser();
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
-        console.log(data?.id);
-        console.log(data?.data());
         const user: userType = {
           uid: data?.id as string,
           email: data?.data().email,
           image: data?.data().image,
           name: data?.data().name,
         };
-        console.log(user);
+        // console.log(user);
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
       }
     });
   }, []);
-  return <></>;
+  return <div>現在登入的是:{userInfo.name}</div>;
 }
 
 function App() {
@@ -88,7 +88,7 @@ function App() {
       {/* <Reset /> */}
       <GlobalStyle />
       <User />
-      <ChatRooms />
+      {/* <ChatRooms /> */}
       <Header />
       <Outlet />
       <Footer />
