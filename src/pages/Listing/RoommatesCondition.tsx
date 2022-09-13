@@ -40,53 +40,45 @@ const SubmitBtn = styled.div`
 function RoommatesCondition(roommatesConditions: any) {
   const [keys, setKeys] = useState<string[]>([]);
   const userAsRoommate = useSelector((state: RootState) => state.UserAsRoommateReducer);
-  console.log(userAsRoommate.userAsRoommatesConditions);
+
   function match() {
-    console.log('比對');
-    const hero1 = {
-      name: 'Joker',
-    };
-    const hero2 = {
-      name: 'Joker',
-      realName: 'Bruce Wayne',
-    };
-    const hero3 = {
-      name: 'Batman',
-      realName: 'Bruce Wayne',
-    };
+    console.log(roommatesConditions.roommatesConditions);
+    function getTrueKey(object: any) {
+      let keys = ['bringFriendToStay', 'pet', 'smoke'];
+      let newObj = { ...object };
+      for (let key of keys) {
+        if (newObj[key] === 'true') {
+          console.log(key);
+          newObj[key] = 'unlimited';
+          // const newObj = { ...object, [key]: 'unlimited' };
+        } else {
+        }
+      }
+      return newObj;
+    }
     function getNonUnlimitedKey(object: any, value: any) {
-      console.log(object);
       let unlimitedKey = Object.keys(object).filter((key) => object[key] === value);
-      console.log(Object.keys(object).filter((key) => object[key] === value));
       for (let key of unlimitedKey) {
         delete object[key];
-        console.log(key);
-        console.log(object);
-        // const { [key]: _, ...newObj } = object;
-        // console.log(newObj);
       }
       return object;
     }
-    // getNonUnlimitedKey(roommatesConditions.roommatesConditions, 'unlimited');
+
     function shallowEqual(object1: any, object2: any) {
       const keys1 = Object.keys(object1);
       const keys2 = Object.keys(object2);
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
-          console.log(key);
-          console.log(object1[key]);
-          console.log(object2[key]);
-          console.log('不符');
           window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
           return false;
         }
       }
-      console.log('符合');
+      window.alert('符合');
       return true;
     }
 
     shallowEqual(
-      getNonUnlimitedKey(roommatesConditions.roommatesConditions, 'unlimited'),
+      getNonUnlimitedKey(getTrueKey(roommatesConditions.roommatesConditions), 'unlimited'),
       userAsRoommate.userAsRoommatesConditions
     ); // => true
   }
@@ -100,7 +92,7 @@ function RoommatesCondition(roommatesConditions: any) {
     if (roommatesConditions?.roommatesConditions) {
       findObjectKeys();
     }
-  }, [roommatesConditions]);
+  }, [roommatesConditions.roommatesConditions]);
   return (
     <Wrapper>
       <SubmitBtn onClick={() => match()}>比對</SubmitBtn>
@@ -113,7 +105,6 @@ function RoommatesCondition(roommatesConditions: any) {
             <div>{roommatesConditions.roommatesConditions[el]}</div>
           </ConditionArea>
         ))}
-      <h1>湊團</h1>
     </Wrapper>
   );
 }

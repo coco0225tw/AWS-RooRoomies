@@ -7,11 +7,14 @@ import Map from './Map';
 import CalendarContainer from '../../components/Calendar';
 import { firebase } from '../../utils/firebase';
 import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
 import RoommatesCondition from './RoommatesCondition';
 import Facility from './Facility';
 import RoomDetails from './RoomDetails';
+import Group from './Group';
 
+import { groupType, userInfoType } from '../../redux/Group/GroupType';
 import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import bookingTimesType from '../../redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
@@ -91,6 +94,7 @@ const SubmitBtn = styled.div`
 `;
 const IsBookedTimes = styled.div``;
 function Listing() {
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const { id } = useParams<string>();
   type ListingType = {
     mainImage: string;
@@ -103,6 +107,8 @@ function Listing() {
     roommatesConditions: roommatesConditionType;
     facility: facilityType;
     rentRoomDetails: roomDetailsType;
+    peopleAmount: number;
+    matchGroup: Array<groupType>;
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -125,11 +131,39 @@ function Listing() {
   function clickDate(date: Date) {
     setSelectedDate(date);
   }
-  async function bookedTime(id: string, docId: string) {
-    console.log(docId);
-    console.log(id);
-    await firebase.bookedTime(id, docId);
+  async function bookedTime(uid: string, docId: string, listingId: string, selectedDateTime: any) {
+    let chatRoomId!: string;
+    let userId!: [];
+    await firebase.checkIfUserCanBook(uid, listingId).then((listing) => {
+      let isBooked;
+      listing.forEach((doc) => {
+        isBooked = doc.data().isBooked;
+        chatRoomId = doc.id;
+        userId = doc.data().userId;
+      });
+      if (isBooked === false) {
+        window.alert('確定預約?');
+        const bookedRecord = {
+          chatRoomId,
+          ...selectedDateTime,
+          userId,
+        };
+        async function updateAllBookedTime() {
+          await Promise.all([
+            firebase.bookedTime(listingId, docId),
+            firebase.bookedTimeInChatRoom(chatRoomId as string, selectedDateTime),
+            firebase.createBookedTimeInfo(listingId, bookedRecord),
+          ]);
+        }
+        updateAllBookedTime();
+        console.log('第一次預約');
+      } else {
+        window.alert('一團只能預約一次哦');
+        console.log('重複預約');
+      }
+    });
   }
+
   useEffect(() => {
     async function getListing() {
       const data = (await firebase.getListing(id!)) as ListingType;
@@ -191,6 +225,7 @@ function Listing() {
               {listingInfo?.environmentDescription}
             </AddrSection>
             <RoommatesCondition roommatesConditions={listingInfo?.roommatesConditions}></RoommatesCondition>
+            <Group peopleAmount={listingInfo?.peopleAmount!} listingId={id!}></Group>
             <Facility facility={listingInfo?.facility}></Facility>
             <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
           </TitleWrapper>
@@ -216,7 +251,13 @@ function Listing() {
                   .map((el, index) => (
                     <SectionWrapper key={`selectedTimes_${index}`}>
                       <div>{el.data().startTime}</div>
-                      <SubmitBtn onClick={() => bookedTime(id as string, el.id)}>預約</SubmitBtn>
+                      <SubmitBtn
+                        onClick={() =>
+                          bookedTime(userInfo.uid, el.id, id!, { date: el.data().date, startTime: el.data().startTime })
+                        }
+                      >
+                        預約
+                      </SubmitBtn>
                     </SectionWrapper>
                   ))}
               {selectedDate &&

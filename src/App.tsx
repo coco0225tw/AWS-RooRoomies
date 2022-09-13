@@ -40,6 +40,7 @@ const GlobalStyle = createGlobalStyle`
   }
   ::-webkit-scrollbar {
       width: 5px;
+      height: 5px;
   }
     
   /* Track */

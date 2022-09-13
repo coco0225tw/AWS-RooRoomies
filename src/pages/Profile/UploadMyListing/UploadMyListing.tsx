@@ -75,6 +75,7 @@ function UploadMyListing() {
       facility: getFacility,
       roommatesConditions: getRoommatesCondition,
       latLng: { lat: 25.026221, lng: 121.560623 }, //預設北醫
+      matchGroup: [],
     };
     firebase.setNewListingDocField(newListingRef, listingData, getBookingTimes, getImages.mainImage, getImages.images);
   }

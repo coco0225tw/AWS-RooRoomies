@@ -16,6 +16,7 @@ import {
   addDoc,
   onSnapshot,
   QueryDocumentSnapshot,
+  where,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import {
@@ -25,6 +26,7 @@ import {
   signOut,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
+import { isCompositeComponent } from 'react-dom/test-utils';
 const firebaseConfig = {
   apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
   authDomain: 'rooroomies.firebaseapp.com',
@@ -199,6 +201,7 @@ const firebase = {
   },
   async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {
     const chatRoomRef = doc(db, 'chatRooms', chatRoomId);
+    console.log(chatRoomId);
     await updateDoc(chatRoomRef, {
       msg: [...oldMsg, newMsg],
     });
@@ -208,6 +211,71 @@ const firebase = {
       doc(db, 'users', uid),
       {
         userAsRoommatesConditions: userAsRoommate,
+      },
+      { merge: true }
+    );
+  },
+  async addUserToGroup(listingId: string, updateGroup: any) {
+    console.log(updateGroup);
+    console.log(listingId);
+    await setDoc(
+      doc(db, 'listings', listingId),
+      {
+        matchGroup: updateGroup,
+      },
+      { merge: true }
+    );
+  },
+  async createChatRoom(userId: string[], listingId: string, updateGroup: any, index: number) {
+    const newChatRoomRef = doc(collection(db, 'chatRooms'));
+    await setDoc(newChatRoomRef, {
+      bookedTime: {},
+      isBooked: false,
+      listingId: listingId,
+      userId: [...userId],
+      msg: [],
+    });
+    await this.updateChatRoomIdInListing(listingId, updateGroup, index, newChatRoomRef.id);
+  },
+  async bookedTimeInChatRoom(chatRoomId: string, bookedTime: any) {
+    await setDoc(
+      doc(db, 'chatRooms', chatRoomId),
+      {
+        bookedTime: bookedTime,
+        isBooked: true,
+      },
+      { merge: true }
+    );
+  },
+  async createBookedTimeInfo(listingId: string, bookedTimeInfo: any) {
+    await setDoc(doc(collection(db, 'listings', listingId, 'bookedTimeInfos')), { ...bookedTimeInfo });
+  },
+  async getAllHouseHunting(uid: string) {
+    const houseHuntingRef = collection(db, 'chatRooms');
+    const userChatRef = query(houseHuntingRef, where('userId', 'array-contains', uid));
+    const querySnapshot = await getDocs(userChatRef);
+    return querySnapshot;
+  },
+  async checkIfUserCanBook(uid: string, listingId: string) {
+    const houseHuntingRef = collection(db, 'chatRooms');
+    const userChatRef = query(
+      houseHuntingRef,
+      where('userId', 'array-contains', uid),
+      where('listingId', '==', listingId)
+    );
+    console.log('check');
+    const querySnapshot = await getDocs(userChatRef);
+    return querySnapshot;
+  },
+  async updateChatRoomIdInListing(listingId: string, updateGroup: any, index: number, chatRoomId: string) {
+    console.log(updateGroup);
+    console.log(listingId);
+    updateGroup[index].chatRoomId = chatRoomId;
+    console.log(updateGroup[index]);
+    await setDoc(
+      doc(db, 'listings', listingId),
+      {
+        matchGroup: updateGroup,
       },
       { merge: true }
     );
