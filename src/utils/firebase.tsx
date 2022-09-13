@@ -203,6 +203,15 @@ const firebase = {
       msg: [...oldMsg, newMsg],
     });
   },
+  async updateUserAsRoommate(uid: string, userAsRoommate: any) {
+    await setDoc(
+      doc(db, 'users', uid),
+      {
+        userAsRoommatesConditions: userAsRoommate,
+      },
+      { merge: true }
+    );
+  },
 };
 
 export {

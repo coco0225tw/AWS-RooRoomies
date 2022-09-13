@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../../redux/rootReducer';
 import styled from 'styled-components';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import { firebase } from '../../../utils/firebase';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -273,19 +275,28 @@ const SubmitBtn = styled.div`
 
 function AboutMe() {
   const dispatch = useDispatch();
-  const initialRoommatesState = {
-    gender: '',
-    bringFriendToStay: '',
-    hygiene: '',
-    livingHabit: '',
-    genderFriendly: '',
-    pet: '',
-    smoke: '',
-    career: '',
-  };
-  const [roommatesState, setRoommatesStateState] = useState<roommatesConditionType>(initialRoommatesState);
-  function submit(roommatesState: roommatesConditionType) {
-    dispatch({ type: 'UPLOAD_ROOMMATESCONDITION', payload: { roommatesState } });
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const userAsRoommate = useSelector((state: RootState) => state.UserAsRoommateReducer);
+  console.log(userAsRoommate);
+  const initialRoommatesState = userAsRoommate
+    ? userAsRoommate.userAsRoommatesConditions
+    : {
+        gender: '',
+        bringFriendToStay: '',
+        hygiene: '',
+        livingHabit: '',
+        genderFriendly: '',
+        pet: '',
+        smoke: '',
+        career: '',
+      };
+
+  console.log(initialRoommatesState);
+  const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(initialRoommatesState);
+  async function submit(meAsRoommatesState: roommatesConditionType) {
+    dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
+    await firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState);
+    console.log(meAsRoommatesState);
     console.log('送出室友條件');
   }
   return (
@@ -297,14 +308,30 @@ function AboutMe() {
           {options ? (
             options.map((option) => (
               <FormCheck key={option.value}>
-                <FormCheckInput
-                  onChange={(e) => {
-                    if (e.target.checked) setRoommatesStateState({ ...roommatesState, [key]: option.value });
-                  }}
-                  type="radio"
-                  name={label}
-                />
-                <FormCheckLabel>{option.text}</FormCheckLabel>
+                {initialRoommatesState && initialRoommatesState[key] === option.value ? (
+                  <>
+                    <FormCheckInput
+                      checked
+                      onChange={(e) => {
+                        if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
+                      }}
+                      type="radio"
+                      name={label}
+                    />
+                    <FormCheckLabel>{option.text}</FormCheckLabel>
+                  </>
+                ) : (
+                  <>
+                    <FormCheckInput
+                      onChange={(e) => {
+                        if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
+                      }}
+                      type="radio"
+                      name={label}
+                    />
+                    <FormCheckLabel>{option.text}</FormCheckLabel>
+                  </>
+                )}
               </FormCheck>
             ))
           ) : (
@@ -312,7 +339,7 @@ function AboutMe() {
           )}
         </FormGroup>
       ))}
-      <SubmitBtn onClick={() => submit(roommatesState!)}>送出</SubmitBtn>
+      <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>送出</SubmitBtn>
       {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );

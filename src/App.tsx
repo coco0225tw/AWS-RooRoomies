@@ -65,6 +65,19 @@ function User() {
       // console.log(currentUser?.uid);
       if (currentUser) {
         getUser();
+      } else {
+        const user: userType = {
+          uid: '',
+          email: '',
+          image: '',
+          name: '',
+        };
+        const meAsRoommatesState = {
+          userAsRoommatesConditions: {},
+        };
+        console.log('logOut');
+        dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
+        dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
@@ -74,8 +87,12 @@ function User() {
           image: data?.data().image,
           name: data?.data().name,
         };
+        const meAsRoommatesState = {
+          userAsRoommatesConditions: data?.data().userAsRoommatesConditions,
+        };
         // console.log(user);
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
+        dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
       }
     });
   }, []);

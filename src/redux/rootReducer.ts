@@ -8,6 +8,7 @@ import UploadRooms from './UploadRoomsDetails/UploadRoomsDetailsReducer';
 import UploadTimes from './UploadBookingTimes/UploadBookingTimesReducer';
 import GetAuth from './GetAuth/GetAuthReducer';
 import SelectTab from './SelectTab/SelectTabReducer';
+import UploadMeAsRoommate from './UserAsRoommate/UserAsRoommateReducer';
 
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   UploadTimesReducer: UploadTimes,
   GetAuthReducer: GetAuth,
   SelectTabReducer: SelectTab,
+  UserAsRoommateReducer: UploadMeAsRoommate,
 });
 
 export default rootReducer;
