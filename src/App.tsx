@@ -105,7 +105,7 @@ function App() {
       {/* <Reset /> */}
       <GlobalStyle />
       <User />
-      {/* <ChatRooms /> */}
+      <ChatRooms />
       <Header />
       <Outlet />
       <Footer />

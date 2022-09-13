@@ -31,12 +31,12 @@ function RoomDetails(rooms: any) {
   const [keys, setKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log(rooms?.room);
+    // console.log(rooms?.room);
     if (rooms?.room) {
       setRoom(rooms?.room);
     }
   }, [rooms]);
-  console.log(rooms.room);
+  // console.log(rooms.room);
   return (
     <Wrapper>
       <h1>房間規格</h1>

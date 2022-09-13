@@ -19,8 +19,8 @@ import {
   FieldValue,
   serverTimestamp,
 } from 'firebase/firestore';
-const Wrapper = styled.div`
-  top: 40vh;
+const Wrapper = styled.div<{ closeAndOpen: boolean }>`
+  top: ${(props) => (props.closeAndOpen ? '40vh' : '90vh')};
   //   bottom: 0vh
   position: fixed;
   //   display: flex;
@@ -28,8 +28,8 @@ const Wrapper = styled.div`
   //   justify-content: center;
   //   align-items: flex-start;
 
-  width: 50%;
-  height: 50vh;
+  width: 30%;
+  height: ${(props) => (props.closeAndOpen ? '50vh' : '10vh')};
   //margin: auto;
   z-index: 1;
   background-color: white;
@@ -92,6 +92,7 @@ const SubmitBtn = styled.div`
 `;
 
 function ChatRooms() {
+  const [closeAndOpen, setCloseAndOpen] = useState<boolean>(true);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   interface Msg {
     userMsg: string;
@@ -115,31 +116,34 @@ function ChatRooms() {
   useEffect(() => {
     const chatRoomQuery = doc(db, 'chatRooms', 'D4f902RqCnFxfmzLVt0h');
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
-      console.log('send');
+      // console.log('send');
       setAllMessages(snapshot.data()!.msg);
     });
   }, []);
   return (
-    <Wrapper>
-      <SectionWrapper>
-        <MessagesArea>
-          {allMessages &&
-            allMessages.map((el, index) => (
-              <Message key={`message${index}`}>
-                <UserInfo>
-                  <UserPic pic={el.userPic}></UserPic>
-                  <UserName>{el.userName}</UserName>
-                </UserInfo>
-                <UserMessage>{el.userMsg}</UserMessage>
-                {/* <SendTime>{el.sendTime.toDate().toDateString()}</SendTime> */}
-              </Message>
-            ))}
-        </MessagesArea>
-        <InputArea>
-          <InputMessageBox placeholder={'輸入訊息'} ref={msgInputRef}></InputMessageBox>
-          <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
-        </InputArea>
-      </SectionWrapper>
+    <Wrapper closeAndOpen={closeAndOpen}>
+      <SubmitBtn onClick={() => setCloseAndOpen(false)}>x</SubmitBtn>
+      <SubmitBtn onClick={() => setCloseAndOpen(true)}>o</SubmitBtn>
+      {closeAndOpen && (
+        <SectionWrapper>
+          <MessagesArea>
+            {allMessages &&
+              allMessages.map((el, index) => (
+                <Message key={`message${index}`}>
+                  <UserInfo>
+                    <UserPic pic={el.userPic}></UserPic>
+                    <UserName>{el.userName}</UserName>
+                  </UserInfo>
+                  <UserMessage>{el.userMsg}</UserMessage>
+                </Message>
+              ))}
+          </MessagesArea>
+          <InputArea>
+            <InputMessageBox placeholder={'輸入訊息'} ref={msgInputRef}></InputMessageBox>
+            <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
+          </InputArea>
+        </SectionWrapper>
+      )}
     </Wrapper>
   );
 }

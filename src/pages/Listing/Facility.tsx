@@ -30,11 +30,11 @@ function Facility(facility: any) {
   const [keys, setKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log(facility.facility);
+    // console.log(facility.facility);
     function findObjectKeys() {
-      console.log(facility?.facility);
+      // console.log(facility?.facility);
       let keys = Object.keys(facility.facility);
-      console.log(keys);
+      // console.log(keys);
       setKeys(keys);
     }
     if (facility?.facility) {
@@ -189,7 +189,7 @@ function Facility(facility: any) {
       ],
     },
   ];
-  console.log(facility.facility);
+  // console.log(facility.facility);
   return (
     <Wrapper>
       <h1>設施條件</h1>
