@@ -65,7 +65,7 @@ function Home() {
   const [lastListingDocument, setLastListingDocument] = useState<DocumentData>();
   const [listingDocData, setListingDocData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
   useEffect(() => {
-    firebase.getAllListings(null, '屏東市').then((listing) => {
+    firebase.getAllListings(null, null).then((listing) => {
       const lastDoc = listing.docs[listing.docs.length - 1];
       setLastListingDocument(lastDoc);
       let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];

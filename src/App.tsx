@@ -83,12 +83,14 @@ function User() {
         const userOnSnapShotQuery = doc(db, 'users', data?.id!);
         const userQuery = onSnapshot(userOnSnapShotQuery, (snapshot) => {
           const favoriteLists = [...snapshot.data()!.favoriteLists];
-          // console.log(snapshot.data()!.compareLists);
           const compareLists = [...snapshot.data()!.compareLists];
-          dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
-          dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
+          // dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
+          // dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
         });
+        const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
+        dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
+        dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
         dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
       }

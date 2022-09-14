@@ -79,11 +79,13 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
       }
       addToFavoriteLists();
+      dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: listingDocData.id } });
     } else {
       async function removeFromFavoriteLists() {
         await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
       }
       removeFromFavoriteLists();
+      dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: listingDocData.id } });
     }
   }
 
@@ -95,11 +97,13 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
       }
       addToCompareLists();
+      dispatch({ type: 'ADD_TO_COMPARELIST', payload: { id: listingDocData.id } });
     } else {
       async function removeFromCompareLists() {
         await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
       }
       removeFromCompareLists();
+      dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: listingDocData.id } });
     }
   }
   return (

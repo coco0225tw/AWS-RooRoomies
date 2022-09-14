@@ -123,11 +123,13 @@ function Listing() {
         await firebase.addToFavoriteLists(userInfo.uid, id!);
       }
       addToFavoriteLists();
+      dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: id! } });
     } else {
       async function removeFromFavoriteLists() {
         await firebase.removeFromFavoriteLists(userInfo.uid, id!);
       }
       removeFromFavoriteLists();
+      dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: id! } });
     }
   }
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
@@ -138,11 +140,13 @@ function Listing() {
         await firebase.addToCompareLists(userInfo.uid, id!);
       }
       addToCompareLists();
+      dispatch({ type: 'ADD_TO_COMPARELIST', payload: { id: id! } });
     } else {
       async function removeFromCompareLists() {
         await firebase.removeFromCompareLists(userInfo.uid, id!);
       }
       removeFromCompareLists();
+      dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
     }
   }
 

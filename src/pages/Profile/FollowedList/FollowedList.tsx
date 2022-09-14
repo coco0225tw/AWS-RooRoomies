@@ -33,17 +33,11 @@ function FollowedList() {
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, listingId: string) {
     e.stopPropagation();
     e.preventDefault();
-    // if (!isLiked) {
-    //   async function addToFavoriteLists() {
-    //     await firebase.addToFavoriteLists(userInfo.uid, listingId);
-    //   }
-    //   addToFavoriteLists();
-    // } else {
     async function removeFromFavoriteLists() {
       await firebase.removeFromFavoriteLists(userInfo.uid, listingId);
     }
     removeFromFavoriteLists();
-    // }
+    dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: listingId } });
   }
   return (
     <Wrapper>

@@ -27,6 +27,7 @@ const CompareIcon = styled.div`
   background-size: 40px 40px;
 `;
 function CompareList() {
+  const dispatch = useDispatch();
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, listingId: string) {
@@ -36,6 +37,7 @@ function CompareList() {
       await firebase.removeFromCompareLists(userInfo.uid, listingId);
     }
     removeFromCompareLists();
+    dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: listingId } });
   }
   return (
     <Wrapper>
