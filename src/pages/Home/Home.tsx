@@ -4,6 +4,7 @@ import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSna
 import styled from 'styled-components';
 import { firebase } from '../../utils/firebase';
 import Listing from './Listing';
+import Search from './Search';
 import { RootState } from '../../redux/rootReducer';
 import { useSelector, useDispatch } from 'react-redux';
 interface Props {
@@ -64,7 +65,7 @@ function Home() {
   const [lastListingDocument, setLastListingDocument] = useState<DocumentData>();
   const [listingDocData, setListingDocData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
   useEffect(() => {
-    firebase.getAllListings().then((listing) => {
+    firebase.getAllListings(null, '屏東市').then((listing) => {
       const lastDoc = listing.docs[listing.docs.length - 1];
       setLastListingDocument(lastDoc);
       let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
@@ -90,7 +91,7 @@ function Home() {
   }
   return (
     <Wrapper>
-      <HomePageTitle>這裡是homePage</HomePageTitle>
+      <Search></Search>
       {listingDocData &&
         listingDocData.map((listingDocData, index) => (
           <ListingWrapper target="_blank" to={`/listing/${listingDocData.id}`} key={`listing_${index}`}>

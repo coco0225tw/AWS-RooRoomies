@@ -83,13 +83,23 @@ const firebase = {
     await Promise.all(bookingTimePromises);
   },
 
-  async getAllListings() {
-    const listingsQuery = query(
-      collection(db, 'listings'),
-      orderBy(uploadedTimeField, descending),
-      limit(homePageListingSize)
-    );
-    const querySnapshot = await getDocs(listingsQuery);
+  async getAllListings(county: string | null, town: string | null) {
+    // const constraints: any[] = [];
+    // console.log(constraints);
+    // if (county) constraints.push(where('countyName', '==', county));
+    // if (town) constraints.push(where('townName', '==', town));
+    // console.log(...constraints);
+    let q = query(collection(db, 'listings'));
+    if (county) q = query(q, where('countyName', '==', county));
+    if (town) q = query(q, where('townName', '==', town));
+    q = query(q, orderBy(uploadedTimeField, descending), limit(homePageListingSize));
+    // const listingsQuery = query(
+    //   collection(db, 'listings'),
+    //   // ...constraints,
+    //   orderBy(uploadedTimeField, descending),
+    //   limit(homePageListingSize)
+    // );
+    const querySnapshot = await getDocs(q);
     return querySnapshot;
   },
 
