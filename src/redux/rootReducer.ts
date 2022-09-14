@@ -10,6 +10,8 @@ import GetAuth from './GetAuth/GetAuthReducer';
 import SelectTab from './SelectTab/SelectTabReducer';
 import UploadMeAsRoommate from './UserAsRoommate/UserAsRoommateReducer';
 import Group from './Group/GroupReducer';
+import GetFavoriteLists from './GetFavoriteListing/GetFavoriteListingReducer';
+import GetCompareLists from './GetCompareLists/GetCompareListsReducer';
 
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
@@ -23,6 +25,8 @@ const rootReducer = combineReducers({
   SelectTabReducer: SelectTab,
   UserAsRoommateReducer: UploadMeAsRoommate,
   GroupReducer: Group,
+  GetFavoriteListsReducer: GetFavoriteLists,
+  GetCompareListsReducer: GetCompareLists,
 });
 
 export default rootReducer;

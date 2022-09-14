@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   margin: auto;
 `;
 

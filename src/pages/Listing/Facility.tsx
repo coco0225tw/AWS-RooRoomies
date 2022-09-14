@@ -9,7 +9,7 @@ const Wrapper = styled.div`
   //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 100%;
+  // height: 100%;
   margin: auto;
 `;
 
@@ -30,11 +30,8 @@ function Facility(facility: any) {
   const [keys, setKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    // console.log(facility.facility);
     function findObjectKeys() {
-      // console.log(facility?.facility);
       let keys = Object.keys(facility.facility);
-      // console.log(keys);
       setKeys(keys);
     }
     if (facility?.facility) {

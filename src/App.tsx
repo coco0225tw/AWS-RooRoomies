@@ -1,12 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { query, getFirestore, getDocs, collection } from 'firebase/firestore';
+import { query, getFirestore, getDocs, collection, doc, onSnapshot } from 'firebase/firestore';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, Fragment } from 'react';
 import { Outlet } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { Provider } from 'react-redux';
 import store from './redux/store';
-import { firebase, auth, onAuthStateChanged } from './utils/firebase';
+import { firebase, auth, onAuthStateChanged, db } from './utils/firebase';
 import { RootState } from './redux/rootReducer';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -67,18 +67,7 @@ function User() {
       if (currentUser) {
         getUser();
       } else {
-        const user: userType = {
-          uid: '',
-          email: '',
-          image: '',
-          name: '',
-        };
-        const meAsRoommatesState = {
-          userAsRoommatesConditions: {},
-        };
-        console.log('logOut');
-        dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
-        dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
+        //登出
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
@@ -91,7 +80,15 @@ function User() {
         const meAsRoommatesState = {
           userAsRoommatesConditions: data?.data().userAsRoommatesConditions,
         };
-        // console.log(user);
+        const userOnSnapShotQuery = doc(db, 'users', data?.id!);
+        const userQuery = onSnapshot(userOnSnapShotQuery, (snapshot) => {
+          const favoriteLists = [...snapshot.data()!.favoriteLists];
+          // console.log(snapshot.data()!.compareLists);
+          const compareLists = [...snapshot.data()!.compareLists];
+          dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
+          dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
+        });
+        const favoriteLists = data?.data().favoriteLists;
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
         dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
       }

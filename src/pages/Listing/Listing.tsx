@@ -15,10 +15,17 @@ import RoomDetails from './RoomDetails';
 import Group from './Group';
 
 import { groupType, userInfoType } from '../../redux/Group/GroupType';
+// import { groupType, userInfoType } from '../../redux/Group/GroupType';
 import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import bookingTimesType from '../../redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from '../../redux/UploadFacility/UploadFacilityType';
+
+import likedIcon from '../../assets/heart.png';
+import unLikedIcon from '../../assets/unHeart.png';
+
+import addIcon from '../../assets/add.png';
+import unAddIcon from '../../assets/unAdd.png';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -43,12 +50,8 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   overflow-x: hidden;
 `;
 const TitleWrapper = styled(SectionWrapper)`
-  // flex-wrap: wrap;
-  // height: 100%;
-  // overflow: scroll;
-  // overflow-x: hidden;
   flex-direction: column;
-  // align-items: flex-start;
+  // height: 100vh;
 `;
 
 const DividedCalendarSection = styled(SectionWrapper)`
@@ -92,10 +95,57 @@ const SubmitBtn = styled.div`
   color: white;
   cursor: pointer;
 `;
+const FavoriteIcon = styled.div<{ isLiked: boolean }>`
+  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
+  height: 40px;
+  width: 40px;
+  background-size: 40px 40px;
+`;
+
+const CompareIcon = styled.div<{ isCompared: boolean }>`
+  background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
+  height: 40px;
+  width: 40px;
+  background-size: 40px 40px;
+`;
 const IsBookedTimes = styled.div``;
 function Listing() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const { id } = useParams<string>();
+  const dispatch = useDispatch();
+  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
+  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!isLiked) {
+      async function addToFavoriteLists() {
+        await firebase.addToFavoriteLists(userInfo.uid, id!);
+      }
+      addToFavoriteLists();
+    } else {
+      async function removeFromFavoriteLists() {
+        await firebase.removeFromFavoriteLists(userInfo.uid, id!);
+      }
+      removeFromFavoriteLists();
+    }
+  }
+  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!isCompared) {
+      async function addToCompareLists() {
+        await firebase.addToCompareLists(userInfo.uid, id!);
+      }
+      addToCompareLists();
+    } else {
+      async function removeFromCompareLists() {
+        await firebase.removeFromCompareLists(userInfo.uid, id!);
+      }
+      removeFromCompareLists();
+    }
+  }
+
   type ListingType = {
     mainImage: string;
     images: string[];
@@ -216,6 +266,14 @@ function Listing() {
         <InformationWrapper>
           <TitleWrapper>
             <Title>{listingInfo?.title}</Title>
+            <FavoriteIcon
+              onClick={(e) => handleLiked(e!, favoriteLists.includes(id!))}
+              isLiked={favoriteLists.includes(id!)}
+            ></FavoriteIcon>
+            <CompareIcon
+              onClick={(e) => handleCompare(e!, compareLists.includes(id!))}
+              isCompared={compareLists.includes(id!)}
+            ></CompareIcon>
             <AddrSection>
               {listingInfo?.countyName}
               {listingInfo?.townName}

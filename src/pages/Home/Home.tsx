@@ -4,6 +4,8 @@ import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSna
 import styled from 'styled-components';
 import { firebase } from '../../utils/firebase';
 import Listing from './Listing';
+import { RootState } from '../../redux/rootReducer';
+import { useSelector, useDispatch } from 'react-redux';
 interface Props {
   key: string;
 }
@@ -54,9 +56,6 @@ const Page = styled.div`
   padding: 10px;
 `;
 function Home() {
-  // interface DocumentData {
-  //   uploadedTime: Date
-  // }
   interface Props {
     data: DocumentData;
     key: string;
@@ -71,6 +70,7 @@ function Home() {
       let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
       listing.forEach((doc) => {
         listingDocArr.push(doc);
+        console.log();
       });
       setListingDocData(listingDocArr);
     });
@@ -94,7 +94,7 @@ function Home() {
       {listingDocData &&
         listingDocData.map((listingDocData, index) => (
           <ListingWrapper target="_blank" to={`/listing/${listingDocData.id}`} key={`listing_${index}`}>
-            <Listing data={listingDocData.data()}></Listing>
+            <Listing listingDocData={listingDocData}></Listing>
           </ListingWrapper>
         ))}
       <PageArea>

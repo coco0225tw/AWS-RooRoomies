@@ -17,6 +17,8 @@ import {
   onSnapshot,
   QueryDocumentSnapshot,
   where,
+  arrayUnion,
+  arrayRemove,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import {
@@ -174,20 +176,9 @@ const firebase = {
       name: name,
       email: email,
       image: url,
+      favoriteLists: [],
+      compareLists: [],
     });
-  },
-  getMessagesSubCollection(chatRoomId: string) {
-    const subColRef = collection(db, 'chatRooms', chatRoomId, 'messages');
-    // const querySnapshot= await db.collection('chatRooms').doc(chatRoomId).collection('messages')
-    let allMessages: DocumentData[] = [];
-    const getAllMessages = onSnapshot(subColRef, (snapshot) => {
-      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
-        allMessages.push(doc.data());
-        console.log(allMessages);
-      });
-      console.log(allMessages);
-    });
-    console.log(allMessages);
   },
   async getUserDocFromFirebase(uid: string) {
     const userRef = doc(db, 'users', uid);
@@ -279,6 +270,26 @@ const firebase = {
       },
       { merge: true }
     );
+  },
+  async addToFavoriteLists(uid: string, listingId: string) {
+    await updateDoc(doc(db, 'users', uid), {
+      favoriteLists: arrayUnion(listingId),
+    });
+  },
+  async removeFromFavoriteLists(uid: string, listingId: string) {
+    await updateDoc(doc(db, 'users', uid), {
+      favoriteLists: arrayRemove(listingId),
+    });
+  },
+  async addToCompareLists(uid: string, listingId: string) {
+    await updateDoc(doc(db, 'users', uid), {
+      compareLists: arrayUnion(listingId),
+    });
+  },
+  async removeFromCompareLists(uid: string, listingId: string) {
+    await updateDoc(doc(db, 'users', uid), {
+      compareLists: arrayRemove(listingId),
+    });
   },
 };
 
