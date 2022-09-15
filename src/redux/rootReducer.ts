@@ -12,6 +12,8 @@ import UploadMeAsRoommate from './UserAsRoommate/UserAsRoommateReducer';
 import Group from './Group/GroupReducer';
 import GetFavoriteLists from './GetFavoriteListing/GetFavoriteListingReducer';
 import GetCompareLists from './GetCompareLists/GetCompareListsReducer';
+import GetListingInHomePage from './ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
+import GetLastDoc from './LastDoc/LastDocReducer';
 
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
@@ -27,6 +29,8 @@ const rootReducer = combineReducers({
   GroupReducer: Group,
   GetFavoriteListsReducer: GetFavoriteLists,
   GetCompareListsReducer: GetCompareLists,
+  GetListingInHomePageReducer: GetListingInHomePage,
+  GetLastDocReducer: GetLastDoc,
 });
 
 export default rootReducer;

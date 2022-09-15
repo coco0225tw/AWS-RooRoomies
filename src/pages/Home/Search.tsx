@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 import countyItem from '../../utils/county';
 import allTowns from '../../utils/town';
+import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -105,26 +107,104 @@ const FormControl = styled.input`
     width: 100%;
   }
 `;
-
-function Search() {
-  interface County {
-    countyCode: number;
-    countyName: string;
+const Btn = styled.div`
+  cursor: pointer;
+  padding: 10px;
+  &:hover {
+    color: white;
+    background-color: grey;
+    transition: 0.2s;
   }
-  const [selectCounty, setSelectCounty] = useState<County>();
+`;
+const NextPageBtn = styled(Btn)``;
+function Search() {
+  const dispatch = useDispatch();
+  const startRentRef = useRef<HTMLInputElement>(null);
+  const endRentRef = useRef<HTMLInputElement>(null);
+  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
+  interface County {
+    countyCode: number | null;
+    countyName: string | null;
+  }
+
+  const [selectCounty, setSelectCounty] = useState<County>({
+    countyCode: null,
+    countyName: null,
+  });
   const [towns, setTowns] = useState<any>();
-  const [selectTown, setSelectTown] = useState<number>();
+  const [selectTown, setSelectTown] = useState<string>();
   const searchFormGroup = [
     { label: '縣市', key: 'countyname', countyOptions: countyItem },
     { label: '鄉鎮市區', key: 'townname' },
+    {
+      label: '租金',
+      key: 'rent',
+      options: [
+        { label: '開始租金', key: 'startRent' },
+        { label: '結束租金', key: 'endRent' },
+      ],
+    },
   ];
-  console.log(towns);
+
+  function handleOnchange(
+    county: string | null,
+    town: string | null,
+    startRent: number | null,
+    endRent: number | null
+  ) {
+    firebase.getAllListings(county, town, startRent, endRent).then((listing) => {
+      if (listing.empty) {
+        dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: [] } });
+        dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: null } });
+      } else {
+        dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: [] } });
+        const lastDoc = listing.docs[listing.docs.length - 1];
+        dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
+        let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        listing.forEach((doc) => {
+          listingDocArr.push(doc);
+        });
+        dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
+      }
+    });
+  }
+  async function nextPage(county: string | null, town: string | null) {
+    firebase.getNextPageListing(lastDocData as QueryDocumentSnapshot<DocumentData>, county, town).then((listing) => {
+      if (listing.empty) return;
+      const lastDoc = listing.docs[listing.docs.length - 1];
+      dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
+      let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+      listing.forEach((doc) => {
+        listingDocArr.push(doc);
+      });
+      dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
+    });
+  }
   return (
     <Wrapper>
-      {searchFormGroup.map(({ label, key, countyOptions }, index) => (
+      {searchFormGroup.map(({ label, key, countyOptions, options }, index) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          {countyOptions
+          {options
+            ? options.map((option: any, oIndex) => (
+                <FormCheck key={`${option.key}${oIndex}`}>
+                  <FormCheckLabel>{option.label}</FormCheckLabel>
+                  <FormCheckInput
+                    onBlur={() => {
+                      handleOnchange(
+                        selectCounty!.countyName,
+                        selectTown!,
+                        Number(startRentRef.current!.value),
+                        Number(endRentRef.current!.value)
+                      );
+                    }}
+                    ref={eval(`${option.key}Ref`)}
+                    type="input"
+                    name={label}
+                  />
+                </FormCheck>
+              ))
+            : countyOptions
             ? countyOptions.map((option, cIndex) => (
                 <FormCheck key={`town${cIndex}`}>
                   <FormCheckInput
@@ -133,7 +213,12 @@ function Search() {
                     // checked={selectCounty?.countyCode == option.countycode01}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        console.log('checked');
+                        handleOnchange(
+                          option.countyname,
+                          null,
+                          Number(startRentRef.current!.value),
+                          Number(endRentRef.current!.value)
+                        );
                         setSelectCounty({ countyCode: option.countycode01, countyName: option.countyname });
                         setTowns(allTowns[`townItem${option.countycode01}` as keyof typeof allTowns]);
                       }
@@ -145,12 +230,27 @@ function Search() {
             : towns &&
               towns.map((option: any, tIndex: any) => (
                 <FormCheck key={`town${selectCounty!.countyName}${tIndex}`}>
-                  <FormCheckInput type="radio" name="town" />
+                  <FormCheckInput
+                    type="radio"
+                    name="town"
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        handleOnchange(
+                          selectCounty!.countyName,
+                          option.townname,
+                          Number(startRentRef.current!.value),
+                          Number(endRentRef.current!.value)
+                        );
+                        setSelectTown(option.townname);
+                      }
+                    }}
+                  />
                   <FormCheckLabel>{option.townname}</FormCheckLabel>
                 </FormCheck>
               ))}
         </FormGroup>
       ))}
+      <NextPageBtn onClick={() => nextPage(selectCounty?.countyName, selectTown!)}>下一頁</NextPageBtn>
     </Wrapper>
   );
 }

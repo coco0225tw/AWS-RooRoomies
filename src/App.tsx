@@ -63,7 +63,6 @@ function User() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
-      // console.log(currentUser?.uid);
       if (currentUser) {
         getUser();
       } else {

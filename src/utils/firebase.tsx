@@ -83,29 +83,39 @@ const firebase = {
     await Promise.all(bookingTimePromises);
   },
 
-  async getAllListings(county: string | null, town: string | null) {
-    // const constraints: any[] = [];
-    // console.log(constraints);
-    // if (county) constraints.push(where('countyName', '==', county));
-    // if (town) constraints.push(where('townName', '==', town));
-    // console.log(...constraints);
-    let q = query(collection(db, 'listings'));
-    if (county) q = query(q, where('countyName', '==', county));
-    if (town) q = query(q, where('townName', '==', town));
-    q = query(q, orderBy(uploadedTimeField, descending), limit(homePageListingSize));
-    // const listingsQuery = query(
-    //   collection(db, 'listings'),
-    //   // ...constraints,
-    //   orderBy(uploadedTimeField, descending),
-    //   limit(homePageListingSize)
-    // );
-    const querySnapshot = await getDocs(q);
+  async getAllListings(county: string | null, town: string | null, startRent: number | null, endRent: number | null) {
+    const whereQuery: any[] = [];
+    let convertedCounty: string | null = null;
+    if (startRent) whereQuery.push(where('startRent', '>=', startRent));
+    if (endRent) whereQuery.push(where('endRent', '<=', endRent));
+    if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
+    if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
+    if (town) whereQuery.push(where('townName', '==', town));
+
+    let orderByQuery: any[] = [];
+    if (startRent) orderByQuery.push(orderBy('startRent', descending));
+    if (endRent) orderByQuery.push(orderBy('endRent', descending));
+
+    const listingsQuery = query(
+      collection(db, 'listings'),
+      ...whereQuery,
+      ...orderByQuery,
+      orderBy(uploadedTimeField, descending),
+      limit(homePageListingSize)
+    );
+    const querySnapshot = await getDocs(listingsQuery);
     return querySnapshot;
   },
 
-  async getNextPageListing(lastDoc: DocumentData) {
+  async getNextPageListing(lastDoc: DocumentData, county: string | null, town: string | null) {
+    const constraints: any[] = [];
+    let convertedCounty: string | null = null;
+    if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
+    if (county) constraints.push(where('countyName', 'in', [county, convertedCounty]));
+    if (town) constraints.push(where('townName', '==', town));
     const listingsQuery = query(
       collection(db, 'listings'),
+      ...constraints,
       orderBy(uploadedTimeField, descending),
       startAfter(lastDoc), //BUGFIX-者理會有ERROR(最後一頁)
       limit(homePageListingSize)
