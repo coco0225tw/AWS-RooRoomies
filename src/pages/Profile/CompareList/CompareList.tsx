@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
