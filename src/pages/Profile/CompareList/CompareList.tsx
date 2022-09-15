@@ -66,8 +66,6 @@ function CompareList() {
     removeFromDndLists();
     dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: listingId } });
   }
-  const [test, setTest] = useState(['哈囉', '你好', '我是3', '我是4', '我是5']);
-  const [test2, setTest2] = useState(['哈囉2', '你好2', '我是32', '我是42', '我是52']);
   return (
     <Wrapper>
       <div>追蹤物件</div>
@@ -84,11 +82,8 @@ function CompareList() {
             return result;
           };
           const move = (source: any, destination: any, droppableSource, droppableDestination: any) => {
-            console.log(destination);
-            console.log(source);
             const sourceClone = Array.from(source);
             const destClone = Array.from(destination);
-            console.log(destination);
             const [removed] = sourceClone.splice(droppableSource.index, 1);
 
             destClone.splice(droppableDestination.index, 0, removed);
@@ -105,11 +100,6 @@ function CompareList() {
           async function updateDndListsField(dndLists: any) {
             await firebase.updateDndListsField(userInfo.uid, dndLists);
           }
-          // let arr = [...test];
-          // console.log(arr);
-          // const [remove] = arr.splice(source.index, 1);
-          // arr.splice(destination.index, 0, remove);
-          // setTest(arr);
           const id2List = {
             compareLists: compareLists,
             dndLists: dndLists,
@@ -121,37 +111,29 @@ function CompareList() {
             let state = { items };
 
             if (source.droppableId === 'compareLists') {
-              setTest(items as any);
               console.log(items);
               dispatch({ type: 'REODER_AND_MOVE_COMPARELISTS', payload: { compareLists: items } });
               updateCompareListsField(items);
-              // state = { selected: items };
             }
 
             if (source.droppableId === 'dndLists') {
-              // setTest2(items as any);
               dispatch({ type: 'REODER_AND_MOVE_DNDLISTS', payload: { dndLists: items } });
-              console.log(items);
               updateDndListsField(items);
-              // state = { bottom: items };
             }
-
-            // this.setState(state);
           } else {
-            const result = move(getList(source.droppableId), getList(destination.droppableId), source, destination);
+            const result: any = move(
+              getList(source.droppableId),
+              getList(destination.droppableId),
+              source,
+              destination
+            );
             if (result.compareLists) {
-              console.log(result.compareLists);
-              // setTest(result.compareLists);
               dispatch({ type: 'REODER_AND_MOVE_COMPARELISTS', payload: { compareLists: result.compareLists } });
               updateCompareListsField(result.compareLists);
-              // this.setState({ items: result.droppable });
             }
             if (result.dndLists) {
-              console.log(result.dndLists);
               dispatch({ type: 'REODER_AND_MOVE_DNDLISTS', payload: { dndLists: result.dndLists } });
               updateDndListsField(result.dndLists);
-              // setTest2(result.dndLists);
-              // this.setState({ selected: result.droppable2 });
             }
           }
         }}
@@ -195,16 +177,6 @@ function CompareList() {
           </Droppable>
         </Drop>
       </DragDropContext>
-
-      {/* <SectionWrapper> */}
-      {/* {compareLists &&
-          compareLists.map((f, index) => (
-            <div key={`compareLists${index}`}>
-              <div>{f}</div>
-              <CompareIcon onClick={(e) => handleCompare(e, f)}></CompareIcon>
-            </div>
-          ))} */}
-      {/* </SectionWrapper> */}
     </Wrapper>
   );
 }
