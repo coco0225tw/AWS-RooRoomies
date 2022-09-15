@@ -62,6 +62,7 @@ function User() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   useEffect(() => {
+    console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
       // console.log(currentUser?.uid);
       if (currentUser) {

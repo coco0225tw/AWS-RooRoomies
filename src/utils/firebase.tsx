@@ -30,6 +30,12 @@ import {
 } from 'firebase/auth';
 import { isCompositeComponent } from 'react-dom/test-utils';
 const firebaseConfig = {
+  // apiKey: 'AIzaSyA7CjH0CyRg1ICdCKBUbSK8DbcTVXSvyL8',
+  // authDomain: 'rooroomies-5c4be.firebaseapp.com',
+  // projectId: 'rooroomies-5c4be',
+  // storageBucket: 'rooroomies-5c4be.appspot.com',
+  // messagingSenderId: '50571848700',
+  // appId: '1:50571848700:web:b59e5b8a21ea64b5746079',
   apiKey: 'AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q',
   authDomain: 'rooroomies.firebaseapp.com',
   projectId: 'rooroomies',

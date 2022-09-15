@@ -49,7 +49,7 @@ function Map() {
         });
       });
     }
-    // getRestaurant();
+    getRestaurant();
   }, []);
   return (
     <>
