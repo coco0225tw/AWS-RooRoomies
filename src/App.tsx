@@ -85,12 +85,16 @@ function User() {
         const userQuery = onSnapshot(userOnSnapShotQuery, (snapshot) => {
           const favoriteLists = [...snapshot.data()!.favoriteLists];
           const compareLists = [...snapshot.data()!.compareLists];
+          const dndLists = [...snapshot.data()!.dndLists];
           // dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
           // dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
+          // dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
         });
         const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
+        const dndLists = data?.data().dndLists;
         dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
+        dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
         dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
         dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });

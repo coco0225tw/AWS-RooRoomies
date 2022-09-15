@@ -1,7 +1,7 @@
 import tabType from './SelectTabType';
 type Action = { type: 'SELECT_TYPE'; payload: { tab: tabType } };
 const tabInitialState = {
-  tab: 'allHouseHunting',
+  tab: 'compareList',
 };
 
 export default function Tab(state = tabInitialState, action: Action) {

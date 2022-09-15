@@ -70,10 +70,12 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   const dispatch = useDispatch();
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
+  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
     e.preventDefault();
+
     if (!isLiked) {
       async function addToFavoriteLists() {
         await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
@@ -92,18 +94,36 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
+    console.log(isCompared);
+    console.log(compareLists.includes(listingDocData.id));
+    console.log(dndLists.includes(listingDocData.id));
+    console.log(compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
     if (!isCompared) {
       async function addToCompareLists() {
         await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
       }
       addToCompareLists();
-      dispatch({ type: 'ADD_TO_COMPARELIST', payload: { id: listingDocData.id } });
+      dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: listingDocData.id } });
     } else {
       async function removeFromCompareLists() {
+        console.log('removefromcom');
         await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
       }
       removeFromCompareLists();
-      dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: listingDocData.id } });
+      handleDnd(e, isCompared);
+      dispatch({ type: 'REMOVE_FROM_COMPARELISTS', payload: { id: listingDocData.id } });
+    }
+  }
+  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isCompared) {
+      console.log('removefromDnd');
+      async function removeFromDndLists() {
+        await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
+      }
+      removeFromDndLists();
+      dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: listingDocData.id } });
     }
   }
   return (
@@ -115,8 +135,10 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             isLiked={favoriteLists.includes(listingDocData.id)}
           ></FavoriteIcon>
           <CompareIcon
-            onClick={(e) => handleCompare(e!, compareLists.includes(listingDocData.id))}
-            isCompared={compareLists.includes(listingDocData.id)}
+            onClick={(e) => {
+              handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
+            }}
+            isCompared={compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id)}
           ></CompareIcon>
         </MainImage>
         <Title>{listingDocData.data().title}</Title>

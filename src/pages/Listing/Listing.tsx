@@ -114,6 +114,7 @@ function Listing() {
   const { id } = useParams<string>();
   const dispatch = useDispatch();
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
+  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
@@ -140,16 +141,27 @@ function Listing() {
         await firebase.addToCompareLists(userInfo.uid, id!);
       }
       addToCompareLists();
-      dispatch({ type: 'ADD_TO_COMPARELIST', payload: { id: id! } });
+      dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: id! } });
     } else {
       async function removeFromCompareLists() {
         await firebase.removeFromCompareLists(userInfo.uid, id!);
       }
       removeFromCompareLists();
+      handleDnd(e, isCompared);
       dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
     }
   }
-
+  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (isCompared) {
+      async function removeFromDndLists() {
+        await firebase.removeFromDndLists(userInfo.uid, id!);
+      }
+      removeFromDndLists();
+      dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: id! } });
+    }
+  }
   type ListingType = {
     mainImage: string;
     images: string[];
@@ -275,8 +287,11 @@ function Listing() {
               isLiked={favoriteLists.includes(id!)}
             ></FavoriteIcon>
             <CompareIcon
-              onClick={(e) => handleCompare(e!, compareLists.includes(id!))}
-              isCompared={compareLists.includes(id!)}
+              onClick={(e) => {
+                handleCompare(e!, compareLists.includes(id!) || dndLists.includes(id!));
+                // handleDnd(e!, dndLists.includes(id!));
+              }}
+              isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
             ></CompareIcon>
             <AddrSection>
               {listingInfo?.countyName}

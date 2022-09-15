@@ -307,6 +307,29 @@ const firebase = {
       compareLists: arrayRemove(listingId),
     });
   },
+  async updateCompareListsField(uid: string, compareLists: any) {
+    await setDoc(
+      doc(db, 'users', uid),
+      {
+        compareLists: compareLists,
+      },
+      { merge: true }
+    );
+  },
+  async updateDndListsField(uid: string, dndLists: any) {
+    await setDoc(
+      doc(db, 'users', uid),
+      {
+        dndLists: dndLists,
+      },
+      { merge: true }
+    );
+  },
+  async removeFromDndLists(uid: string, listingId: string) {
+    await updateDoc(doc(db, 'users', uid), {
+      dndLists: arrayRemove(listingId),
+    });
+  },
 };
 
 export {

@@ -12,7 +12,7 @@ import UploadMeAsRoommate from './UserAsRoommate/UserAsRoommateReducer';
 import Group from './Group/GroupReducer';
 import GetFavoriteLists from './GetFavoriteListing/GetFavoriteListingReducer';
 import GetCompareLists from './GetCompareLists/GetCompareListsReducer';
-
+import GetDndLists from './GetDndLists/GetDndListsReducer';
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
   UploadRoommatesConditionReducer: UploadRoommatesCondition,
@@ -27,6 +27,7 @@ const rootReducer = combineReducers({
   GroupReducer: Group,
   GetFavoriteListsReducer: GetFavoriteLists,
   GetCompareListsReducer: GetCompareLists,
+  GetDndListsReducer: GetDndLists,
 });
 
 export default rootReducer;

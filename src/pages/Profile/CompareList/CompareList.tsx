@@ -8,12 +8,13 @@ import addIcon from '../../../assets/add.png';
 import unAddIcon from '../../../assets/unAdd.png';
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   width: 80%;
-  height: 100%;
+  height: 50vh;
   margin: auto;
+  overflow-x: scroll;
 `;
 
 const SideBarWrapper = styled.div`
@@ -27,9 +28,23 @@ const CompareIcon = styled.div`
   width: 40px;
   background-size: 40px 40px;
 `;
+
+const Test = styled.div`
+  width: 50px;
+`;
+
+const SectionWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+
+const Drop = styled.div`
+  height: 100px;
+`;
 function CompareList() {
   const dispatch = useDispatch();
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
+  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, listingId: string) {
     e.stopPropagation();
@@ -37,19 +52,159 @@ function CompareList() {
     async function removeFromCompareLists() {
       await firebase.removeFromCompareLists(userInfo.uid, listingId);
     }
+    console.log('clicked');
     removeFromCompareLists();
-    dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: listingId } });
+    dispatch({ type: 'REMOVE_FROM_COMPARELISTS', payload: { id: listingId } });
   }
+
+  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, listingId: string) {
+    e.stopPropagation();
+    e.preventDefault();
+    async function removeFromDndLists() {
+      await firebase.removeFromDndLists(userInfo.uid, listingId);
+    }
+    removeFromDndLists();
+    dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: listingId } });
+  }
+  const [test, setTest] = useState(['哈囉', '你好', '我是3', '我是4', '我是5']);
+  const [test2, setTest2] = useState(['哈囉2', '你好2', '我是32', '我是42', '我是52']);
   return (
     <Wrapper>
       <div>追蹤物件</div>
-      {compareLists &&
-        compareLists.map((f, index) => (
-          <div key={`compareLists${index}`}>
-            <div>{f}</div>
-            <CompareIcon onClick={(e) => handleCompare(e, f)}></CompareIcon>
-          </div>
-        ))}
+      <DragDropContext
+        onDragEnd={(result) => {
+          const { source, destination, draggableId } = result;
+          if (!destination) {
+            return;
+          }
+          const reorder = (list: any, startIndex: any, endIndex: any) => {
+            const result = Array.from(list);
+            const [removed] = result.splice(startIndex, 1);
+            result.splice(endIndex, 0, removed);
+            return result;
+          };
+          const move = (source: any, destination: any, droppableSource, droppableDestination: any) => {
+            console.log(destination);
+            console.log(source);
+            const sourceClone = Array.from(source);
+            const destClone = Array.from(destination);
+            console.log(destination);
+            const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+            destClone.splice(droppableDestination.index, 0, removed);
+
+            const result = {};
+            result[droppableSource.droppableId] = sourceClone;
+            result[droppableDestination.droppableId] = destClone;
+            return result;
+          };
+
+          async function updateCompareListsField(compareLists: any) {
+            await firebase.updateCompareListsField(userInfo.uid, compareLists);
+          }
+          async function updateDndListsField(dndLists: any) {
+            await firebase.updateDndListsField(userInfo.uid, dndLists);
+          }
+          // let arr = [...test];
+          // console.log(arr);
+          // const [remove] = arr.splice(source.index, 1);
+          // arr.splice(destination.index, 0, remove);
+          // setTest(arr);
+          const id2List = {
+            compareLists: compareLists,
+            dndLists: dndLists,
+          };
+          const getList = (id) => id2List[id];
+          if (source.droppableId === destination.droppableId) {
+            const items = reorder(getList(source.droppableId), source.index, destination.index);
+
+            let state = { items };
+
+            if (source.droppableId === 'compareLists') {
+              setTest(items as any);
+              console.log(items);
+              dispatch({ type: 'REODER_AND_MOVE_COMPARELISTS', payload: { compareLists: items } });
+              updateCompareListsField(items);
+              // state = { selected: items };
+            }
+
+            if (source.droppableId === 'dndLists') {
+              // setTest2(items as any);
+              dispatch({ type: 'REODER_AND_MOVE_DNDLISTS', payload: { dndLists: items } });
+              console.log(items);
+              updateDndListsField(items);
+              // state = { bottom: items };
+            }
+
+            // this.setState(state);
+          } else {
+            const result = move(getList(source.droppableId), getList(destination.droppableId), source, destination);
+            if (result.compareLists) {
+              console.log(result.compareLists);
+              // setTest(result.compareLists);
+              dispatch({ type: 'REODER_AND_MOVE_COMPARELISTS', payload: { compareLists: result.compareLists } });
+              updateCompareListsField(result.compareLists);
+              // this.setState({ items: result.droppable });
+            }
+            if (result.dndLists) {
+              console.log(result.dndLists);
+              dispatch({ type: 'REODER_AND_MOVE_DNDLISTS', payload: { dndLists: result.dndLists } });
+              updateDndListsField(result.dndLists);
+              // setTest2(result.dndLists);
+              // this.setState({ selected: result.droppable2 });
+            }
+          }
+        }}
+      >
+        <Drop>
+          <Droppable direction="horizontal" droppableId="compareLists">
+            {(provided, snapshot) => (
+              <div style={{ display: 'flex' }} ref={provided.innerRef} {...provided.droppableProps}>
+                {compareLists.map((item, index) => (
+                  <Draggable key={`1${index}`} draggableId={`compare${index}`} index={index}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                        <div>{item}</div>
+                        <CompareIcon onClick={(e) => handleCompare(e, item)}></CompareIcon>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </Drop>
+        <Drop>
+          <Droppable key="d2" direction="horizontal" droppableId="dndLists">
+            {(provided, snapshot) => (
+              <div style={{ display: 'flex' }} ref={provided.innerRef} {...provided.droppableProps}>
+                {dndLists.map((item, index) => (
+                  <Draggable key={`2${index}`} draggableId={`2${index}`} index={index}>
+                    {(provided, snapshot) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                        <div>{item}</div>
+                        <CompareIcon onClick={(e) => handleDnd(e, item)}></CompareIcon>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </Drop>
+      </DragDropContext>
+
+      {/* <SectionWrapper> */}
+      {/* {compareLists &&
+          compareLists.map((f, index) => (
+            <div key={`compareLists${index}`}>
+              <div>{f}</div>
+              <CompareIcon onClick={(e) => handleCompare(e, f)}></CompareIcon>
+            </div>
+          ))} */}
+      {/* </SectionWrapper> */}
     </Wrapper>
   );
 }
