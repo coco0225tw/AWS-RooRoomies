@@ -81,14 +81,14 @@ function CompareList() {
             result.splice(endIndex, 0, removed);
             return result;
           };
-          const move = (source: any, destination: any, droppableSource, droppableDestination: any) => {
+          const move = (source: any, destination: any, droppableSource: any, droppableDestination: any) => {
             const sourceClone = Array.from(source);
             const destClone = Array.from(destination);
             const [removed] = sourceClone.splice(droppableSource.index, 1);
 
             destClone.splice(droppableDestination.index, 0, removed);
 
-            const result = {};
+            const result: any = {};
             result[droppableSource.droppableId] = sourceClone;
             result[droppableDestination.droppableId] = destClone;
             return result;
@@ -104,7 +104,7 @@ function CompareList() {
             compareLists: compareLists,
             dndLists: dndLists,
           };
-          const getList = (id) => id2List[id];
+          const getList = (id: string | keyof typeof id2List) => id2List[id as keyof typeof id2List];
           if (source.droppableId === destination.droppableId) {
             const items = reorder(getList(source.droppableId), source.index, destination.index);
 

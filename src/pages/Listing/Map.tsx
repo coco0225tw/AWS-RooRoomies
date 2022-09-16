@@ -165,7 +165,7 @@ function Map() {
         res.json().then((data) => {
           console.log(data.results);
           let allRestaurants: [] = [];
-          let allLatLng = data.results.map((p, index) => {
+          let allLatLng = data.results.map((p: any, index: number) => {
             return p.geometry.location;
           });
           setAllRestaurants(allLatLng);

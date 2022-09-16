@@ -108,9 +108,10 @@ function App() {
     <Provider store={store}>
       {/* <Reset /> */}
       <GlobalStyle />
-      <User />
+
       <ChatRooms />
       <Header />
+      <User />
       <Outlet />
       <Footer />
     </Provider>
