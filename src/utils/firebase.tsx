@@ -87,7 +87,7 @@ const firebase = {
     const whereQuery: any[] = [];
     let convertedCounty: string | null = null;
     if (startRent) whereQuery.push(where('startRent', '>=', startRent));
-    if (endRent) whereQuery.push(where('endRent', '<=', endRent));
+    if (endRent) whereQuery.push(where('startRent', '<=', endRent));
     if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
     if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
     if (town) whereQuery.push(where('townName', '==', town));
