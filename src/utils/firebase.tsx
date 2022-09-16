@@ -89,18 +89,19 @@ const firebase = {
     await Promise.all(bookingTimePromises);
   },
 
-  async getAllListings(county: string | null, town: string | null, startRent: number | null, endRent: number | null) {
+  async getAllListings(county: string | null, town: string | null, startRent: string | null, endRent: string | null) {
     const whereQuery: any[] = [];
     let convertedCounty: string | null = null;
-    if (startRent) whereQuery.push(where('startRent', '>=', startRent));
-    if (endRent) whereQuery.push(where('startRent', '<=', endRent));
+    console.log(startRent);
+    console.log(endRent);
+    if (startRent) whereQuery.push(where('startRent', '>=', Number(startRent)));
+    if (endRent) whereQuery.push(where('startRent', '<=', Number(endRent)));
     if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
     if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
     if (town) whereQuery.push(where('townName', '==', town));
 
     let orderByQuery: any[] = [];
-    if (startRent) orderByQuery.push(orderBy('startRent', descending));
-    if (endRent) orderByQuery.push(orderBy('endRent', descending));
+    if (startRent || endRent) orderByQuery.push(orderBy('startRent', descending));
 
     const listingsQuery = query(
       collection(db, 'listings'),

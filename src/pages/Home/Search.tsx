@@ -149,9 +149,11 @@ function Search() {
   function handleOnchange(
     county: string | null,
     town: string | null,
-    startRent: number | null,
-    endRent: number | null
+    startRent: string | null,
+    endRent: string | null
   ) {
+    console.log(startRent);
+    console.log(endRent);
     firebase.getAllListings(county, town, startRent, endRent).then((listing) => {
       if (listing.empty) {
         dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: [] } });
@@ -194,8 +196,8 @@ function Search() {
                       handleOnchange(
                         selectCounty!.countyName,
                         selectTown!,
-                        Number(startRentRef.current!.value),
-                        Number(endRentRef.current!.value)
+                        startRentRef.current!.value,
+                        endRentRef.current!.value
                       );
                     }}
                     ref={eval(`${option.key}Ref`)}
@@ -213,12 +215,7 @@ function Search() {
                     // checked={selectCounty?.countyCode == option.countycode01}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        handleOnchange(
-                          option.countyname,
-                          null,
-                          Number(startRentRef.current!.value),
-                          Number(endRentRef.current!.value)
-                        );
+                        handleOnchange(option.countyname, null, startRentRef.current!.value, endRentRef.current!.value);
                         setSelectCounty({ countyCode: option.countycode01, countyName: option.countyname });
                         setTowns(allTowns[`townItem${option.countycode01}` as keyof typeof allTowns]);
                       }
@@ -238,8 +235,8 @@ function Search() {
                         handleOnchange(
                           selectCounty!.countyName,
                           option.townname,
-                          Number(startRentRef.current!.value),
-                          Number(endRentRef.current!.value)
+                          startRentRef.current!.value,
+                          endRentRef.current!.value
                         );
                         setSelectTown(option.townname);
                       }
