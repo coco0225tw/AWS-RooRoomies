@@ -13,6 +13,9 @@ import Group from './Group/GroupReducer';
 import GetFavoriteLists from './GetFavoriteListing/GetFavoriteListingReducer';
 import GetCompareLists from './GetCompareLists/GetCompareListsReducer';
 import GetDndLists from './GetDndLists/GetDndListsReducer';
+import GetListingInHomePage from './ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
+import GetLastDoc from './LastDoc/LastDocReducer';
+
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
   UploadRoommatesConditionReducer: UploadRoommatesCondition,
@@ -28,6 +31,8 @@ const rootReducer = combineReducers({
   GetFavoriteListsReducer: GetFavoriteLists,
   GetCompareListsReducer: GetCompareLists,
   GetDndListsReducer: GetDndLists,
+  GetListingInHomePageReducer: GetListingInHomePage,
+  GetLastDocReducer: GetLastDoc,
 });
 
 export default rootReducer;

@@ -57,43 +57,45 @@ const Page = styled.div`
   padding: 10px;
 `;
 function Home() {
+  const dispatch = useDispatch();
   interface Props {
     data: DocumentData;
     key: string;
   }
+  const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
+  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
 
-  const [lastListingDocument, setLastListingDocument] = useState<DocumentData>();
-  const [listingDocData, setListingDocData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
+  console.log(listingDocData);
   useEffect(() => {
-    firebase.getAllListings(null, null).then((listing) => {
-      const lastDoc = listing.docs[listing.docs.length - 1];
-      setLastListingDocument(lastDoc);
-      let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-      listing.forEach((doc) => {
-        listingDocArr.push(doc);
-        console.log();
-      });
-      setListingDocData(listingDocArr);
-    });
+    console.log('homeFromUseEffect');
+    // firebase.getAllListings(null, null).then((listing) => {
+    //   const lastDoc = listing.docs[listing.docs.length - 1];
+    //   dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
+    //   let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+    //   listing.forEach((doc) => {
+    //     listingDocArr.push(doc);
+    //   });
+    //   dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
+    // });
   }, []);
   const arr = [];
 
-  async function nextPage() {
-    firebase.getNextPageListing(lastListingDocument as DocumentData).then((listing) => {
-      const lastDoc = listing.docs[listing.docs.length - 1];
-      setLastListingDocument(lastDoc);
-      let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-      listing.forEach((doc) => {
-        listingDocArr.push(doc);
-      });
-      setListingDocData([...listingDocData, ...listingDocArr]);
-    });
-  }
+  // async function nextPage() {
+  //   firebase.getNextPageListing(lastDocData as DocumentData).then((listing) => {
+  //     const lastDoc = listing.docs[listing.docs.length - 1];
+  //     dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
+  //     let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+  //     listing.forEach((doc) => {
+  //       listingDocArr.push(doc);
+  //     });
+  //     dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
+  //   });
+  // }
   return (
     <Wrapper>
       <Search></Search>
       {listingDocData &&
-        listingDocData.map((listingDocData, index) => (
+        listingDocData.map((listingDocData: DocumentData, index: number) => (
           <ListingWrapper target="_blank" to={`/listing/${listingDocData.id}`} key={`listing_${index}`}>
             <Listing listingDocData={listingDocData}></Listing>
           </ListingWrapper>
@@ -101,7 +103,7 @@ function Home() {
       <PageArea>
         {/* <PrevPageBtn>上一頁</PrevPageBtn>
         <Page>頁碼</Page> */}
-        <NextPageBtn onClick={() => nextPage()}>下一頁</NextPageBtn>
+        {/* <NextPageBtn onClick={() => nextPage()}>下一頁</NextPageBtn> */}
       </PageArea>
     </Wrapper>
   );

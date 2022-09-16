@@ -64,7 +64,6 @@ function User() {
   useEffect(() => {
     console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
-      // console.log(currentUser?.uid);
       if (currentUser) {
         getUser();
       } else {
