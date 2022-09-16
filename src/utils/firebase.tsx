@@ -253,6 +253,7 @@ const firebase = {
       listingId: listingId,
       userId: [...userId],
       msg: [],
+      isFull: false,
     });
     await this.updateChatRoomIdInListing(listingId, updateGroup, index, newChatRoomRef.id);
   },

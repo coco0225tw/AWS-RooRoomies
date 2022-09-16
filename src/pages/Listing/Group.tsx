@@ -87,8 +87,8 @@ function Group({ peopleAmount, listingId }: { peopleAmount: number; listingId: s
     dispatch({ type: 'REMOVE_GROUP', payload: { index } });
   }
   async function addUserToGroup(groupId: number, userId: number) {
-    // dispatch({ type: 'ADD_USER_TO_GROUP', payload: { groupId, userId, userInfo } });
-    // await firebase.addUserToGroup(listingId, getGroup);
+    dispatch({ type: 'ADD_USER_TO_GROUP', payload: { groupId, userId, userInfo } });
+    await firebase.addUserToGroup(listingId, getGroup);
     let index = getGroup[groupId].users.indexOf(null);
     if (index === -1) {
       console.log('make chatRooms');
