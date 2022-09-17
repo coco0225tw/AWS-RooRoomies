@@ -70,7 +70,15 @@ const UserPic = styled(AddToGroup)<{ img: string }>`
   background-image: url(${(props) => props.img});
   background-size: 40px 40px;
 `;
-function Group({ peopleAmount, listingId }: { peopleAmount: number; listingId: string }) {
+function Group({
+  peopleAmount,
+  listingId,
+  listingTitle,
+}: {
+  peopleAmount: number;
+  listingId: string;
+  listingTitle: string;
+}) {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState<Array<groupType>>([]);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -96,7 +104,7 @@ function Group({ peopleAmount, listingId }: { peopleAmount: number; listingId: s
         return u!.userId;
       });
       console.log(userIds);
-      await firebase.createChatRoom(userIds, listingId, getGroup, groupId);
+      await firebase.createChatRoom(userIds, listingId, listingTitle, getGroup, groupId);
     }
   }
   useEffect(() => {

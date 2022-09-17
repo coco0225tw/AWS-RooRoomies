@@ -245,12 +245,13 @@ const firebase = {
       { merge: true }
     );
   },
-  async createChatRoom(userId: string[], listingId: string, updateGroup: any, index: number) {
+  async createChatRoom(userId: string[], listingId: string, listingTitle: string, updateGroup: any, index: number) {
     const newChatRoomRef = doc(collection(db, 'chatRooms'));
     await setDoc(newChatRoomRef, {
       bookedTime: {},
       isBooked: false,
       listingId: listingId,
+      listingTitle: listingTitle,
       userId: [...userId],
       msg: [],
       isFull: false,

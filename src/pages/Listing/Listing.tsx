@@ -175,6 +175,7 @@ function Listing() {
     rentRoomDetails: roomDetailsType;
     peopleAmount: number;
     matchGroup: Array<groupType>;
+    listingTitle: string;
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -302,7 +303,11 @@ function Listing() {
               {listingInfo?.environmentDescription}
             </AddrSection>
             <RoommatesCondition roommatesConditions={listingInfo?.roommatesConditions}></RoommatesCondition>
-            <Group peopleAmount={listingInfo?.peopleAmount!} listingId={id!}></Group>
+            <Group
+              peopleAmount={listingInfo?.peopleAmount!}
+              listingId={id!}
+              listingTitle={listingInfo?.listingTitle!}
+            ></Group>
             <Facility facility={listingInfo?.facility}></Facility>
             <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
           </TitleWrapper>

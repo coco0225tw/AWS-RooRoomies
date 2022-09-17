@@ -18,6 +18,7 @@ const Wrapper = styled.div`
   width: 80%;
   height: 100%;
   margin: auto;
+  margin-top: 80px;
 `;
 
 const SideBarWrapper = styled.div`

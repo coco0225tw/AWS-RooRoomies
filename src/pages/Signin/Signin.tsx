@@ -14,12 +14,13 @@ const showInfoInputAni = keyframes`
  100% { height: 100%; opacity: 1; }
 `;
 const Wrapper = styled.div`
-  padding: 130px 0px;
-  margin: auto;
+  // padding: 130px 0px;
+  margin: 80px auto;
+  flex-grow: 1;
   ${'' /* border: solid 5px brown; */}
   width: 960px;
   @media screen and (max-width: 1279px) {
-    width: 80vw;
+    width: 100vw;
   }
 `;
 

@@ -19,28 +19,42 @@ import {
   FieldValue,
   serverTimestamp,
 } from 'firebase/firestore';
-const Wrapper = styled.div<{ closeAndOpen: boolean }>`
-  top: ${(props) => (props.closeAndOpen ? '40vh' : '90vh')};
-  //   bottom: 0vh
+import chat from '../../assets/chat.png';
+const Wrapper = styled.div<{ isShown: boolean }>`
+  bottom: ${(props) => (props.isShown ? '0px' : '50px')};
+  right: ${(props) => (props.isShown ? '120px' : '50px')};
   position: fixed;
-  //   display: flex;
+  display: flex;
   //   flex-direction: row;
   //   justify-content: center;
   //   align-items: flex-start;
-
-  width: 30%;
-  height: ${(props) => (props.closeAndOpen ? '50vh' : '10vh')};
-  //margin: auto;
   z-index: 1;
   background-color: white;
+  // width: 44;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  height: ${(props) => (props.isShown ? '500px' : 'auto')};
+  box-shadow: ${(props) => (props.isShown ? 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' : '')};
+  border-radius: ${(props) => (props.isShown ? '8px 8px 0px 0px ' : '50%')};
 `;
-
+const ChatIcon = styled.div<{ isShown: boolean }>`
+  width: 80px;
+  height: 80px;
+  background-image: url(${chat});
+  background-size: 60px 60px;
+  border-radius: 50%;
+  background-color: #c77155;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  display: ${(props) => (props.isShown ? 'none' : 'block')};
+`;
 const SectionWrapper = styled.div`
   display: flex;
   width: 100%;
-  height: 100%;
+  // flex-grow: 1;
+  height: 80%;
   flex-direction: column;
-  //   align-items: center;
+  overflow: scroll;
+  overflow-x: hidden;
 `;
 const SideBarWrapper = styled.div`
   width: 30%;
@@ -48,10 +62,19 @@ const SideBarWrapper = styled.div`
 `;
 const MessagesArea = styled.div`
   flex-grow: 1;
-  overflow: scroll;
-  overflow-x: hidden;
+  // overflow: scroll;
+  // overflow-x: hidden;
+  // display: flex;
+  // flex-direction: column;
+`;
+
+const MsgWrapper = styled.div`
+  // overflow: scroll;
+  // overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  // height: 100%;
+  justify-content: flex-end;
 `;
 const InputArea = styled.div`
   display: flex;
@@ -97,21 +120,32 @@ const SubmitBtn = styled.div`
 
 const HeaderBar = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 `;
 const Tabs = styled.div`
-  flex-grow: 1;
+  // flex-grow: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
   overflow-x: scroll;
   // overflow-y: hidden;
 `;
-const Tab = styled.div`
+const Tab = styled.div<{ isChoose: boolean }>`
   // width: 20%;
-  font-size: 12px;
+  font-size: 20px;
+  letter-spacing: 4px;
   height: 100%;
   padding: 10px;
+  border-bottom: ${(props) => (props.isChoose ? 'solid 2px #c77155' : '')};
+  // background-color: ${(props) => (props.isChoose ? '#c77155' : '#ffffff')};
+  color: ${(props) => (props.isChoose ? '#c77155' : '#4f5152')};
+  cursor: pointer;
+  &:hover {
+    background-color: ${(props) => (props.isChoose ? '#c77155' : '#ffffff')};
+    color: ${(props) => (props.isChoose ? '#ffffff' : '#4f5152')};
+    // border: ${(props) => (props.isChoose ? '#ffffff' : '1px solid #c77155')};
+    border-bottom: ${(props) => (props.isChoose ? '' : 'solid 2px #4f5152')};
+  }
 `;
 
 const MessageWrapper = styled.div`
@@ -119,11 +153,32 @@ const MessageWrapper = styled.div`
   flex-direction: row;
   width: 100%;
 `;
+
+const Close = styled.div<{ isShown: boolean }>`
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  line-height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  right: 0;
+  transform: translateY(-100%);
+  &:hover {
+    color: #ffffff;
+    border: solid 1px #ece2d5;
+    background-color: #4f5152;
+  }
+  display: ${(props) => (props.isShown ? 'block' : 'none')};
+`;
 function ChatRooms() {
   const [houseHuntingData, setHouseHuntingData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
-  const [closeAndOpen, setCloseAndOpen] = useState<boolean>(false);
+  const [isShown, setIsShown] = useState<boolean>(true);
   const [chooseRoomId, setChooseRoomId] = useState<string>('');
+  const [allMessages, setAllMessages] = useState<DocumentData[]>();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   interface Msg {
     userMsg: string;
     sendTime: number;
@@ -132,7 +187,7 @@ function ChatRooms() {
     userPic: string;
   }
   const msgInputRef = useRef<HTMLInputElement>(null);
-  const [allMessages, setAllMessages] = useState<DocumentData[]>([]);
+
   async function senMsg() {
     const msg: Msg = {
       userMsg: msgInputRef.current!.value,
@@ -163,64 +218,89 @@ function ChatRooms() {
         setHouseHuntingData(houseHuntingDocArr);
       });
     }
-
     getAllHouseHuntingData();
-  }, [userInfo]);
-  return (
-    <Wrapper closeAndOpen={closeAndOpen}>
-      <HeaderBar>
-        <Tabs>
-          {houseHuntingData &&
-            houseHuntingData.map((h, index) => (
-              <Tab
-                onClick={() => {
-                  onSnapshotMessages(h.id);
-                  setChooseRoomId(h.id);
-                }}
-                key={`house${index}`}
-              >
-                {h.data().listingId}
-              </Tab>
-            ))}
-        </Tabs>
-        <SubmitBtn onClick={() => setCloseAndOpen(false)}>x</SubmitBtn>
-        <SubmitBtn onClick={() => setCloseAndOpen(true)}>o</SubmitBtn>
-      </HeaderBar>
+    console.log(authChange);
+    console.log(isShown);
+    console.log(houseHuntingData.length);
+    console.log(houseHuntingData);
+  }, [authChange]);
 
-      {closeAndOpen && (
-        <SectionWrapper>
-          <MessagesArea>
-            {allMessages &&
-              allMessages.map((el, index) => (
-                <Message auth={el.userId === userInfo.uid} key={`message${index}`}>
-                  {el.userId === userInfo.uid ? (
-                    <MessageWrapper>
-                      <UserMessage>{el.userMsg}</UserMessage>
-                      <UserInfo>
-                        <UserPic pic={el.userPic}></UserPic>
-                        <UserName>{el.userName}</UserName>
-                      </UserInfo>
-                    </MessageWrapper>
-                  ) : (
-                    <MessageWrapper>
-                      <UserInfo>
-                        <UserPic pic={el.userPic}></UserPic>
-                        <UserName>{el.userName}</UserName>
-                      </UserInfo>
-                      <UserMessage>{el.userMsg}</UserMessage>
-                    </MessageWrapper>
-                  )}
-                </Message>
-              ))}
-          </MessagesArea>
-          <InputArea>
-            <InputMessageBox placeholder={'輸入訊息'} ref={msgInputRef}></InputMessageBox>
-            <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
-          </InputArea>
-        </SectionWrapper>
-      )}
-    </Wrapper>
-  );
+  if (authChange) {
+    return (
+      <Wrapper isShown={isShown}>
+        <ChatIcon
+          isShown={isShown}
+          onClick={() => {
+            setIsShown(true);
+            console.log(houseHuntingData);
+            if (houseHuntingData.length !== 0) {
+              setChooseRoomId(houseHuntingData[0]?.id);
+              setAllMessages(houseHuntingData[0]?.data().msg);
+            }
+          }}
+        ></ChatIcon>
+        <Close isShown={isShown} onClick={() => setIsShown(false)}>
+          x
+        </Close>
+        {isShown ? (
+          houseHuntingData.length === 0 ? (
+            <div>popup</div>
+          ) : (
+            <HeaderBar>
+              <Tabs>
+                {houseHuntingData.map((h, index) => (
+                  <Tab
+                    isChoose={h.id === chooseRoomId}
+                    onClick={() => {
+                      onSnapshotMessages(h.id);
+                      setChooseRoomId(h.id);
+                    }}
+                    key={`house${index}`}
+                  >
+                    {h.data().listingTitle}
+                  </Tab>
+                ))}
+              </Tabs>
+              <SectionWrapper>
+                {/* <MessagesArea> */}
+                <MsgWrapper>
+                  {allMessages &&
+                    allMessages.map((el, index) => (
+                      <Message auth={el.userId === userInfo.uid} key={`message${index}`}>
+                        {el.userId === userInfo.uid ? (
+                          <MessageWrapper>
+                            <UserMessage>{el.userMsg}</UserMessage>
+                            <UserInfo>
+                              <UserPic pic={el.userPic}></UserPic>
+                              <UserName>{el.userName}</UserName>
+                            </UserInfo>
+                          </MessageWrapper>
+                        ) : (
+                          <MessageWrapper>
+                            <UserInfo>
+                              <UserPic pic={el.userPic}></UserPic>
+                              <UserName>{el.userName}</UserName>
+                            </UserInfo>
+                            <UserMessage>{el.userMsg}</UserMessage>
+                          </MessageWrapper>
+                        )}
+                      </Message>
+                    ))}
+                </MsgWrapper>
+                {/* </MessagesArea> */}
+              </SectionWrapper>
+              <InputArea>
+                <InputMessageBox placeholder={'輸入訊息'} ref={msgInputRef}></InputMessageBox>
+                <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
+              </InputArea>
+            </HeaderBar>
+          )
+        ) : null}
+      </Wrapper>
+    );
+  } else {
+    return null;
+  }
 }
 
 export default ChatRooms;
