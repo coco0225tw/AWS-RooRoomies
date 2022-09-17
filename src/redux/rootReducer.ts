@@ -15,6 +15,7 @@ import GetCompareLists from './GetCompareLists/GetCompareListsReducer';
 import GetDndLists from './GetDndLists/GetDndListsReducer';
 import GetListingInHomePage from './ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
 import GetLastDoc from './LastDoc/LastDocReducer';
+import AuthChange from './OnAuthChange/OnAuthChangeReducer';
 
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   GetDndListsReducer: GetDndLists,
   GetListingInHomePageReducer: GetListingInHomePage,
   GetLastDocReducer: GetLastDoc,
+  AuthChangeReducer: AuthChange,
 });
 
 export default rootReducer;

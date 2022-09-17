@@ -67,7 +67,23 @@ function User() {
       if (currentUser) {
         getUser();
       } else {
-        //登出
+        dispatch({ type: 'RETURN_INITIAL_GETUSER' });
+        dispatch({ type: 'RETURN_INITIAL_AUTH' });
+        dispatch({ type: 'RETURN_INITIAL_COMPARELISTS' });
+        dispatch({ type: 'RETURN_INITIAL_DNDLISTS' });
+        dispatch({ type: 'RETURN_INITIAL_FAVORITELISTS' });
+        //group
+        //lastdoc
+        //listingdocumentforhomepage
+        dispatch({ type: 'RETURN_INITIAL_TAB' });
+        dispatch({ type: 'RETURN_INITIAL_ADDR' });
+        dispatch({ type: 'RETURN_INITIAL_BOOKINGTIMES' });
+        dispatch({ type: 'RETURN_INITIAL_FACILITY' });
+        dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
+        dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
+        dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
+        dispatch({ type: 'RETURN_INITIAL_TITLE' });
+        dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
@@ -97,6 +113,7 @@ function User() {
         dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
         dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
+        dispatch({ type: 'AUTH_CHANGE' });
       }
     });
   }, []);

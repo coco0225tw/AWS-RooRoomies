@@ -2,7 +2,8 @@ type Action =
   | { type: 'GET_COMPARELISTS_FROM_FIREBASE'; payload: { compareLists: Array<string> } }
   | { type: 'REMOVE_FROM_COMPARELISTS'; payload: { id: string } }
   | { type: 'ADD_TO_COMPARELISTS'; payload: { id: string } }
-  | { type: 'REODER_AND_MOVE_COMPARELISTS'; payload: { compareLists: Array<string> } };
+  | { type: 'REODER_AND_MOVE_COMPARELISTS'; payload: { compareLists: Array<string> } }
+  | { type: 'RETURN_INITIAL_COMPARELISTS' };
 const compareListsState: Array<string> = [];
 
 export default function GetCompareLists(state = compareListsState, action: Action) {
@@ -29,6 +30,9 @@ export default function GetCompareLists(state = compareListsState, action: Actio
     }
     case 'REODER_AND_MOVE_COMPARELISTS': {
       return action.payload.compareLists;
+    }
+    case 'RETURN_INITIAL_COMPARELISTS': {
+      return compareListsState;
     }
     default:
       return state;

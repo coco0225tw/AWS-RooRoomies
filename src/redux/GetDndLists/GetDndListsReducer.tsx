@@ -2,7 +2,8 @@ type Action =
   | { type: 'GET_DNDLISTS_FROM_FIREBASE'; payload: { dndLists: Array<string> } }
   | { type: 'REMOVE_FROM_DNDLISTS'; payload: { id: string } }
   | { type: 'ADD_TO_DNDLISTS'; payload: { id: string } }
-  | { type: 'REODER_AND_MOVE_DNDLISTS'; payload: { dndLists: Array<string> } };
+  | { type: 'REODER_AND_MOVE_DNDLISTS'; payload: { dndLists: Array<string> } }
+  | { type: 'RETURN_INITIAL_DNDLISTS' };
 const dndListsState: Array<string> = [];
 
 export default function GetDndLists(state = dndListsState, action: Action) {
@@ -24,6 +25,9 @@ export default function GetDndLists(state = dndListsState, action: Action) {
     }
     case 'REODER_AND_MOVE_DNDLISTS': {
       return action.payload.dndLists;
+    }
+    case 'RETURN_INITIAL_DNDLISTS': {
+      return dndListsState;
     }
     default:
       return state;

@@ -1,5 +1,7 @@
 import facilityType from './UploadFacilityType';
-type Action = { type: 'UPLOAD_FACILITY'; payload: { facilityState: facilityType } };
+type Action =
+  | { type: 'UPLOAD_FACILITY'; payload: { facilityState: facilityType } }
+  | { type: 'RETURN_INITIAL_FACILITY' };
 
 const facilityEmptyState = {
   deposit: '',
@@ -13,6 +15,8 @@ export default function UploadFacility(state = facilityEmptyState, action: Actio
   switch (action.type) {
     case 'UPLOAD_FACILITY':
       return action.payload.facilityState;
+    case 'RETURN_INITIAL_FACILITY':
+      return facilityEmptyState;
     default:
       return state;
   }

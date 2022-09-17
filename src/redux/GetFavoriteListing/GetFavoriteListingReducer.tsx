@@ -2,7 +2,8 @@ import FavoriteListingType from './GetFavoriteListingType';
 type Action =
   | { type: 'GET_FAVORITELISTS_FROM_FIREBASE'; payload: { favoriteLists: Array<string> } }
   | { type: 'REMOVE_FROM_FAVORITELISTS'; payload: { id: string } }
-  | { type: 'ADD_TO_FAVORITELISTS'; payload: { id: string } };
+  | { type: 'ADD_TO_FAVORITELISTS'; payload: { id: string } }
+  | { type: 'RETURN_INITIAL_FAVORITELISTS' };
 const favoriteListsState: Array<string> = [];
 
 export default function GetFavoriteLists(state = favoriteListsState, action: Action) {
@@ -20,6 +21,9 @@ export default function GetFavoriteLists(state = favoriteListsState, action: Act
     case 'ADD_TO_FAVORITELISTS': {
       let newState = [...state];
       return [...state, action.payload.id];
+    }
+    case 'RETURN_INITIAL_FAVORITELISTS': {
+      return favoriteListsState;
     }
     default:
       return state;
