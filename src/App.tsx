@@ -45,7 +45,8 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
     // border: solid 1px black;
-    color: #4f5152
+    color: #4f5152;
+    position: relative;
   }
 
   body {

@@ -174,7 +174,7 @@ const Close = styled.div<{ isShown: boolean }>`
 `;
 function ChatRooms() {
   const [houseHuntingData, setHouseHuntingData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
-  const [isShown, setIsShown] = useState<boolean>(true);
+  const [isShown, setIsShown] = useState<boolean>(false);
   const [chooseRoomId, setChooseRoomId] = useState<string>('');
   const [allMessages, setAllMessages] = useState<DocumentData[]>();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
