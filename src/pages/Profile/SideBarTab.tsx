@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { firebase } from '../../utils/firebase';
 import { RootState } from '../../redux/rootReducer';
+import { BtnDiv } from '../../components/Button';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,7 +65,7 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   position: absolute;
   right: 0px;
   transform: translateX(${(props) => (props.windowState ? '180%' : '200%')});
-
+  display: block !important;
   background-color: #f3f2ef;
   height: 50px;
   cursor: pointer;
@@ -84,7 +85,7 @@ const ArrowWrap = styled.div`
 `;
 function SideBarTab({ showTab, setShowTab }: { showTab: boolean; setShowTab: any }) {
   const dispatch = useDispatch();
-  const [windowState, setWindowState] = useState<boolean>(false);
+  // const [windowState, setWindowState] = useState<boolean>(false);
   // if (window.innerWidth < 425) {
   //   setWindowState(true);
   // }
@@ -107,13 +108,6 @@ function SideBarTab({ showTab, setShowTab }: { showTab: boolean; setShowTab: any
 
   return (
     <Wrapper>
-      <Arrow
-        windowState={windowState}
-        isShowTab={showTab}
-        onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
-      >
-        {showTab ? <ArrowWrap>&#171;</ArrowWrap> : <ArrowWrap>&#187;</ArrowWrap>}
-      </Arrow>
       {tabsOptions.map((options, index) => (
         <TabWrapper
           key={options.key}

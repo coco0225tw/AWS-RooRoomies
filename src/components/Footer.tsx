@@ -16,6 +16,8 @@ const Wrapper = styled.div`
   margin: auto;
   background-color: #f3f2ef;
   flex-shrink: 0;
+  position: fixed;
+  bottom: 0px;
   @media screen and (max-width: 960px) {
     position: fixed;
     bottom: 0px;

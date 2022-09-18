@@ -1,7 +1,7 @@
 import tabType from './SelectTabType';
 type Action = { type: 'SELECT_TYPE'; payload: { tab: tabType } } | { type: 'RETURN_INITIAL_TAB' };
 const tabInitialState = {
-  tab: 'compareList',
+  tab: 'aboutMe',
 };
 
 export default function Tab(state = tabInitialState, action: Action) {

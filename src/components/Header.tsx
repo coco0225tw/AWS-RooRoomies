@@ -20,6 +20,7 @@ const Wrapper = styled.div`
   position: fixed;
   background-color: #f3f2ef;
   z-index: 4;
+  top: 0;
   // margin-bottom: 80px;
   // @media screen and (max-width: 960px) {
   //   background-color: white;

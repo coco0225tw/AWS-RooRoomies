@@ -201,9 +201,9 @@ function ChatRooms() {
 
   function onSnapshotMessages(chooseRoomId: string) {
     const chatRoomQuery = doc(db, 'chatRooms', chooseRoomId);
-    console.log('choose');
+    // console.log('choose');
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
-      console.log(snapshot);
+      // console.log(snapshot);
       setAllMessages(snapshot.data()!.msg);
     });
   }
@@ -211,7 +211,7 @@ function ChatRooms() {
     async function getAllHouseHuntingData() {
       await firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        console.log(listing);
+        // console.log(listing);
         listing.forEach((doc) => {
           houseHuntingDocArr.push(doc);
         });
@@ -219,10 +219,10 @@ function ChatRooms() {
       });
     }
     getAllHouseHuntingData();
-    console.log(authChange);
-    console.log(isShown);
-    console.log(houseHuntingData.length);
-    console.log(houseHuntingData);
+    // console.log(authChange);
+    // console.log(isShown);
+    // console.log(houseHuntingData.length);
+    // console.log(houseHuntingData);
   }, [authChange]);
 
   if (authChange) {
@@ -232,7 +232,7 @@ function ChatRooms() {
           isShown={isShown}
           onClick={() => {
             setIsShown(true);
-            console.log(houseHuntingData);
+            // console.log(houseHuntingData);
             if (houseHuntingData.length !== 0) {
               setChooseRoomId(houseHuntingData[0]?.id);
               setAllMessages(houseHuntingData[0]?.data().msg);

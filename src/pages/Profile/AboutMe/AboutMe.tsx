@@ -4,17 +4,24 @@ import { RootState } from '../../../redux/rootReducer';
 import styled from 'styled-components';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import { firebase } from '../../../utils/firebase';
+import Hr from '../../../components/Hr';
+import { BtnDiv } from '../../../components/Button';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 80%;
+  width: 70%;
   height: 100%;
   color: #4f5152;
+  margin-top: 20px;
 `;
-
+const Title = styled.div`
+  font-size: 36px;
+  letter-spacing: 4px;
+`;
 const FormLegend = styled.legend`
   line-height: 19px;
   font-size: 16px;
@@ -26,43 +33,65 @@ const FormLegend = styled.legend`
 `;
 const FormGroup = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   //   flex-wrap: wrap;
-  margin-top: 30px;
-  width: 684px;
+  flex-direction: column;
 
+  margin-top: 30px;
+  width: 100%;
+  // font-size: 36px;
   ${FormLegend} + & {
     margin-top: 25px;
   }
 
-  @media screen and (max-width: 1279px) {
-    line-height: 17px;
-    font-size: 14px;
-    margin-top: 20px;
-    width: 100%;
+  // @media screen and (max-width: 1279px) {
+  //   line-height: 17px;
+  //   font-size: 14px;
+  //   margin-top: 20px;
+  //   width: 100%;
 
-    ${FormLegend} + & {
-      margin-top: 20px;
-    }
-  }
+  //   ${FormLegend} + & {
+  //     margin-top: 20px;
+  //   }
+  // }
 `;
 
 const FormLabel = styled.label`
   //   width: 110px;
-  line-height: 19px;
+  // line-height: 19px;
   font-size: 16px;
   color: #3f3a3a;
   display: block;
+  padding: 4px;
+  padding-left: 0px;
+  border-bottom: solid 1px #4f5152;
 `;
-
+const FormInputWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  width: 100%;
+  margin-top: 8px;
+`;
 const FormCheckInput = styled.input`
   margin: 0;
   flex-grow: 1;
   height: 19px;
+  // background-color: #c77155;
+  accent-color: #c77155;
+  cursor: pointer;
+  // width: 12px;
+  // height: 12px;
+  // position: absolute;
+  // top: 9px;
+  // left: 10px;
+  // content: ' ';
+  // display: block;
+  // background: #004c97;
 `;
 
 const FormCheck = styled.div`
-  margin-left: 8px;
+  // margin-left: 8px;
   display: flex;
   align-items: center;
 
@@ -70,14 +99,14 @@ const FormCheck = styled.div`
     margin-left: 30px;
   }
 
-  @media screen and (max-width: 1279px) {
-    margin-left: 0;
-    margin-top: 10px;
+  // @media screen and (max-width: 1279px) {
+  //   margin-left: 0;
+  //   margin-top: 10px;
 
-    & + & {
-      margin-left: 27px;
-    }
-  }
+  //   & + & {
+  //     margin-left: 27px;
+  //   }
+  // }
 `;
 
 const FormCheckLabel = styled.label`
@@ -263,22 +292,39 @@ const roommatesConditionFormGroups = [
   },
 ];
 
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  &:hover {
-    background-color: #222;
-  }
-`;
+// const SubmitBtn = styled.div`
+//   background-color: grey;
+//   color: white;
+//   cursor: pointer;
+//   border-radius: 10px;
+//   padding: 4px;
+//   &:hover {
+//     background-color: #222;
+//   }
+// `;
 
+const SubmitBtn = styled(BtnDiv)`
+  border: solid 1px #4f5152;
+  align-self: flex-end;
+  margin-top: 20px;
+`;
 function AboutMe() {
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const userAsRoommate = useSelector((state: RootState) => state.UserAsRoommateReducer);
   console.log(userAsRoommate);
+  console.log(userAsRoommate);
+  // const initialRoommatesState = {
+  //   gender: '',
+  //   bringFriendToStay: '',
+  //   hygiene: '',
+  //   livingHabit: '',
+  //   genderFriendly: '',
+  //   pet: '',
+  //   smoke: '',
+  //   career: '',
+  // };
+
   const initialRoommatesState = userAsRoommate
     ? userAsRoommate.userAsRoommatesConditions
     : {
@@ -297,50 +343,59 @@ function AboutMe() {
   async function submit(meAsRoommatesState: roommatesConditionType) {
     dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
     await firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState);
-    console.log(meAsRoommatesState);
-    console.log('送出室友條件');
+    // console.log(meAsRoommatesState);
+    // console.log('送出室友條件');
   }
   return (
     <Wrapper>
-      <h1>我的條件</h1>
+      <Title>關於我</Title>
+      <Hr />
       {roommatesConditionFormGroups.map(({ label, key, options }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          {options ? (
-            options.map((option) => (
-              <FormCheck key={option.value}>
-                {initialRoommatesState && initialRoommatesState[key] === option.value ? (
-                  <>
-                    <FormCheckInput
-                      checked
-                      onChange={(e) => {
-                        if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
-                      }}
-                      type="radio"
-                      name={label}
-                    />
-                    <FormCheckLabel>{option.text}</FormCheckLabel>
-                  </>
-                ) : (
-                  <>
-                    <FormCheckInput
-                      onChange={(e) => {
-                        if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
-                      }}
-                      type="radio"
-                      name={label}
-                    />
-                    <FormCheckLabel>{option.text}</FormCheckLabel>
-                  </>
-                )}
-              </FormCheck>
-            ))
-          ) : (
-            <FormControl />
-          )}
+          {/* <Hr /> */}
+          <FormInputWrapper>
+            {options ? (
+              options.map((option) => (
+                <FormCheck key={option.value}>
+                  {initialRoommatesState && initialRoommatesState[key] === option.value ? (
+                    <>
+                      <FormCheckInput
+                        // checked
+                        defaultChecked
+                        onChange={(e) => {
+                          if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
+                        }}
+                        type="radio"
+                        name={label}
+                        value={option.value || ''}
+                      />
+                      <FormCheckLabel>{option.text}</FormCheckLabel>
+                    </>
+                  ) : (
+                    <>
+                      <FormCheckInput
+                        onChange={(e) => {
+                          if (e.target.checked) setMeAsRoommatesState({ ...meAsRoommatesState, [key]: option.value });
+                        }}
+                        type="radio"
+                        value={option.value || ''}
+                        name={label}
+                      />
+                      {/* {option.value} */}
+                      <FormCheckLabel>{option.text}</FormCheckLabel>
+                    </>
+                  )}
+                </FormCheck>
+              ))
+            ) : (
+              <FormControl />
+            )}
+          </FormInputWrapper>
         </FormGroup>
       ))}
-      <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>送出</SubmitBtn>
+      <SubmitBtn>儲存變更</SubmitBtn>
+      {/* <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>送出</SubmitBtn> */}
       {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );

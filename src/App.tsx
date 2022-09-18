@@ -44,29 +44,31 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-    // border: solid 1px black;
+    border: solid 1px black;
     // color: #4f5152;
     position: relative;
   }
 
   body {
     font-family: NotoSansTC;
-    overflow-x: hidden;
+    // overflow-x: hidden;
     padding: 0;
     margin: 0;
-   
+    // height: 100vh;
   }
 
   html {
     padding: 0;
     margin: 0;
+    // height: 100vh;
   }
   #root {
     min-height: 100vh;
     // padding: 140px 0 115px;
     position: relative;
-    display: flex;
-    flex-direction: column;
+    // display: flex;
+    // flex-direction: column;
+    // flex-grow: 1;
   }
   a {
     color: inherit; /* blue colors for links too */
