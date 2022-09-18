@@ -29,6 +29,7 @@ import unAddIcon from '../../assets/unAdd.png';
 
 import { BtnDiv } from '../../components/Button';
 import Popup from '../../components/Popup';
+import Hr from '../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -147,11 +148,12 @@ const SubTitle = styled.div`
   width: 100%;
 `;
 
-const Hr = styled.hr`
-  border-color: #f3f2ef;
-  width: 100%;
-  height: 1px;
-`;
+// const Hr = styled.div`
+//   background-color: #4f5152;
+//   width: 100%;
+//   height: 1px;
+//   margin: 4px 0px 12px;
+// `;
 
 const SelectTime = styled.div`
   font-size: 16px;

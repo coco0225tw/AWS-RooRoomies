@@ -10,8 +10,9 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 100%;
+  width: 80%;
   height: 100%;
+  color: #4f5152;
 `;
 
 const FormLegend = styled.legend`
