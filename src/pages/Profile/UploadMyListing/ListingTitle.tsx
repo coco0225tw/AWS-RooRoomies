@@ -2,6 +2,17 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
+import { SubTitle } from '../../../components/ProfileTitle';
+import {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+} from '../../../components/InputArea';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -9,53 +20,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  background-color: lightgrey;
-`;
-
-const FormLegend = styled.legend`
-  line-height: 19px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #3f3a3a;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #3f3a3a;
-  width: 100%;
-`;
-const FormGroup = styled.div`
-  display: flex;
-  align-items: center;
-  //   flex-wrap: wrap;
-  margin-top: 30px;
-  width: 684px;
-
-  ${FormLegend} + & {
-    margin-top: 25px;
-  }
-
-  @media screen and (max-width: 1279px) {
-    line-height: 17px;
-    font-size: 14px;
-    margin-top: 20px;
-    width: 100%;
-
-    ${FormLegend} + & {
-      margin-top: 20px;
-    }
-  }
-`;
-
-const FormLabel = styled.label`
-  //   width: 110px;
-  line-height: 19px;
-  font-size: 16px;
-  color: #3f3a3a;
-  display: block;
-`;
-
-const FormCheckInput = styled.input`
-  margin: 0;
-  flex-grow: 1;
-  height: 19px;
+  // background-color: lightgrey;
 `;
 
 const SubmitBtn = styled.div`
@@ -93,11 +58,13 @@ function ListingTitle() {
   }
   return (
     <Wrapper>
-      <h2>輸入基本資訊</h2>
+      <SubTitle>輸入基本資訊</SubTitle>
       {titleFormGroups.map(({ label, key }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          <FormCheckInput onChange={(e) => setTitleState({ ...titleState, [key]: e.target.value })} />
+          <FormInputWrapper>
+            <FormControl onChange={(e) => setTitleState({ ...titleState, [key]: e.target.value })} />
+          </FormInputWrapper>
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(titleState)}>儲存</SubmitBtn>

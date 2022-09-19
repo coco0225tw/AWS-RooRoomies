@@ -11,13 +11,14 @@ import RoommatesCondition from './RoommatesCondition';
 import Facility from './Facility';
 import RentRoomDetails from './RentRoomDetails';
 import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { Title } from '../../../components/ProfileTitle';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 80%;
+  width: 70%;
   height: 100%;
 `;
 
@@ -81,7 +82,7 @@ function UploadMyListing() {
   }
   return (
     <Wrapper>
-      <h1>上傳物件</h1>
+      <Title>管理物件</Title>
       <ListingTitle />
       <ListingAddr />
       <UploadMainImageAndImages />

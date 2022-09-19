@@ -5,6 +5,7 @@ import DatePicker from 'react-multi-date-picker';
 import styled from 'styled-components';
 import bookingTimesType from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
 import CalendarContainer from '../../../components/Calendar';
+import { SubTitle } from '../../../components/ProfileTitle';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -86,11 +87,11 @@ function SetBookingTimes() {
   }
   return (
     <Wrapper>
-      <h2>選擇時間</h2>
+      <SubTitle>選擇時間</SubTitle>
       <CalendarContainer>
         <Calendar onClickDay={clickDate} selectRange={false} tileDisabled={tileDisabled} />
       </CalendarContainer>
-      <div>選擇的日期</div>
+      <SubTitle>選擇的日期</SubTitle>
       {selectedDays &&
         selectedDays.map((s, index) => (
           <SelectedDays key={`selectedDays${index}`}>

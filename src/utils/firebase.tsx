@@ -206,6 +206,7 @@ const firebase = {
       favoriteLists: [],
       compareLists: [],
       dndLists: [],
+      userListingId: '',
     });
   },
   async getUserDocFromFirebase(uid: string) {

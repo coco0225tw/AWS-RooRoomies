@@ -2,6 +2,17 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import addressType from '../../../redux/UploadAddr/UploadAddrType';
+import { SubTitle } from '../../../components/ProfileTitle';
+import {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+} from '../../../components/InputArea';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -11,51 +22,51 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const FormLegend = styled.legend`
-  line-height: 19px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #3f3a3a;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #3f3a3a;
-  width: 100%;
-`;
-const FormGroup = styled.div`
-  display: flex;
-  align-items: center;
-  //   flex-wrap: wrap;
-  margin-top: 30px;
-  width: 684px;
+// const FormLegend = styled.legend`
+//   line-height: 19px;
+//   font-size: 16px;
+//   font-weight: bold;
+//   color: #3f3a3a;
+//   padding-bottom: 16px;
+//   border-bottom: 1px solid #3f3a3a;
+//   width: 100%;
+// `;
+// const FormGroup = styled.div`
+//   display: flex;
+//   align-items: center;
+//   //   flex-wrap: wrap;
+//   margin-top: 30px;
+//   width: 684px;
 
-  ${FormLegend} + & {
-    margin-top: 25px;
-  }
+//   ${FormLegend} + & {
+//     margin-top: 25px;
+//   }
 
-  @media screen and (max-width: 1279px) {
-    line-height: 17px;
-    font-size: 14px;
-    margin-top: 20px;
-    width: 100%;
+//   @media screen and (max-width: 1279px) {
+//     line-height: 17px;
+//     font-size: 14px;
+//     margin-top: 20px;
+//     width: 100%;
 
-    ${FormLegend} + & {
-      margin-top: 20px;
-    }
-  }
-`;
+//     ${FormLegend} + & {
+//       margin-top: 20px;
+//     }
+//   }
+// `;
 
-const FormLabel = styled.label`
-  //   width: 110px;
-  line-height: 19px;
-  font-size: 16px;
-  color: #3f3a3a;
-  display: block;
-`;
+// const FormLabel = styled.label`
+//   //   width: 110px;
+//   line-height: 19px;
+//   font-size: 16px;
+//   color: #3f3a3a;
+//   display: block;
+// `;
 
-const FormCheckInput = styled.input`
-  margin: 0;
-  flex-grow: 1;
-  height: 19px;
-`;
+// const FormCheckInput = styled.input`
+//   margin: 0;
+//   flex-grow: 1;
+//   height: 19px;
+// `;
 
 const SubmitBtn = styled.div`
   background-color: grey;
@@ -108,11 +119,13 @@ function ListingAddr() {
   }
   return (
     <Wrapper>
-      <h2>輸入地址</h2>
+      <SubTitle>輸入地址</SubTitle>
       {addressFormGroups.map(({ label, key }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          <FormCheckInput onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })} />
+          <FormInputWrapper>
+            <FormControl onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })} />
+          </FormInputWrapper>
         </FormGroup>
       ))}
       <SubmitBtn onClick={() => submit(addrState!)}>儲存</SubmitBtn>

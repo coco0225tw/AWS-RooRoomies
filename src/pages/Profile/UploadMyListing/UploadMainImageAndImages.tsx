@@ -3,6 +3,17 @@ import styled from 'styled-components';
 import { firebase } from '../../../utils/firebase';
 import { useSelector, useDispatch } from 'react-redux';
 import titleType from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
+import { SubTitle } from '../../../components/ProfileTitle';
+import {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+} from '../../../components/InputArea';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -77,7 +88,7 @@ function UploadMainImageAndImages() {
   }
   return (
     <Wrapper>
-      <h2>上傳圖片</h2>
+      <SubTitle>上傳圖片</SubTitle>
       <UploadMainImage onChange={(e) => previewMainImage(e)} />
       {mainImgUrl && <PreviewMainImage src={mainImgUrl as string} />}
       <UploadImages onChange={(e) => previewImages(e)} />
