@@ -29,12 +29,18 @@ const Icon = styled.div`
   height: auto;
   width: 24px;
   background-size: 100% 100%;
+  // flex-grow: 1;
+  &:hover {
+    width: 32px;
+  }
 `;
 
 const IconArea = styled.div`
   display: flex;
   justify-content: flex-end;
   padding: 8px 8px 0px 0px;
+  align-items: start;
+  transition-duration: 0.2s;
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
@@ -151,6 +157,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: listingDocData.id } });
     }
   }
+  // console.log(new Date(listingDocData.data().moveInDate));
   return (
     <Wrapper>
       <CardWrapper>
@@ -175,7 +182,14 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         </Addr>
 
         <PeopleAmount>可入住人數:{listingDocData.data().peopleAmount}</PeopleAmount>
-        <Time>{listingDocData.data().uploadedTime?.toDate().toDateString()}</Time>
+        <Time>
+          {/* {listingDocData.data().moveInDate.getFullYear() +
+            '-' +
+            ('0' + (listingDocData.data().moveInDate.getMonth() + 1)).slice(-2) +
+            '-' +
+            ('0' + listingDocData.data().moveInDate.getDate()).slice(-2)} */}
+          {/* {listingDocData.data().uploadedTime?.toDate().toDateString()} */}
+        </Time>
         <Rent>
           {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
         </Rent>

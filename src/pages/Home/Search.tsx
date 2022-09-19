@@ -7,14 +7,29 @@ import countyItem from '../../utils/county';
 import allTowns from '../../utils/town';
 import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import carousel from '../../assets/carousel.jpg';
+import {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+} from '../../components/InputArea';
+// import { RootState } from '../../../redux/rootReducer';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 100%;
+  height: 50vh;
   margin: auto;
+  background-image: url(${carousel});
+  background-size: cover;
+  // background-position: cover;
+  background-position: bottom;
 `;
 
 const SideBarWrapper = styled.div`
@@ -22,90 +37,94 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 
-const FormLegend = styled.legend`
-  line-height: 19px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #3f3a3a;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #3f3a3a;
-  flex-direction: column;
-  width: 100%;
-`;
-const FormGroup = styled.div`
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 30px;
-  width: 100%;
-  ${FormLegend} + & {
-    margin-top: 25px;
-  }
+// const FormLegend = styled.legend`
+//   line-height: 19px;
+//   font-size: 16px;
+//   font-weight: bold;
+//   color: #3f3a3a;
+//   padding-bottom: 16px;
+//   border-bottom: 1px solid #3f3a3a;
+//   flex-direction: column;
+//   width: 100%;
+// `;
+// const FormGroup = styled.div`
+//   display: flex;
+//   align-items: center;
+//   flex-wrap: wrap;
+//   margin-top: 30px;
+//   width: 100%;
+//   ${FormLegend} + & {
+//     margin-top: 25px;
+//   }
 
-  @media screen and (max-width: 1279px) {
-    line-height: 17px;
-    font-size: 14px;
-    margin-top: 20px;
-    width: 100%;
+//   @media screen and (max-width: 1279px) {
+//     line-height: 17px;
+//     font-size: 14px;
+//     margin-top: 20px;
+//     width: 100%;
 
-    ${FormLegend} + & {
-      margin-top: 20px;
-    }
-  }
-`;
+//     ${FormLegend} + & {
+//       margin-top: 20px;
+//     }
+//   }
+// `;
 
-const FormLabel = styled.label`
-  //   width: 110px;
-  line-height: 19px;
-  font-size: 16px;
-  color: #3f3a3a;
-  display: block;
-`;
+// const FormLabel = styled.label`
+//   //   width: 110px;
+//   line-height: 19px;
+//   font-size: 16px;
+//   color: #3f3a3a;
+//   display: block;
+// `;
 
-const FormCheckInput = styled.input`
-  margin: 0;
-  flex-grow: 1;
-  height: 19px;
-`;
+// const FormCheckInput = styled.input`
+//   margin: 0;
+//   flex-grow: 1;
+//   height: 19px;
+// `;
 
-const FormCheck = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
+// const FormCheck = styled.div`
+//   margin-left: 8px;
+//   display: flex;
+//   align-items: center;
 
-  & + & {
-    margin-left: 30px;
-  }
+//   & + & {
+//     margin-left: 30px;
+//   }
 
-  @media screen and (max-width: 1279px) {
-    margin-left: 0;
-    margin-top: 10px;
+//   @media screen and (max-width: 1279px) {
+//     margin-left: 0;
+//     margin-top: 10px;
 
-    & + & {
-      margin-left: 27px;
-    }
-  }
-`;
+//     & + & {
+//       margin-left: 27px;
+//     }
+//   }
+// `;
 
-const FormCheckLabel = styled.label`
-  margin-left: 10px;
-  line-height: 26px;
+// const FormCheckLabel = styled.label`
+//   margin-left: 10px;
+//   line-height: 26px;
 
-  @media screen and (max-width: 1279px) {
-    font-size: 14px;
-  }
-`;
+//   @media screen and (max-width: 1279px) {
+//     font-size: 14px;
+//   }
+// `;
 
-const FormControl = styled.input`
-  width: 574px;
-  height: 30px;
-  border-radius: 8px;
-  border: solid 1px #979797;
+// const FormControl = styled.input`
+//   width: 574px;
+//   height: 30px;
+//   border-radius: 8px;
+//   border: solid 1px #979797;
 
-  @media screen and (max-width: 1279px) {
-    margin-top: 10px;
-    width: 100%;
-  }
+//   @media screen and (max-width: 1279px) {
+//     margin-top: 10px;
+//     width: 100%;
+//   }
+// `;
+const SearchBox = styled.div`
+  margin: 80px;
+  background-color: rgba(225, 225, 225, 0.9);
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -184,70 +203,79 @@ function Search() {
   }
   return (
     <Wrapper>
-      {searchFormGroup.map(({ label, key, countyOptions, options }, index) => (
-        <FormGroup key={key}>
-          <FormLabel>{label}</FormLabel>
-          {options
-            ? options.map((option: any, oIndex) => (
-                <FormCheck key={`${option.key}${oIndex}`}>
-                  <FormCheckLabel>{option.label}</FormCheckLabel>
-                  <FormCheckInput
-                    onBlur={() => {
-                      handleOnchange(
-                        selectCounty!.countyName,
-                        selectTown!,
-                        startRentRef.current!.value,
-                        endRentRef.current!.value
-                      );
-                    }}
-                    ref={eval(`${option.key}Ref`)}
-                    type="input"
-                    name={label}
-                  />
-                </FormCheck>
-              ))
-            : countyOptions
-            ? countyOptions.map((option, cIndex) => (
-                <FormCheck key={`town${cIndex}`}>
-                  <FormCheckInput
-                    type="radio"
-                    name={label}
-                    // checked={selectCounty?.countyCode == option.countycode01}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleOnchange(option.countyname, null, startRentRef.current!.value, endRentRef.current!.value);
-                        setSelectCounty({ countyCode: option.countycode01, countyName: option.countyname });
-                        setTowns(allTowns[`townItem${option.countycode01}` as keyof typeof allTowns]);
-                      }
-                    }}
-                  />
-                  <FormCheckLabel>{option.countyname}</FormCheckLabel>
-                </FormCheck>
-              ))
-            : towns &&
-              towns.map((option: any, tIndex: any) => (
-                <FormCheck key={`town${selectCounty!.countyName}${tIndex}`}>
-                  <FormCheckInput
-                    type="radio"
-                    name="town"
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handleOnchange(
-                          selectCounty!.countyName,
-                          option.townname,
-                          startRentRef.current!.value,
-                          endRentRef.current!.value
-                        );
-                        setSelectTown(option.townname);
-                      }
-                    }}
-                  />
-                  <FormCheckLabel>{option.townname}</FormCheckLabel>
-                </FormCheck>
-              ))}
-        </FormGroup>
-      ))}
-      <NextPageBtn onClick={() => nextPage(selectCounty?.countyName, selectTown!)}>下一頁</NextPageBtn>
+      <SearchBox>
+        {searchFormGroup.map(({ label, key, countyOptions, options }, index) => (
+          <FormGroup style={{ flexDirection: 'row' }} key={key}>
+            <FormLabel>{label}</FormLabel>
+            <FormInputWrapper>
+              {options
+                ? options.map((option: any, oIndex) => (
+                    <FormCheck key={`${option.key}${oIndex}`}>
+                      <FormCheckLabel>{option.label}</FormCheckLabel>
+                      <FormCheckInput
+                        onBlur={() => {
+                          handleOnchange(
+                            selectCounty!.countyName,
+                            selectTown!,
+                            startRentRef.current!.value,
+                            endRentRef.current!.value
+                          );
+                        }}
+                        ref={eval(`${option.key}Ref`)}
+                        type="input"
+                        name={label}
+                      />
+                    </FormCheck>
+                  ))
+                : countyOptions
+                ? countyOptions.map((option, cIndex) => (
+                    <FormCheck key={`town${cIndex}`}>
+                      <FormCheckInput
+                        type="radio"
+                        name={label}
+                        // checked={selectCounty?.countyCode == option.countycode01}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            handleOnchange(
+                              option.countyname,
+                              null,
+                              startRentRef.current!.value,
+                              endRentRef.current!.value
+                            );
+                            setSelectCounty({ countyCode: option.countycode01, countyName: option.countyname });
+                            setTowns(allTowns[`townItem${option.countycode01}` as keyof typeof allTowns]);
+                          }
+                        }}
+                      />
+                      <FormCheckLabel>{option.countyname}</FormCheckLabel>
+                    </FormCheck>
+                  ))
+                : towns &&
+                  towns.map((option: any, tIndex: any) => (
+                    <FormCheck key={`town${selectCounty!.countyName}${tIndex}`}>
+                      <FormCheckInput
+                        type="radio"
+                        name="town"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            handleOnchange(
+                              selectCounty!.countyName,
+                              option.townname,
+                              startRentRef.current!.value,
+                              endRentRef.current!.value
+                            );
+                            setSelectTown(option.townname);
+                          }
+                        }}
+                      />
+                      <FormCheckLabel>{option.townname}</FormCheckLabel>
+                    </FormCheck>
+                  ))}
+            </FormInputWrapper>
+          </FormGroup>
+        ))}
+        <NextPageBtn onClick={() => nextPage(selectCounty?.countyName, selectTown!)}>下一頁</NextPageBtn>
+      </SearchBox>
     </Wrapper>
   );
 }

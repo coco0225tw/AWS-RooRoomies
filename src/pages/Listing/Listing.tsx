@@ -37,7 +37,8 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 80%;
   height: 100%;
-  margin: auto;
+  margin: 80px auto;
+  color: #4f5152;
 `;
 
 const SectionWrapper = styled.div`
@@ -46,12 +47,19 @@ const SectionWrapper = styled.div`
 `;
 const ImagesWrapper = styled(SectionWrapper)`
   height: 50vh;
+  overflow: hidden;
+  border-radius: 20px;
+  justify-content: space-between;
+  align-items: flex-start;
 `;
 const OtherImagesWrapper = styled(SectionWrapper)`
   flex-wrap: wrap;
   height: 100%;
   overflow: scroll;
   overflow-x: hidden;
+  width: 49%;
+  justify-content: space-between;
+  align-items: flex-start;
 `;
 const TitleWrapper = styled(SectionWrapper)`
   flex-direction: column;
@@ -79,13 +87,34 @@ const SelectTimeWrapper = styled(SectionWrapper)`
   //   background-color: #c77155;
   // }
 `;
-const MainImage = styled.img.attrs((props) => ({
-  src: props.src,
-}))`
-  width: 50%;
-  object-fit: cover;
+
+const ImageWrap = styled.div`
+  width: 49%;
+  cursor: pointer;
+  overflow: hidden;
+  height: 100%;
+  &:hover {
+    filter: brightness(70%);
+  }
 `;
-const Images = styled(MainImage)``;
+const MainImage = styled.div<{ src: string }>`
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-image: url(${(props) => props.src});
+
+  transition-duration: 0.2s;
+  &:hover {
+    transform: scale(120%);
+  }
+`;
+const Images = styled(MainImage)`
+  height: auto;
+  aspect-ratio: 1 / 1;
+  // width: 50%;
+  // height: auto;
+`;
 
 const InformationWrapper = styled(SectionWrapper)`
   flex-direction: row;
@@ -349,9 +378,16 @@ function Listing() {
       )}
       <div>房源id:{id}</div>
       <ImagesWrapper>
-        <MainImage src={listingInfo?.mainImage} />
+        <ImageWrap>
+          <MainImage src={listingInfo?.mainImage!} />
+        </ImageWrap>
         <OtherImagesWrapper>
-          {listingInfo?.images && listingInfo.images.map((src, index) => <Images key={`images_${index}`} src={src} />)}
+          {listingInfo?.images &&
+            listingInfo.images.map((src, index) => (
+              <ImageWrap>
+                <Images key={`images_${index}`} src={src} />
+              </ImageWrap>
+            ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
       <DividedCalendarSection>

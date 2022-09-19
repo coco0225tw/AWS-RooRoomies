@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   justify-content: space-around;
   align-items: flex-start;
   flex-wrap: wrap;
-  width: 80%;
+  width: 100%;
   height: 100%;
   // margin: auto;
   position: relative;
@@ -35,10 +35,11 @@ const SideBarWrapper = styled.div`
 `;
 
 const ListingWrapper = styled.div`
-  width: 100%;
+  width: 80%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-top: 32px;
   // justify-content: flex-start;
   // background-color: grey;
 `;
