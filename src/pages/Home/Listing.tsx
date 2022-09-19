@@ -21,20 +21,28 @@ const Wrapper = styled.div`
   height: 100%;
   // margin: auto;
   padding: 10px;
+  margin-bottom: 32px;
 `;
 
-const FavoriteIcon = styled.div<{ isLiked: boolean }>`
+const Icon = styled.div`
+  aspect-ratio: 1 / 1;
+  height: auto;
+  width: 24px;
+  background-size: 100% 100%;
+`;
+
+const IconArea = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 8px 0px 0px;
+`;
+const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
-  height: 40px;
-  width: 40px;
-  background-size: 40px 40px;
+  right: 8px;
 `;
 
-const CompareIcon = styled.div<{ isCompared: boolean }>`
+const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
   background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
-  height: 40px;
-  width: 40px;
-  background-size: 40px 40px;
 `;
 
 const SideBarWrapper = styled.div`
@@ -45,24 +53,41 @@ const SideBarWrapper = styled.div`
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  border: solid 1px orange;
+  // border: solid 1px orange;
   align-items: flex-start;
+  color: #4f5152;
+  font-size: 16px;
 `;
 
 const MainImage = styled.div<ImgProps>`
+  aspect-ratio: 1 / 1;
   width: 100%;
-  height: 300px;
   background-image: url(${(props) => (props.img ? props.img : '')});
-  background-size: cover;
+  background-position: cover;
+  background-size: 100% 100%;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const Title = styled.h3`
-  margin: 0;
+const Title = styled.div`
+  font-size: 20px;
+  color: #4f5152;
+  letter-spacing: 2px;
+  font-weight: 600;
+  // margin: 0px 0px 8px 8px;
+  // align-self: flex-end;
 `;
 
 const Time = styled.div``;
 
-const Rent = styled.div``;
+const Rent = styled.div`
+  font-size: 20px;
+  color: #c77155;
+  align-self: flex-end;
+`;
 
 const Addr = styled.div``;
 const PeopleAmount = styled.div``;
@@ -130,27 +155,30 @@ function Listing({ listingDocData }: { listingDocData: any }) {
     <Wrapper>
       <CardWrapper>
         <MainImage img={listingDocData.data().mainImage}>
-          <FavoriteIcon
-            onClick={(e) => handleLiked(e!, favoriteLists.includes(listingDocData.id))}
-            isLiked={favoriteLists.includes(listingDocData.id)}
-          ></FavoriteIcon>
-          <CompareIcon
-            onClick={(e) => {
-              handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
-            }}
-            isCompared={compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id)}
-          ></CompareIcon>
+          <IconArea>
+            <FavoriteIcon
+              onClick={(e) => handleLiked(e!, favoriteLists.includes(listingDocData.id))}
+              isLiked={favoriteLists.includes(listingDocData.id)}
+            ></FavoriteIcon>
+            <CompareIcon
+              onClick={(e) => {
+                handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
+              }}
+              isCompared={compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id)}
+            ></CompareIcon>
+          </IconArea>
         </MainImage>
         <Title>{listingDocData.data().title}</Title>
+        <Addr>
+          {listingDocData.data().countyName}
+          {listingDocData.data().townName}
+        </Addr>
+
+        <PeopleAmount>可入住人數:{listingDocData.data().peopleAmount}</PeopleAmount>
+        <Time>{listingDocData.data().uploadedTime?.toDate().toDateString()}</Time>
         <Rent>
           {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
         </Rent>
-        <Addr>
-          縣市:{listingDocData.data().countyName}
-          地區:{listingDocData.data().townName}
-        </Addr>
-        <PeopleAmount>人數:{listingDocData.data().peopleAmount}</PeopleAmount>
-        <Time>{listingDocData.data().uploadedTime?.toDate().toDateString()}</Time>
       </CardWrapper>
     </Wrapper>
   );

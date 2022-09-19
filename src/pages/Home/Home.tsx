@@ -18,8 +18,9 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
   width: 80%;
   height: 100%;
-  margin: auto;
+  // margin: auto;
   position: relative;
+  margin: 80px auto;
 `;
 
 const HomePageTitle = styled.div`
@@ -33,10 +34,13 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 
-const ListingWrapper = styled(Link)<Props>`
-  // position: relative;
-  // width: 100%;
-  width: 50%;
+const ListingWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  // justify-content: flex-start;
+  // background-color: grey;
 `;
 
 const Btn = styled.div`
@@ -50,6 +54,10 @@ const Btn = styled.div`
 `;
 const PageArea = styled.div`
   display: flex;
+`;
+const ListingLink = styled(Link)`
+  width: 25%;
+  height: 100%;
 `;
 const NextPageBtn = styled(Btn)``;
 const PrevPageBtn = styled(Btn)``;
@@ -94,12 +102,14 @@ function Home() {
   return (
     <Wrapper>
       <Search></Search>
-      {listingDocData &&
-        listingDocData.map((listingDocData: DocumentData, index: number) => (
-          <ListingWrapper target="_blank" to={`/listing/${listingDocData.id}`} key={`listing_${index}`}>
-            <Listing listingDocData={listingDocData}></Listing>
-          </ListingWrapper>
-        ))}
+      <ListingWrapper>
+        {listingDocData &&
+          listingDocData.map((listingDocData: DocumentData, index: number) => (
+            <ListingLink key={`listing_${index}`} target="_blank" to={`/listing/${listingDocData.id}`}>
+              <Listing listingDocData={listingDocData}></Listing>
+            </ListingLink>
+          ))}
+      </ListingWrapper>
       <PageArea>
         {/* <PrevPageBtn>上一頁</PrevPageBtn>
         <Page>頁碼</Page> */}

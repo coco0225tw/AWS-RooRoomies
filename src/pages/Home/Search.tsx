@@ -6,7 +6,7 @@ import { RootState } from '../../redux/rootReducer';
 import countyItem from '../../utils/county';
 import allTowns from '../../utils/town';
 import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-
+import carousel from '../../assets/carousel.jpg';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
