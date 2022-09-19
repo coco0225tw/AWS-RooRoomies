@@ -13,6 +13,7 @@ import {
   FormCheckLabel,
   FormControl,
 } from '../../../components/InputArea';
+import { RootState } from '../../../redux/rootReducer';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -90,17 +91,7 @@ const addressFormGroups = [
 ];
 function ListingAddr() {
   const dispatch = useDispatch();
-  // interface addressType {
-  //   countyname: string;
-  //   townname: string;
-  //   roadOrStreetNameOrVillage: string;
-  //   roadSection: string;
-  //   lane: string;
-  //   alley: string;
-  //   number: string;
-  //   floor: string;
-  // }
-
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const initialAddrState = {
     countyname: '',
     townname: '',

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
 import { SubTitle } from '../../../components/ProfileTitle';
+import { RootState } from '../../../redux/rootReducer';
 import {
   FormLegend,
   FormGroup,
@@ -35,17 +36,17 @@ const SubmitBtn = styled.div`
 `;
 function ListingTitle() {
   const dispatch = useDispatch();
-  // interface titleType {
-  //   title: string;
-  //   totalSq: string;
-  //   form: string;
-  // }
-
-  const initialTitleState = {
-    title: '',
-    totalSq: '',
-    form: '',
-  };
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const titleInfo = useSelector((state: RootState) => state.UploadTitleReducer);
+  const initialTitleState =
+    userInfo!.userListingId?.length !== 0
+      ? titleInfo
+      : {
+          title: '',
+          totalSq: '',
+          form: '',
+        };
+  console.log(initialTitleState);
   const titleFormGroups = [
     { label: '名稱', key: 'title' },
     { label: '坪數', key: 'totalSq' },
@@ -63,7 +64,10 @@ function ListingTitle() {
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
           <FormInputWrapper>
-            <FormControl onChange={(e) => setTitleState({ ...titleState, [key]: e.target.value })} />
+            <FormControl
+              value={titleState[key as keyof titleType]}
+              onChange={(e) => setTitleState({ ...titleState, [key]: e.target.value })}
+            />
           </FormInputWrapper>
         </FormGroup>
       ))}

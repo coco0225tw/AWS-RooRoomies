@@ -5,6 +5,7 @@ const userInitialState = {
   email: '',
   image: '',
   name: '',
+  userListingId: '',
 };
 
 export default function User(state = userInitialState, action: Action) {

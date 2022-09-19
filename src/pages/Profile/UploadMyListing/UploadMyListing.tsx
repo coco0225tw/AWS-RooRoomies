@@ -30,6 +30,7 @@ const SubmitBtn = styled.div`
 `;
 
 function UploadMyListing() {
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
   const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
   const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
@@ -83,6 +84,7 @@ function UploadMyListing() {
   return (
     <Wrapper>
       <Title>管理物件</Title>
+      {userInfo!.userListingId?.length !== 0 && <div>你有一個上傳物件</div>}
       <ListingTitle />
       <ListingAddr />
       <UploadMainImageAndImages />

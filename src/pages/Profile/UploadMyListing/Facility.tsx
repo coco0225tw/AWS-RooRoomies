@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
 import { SubTitle } from '../../../components/ProfileTitle';
+import { RootState } from '../../../redux/rootReducer';
 import {
   FormLegend,
   FormGroup,
@@ -13,6 +14,8 @@ import {
   FormCheckLabel,
   FormControl,
 } from '../../../components/InputArea';
+
+import Icons from '../../../assets/facility/Icon';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -35,6 +38,30 @@ const FormText = styled.div`
 const CustomFormCheckInput = styled(FormCheckInput)`
   margin-left: 0px;
 `;
+
+const SubmitBtn = styled.div`
+  background-color: grey;
+  color: white;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 4px;
+  &:hover {
+    background-color: #222;
+  }
+`;
+const Icon = styled.div<{ img: string }>`
+  height: 40px;
+  width: 40px;
+  background-size: 40px 40px;
+  background-image: url(${(props) => props.img});
+  border-radius: 50%;
+`;
+
+const Input = styled(CustomFormCheckInput)`
+  &:checked + ${FormCheckLabel} {
+    color: blue;
+  }
+`;
 const facilityFormGroups = [
   { label: '押金', key: 'deposit' },
   {
@@ -42,29 +69,34 @@ const facilityFormGroups = [
     key: 'extraFee',
     options: [
       {
+        label: 'administratorFee',
+        text: '管理費',
+        value: Icons.extraFee.administratorFee,
+      },
+      {
         label: 'cleanFee',
         text: '清潔費',
-        value: 'cleanFee',
+        value: Icons.extraFee.cleanFee,
       },
       {
         label: 'electricFee',
         text: '電費',
-        value: 'electricFee',
+        value: Icons.extraFee.electricFee,
       },
       {
         label: 'waterFee',
         text: '水費',
-        value: 'waterFee',
+        value: Icons.extraFee.waterFee,
       },
       {
         label: 'gasFee',
         text: '瓦斯費',
-        value: 'gasFee',
+        value: Icons.extraFee.gasFee,
       },
       {
         label: 'wifiFee',
         text: '網路費',
-        value: 'wifiFee',
+        value: Icons.extraFee.wifiFee,
       },
     ],
   },
@@ -73,49 +105,61 @@ const facilityFormGroups = [
     key: 'facility',
     options: [
       {
-        label: 'elevator',
-        text: '電梯',
-        value: 'elevator',
+        label: 'fridge',
+        text: '冰箱',
+        value: Icons.facility.fridge,
       },
       {
-        label: 'fogDetector',
-        text: '煙霧偵測器',
-        value: 'fogDetector',
+        label: 'elevator',
+        text: '電梯',
+        value: Icons.facility.elevator,
       },
+
       {
         label: 'extinguisher',
         text: '滅火器',
-        value: 'extinguisher',
+        value: Icons.facility.extinguisher,
       },
       {
         label: 'natureGas',
         text: '天然氣',
-        value: 'natureGas',
+        value: Icons.facility.natureGas,
       },
-      {
-        label: 'liquifiedGas',
-        text: '桶裝瓦斯',
-        value: 'liquifiedGas',
-      },
+
       {
         label: 'waterHeater',
         text: '熱水器',
-        value: 'waterHeater',
+        value: Icons.facility.waterHeater,
       },
       {
         label: 'kitchen',
         text: '廚房',
-        value: 'kitchen',
+        value: Icons.facility.kitchen,
       },
       {
         label: 'washingMachine',
         text: '洗衣機',
-        value: 'washingMachine',
+        value: Icons.facility.washingMachine,
       },
       {
         label: 'wifi',
         text: '網路',
-        value: 'wifi',
+        value: Icons.facility.wifi,
+      },
+      {
+        label: 'garbage',
+        text: '代收垃圾',
+        value: Icons.facility.garbage,
+      },
+      {
+        label: 'fogDetector',
+        text: '煙霧偵測器',
+        value: Icons.facility.fogDetector,
+      },
+      {
+        label: 'liquifiedGas',
+        text: '桶裝瓦斯',
+        value: Icons.facility.liquifiedGas,
       },
     ],
   },
@@ -124,29 +168,39 @@ const facilityFormGroups = [
     key: 'furniture',
     options: [
       {
+        label: 'sofa',
+        text: '沙發',
+        value: Icons.furniture.sofa,
+      },
+      {
         label: 'airConditioner',
         text: '冷氣',
-        value: 'airConditioner',
+        value: Icons.furniture.airConditioner,
+      },
+      {
+        label: 'wardrobe',
+        text: '衣櫃',
+        value: Icons.furniture.wardrobe,
       },
       {
         label: 'bed',
         text: '床',
-        value: 'bed',
+        value: Icons.furniture.bed,
       },
       {
         label: 'bedding',
         text: '床俱',
-        value: 'bedding',
+        value: Icons.furniture.bedding,
       },
       {
         label: 'table',
         text: '桌子',
-        value: 'table',
+        value: Icons.furniture.table,
       },
       {
         label: 'chair',
         text: '椅子',
-        value: 'chair',
+        value: Icons.furniture.chair,
       },
     ],
   },
@@ -178,77 +232,96 @@ const facilityFormGroups = [
       {
         label: 'fire',
         text: '可以開火',
-        value: 'fire',
+        value: Icons.fire,
       },
     ],
   },
 ];
 
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  &:hover {
-    background-color: #222;
-  }
-`;
-
 function Facility() {
   const dispatch = useDispatch();
-  // interface facilityType {
-  //   deposit: string;
-  //   extraFee: string[];
-  //   facility: string[];
-  //   furniture: string[];
-  //   parking: string[];
-  //   rules: string[];
-  // }
-  const initialFacilityEmptyState = {
-    deposit: '',
-    extraFee: [],
-    facility: [],
-    furniture: [],
-    parking: [],
-    rules: [],
-  };
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
+  console.log(facilityInfo);
+  const initialFacilityEmptyState =
+    userInfo!.userListingId?.length !== 0
+      ? facilityInfo
+      : {
+          deposit: '',
+          extraFee: [],
+          facility: [],
+          furniture: [],
+          parking: [],
+          rules: [],
+        };
   const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
   function submit() {
     dispatch({ type: 'UPLOAD_FACILITY', payload: { facilityState } });
     console.log('送出設施');
   }
-
+  const [checked, setChecked] = useState<boolean>(false);
   return (
     <Wrapper>
       <SubTitle>設施</SubTitle>
       {facilityFormGroups.map(({ label, key, options }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
-          <FormInputWrapper>
+          <FormInputWrapper style={{ display: 'flex' }}>
             {options ? (
               options.map((option) => (
-                <FormCheck key={option.value}>
-                  <CustomFormCheckInput
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setFacilityState({
-                          ...facilityState,
-                          [key]: [...facilityState[key as keyof typeof facilityState], option.value],
-                        });
-                      } else {
-                        setFacilityState({
-                          ...facilityState,
-                          [key]: (facilityState[key as keyof typeof facilityState] as string[]).filter(
-                            (el) => el !== option.value
-                          ),
-                        });
-                      }
-                    }}
-                    type="checkbox"
-                    name={label}
-                  />
-                  <FormCheckLabel>{option.text}</FormCheckLabel>
+                <FormCheck
+                  key={option.value}
+                  style={{ flexBasis: '25%', marginRight: '0px', justifyContent: 'flex-start' }}
+                >
+                  {facilityState && facilityState[key as keyof facilityType].includes(option.label) ? (
+                    <Input
+                      id={option.label}
+                      style={{ flexGrow: '0' }}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFacilityState({
+                            ...facilityState,
+                            [key]: [...facilityState[key as keyof typeof facilityState], option.value],
+                          });
+                        } else {
+                          setFacilityState({
+                            ...facilityState,
+                            [key]: (facilityState[key as keyof typeof facilityState] as string[]).filter(
+                              (el) => el !== option.value
+                            ),
+                          });
+                        }
+                      }}
+                      type="checkbox"
+                      name={option.label}
+                      // value={facilityState[key as keyof facilityType]}
+                      defaultChecked
+                    />
+                  ) : (
+                    <Input
+                      id={option.label}
+                      style={{ flexGrow: '0' }}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setFacilityState({
+                            ...facilityState,
+                            [key]: [...facilityState[key as keyof typeof facilityState], option.value],
+                          });
+                        } else {
+                          setFacilityState({
+                            ...facilityState,
+                            [key]: (facilityState[key as keyof typeof facilityState] as string[]).filter(
+                              (el) => el !== option.value
+                            ),
+                          });
+                        }
+                      }}
+                      type="checkbox"
+                      name={option.label}
+                    />
+                  )}
+                  <Icon img={option.value}></Icon>
+                  <FormCheckLabel htmlFor={option.label}>{option.text}</FormCheckLabel>
                 </FormCheck>
               ))
             ) : (

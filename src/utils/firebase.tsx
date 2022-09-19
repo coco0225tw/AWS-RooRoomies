@@ -132,6 +132,7 @@ const firebase = {
   },
   async getListing(listingId: string) {
     const listingRef = doc(db, 'listings', listingId);
+    console.log(listingId);
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap.data();

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import { RootState } from '../../../redux/rootReducer';
 import { SubTitle } from '../../../components/ProfileTitle';
 import {
   FormLegend,
@@ -193,16 +194,21 @@ const SubmitBtn = styled.div`
 
 function RoommatesCondition() {
   const dispatch = useDispatch();
-  const initialRoommatesState = {
-    gender: '',
-    bringFriendToStay: '',
-    hygiene: '',
-    livingHabit: '',
-    genderFriendly: '',
-    pet: '',
-    smoke: '',
-    career: '',
-  };
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const roommatesConditionsInfo = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
+  const initialRoommatesState =
+    userInfo!.userListingId?.length !== 0
+      ? roommatesConditionsInfo
+      : {
+          gender: '',
+          bringFriendToStay: '',
+          hygiene: '',
+          livingHabit: '',
+          genderFriendly: '',
+          pet: '',
+          smoke: '',
+          career: '',
+        };
   const [roommatesState, setRoommatesStateState] = useState<roommatesConditionType>(initialRoommatesState);
   function submit(roommatesState: roommatesConditionType) {
     dispatch({ type: 'UPLOAD_ROOMMATESCONDITION', payload: { roommatesState } });
@@ -218,17 +224,30 @@ function RoommatesCondition() {
             {options ? (
               options.map((option) => (
                 <FormCheck key={option.value}>
-                  {/* <FormInputWrapper> */}
-                  <>
-                    <FormCheckInput
-                      onChange={(e) => {
-                        if (e.target.checked) setRoommatesStateState({ ...roommatesState, [key]: option.value });
-                      }}
-                      type="radio"
-                      name={label}
-                    />
-                  </>
-                  {/* </FormInputWrapper> */}
+                  {initialRoommatesState &&
+                  initialRoommatesState[key as keyof roommatesConditionType] === option.value ? (
+                    <>
+                      <FormCheckInput
+                        defaultChecked
+                        onChange={(e) => {
+                          if (e.target.checked) setRoommatesStateState({ ...roommatesState, [key]: option.value });
+                        }}
+                        type="radio"
+                        name={label}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FormCheckInput
+                        onChange={(e) => {
+                          if (e.target.checked) setRoommatesStateState({ ...roommatesState, [key]: option.value });
+                        }}
+                        type="radio"
+                        value={option.value || ''}
+                        name={label}
+                      />
+                    </>
+                  )}
                   <FormCheckLabel>{option.text}</FormCheckLabel>
                 </FormCheck>
               ))

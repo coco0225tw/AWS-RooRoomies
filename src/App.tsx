@@ -1,5 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { query, getFirestore, getDocs, collection, doc, onSnapshot } from 'firebase/firestore';
+import {
+  query,
+  getFirestore,
+  getDocs,
+  collection,
+  doc,
+  onSnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+} from 'firebase/firestore';
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect, Fragment } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -18,6 +27,12 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import ChatRooms from './components/ChatRooms/ChatRooms';
 import userType from './redux/GetAuth/GetAuthType';
+
+import { groupType, userInfoType } from './redux/Group/GroupType';
+import roomDetailsType from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import bookingTimesType from './redux/UploadBookingTimes/UploadBookingTimesType';
+import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import facilityType from './redux/UploadFacility/UploadFacilityType';
 const GlobalStyle = createGlobalStyle`
 @font-face {
   font-family: PingFangTC;
@@ -44,7 +59,7 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-    // border: solid 1px black;
+    border: solid 1px black;
     // color: #4f5152;
     position: relative;
   }
@@ -129,6 +144,7 @@ function User() {
           email: data?.data().email,
           image: data?.data().image,
           name: data?.data().name,
+          userListingId: data?.data().userListingId,
         };
         const meAsRoommatesState = {
           userAsRoommatesConditions: data?.data().userAsRoommatesConditions,
@@ -138,9 +154,6 @@ function User() {
           const favoriteLists = [...snapshot.data()!.favoriteLists];
           const compareLists = [...snapshot.data()!.compareLists];
           const dndLists = [...snapshot.data()!.dndLists];
-          // dispatch({ type: 'GET_FAVORITELISTS_FROM_FIREBASE', payload: { favoriteLists } });
-          // dispatch({ type: 'GET_COMPARELISTS_FROM_FIREBASE', payload: { compareLists } });
-          // dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
         });
         const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
@@ -151,6 +164,75 @@ function User() {
         dispatch({ type: 'GETUSER_FROMFIREBASE', payload: { user } });
         dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
         dispatch({ type: 'AUTH_CHANGE' });
+        if (data?.data().userListingId.length !== 0) {
+          console.log(data?.data().userListingId);
+          async function getListing() {
+            type ListingType = {
+              mainImage: string;
+              images: string[];
+              title: string;
+              countyName: string;
+              townName: string;
+              form: string;
+              environmentDescription: string;
+              roommatesConditions: roommatesConditionType;
+              facility: facilityType;
+              rentRoomDetails: roomDetailsType;
+              peopleAmount: number;
+              matchGroup: Array<groupType>;
+              listingTitle: string;
+              totalSq: number;
+            };
+            const listingData = await firebase.getListing(data?.data().userListingId);
+            let listingTitle = {
+              title: listingData?.title,
+              totalSq: listingData?.totalSq,
+              form: listingData?.form,
+            };
+            console.log(listingData?.roommatesConditions);
+            dispatch({ type: 'GET_LISTING_TITLE_FROM_FIREBASE', payload: { listingTitle } });
+            dispatch({
+              type: 'GET_ROOMMATESCONDITION_FROM_FIREBASE',
+              payload: { roommatesState: listingData?.roommatesConditions },
+            });
+            dispatch({
+              type: 'GET_FACILITY_FROM_FIREBASE',
+              payload: { facilityState: listingData?.facility },
+            });
+          }
+          // async function getBookingTimes() {
+          //   await firebase.getBookingTimesSubColForListing(data?.data().listingId).then((times) => {
+          //     let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+          //     times.forEach((doc) => {
+          //       listingTimesArr.push(doc);
+          //     });
+          //     // setBookingTimesInfo(listingTimesArr);
+
+          //     let enableDate = [];
+          //     if (listingTimesArr?.length !== 0) {
+          //       enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
+          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds); //console.log
+          //         if (findIndex === -1) {
+          //           acc.push(curr);
+          //         } else {
+          //         }
+          //         return acc;
+          //       }, []);
+          //       // setAbleBookingTimes(enableDate);
+          //     }
+          //     let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
+          //       let date = s.data().date.toDate();
+          //       return date;
+          //     });
+          //     // setAbleBookingTimes(enableDates);
+          //   });
+          // }
+          async function promise() {
+            await Promise.all([getListing()]);
+          }
+
+          promise();
+        }
       }
     });
   }, []);
