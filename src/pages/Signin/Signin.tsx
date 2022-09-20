@@ -5,7 +5,18 @@ import styled from 'styled-components';
 import { keyframes } from 'styled-components';
 
 import { firebase, auth, onAuthStateChanged } from '../../utils/firebase';
-
+import loginPage from '../../assets/loginPage.png';
+import { Title, SubTitle } from '../../components/ProfileTitle';
+import {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+} from '../../components/InputArea';
 interface IsActiveBtnProps {
   $isActive: boolean;
 }
@@ -15,54 +26,61 @@ const showInfoInputAni = keyframes`
 `;
 const Wrapper = styled.div`
   // padding: 130px 0px;
-  margin: 80px auto;
+  padding: 80px 40px;
   flex-grow: 1;
-  ${'' /* border: solid 5px brown; */}
-  width: 960px;
+  background-image: url(${loginPage});
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: right;
+  ${'' /* border: solid 5px brown; */};
+  // transform: scale(-1); // width: 960px;
   @media screen and (max-width: 1279px) {
     width: 100vw;
   }
 `;
 
-const FormGroup = styled.div`
-  display: flex;
-  align-items: center;
-  margin-top: 40px;
-  width: 50vw;
-  ${'' /* padding: 10px; */}
-  padding: 0px 30px;
-  justify-content: space-between;
-  animation-name: ${showInfoInputAni};
-  animation-duration: 1s;
-  animation-iteration-count: 1;
-  @media screen and (max-width: 1279px) {
-    width: 100%;
-    padding: 0px 15px;
+// const FormGroup = styled.div`
+//   display: flex;
+//   align-items: center;
+//   margin-top: 40px;
+//   width: 50vw;
+//   ${'' /* padding: 10px; */}
+//   padding: 0px 30px;
+//   justify-content: space-between;
+//   animation-name: ${showInfoInputAni};
+//   animation-duration: 1s;
+//   animation-iteration-count: 1;
+//   @media screen and (max-width: 1279px) {
+//     width: 100%;
+//     padding: 0px 15px;
 
-    flex-direction: column;
-  }
-`;
+//     flex-direction: column;
+//   }
+// `;
 
 const Form = styled.form.attrs({})`
+  position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: start;
   border: solid 1px #82542b;
   align-items: center;
-  width: 100%;
+  width: 40%;
+  left: 50%;
 `;
-const FormLabel = styled.label`
-  line-height: 19px;
-  font-size: 18px;
-  color: #3f3a3a;
-  display: block;
+// const FormLabel = styled.label`
+//   line-height: 19px;
+//   font-size: 18px;
+//   color: #3f3a3a;
+//   display: block;
 
-  @media screen and (max-width: 1279px) {
-    margin-bottom: 4px;
-    align-self: start;
-    ${'' /* font-size: 14px; */}
-  }
-`;
+//   @media screen and (max-width: 1279px) {
+//     margin-bottom: 4px;
+//     align-self: start;
+//     ${'' /* font-size: 14px; */}
+//   }
+// `;
 const FormInput = styled.input.attrs((props) => ({
   // type: props.id.includes("Picture")
   //   ? "file"
@@ -84,6 +102,9 @@ const FormInput = styled.input.attrs((props) => ({
   }
 `;
 
+const FormControlFullWidth = styled(FormControl)`
+  width: 100%;
+`;
 const SubmitBtn = styled.div`
   border: solid 1px #82542b;
   border-radius: 6px;
@@ -196,30 +217,36 @@ function SignIn() {
   return (
     <Wrapper>
       <Form>
-        <div>現在登入的人：{user?.email}</div>
-        <h1>登入</h1>
+        {/* <div>現在登入的人：{user?.email}</div> */}
+        <Title>登入</Title>
         {signInFormGroup.map(({ label, key }, index) => (
           <FormGroup key={key}>
             <FormLabel>{label}</FormLabel>
-            <FormInput ref={(el) => ((signInInfoRef.current[index] as any) = el)}></FormInput>
+            <FormInputWrapper>
+              <FormControlFullWidth ref={(el) => ((signInInfoRef.current[index] as any) = el)}></FormControlFullWidth>
+            </FormInputWrapper>
           </FormGroup>
         ))}
         <SubmitBtn onClick={() => signInSubmit()}>登入</SubmitBtn>
-        <h1>註冊</h1>
+        <Title>註冊</Title>
         {registerFormGroup.map(({ label, key }, index) => (
           <FormGroup key={key}>
             <FormLabel>{label}</FormLabel>
-
-            {key.includes('Picture') ? (
-              <FormInput type="file" ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormInput>
-            ) : (
-              <FormInput ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormInput>
-            )}
+            <FormInputWrapper>
+              {key.includes('Picture') ? (
+                <FormControlFullWidth
+                  type="file"
+                  ref={(el) => ((regInfoRef.current[index] as any) = el)}
+                ></FormControlFullWidth>
+              ) : (
+                <FormControlFullWidth ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormControlFullWidth>
+              )}
+            </FormInputWrapper>
           </FormGroup>
         ))}
         <SubmitBtn onClick={() => regSubmit()}>註冊</SubmitBtn>
       </Form>
-      <SubmitBtn onClick={() => handleLogout()}>登出</SubmitBtn>
+      {/* <SubmitBtn onClick={() => handleLogout()}>登出</SubmitBtn> */}
     </Wrapper>
   );
 }

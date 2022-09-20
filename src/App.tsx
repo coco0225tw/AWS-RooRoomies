@@ -66,7 +66,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: NotoSansTC;
-    // overflow-x: hidden;
+    overflow-x: hidden;
     padding: 0;
     margin: 0;
     // height: 100vh;
@@ -258,7 +258,7 @@ function App() {
       <GlobalStyle />
       <ChatRooms />
       <Header />
-      <User />
+      {/* <User /> */}
       <Outlet />
       <Footer />
     </Provider>
