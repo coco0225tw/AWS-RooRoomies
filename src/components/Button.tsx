@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 const BtnLink = styled(Link)`
+  color: #4f5152;
   font-size: 16px;
   letter-spacing: 4px;
   padding: 4px 12px;
@@ -14,6 +15,7 @@ const BtnLink = styled(Link)`
 `;
 
 const BtnDiv = styled.div`
+  color: #4f5152;
   font-size: 16px;
   letter-spacing: 4px;
   padding: 4px 12px;

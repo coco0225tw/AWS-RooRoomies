@@ -17,16 +17,19 @@ import {
   FormCheckLabel,
   FormControl,
 } from '../../components/InputArea';
+import { BtnDiv } from '../../components/Button';
+import userDefaultPic from '../../assets/user2.png';
 interface IsActiveBtnProps {
   $isActive: boolean;
 }
+
 const showInfoInputAni = keyframes`
  0% { height: 0; opacity: 0 ;}
  100% { height: 100%; opacity: 1; }
 `;
 const Wrapper = styled.div`
   // padding: 130px 0px;
-  padding: 80px 40px;
+  // padding: 80px 40px;
   flex-grow: 1;
   background-image: url(${loginPage});
   width: 100%;
@@ -39,35 +42,32 @@ const Wrapper = styled.div`
     width: 100vw;
   }
 `;
-
-// const FormGroup = styled.div`
-//   display: flex;
-//   align-items: center;
-//   margin-top: 40px;
-//   width: 50vw;
-//   ${'' /* padding: 10px; */}
-//   padding: 0px 30px;
-//   justify-content: space-between;
-//   animation-name: ${showInfoInputAni};
-//   animation-duration: 1s;
-//   animation-iteration-count: 1;
-//   @media screen and (max-width: 1279px) {
-//     width: 100%;
-//     padding: 0px 15px;
-
-//     flex-direction: column;
-//   }
-// `;
+const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  // width: 30%;
+  padding: 0px 40px 28px;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+`;
 
 const Form = styled.form.attrs({})`
   position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: start;
-  border: solid 1px #82542b;
+  // border: solid 1px #82542b;
+  border-radius: 20px;
   align-items: center;
-  width: 40%;
+  width: 30vw;
   left: 50%;
+  top: 20%;
+  transition-duration: 0.2s;
+  // transform: translateY(-80%);
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  // padding: 40px;
 `;
 // const FormLabel = styled.label`
 //   line-height: 19px;
@@ -124,7 +124,7 @@ const SubmitBtn = styled.div`
 const SwitchBtns = styled.div`
   width: 100%;
 `;
-const SwitchBtn = styled.div<IsActiveBtnProps>`
+const SwitchBtn = styled(BtnDiv)<IsActiveBtnProps>`
   box-sizing: border-box;
   display: inline-block;
   width: 50%;
@@ -133,7 +133,12 @@ const SwitchBtn = styled.div<IsActiveBtnProps>`
   text-align: center;
   cursor: pointer;
   transition-duration: 0.2s;
-  background-color: ${(props) => (props.$isActive ? '#8b572a' : '#ffffff')};
+  color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#4f5152')};
+  background-color: ${(props) => (props.$isActive ? '#c77155 ' : '#ffffff')};
+  &:hover {
+    color: ${(props) => (props.$isActive ? '#c77155 ' : 'ece2d5')};
+    background-color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#ece2d5')};
+  }
 `;
 
 const LoginOptionGroup = ['登入', '建立新帳號'];
@@ -141,7 +146,7 @@ const registerFormGroup = [
   { label: '使用者名稱', key: 'regName' },
   { label: '信箱', key: 'regEmail' },
   { label: '密碼', key: 'regPassword' },
-  { label: '上傳使用者照片', key: 'regPicture' },
+  // { label: '上傳使用者照片', key: 'regPicture' },
 ];
 const signInFormGroup = [
   { label: '信箱', key: 'signInEmail' },
@@ -152,6 +157,8 @@ const FormGroups = [signInFormGroup, registerFormGroup];
 const submitBtnGroups = ['登入', '註冊', '登出'];
 
 function SignIn() {
+  const navigate = useNavigate();
+  const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [user, setUser] = useState<User>();
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
@@ -187,18 +194,22 @@ function SignIn() {
       newUser?.user.uid as string,
       regInfoRef.current[1].value,
       regInfoRef.current[0].value,
-      regInfoRef.current[3].files![0]
+      userDefaultPic
+      // regInfoRef.current[3].files![0]
     );
+    navigate('/');
   };
   const signInSubmit = async function () {
     setSignInInfo({ signInEmail: signInInfoRef.current[0].value, signInPassword: signInInfoRef.current[1].value });
     let newUser = await firebase.signInUser(signInInfoRef.current[0]!.value, signInInfoRef.current[1]!.value);
-    console.log('登入');
+    console.log(newUser);
+    // console.log('登入');
+    // navigate('/');
   };
 
   const handleLogout = async function () {
     await firebase.signOutUser();
-    console.log('登出');
+    // console.log('登出');
   };
 
   async function getProfile() {
@@ -217,36 +228,56 @@ function SignIn() {
   return (
     <Wrapper>
       <Form>
-        {/* <div>現在登入的人：{user?.email}</div> */}
-        <Title>登入</Title>
-        {signInFormGroup.map(({ label, key }, index) => (
-          <FormGroup key={key}>
-            <FormLabel>{label}</FormLabel>
-            <FormInputWrapper>
-              <FormControlFullWidth ref={(el) => ((signInInfoRef.current[index] as any) = el)}></FormControlFullWidth>
-            </FormInputWrapper>
-          </FormGroup>
-        ))}
-        <SubmitBtn onClick={() => signInSubmit()}>登入</SubmitBtn>
-        <Title>註冊</Title>
-        {registerFormGroup.map(({ label, key }, index) => (
-          <FormGroup key={key}>
-            <FormLabel>{label}</FormLabel>
-            <FormInputWrapper>
-              {key.includes('Picture') ? (
-                <FormControlFullWidth
-                  type="file"
-                  ref={(el) => ((regInfoRef.current[index] as any) = el)}
-                ></FormControlFullWidth>
-              ) : (
-                <FormControlFullWidth ref={(el) => ((regInfoRef.current[index] as any) = el)}></FormControlFullWidth>
-              )}
-            </FormInputWrapper>
-          </FormGroup>
-        ))}
-        <SubmitBtn onClick={() => regSubmit()}>註冊</SubmitBtn>
+        <SwitchBtns>
+          {LoginOptionGroup.map((option, index) => (
+            <SwitchBtn
+              key={`switchBtn${index}`}
+              $isActive={index === activeOptionIndex}
+              onClick={() => {
+                setActiveOptionIndex(index);
+              }}
+            >
+              {option}
+            </SwitchBtn>
+          ))}
+        </SwitchBtns>
+        <FormWrapper>
+          {/* <Title>登入</Title> */}
+          {activeOptionIndex === 0 && (
+            <>
+              {signInFormGroup.map(({ label, key }, index) => (
+                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={key}>
+                  <FormLabel>{label}</FormLabel>
+                  <FormInputWrapper>
+                    <FormControlFullWidth
+                      type={key.includes('Password') ? 'password' : 'input'}
+                      ref={(el) => ((signInInfoRef.current[index] as any) = el)}
+                    ></FormControlFullWidth>
+                  </FormInputWrapper>
+                </FormGroup>
+              ))}
+              <BtnDiv onClick={() => signInSubmit()}>登入</BtnDiv>
+            </>
+          )}
+
+          {activeOptionIndex === 1 && (
+            <>
+              {registerFormGroup.map(({ label, key }, index) => (
+                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={key}>
+                  <FormLabel>{label}</FormLabel>
+                  <FormInputWrapper>
+                    <FormControlFullWidth
+                      type={key.includes('Password') ? 'password' : key.includes('Picture') ? 'file' : 'input'}
+                      ref={(el) => ((regInfoRef.current[index] as any) = el)}
+                    ></FormControlFullWidth>
+                  </FormInputWrapper>
+                </FormGroup>
+              ))}
+              <BtnDiv onClick={() => regSubmit()}>註冊</BtnDiv>
+            </>
+          )}
+        </FormWrapper>
       </Form>
-      {/* <SubmitBtn onClick={() => handleLogout()}>登出</SubmitBtn> */}
     </Wrapper>
   );
 }

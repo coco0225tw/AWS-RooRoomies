@@ -77,7 +77,7 @@ const firebase = {
       images: imagesUrl,
     });
     const bookingTimesDocRef = doc(collection(db, 'listings', newListingRef.id, bookingTimesCollection));
-    let bookingTimePromises: any = [];
+    let bookingTimePromises: Promise<void>[] = [];
     console.log(bookingTimes);
     bookingTimes.map((bookingTime: any, index: number) => {
       console.log(newListingRef.id);
@@ -89,13 +89,11 @@ const firebase = {
     await Promise.all(bookingTimePromises);
   },
 
-  async getAllListings(county: string | null, town: string | null, startRent: string | null, endRent: string | null) {
+  async getAllListings(county: string | null, town: string | null, startRent: number | null, endRent: number | null) {
     const whereQuery: any[] = [];
     let convertedCounty: string | null = null;
-    console.log(startRent);
-    console.log(endRent);
-    if (startRent) whereQuery.push(where('startRent', '>=', Number(startRent)));
-    if (endRent) whereQuery.push(where('startRent', '<=', Number(endRent)));
+    if (startRent) whereQuery.push(where('startRent', '>=', startRent));
+    if (endRent) whereQuery.push(where('startRent', '<=', endRent));
     if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
     if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
     if (town) whereQuery.push(where('townName', '==', town));
@@ -114,17 +112,30 @@ const firebase = {
     return querySnapshot;
   },
 
-  async getNextPageListing(lastDoc: DocumentData, county: string | null, town: string | null) {
-    const constraints: any[] = [];
+  async getNextPageListing(
+    lastDoc: DocumentData,
+    county: string | null,
+    town: string | null,
+    startRent: number | null,
+    endRent: number | null
+  ) {
+    const whereQuery: any[] = [];
     let convertedCounty: string | null = null;
+    if (startRent) whereQuery.push(where('startRent', '>=', startRent));
+    if (endRent) whereQuery.push(where('startRent', '<=', endRent));
     if (county?.includes('臺')) convertedCounty = county.replace('臺', '台');
-    if (county) constraints.push(where('countyName', 'in', [county, convertedCounty]));
-    if (town) constraints.push(where('townName', '==', town));
+    if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
+    if (town) whereQuery.push(where('townName', '==', town));
+
+    let orderByQuery: any[] = [];
+    if (startRent || endRent) orderByQuery.push(orderBy('startRent', descending));
+
     const listingsQuery = query(
       collection(db, 'listings'),
-      ...constraints,
+      ...whereQuery,
+      ...orderByQuery,
       orderBy(uploadedTimeField, descending),
-      startAfter(lastDoc), //BUGFIX-者理會有ERROR(最後一頁)
+      startAfter(lastDoc),
       limit(homePageListingSize)
     );
     const querySnapshot = await getDocs(listingsQuery);
@@ -182,6 +193,7 @@ const firebase = {
   async signInUser(email: string, password: string) {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
+
       console.log(user);
     } catch (error: any) {
       console.log(error.message);
@@ -198,12 +210,12 @@ const firebase = {
       isBooked: true,
     });
   },
-  async setNewUserDocField(uid: string, email: string, name: string, image: Blob) {
-    const url = await this.uploadUserImage(image, uid);
+  async setNewUserDocField(uid: string, email: string, name: string, image: string) {
+    // const url = await this.uploadUserImage(image, uid);
     await setDoc(doc(db, 'users', uid), {
       name: name,
       email: email,
-      image: url,
+      image: image,
       favoriteLists: [],
       compareLists: [],
       dndLists: [],

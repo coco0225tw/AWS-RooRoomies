@@ -33,6 +33,7 @@ import roomDetailsType from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import bookingTimesType from './redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from './redux/UploadFacility/UploadFacilityType';
+import { useNavigate } from 'react-router-dom';
 const GlobalStyle = createGlobalStyle`
 @font-face {
   font-family: PingFangTC;
@@ -112,12 +113,14 @@ const GlobalStyle = createGlobalStyle`
 
 function User() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   useEffect(() => {
     console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
+        navigate('/');
       } else {
         dispatch({ type: 'RETURN_INITIAL_GETUSER' });
         dispatch({ type: 'RETURN_INITIAL_AUTH' });
@@ -258,7 +261,7 @@ function App() {
       <GlobalStyle />
       <ChatRooms />
       <Header />
-      {/* <User /> */}
+      <User />
       <Outlet />
       <Footer />
     </Provider>

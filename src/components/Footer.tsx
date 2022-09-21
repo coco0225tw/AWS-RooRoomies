@@ -47,7 +47,7 @@ const Profile = styled(Link)<{ img: string }>`
   border: solid 1px #857c7c;
   background-image: url(${(props) => props.img});
   background-size: 40px 40px;
-  background-position: cover;
+  background-position: center center;
   @media screen and (max-width: 960px) {
     width: 48px;
     height: 48px;

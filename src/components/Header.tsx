@@ -8,7 +8,7 @@ import { BtnLink, BtnDiv } from './Button';
 import Popup from './Popup';
 import search from '../assets/search.svg';
 import { firebase, auth, onAuthStateChanged } from '../utils/firebase';
-
+import user2 from '../assets/user2.png';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -65,10 +65,11 @@ const Profile = styled(Link)<{ img: string }>`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: solid 1px #857c7c;
+  // border: solid 1px #857c7c;
   background-image: url(${(props) => props.img});
   background-size: 40px 40px;
-  background-position: cover;
+  background-position: center center;
+  background-color: white;
 `;
 
 const Notification = styled.div`

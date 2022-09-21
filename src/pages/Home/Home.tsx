@@ -20,7 +20,8 @@ const Wrapper = styled.div`
   height: 100%;
   // margin: auto;
   position: relative;
-  margin: 80px auto;
+  margin: 80px auto 160px;
+  padding-bottom: 20px;
 `;
 
 const HomePageTitle = styled.div`
@@ -39,8 +40,8 @@ const ListingWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin-top: 32px;
-  // justify-content: flex-start;
+  margin: 32px auto;
+  justify-content: flex-start;
   // background-color: grey;
 `;
 
@@ -74,9 +75,9 @@ function Home() {
   const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
   const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
 
-  console.log(listingDocData);
+  // console.log(listingDocData);
   useEffect(() => {
-    console.log('homeFromUseEffect');
+    // console.log('homeFromUseEffect');
     // firebase.getAllListings(null, null).then((listing) => {
     //   const lastDoc = listing.docs[listing.docs.length - 1];
     //   dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });

@@ -57,6 +57,7 @@ const FormCheckInput = styled.input`
   margin: 0;
   flex-grow: 1;
   height: 19px;
+  padding-left: 8px;
   // background-color: #c77155;
   accent-color: #c77155;
   cursor: pointer;
@@ -94,9 +95,9 @@ const FormCheckLabel = styled.label`
   line-height: 26px;
   color: #4f5152;
 
-  @media screen and (max-width: 1279px) {
-    font-size: 14px;
-  }
+  // @media screen and (max-width: 1279px) {
+  //   font-size: 14px;
+  // }
 `;
 
 const FormControl = styled.input`
@@ -104,6 +105,7 @@ const FormControl = styled.input`
   height: 30px;
   border-radius: 8px;
   border: solid 1px #979797;
+  padding-left: 8px;
 
   @media screen and (max-width: 1279px) {
     margin-top: 10px;

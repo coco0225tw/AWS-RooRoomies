@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { firebase } from '../../utils/firebase';
 import { useSelector, useDispatch } from 'react-redux';
@@ -18,6 +18,7 @@ import {
   FormControl,
 } from '../../components/InputArea';
 // import { RootState } from '../../../redux/rootReducer';
+import { BtnDiv } from '../../components/Button';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,6 +31,7 @@ const Wrapper = styled.div`
   background-size: cover;
   // background-position: cover;
   background-position: bottom;
+  position: static;
 `;
 
 const SideBarWrapper = styled.div`
@@ -37,94 +39,11 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 
-// const FormLegend = styled.legend`
-//   line-height: 19px;
-//   font-size: 16px;
-//   font-weight: bold;
-//   color: #3f3a3a;
-//   padding-bottom: 16px;
-//   border-bottom: 1px solid #3f3a3a;
-//   flex-direction: column;
-//   width: 100%;
-// `;
-// const FormGroup = styled.div`
-//   display: flex;
-//   align-items: center;
-//   flex-wrap: wrap;
-//   margin-top: 30px;
-//   width: 100%;
-//   ${FormLegend} + & {
-//     margin-top: 25px;
-//   }
-
-//   @media screen and (max-width: 1279px) {
-//     line-height: 17px;
-//     font-size: 14px;
-//     margin-top: 20px;
-//     width: 100%;
-
-//     ${FormLegend} + & {
-//       margin-top: 20px;
-//     }
-//   }
-// `;
-
-// const FormLabel = styled.label`
-//   //   width: 110px;
-//   line-height: 19px;
-//   font-size: 16px;
-//   color: #3f3a3a;
-//   display: block;
-// `;
-
-// const FormCheckInput = styled.input`
-//   margin: 0;
-//   flex-grow: 1;
-//   height: 19px;
-// `;
-
-// const FormCheck = styled.div`
-//   margin-left: 8px;
-//   display: flex;
-//   align-items: center;
-
-//   & + & {
-//     margin-left: 30px;
-//   }
-
-//   @media screen and (max-width: 1279px) {
-//     margin-left: 0;
-//     margin-top: 10px;
-
-//     & + & {
-//       margin-left: 27px;
-//     }
-//   }
-// `;
-
-// const FormCheckLabel = styled.label`
-//   margin-left: 10px;
-//   line-height: 26px;
-
-//   @media screen and (max-width: 1279px) {
-//     font-size: 14px;
-//   }
-// `;
-
-// const FormControl = styled.input`
-//   width: 574px;
-//   height: 30px;
-//   border-radius: 8px;
-//   border: solid 1px #979797;
-
-//   @media screen and (max-width: 1279px) {
-//     margin-top: 10px;
-//     width: 100%;
-//   }
-// `;
 const SearchBox = styled.div`
+  position: static;
   margin: 80px;
-  background-color: rgba(225, 225, 225, 0.9);
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 0px 20px 30px;
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -135,44 +54,105 @@ const Btn = styled.div`
     transition: 0.2s;
   }
 `;
-const NextPageBtn = styled(Btn)``;
+const NextPageBtn = styled(BtnDiv)`
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
+const CheckedFormCheckLabel = styled(FormCheckLabel)`
+  cursor: pointer;
+`;
+const CheckedFormCheckInput = styled(FormCheckInput)`
+  display: none;
+  &:checked + ${CheckedFormCheckLabel} {
+    // background: #c77155;
+    color: #c77155;
+  }
+`;
+
+const StyledFormGroup = styled(FormGroup)`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const StyledFormLabel = styled(FormLabel)`
+  flex-shrink: 0;
+`;
+
+const StyledFormInputWrapper = styled(FormInputWrapper)`
+  margin-left: 40px;
+  margin-top: 0px;
+`;
 function Search() {
   const dispatch = useDispatch();
+  const [selectCounty, setSelectCounty] = useState<County>({
+    countyCode: 63000,
+    countyName: '臺北市',
+  });
+  const [selectTown, setSelectTown] = useState<string>('不限');
+  const [selectRent, setSelectRent] = useState<string>('不限');
   const startRentRef = useRef<HTMLInputElement>(null);
   const endRentRef = useRef<HTMLInputElement>(null);
+  const peopleRef = useRef<HTMLInputElement>(null);
   const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
   interface County {
     countyCode: number | null;
     countyName: string | null;
   }
-
-  const [selectCounty, setSelectCounty] = useState<County>({
-    countyCode: null,
-    countyName: null,
-  });
   const [towns, setTowns] = useState<any>();
-  const [selectTown, setSelectTown] = useState<string>();
-  const searchFormGroup = [
-    { label: '縣市', key: 'countyname', countyOptions: countyItem },
-    { label: '鄉鎮市區', key: 'townname' },
-    {
-      label: '租金',
-      key: 'rent',
-      options: [
-        { label: '開始租金', key: 'startRent' },
-        { label: '結束租金', key: 'endRent' },
-      ],
-    },
-  ];
 
-  function handleOnchange(
-    county: string | null,
-    town: string | null,
-    startRent: string | null,
-    endRent: string | null
-  ) {
-    console.log(startRent);
-    console.log(endRent);
+  const countyGroup = { label: '縣市', key: 'countyname', countyOptions: countyItem };
+  const townGroup = {
+    label: '地區',
+    key: 'townname',
+    townOptions: [
+      { label: '不限', key: 'unlimitedTown' },
+      ...allTowns[`townItem${selectCounty.countyCode}` as keyof typeof allTowns],
+    ],
+  };
+  const rentGroup = {
+    label: '租金',
+    key: 'rent',
+    options: [
+      { label: '不限', key: 'unlimitedRent' },
+      { label: '5000以下', key: 'under5000' },
+      { label: '5000~10000', key: '5000to10000' },
+      { label: '10000~20000', key: '10000to20000' },
+      { label: '20000以上', key: 'over20000' },
+    ],
+  };
+  const peopleGroup = {
+    label: '人數',
+    key: 'people',
+    options: [
+      { label: '不限', key: 'unlimitedPeople' },
+      { label: '1', key: 'people1' },
+      { label: '2', key: 'people2' },
+      { label: '3', key: 'people3' },
+      { label: '4', key: 'people4' },
+    ],
+  };
+  function handleOnchange(county: string, town: string | null, rent: string) {
+    if (town === '不限') {
+      town = null;
+    }
+    let startRent: null | number = null;
+    let endRent: null | number = null;
+    if (rent === '不限') {
+      startRent = null;
+      endRent = null;
+    } else if (rent.includes('~')) {
+      startRent = Number(rent.split('~')[0]);
+      endRent = Number(rent.split('~')[1]);
+    } else if (rent.includes('以下')) {
+      startRent = null;
+      endRent = Number(rent.replace('以下', ''));
+    } else if (rent.includes('以上')) {
+      startRent = Number(rent.replace('以上', ''));
+      endRent = null;
+    }
     firebase.getAllListings(county, town, startRent, endRent).then((listing) => {
       if (listing.empty) {
         dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: [] } });
@@ -189,104 +169,137 @@ function Search() {
       }
     });
   }
-  async function nextPage(county: string | null, town: string | null) {
-    firebase.getNextPageListing(lastDocData as QueryDocumentSnapshot<DocumentData>, county, town).then((listing) => {
-      if (listing.empty) return;
-      const lastDoc = listing.docs[listing.docs.length - 1];
-      dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
-      let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-      listing.forEach((doc) => {
-        listingDocArr.push(doc);
+  async function nextPage(county: string | null, town: string | null, rent: string) {
+    if (town === '不限') {
+      town = null;
+    }
+    let startRent: null | number = null;
+    let endRent: null | number = null;
+    if (rent === '不限') {
+      startRent = null;
+      endRent = null;
+    } else if (rent.includes('~')) {
+      startRent = Number(rent.split('~')[0]);
+      endRent = Number(rent.split('~')[1]);
+    } else if (rent.includes('以下')) {
+      startRent = null;
+      endRent = Number(rent.replace('以下', ''));
+    } else if (rent.includes('以上')) {
+      startRent = Number(rent.replace('以上', ''));
+      endRent = null;
+    }
+    firebase
+      .getNextPageListing(lastDocData as QueryDocumentSnapshot<DocumentData>, county, town, startRent, endRent)
+      .then((listing) => {
+        if (listing.empty) return;
+        const lastDoc = listing.docs[listing.docs.length - 1];
+        dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
+        let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        listing.forEach((doc) => {
+          listingDocArr.push(doc);
+        });
+        dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
       });
-      dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
-    });
   }
+  useEffect(() => {
+    handleOnchange(selectCounty.countyName!, '不限', '不限');
+  }, []);
   return (
     <Wrapper>
       <SearchBox>
-        {searchFormGroup.map(({ label, key, countyOptions, options }, index) => (
-          <FormGroup style={{ flexDirection: 'row' }} key={key}>
-            <FormLabel>{label}</FormLabel>
-            <FormInputWrapper>
-              {options
-                ? options.map((option: any, oIndex) => (
-                    <FormCheck key={`${option.key}${oIndex}`}>
-                      <FormCheckLabel>{option.label}</FormCheckLabel>
-                      <FormCheckInput
-                        onBlur={() => {
-                          handleOnchange(
-                            selectCounty!.countyName,
-                            selectTown!,
-                            startRentRef.current!.value,
-                            endRentRef.current!.value
-                          );
-                        }}
-                        ref={eval(`${option.key}Ref`)}
-                        type="input"
-                        name={label}
-                      />
-                    </FormCheck>
-                  ))
-                : countyOptions
-                ? countyOptions.map((option, cIndex) => (
-                    <FormCheck key={`town${cIndex}`}>
-                      <FormCheckInput
-                        type="radio"
-                        name={label}
-                        // checked={selectCounty?.countyCode == option.countycode01}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            handleOnchange(
-                              option.countyname,
-                              null,
-                              startRentRef.current!.value,
-                              endRentRef.current!.value
-                            );
-                            setSelectCounty({ countyCode: option.countycode01, countyName: option.countyname });
-                            setTowns(allTowns[`townItem${option.countycode01}` as keyof typeof allTowns]);
-                          }
-                        }}
-                      />
-                      <FormCheckLabel>{option.countyname}</FormCheckLabel>
-                    </FormCheck>
-                  ))
-                : towns &&
-                  towns.map((option: any, tIndex: any) => (
-                    <FormCheck key={`town${selectCounty!.countyName}${tIndex}`}>
-                      <FormCheckInput
-                        type="radio"
-                        name="town"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            handleOnchange(
-                              selectCounty!.countyName,
-                              option.townname,
-                              startRentRef.current!.value,
-                              endRentRef.current!.value
-                            );
-                            setSelectTown(option.townname);
-                          }
-                        }}
-                      />
-                      <FormCheckLabel>{option.townname}</FormCheckLabel>
-                    </FormCheck>
-                  ))}
-            </FormInputWrapper>
-          </FormGroup>
-        ))}
-        <NextPageBtn onClick={() => nextPage(selectCounty?.countyName, selectTown!)}>下一頁</NextPageBtn>
+        <StyledFormGroup key={countyGroup.key}>
+          <StyledFormLabel>{countyGroup.label}</StyledFormLabel>
+          <StyledFormInputWrapper>
+            {countyGroup.countyOptions.map((option: any, oIndex) => (
+              <div key={`${option.key}${oIndex}`}>
+                <FormCheck style={{ padding: '8px 0px' }}>
+                  <CheckedFormCheckInput
+                    defaultChecked={selectCounty.countyCode === option.countycode01}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectCounty({
+                          countyCode: option.countycode01,
+                          countyName: option.countyname,
+                        });
+                        setSelectTown('不限');
+                      }
+                      handleOnchange(option.countyname, '不限', selectRent!);
+                    }}
+                    type="radio"
+                    name={countyGroup.key}
+                    id={`${option.countyname}`}
+                  />
+                  <CheckedFormCheckLabel htmlFor={`${option.countyname}`}>
+                    {option.countyname}
+                    {/* {option.countycode01} */}
+                  </CheckedFormCheckLabel>
+                </FormCheck>
+              </div>
+            ))}
+          </StyledFormInputWrapper>
+        </StyledFormGroup>
+        <StyledFormGroup key={townGroup.key}>
+          <StyledFormLabel>{townGroup.label}</StyledFormLabel>
+          <StyledFormInputWrapper>
+            {selectCounty &&
+              townGroup.townOptions.map((option: any, oIndex) => (
+                <div key={`${selectCounty.countyCode}${option.key}${oIndex}`}>
+                  <FormCheck style={{ padding: '8px 0px' }}>
+                    <CheckedFormCheckInput
+                      defaultChecked={option.key ? true : false}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectTown(option.key ? option.label : option.townname);
+                        }
+                        handleOnchange(
+                          selectCounty!.countyName!,
+                          option.key ? option.label : option.townname,
+                          selectRent!
+                        );
+                      }}
+                      type="radio"
+                      name={townGroup.key}
+                      id={`${option.townname}`}
+                    />
+                    <CheckedFormCheckLabel htmlFor={`${option.townname}`}>
+                      {option.key ? option.label : option.townname}
+                    </CheckedFormCheckLabel>
+                  </FormCheck>
+                </div>
+              ))}
+          </StyledFormInputWrapper>
+        </StyledFormGroup>
+        <StyledFormGroup key={rentGroup.key}>
+          <StyledFormLabel>{rentGroup.label}</StyledFormLabel>
+          <StyledFormInputWrapper>
+            {rentGroup.options.map((option: any, oIndex) => (
+              <div key={`${option.key}${oIndex}`}>
+                <FormCheck style={{ padding: '8px 0px' }}>
+                  <CheckedFormCheckInput
+                    defaultChecked={option.key.includes('unlimited')}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectRent(option.label);
+                      }
+                      handleOnchange(selectCounty!.countyName!, selectTown!, option.label);
+                    }}
+                    type="radio"
+                    name={rentGroup.key}
+                    id={`${option.key}`}
+                  />
+                  <CheckedFormCheckLabel htmlFor={`${option.key}`}>
+                    {option.label}
+                    {/* {option.key ? option.label : option.townname} */}
+                  </CheckedFormCheckLabel>
+                </FormCheck>
+              </div>
+            ))}
+          </StyledFormInputWrapper>
+        </StyledFormGroup>
       </SearchBox>
+      <NextPageBtn onClick={() => nextPage(selectCounty?.countyName, selectTown!, selectRent!)}>下一頁</NextPageBtn>
     </Wrapper>
   );
 }
 
 export default Search;
-
-//   {!countyOptions &&
-//     towns &&
-//     towns.map((option: any, index: any) => (
-//       <FormCheck key={`town${index}`}>
-//         <FormCheckInput type="radio" name="town" />
-//         <FormCheckLabel>{option.townname}</FormCheckLabel>
-//       </FormCheck>
-//     ))}
