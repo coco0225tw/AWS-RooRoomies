@@ -17,6 +17,7 @@ import {
   FormCheckLabel,
   FormControl,
 } from '../../components/InputArea';
+import arrow from '../../assets/arrow.png';
 // import { RootState } from '../../../redux/rootReducer';
 import { BtnDiv } from '../../components/Button';
 const Wrapper = styled.div`
@@ -40,10 +41,15 @@ const SideBarWrapper = styled.div`
 `;
 
 const SearchBox = styled.div`
-  position: static;
-  margin: 80px;
+  position: absolute;
+  margin: 80px auto;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 0px 20px 30px;
+  width: 50%;
+  // top: 20%;
+  top: 0px;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -85,6 +91,36 @@ const StyledFormInputWrapper = styled(FormInputWrapper)`
   margin-left: 40px;
   margin-top: 0px;
 `;
+
+const DropDown = styled(StyledFormLabel)`
+  cursor: pointer;
+  color: #c77155;
+  border-color: #c77155;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+`;
+const DropDownMenuWrapper = styled(StyledFormInputWrapper)`
+  margin-left: 0px;
+  position: absolute;
+  background-color: #fff;
+  z-index: 1;
+  top: 60px;
+  box-shadow: 0px 0px 3px #bbbbbb;
+  width: 80%;
+  padding: 20px 20px;
+`;
+const DropDownIcon = styled.div<{ openDropDown: boolean }>`
+  width: 20px;
+  height: 20px;
+  background-size: 20px 20px;
+  background-image: url(${arrow});
+  background-position: center;
+  transform: ${(props) => (props.openDropDown ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transition-duration: 0.2s;
+  margin-left: 20px;
+  border: solid 1px #fff7f4;
+`;
 function Search() {
   const dispatch = useDispatch();
   const [selectCounty, setSelectCounty] = useState<County>({
@@ -93,9 +129,7 @@ function Search() {
   });
   const [selectTown, setSelectTown] = useState<string>('不限');
   const [selectRent, setSelectRent] = useState<string>('不限');
-  const startRentRef = useRef<HTMLInputElement>(null);
-  const endRentRef = useRef<HTMLInputElement>(null);
-  const peopleRef = useRef<HTMLInputElement>(null);
+  const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
   interface County {
     countyCode: number | null;
@@ -201,42 +235,57 @@ function Search() {
         dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
       });
   }
+  function clickOnDropDown() {
+    setOpenDropDown(true);
+  }
+  function selectCountyFunction() {
+    setOpenDropDown(false);
+  }
   useEffect(() => {
     handleOnchange(selectCounty.countyName!, '不限', '不限');
   }, []);
   return (
     <Wrapper>
       <SearchBox>
-        <StyledFormGroup key={countyGroup.key}>
-          <StyledFormLabel>{countyGroup.label}</StyledFormLabel>
-          <StyledFormInputWrapper>
-            {countyGroup.countyOptions.map((option: any, oIndex) => (
-              <div key={`${option.key}${oIndex}`}>
-                <FormCheck style={{ padding: '8px 0px' }}>
-                  <CheckedFormCheckInput
-                    defaultChecked={selectCounty.countyCode === option.countycode01}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectCounty({
-                          countyCode: option.countycode01,
-                          countyName: option.countyname,
-                        });
-                        setSelectTown('不限');
-                      }
-                      handleOnchange(option.countyname, '不限', selectRent!);
-                    }}
-                    type="radio"
-                    name={countyGroup.key}
-                    id={`${option.countyname}`}
-                  />
-                  <CheckedFormCheckLabel htmlFor={`${option.countyname}`}>
-                    {option.countyname}
-                    {/* {option.countycode01} */}
-                  </CheckedFormCheckLabel>
-                </FormCheck>
-              </div>
-            ))}
-          </StyledFormInputWrapper>
+        <StyledFormGroup style={{ flexDirection: 'column' }} key={countyGroup.key}>
+          {/* <StyledFormLabel>{countyGroup.label}</StyledFormLabel> */}
+          <DropDown onClick={() => (openDropDown ? setOpenDropDown(false) : setOpenDropDown(true))}>
+            {selectCounty.countyName}
+            <span>
+              <DropDownIcon openDropDown={openDropDown} />
+            </span>
+          </DropDown>
+          {openDropDown && (
+            <DropDownMenuWrapper>
+              {countyGroup.countyOptions.map((option: any, oIndex) => (
+                <div key={`${option.key}${oIndex}`}>
+                  <FormCheck style={{ padding: '8px 0px' }}>
+                    <CheckedFormCheckInput
+                      defaultChecked={selectCounty.countyCode === option.countycode01}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectCounty({
+                            countyCode: option.countycode01,
+                            countyName: option.countyname,
+                          });
+                          setSelectTown('不限');
+                        }
+                        handleOnchange(option.countyname, '不限', selectRent!);
+                        setOpenDropDown(false);
+                      }}
+                      type="radio"
+                      name={countyGroup.key}
+                      id={`${option.countyname}`}
+                    />
+                    <CheckedFormCheckLabel htmlFor={`${option.countyname}`}>
+                      {option.countyname}
+                      {/* {option.countycode01} */}
+                    </CheckedFormCheckLabel>
+                  </FormCheck>
+                </div>
+              ))}
+            </DropDownMenuWrapper>
+          )}
         </StyledFormGroup>
         <StyledFormGroup key={townGroup.key}>
           <StyledFormLabel>{townGroup.label}</StyledFormLabel>
