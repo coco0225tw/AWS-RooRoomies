@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../redux/rootReducer';
 import Logo from '../assets/logo.png';
 import { BtnLink, BtnDiv } from './Button';
-import Popup from './Popup';
+import { PopupComponent } from './Popup';
 import search from '../assets/search.svg';
 import { firebase, auth, onAuthStateChanged } from '../utils/firebase';
 import user2 from '../assets/user2.png';
@@ -117,7 +117,7 @@ function Header() {
   return (
     <Wrapper>
       {isShown && (
-        <Popup
+        <PopupComponent
           msg={`確定要登出嗎?`}
           notDefaultBtn={`取消`}
           defaultBtn={`登出`}

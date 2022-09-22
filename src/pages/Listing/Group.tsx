@@ -22,12 +22,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 import { groupType } from '../../redux/Group/GroupType';
 import { Title } from '../../components/ProfileTitle';
+import { BtnDiv } from '../../components/Button';
 import Hr from '../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   //   justify-content: center;
-  // align-items: flex-start;
+  align-items: flex-start;
   width: 100%;
   // height: 100%;
   margin: auto;
@@ -55,8 +56,13 @@ const SubmitBtn = styled.div`
     background-color: #222;
   }
 `;
-const SingleGroup = styled.div``;
+const SingleGroup = styled.div`
+  margin-bottom: 20px;
+  align-items: center;
+  display: flex;
+`;
 const SingleGroupWrapper = styled.div`
+  align-items: center;
   display: flex;
 `;
 
@@ -66,6 +72,14 @@ const AddToGroup = styled.div`
   height: 40px;
   text-align: center;
   line-height: 40px;
+  border: solid 1px #4f5152;
+  margin-left: 20px;
+  cursor: pointer;
+  transition-duration: 0.2s;
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 4px 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const UserPic = styled(AddToGroup)<{ img: string }>`
@@ -78,6 +92,9 @@ const SubTitle = styled.div`
   font-weight: bold;
   color: #4f5152;
   width: 100%;
+`;
+const GroupIndex = styled.div`
+  font-size: 16px;
 `;
 function Group({
   peopleAmount,
@@ -129,30 +146,30 @@ function Group({
   return (
     <Wrapper>
       <Hr style={{ margin: '40px 0px' }} />
-      <SubTitle style={{ marginBottom: '32px' }}>湊團</SubTitle>
+      <SubTitle style={{ marginBottom: '32px' }}>湊團看房</SubTitle>
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
           <SingleGroup key={`group${gIndex}`}>
-            <SingleGroupWrapper>
-              <div>團{gIndex + 1}</div>
-              {group.users.map((user, index) =>
-                user === null ? (
-                  <AddToGroup onClick={() => addUserToGroup(gIndex, index)} key={`user${index}`}>
-                    +
-                  </AddToGroup>
-                ) : (
-                  <UserPic
-                    // onClick={() => addUserToGroup(gIndex, index)}
-                    key={`user${index}`}
-                    img={user.userPic}
-                  ></UserPic>
-                )
-              )}
-              <SubmitBtn onClick={() => removeGroup(gIndex)}>刪除團</SubmitBtn>
-            </SingleGroupWrapper>
+            {/* <SingleGroupWrapper> */}
+            <GroupIndex>團{gIndex + 1}</GroupIndex>
+            {group.users.map((user, index) =>
+              user === null ? (
+                <AddToGroup onClick={() => addUserToGroup(gIndex, index)} key={`user${index}`}>
+                  +
+                </AddToGroup>
+              ) : (
+                <UserPic
+                  // onClick={() => addUserToGroup(gIndex, index)}
+                  key={`user${index}`}
+                  img={user.userPic}
+                ></UserPic>
+              )
+            )}
+            {/* <BtnDiv onClick={() => removeGroup(gIndex)}>刪除團</BtnDiv> */}
+            {/* </SingleGroupWrapper> */}
           </SingleGroup>
         ))}
-      <SubmitBtn onClick={() => addGroup()}>加新的團</SubmitBtn>
+      <BtnDiv onClick={() => addGroup()}>加新的團</BtnDiv>
     </Wrapper>
   );
 }

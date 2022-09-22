@@ -294,9 +294,9 @@ function Facility(facility: any) {
                         return facility.facility[el.key as keyof typeof keys].includes(o.label);
                       })
                       .map((i: any, index: any) => (
-                        <FacilityContainer>
+                        <FacilityContainer key={`facilities${index}`}>
                           <FacilityIcon img={i.value} />
-                          <FacilityText key={`facilities${index}`}>{i.text}</FacilityText>
+                          <FacilityText>{i.text}</FacilityText>
                         </FacilityContainer>
                       ))
                   : ''}

@@ -137,6 +137,7 @@ function Map() {
     // position: absolute;
     // bottom: 0px;
     // left: 0px;
+    margin: 80px 0px 0px;
     transform: translateX(-20vw);
   `;
   const chineseAddr = '台灣台北市信義區吳興街220巷73弄5號';
@@ -186,6 +187,17 @@ function Map() {
     <Wrapper>
       {isLoaded && (
         <GoogleMap options={{ styles: style }} mapContainerStyle={mapStyles} zoom={14} center={addrs}>
+          <Marker
+            // icon={
+            //   {
+            //     // path: google.maps.SymbolPath.CIRCLE,
+            //     // url: require('./../../assets/svg/location_marker.ico'),
+            //     // fillColor: '#EB00FF',
+            //     // scale: 7,
+            //   }
+            // }
+            position={addrs}
+          ></Marker>
           {/* {allRestaurants && allRestaurants.map((l, index) => <Marker position={l}></Marker>)} */}
         </GoogleMap>
       )}

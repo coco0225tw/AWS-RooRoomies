@@ -64,6 +64,18 @@ const Close = styled.div`
     background-color: #fff7f4;
   }
 `;
+const PopImg = styled(Popup)<{ img: string }>`
+  width: 50vw;
+  height: 50vh;
+  background-size: 50vw 50vh;
+
+  background-position: cover;
+  background-image: url(${(props) => props.img});
+  // margin: auto;
+  display: flex;
+  // flex-direction: column;
+  padding: 0px;
+`;
 function PopupComponent({
   msg,
   notDefaultBtn,
@@ -80,7 +92,15 @@ function PopupComponent({
   return (
     <Wrapper>
       <Popup>
-        <Close onClick={clickClose}>x</Close>
+        <Close
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            clickClose();
+          }}
+        >
+          x
+        </Close>
         <Message>{msg}</Message>
         <BtnArea>
           <NotDefaultBtn
@@ -106,4 +126,43 @@ function PopupComponent({
     </Wrapper>
   );
 }
-export default PopupComponent;
+
+function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
+  return (
+    <Wrapper>
+      <PopImg img={img}>
+        <Close
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            clickClose();
+          }}
+        >
+          x
+        </Close>
+        {/* <Message>{msg}</Message> */}
+        {/* <BtnArea>
+          <NotDefaultBtn
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              clickClose();
+            }}
+          >
+            {notDefaultBtn}
+          </NotDefaultBtn>
+          <DefaultBtn
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              clickFunction();
+            }}
+          >
+            {defaultBtn}
+          </DefaultBtn>
+        </BtnArea> */}
+      </PopImg>
+    </Wrapper>
+  );
+}
+export { PopupComponent, PopupImage };

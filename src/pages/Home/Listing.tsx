@@ -10,7 +10,7 @@ import unLikedIcon from '../../assets/unHeart.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 import { Link, useNavigate } from 'react-router-dom';
-import Popup from '../../components/Popup';
+import { PopupComponent } from '../../components/Popup';
 interface ImgProps {
   img: string;
 }
@@ -178,7 +178,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   return (
     <Wrapper>
       {isShown && (
-        <Popup
+        <PopupComponent
           // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}

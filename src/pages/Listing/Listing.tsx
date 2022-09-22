@@ -6,7 +6,16 @@ import 'react-calendar/dist/Calendar.css';
 import Map from './Map';
 import CalendarContainer from '../../components/Calendar';
 import { firebase } from '../../utils/firebase';
-import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import {
+  query,
+  collection,
+  limit,
+  QuerySnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+  FieldValue,
+  Timestamp,
+} from 'firebase/firestore';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 import RoommatesCondition from './RoommatesCondition';
@@ -28,7 +37,7 @@ import addIcon from '../../assets/add.png';
 import unAddIcon from '../../assets/unAdd.png';
 
 import { BtnDiv } from '../../components/Button';
-import Popup from '../../components/Popup';
+import { PopupComponent, PopupImage } from '../../components/Popup';
 import Hr from '../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
@@ -39,7 +48,7 @@ const Wrapper = styled.div`
   height: 100%;
   margin: 80px auto;
   color: #4f5152;
-  padding: 80px 0px;
+  padding: 80px 0px 0px;
 `;
 
 const SectionWrapper = styled.div`
@@ -63,6 +72,7 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   align-items: flex-start;
 `;
 const TitleWrapper = styled(SectionWrapper)`
+  font-size: 20px;
   flex-direction: column;
   width: 60%;
   // height: 100vh;
@@ -74,6 +84,7 @@ const DividedCalendarSection = styled(SectionWrapper)`
   // background-color: grey;
   margin: 20px 0px 32px;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const SelectTimeWrapper = styled(SectionWrapper)`
@@ -128,7 +139,10 @@ const Title = styled.div`
   font-size: 40px;
   //width: 100%;
 `;
-const AddrSection = styled(SectionWrapper)``;
+const AddrSection = styled(SectionWrapper)`
+  justify-content: space-between;
+  margin-top: 32px;
+`;
 const StickyCalendarContainer = styled.div`
   display: flex;
   // flex-grow: 1;
@@ -224,6 +238,31 @@ const IconArea = styled.div`
   height: 52px;
   padding-bottom: 12px;
 `;
+const Rent = styled.div`
+  // right: 0px;
+  color: #c77155;
+  font-size: 28px;
+`;
+const TitleDivide = styled(SectionWrapper)`
+  align-self: flex-start;
+  width: auto;
+  justify-content: space-between;
+  flex-direction: column;
+  // flex-wrap: wrap;
+`;
+const TitleInfoWrapper = styled(SectionWrapper)`
+  align-items: center;
+  width: auto;
+`;
+const TitleIcon = styled.div`
+  font-size: 20px;
+  margin-right: 12px;
+  border-bottom: solid 3px #c77155;
+`;
+const TitleIconWrapper = styled.div`
+  display: flex;
+  margin-top: 20px;
+`;
 function Listing() {
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -304,6 +343,11 @@ function Listing() {
     peopleAmount: number;
     matchGroup: Array<groupType>;
     listingTitle: string;
+    startRent: number;
+    endRent: number;
+    totalSq: number;
+    floor: number;
+    moveInDate: Timestamp;
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -312,6 +356,8 @@ function Listing() {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
   const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
+  const [popImg, setPopImg] = useState<boolean>(false);
+  const [clickOnImg, setClickOnImg] = useState<string>('');
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -327,6 +373,10 @@ function Listing() {
   };
   function clickDate(date: Date) {
     setSelectedDate(date);
+  }
+  function clickOnImage(url: string) {
+    setPopImg(true);
+    setClickOnImg(url);
   }
   async function bookedTime(uid: string, docId: string, listingId: string, selectedDateTime: any) {
     let chatRoomId!: string;
@@ -368,6 +418,8 @@ function Listing() {
     async function getListing() {
       const data = (await firebase.getListing(id!)) as ListingType;
       setListingInfo(data);
+      // console.log(data.moveInDate.toDateString());
+      console.log(data.moveInDate.toDate());
     }
     async function getBookingTimes() {
       await firebase.getBookingTimesSubColForListing(id!).then((times) => {
@@ -417,8 +469,9 @@ function Listing() {
           isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
         ></CompareIcon>
       </IconArea>
+      {popImg && <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />}
       {alreadyBookedPopup && (
-        <Popup
+        <PopupComponent
           msg={`一團只能預約一個時間哦!!`}
           notDefaultBtn={`確認`}
           defaultBtn={`回物件管理頁面取消`}
@@ -427,7 +480,7 @@ function Listing() {
         />
       )}
       {isShown && (
-        <Popup
+        <PopupComponent
           // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}
@@ -439,13 +492,13 @@ function Listing() {
       {/* <div>房源id:{id}</div> */}
       <ImagesWrapper>
         <ImageWrap>
-          <MainImage src={listingInfo?.mainImage!} />
+          <MainImage src={listingInfo?.mainImage!} onClick={() => clickOnImage(listingInfo?.mainImage!)} />
         </ImageWrap>
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              <ImageWrap>
-                <Images key={`images_${index}`} src={src} />
+              <ImageWrap key={`images_${index}`}>
+                <Images src={src} onClick={() => clickOnImage(src)} />
               </ImageWrap>
             ))}
         </OtherImagesWrapper>
@@ -454,15 +507,34 @@ function Listing() {
         {/* <InformationWrapper> */}
         <TitleWrapper>
           <Title>{listingInfo?.title}</Title>
-
           <AddrSection>
-            {listingInfo?.countyName}
-            {listingInfo?.townName}
-            <br />
-            {listingInfo?.form}
-            <br />
-            {listingInfo?.environmentDescription}
+            <TitleDivide>
+              <TitleInfoWrapper>
+                {listingInfo?.countyName}
+                {listingInfo?.townName}
+              </TitleInfoWrapper>
+              <TitleIconWrapper>
+                <TitleIcon>{listingInfo?.form}</TitleIcon>
+                <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
+                <TitleIcon>{listingInfo?.floor}樓</TitleIcon>
+                <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
+                <TitleIcon>
+                  {listingInfo?.moveInDate.toDate().toDateString()}起可入住
+                  {/* {listingInfo?.moveInDate.toDate().getFullYear() +
+                  '-' +
+                  ('0' + (listingInfo?.moveInDate!.toDate().getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + listingInfo?.moveInDate!.toDate().getDate()).slice(-2)} */}
+                </TitleIcon>
+              </TitleIconWrapper>
+            </TitleDivide>
+
+            <Rent>
+              {listingInfo?.startRent}~{listingInfo?.endRent}/月
+            </Rent>
           </AddrSection>
+          <div style={{ margin: '20px 0px' }}>{listingInfo?.environmentDescription}</div>
+
           <RoommatesCondition roommatesConditions={listingInfo?.roommatesConditions}></RoommatesCondition>
           <Group
             peopleAmount={listingInfo?.peopleAmount!}
@@ -473,8 +545,17 @@ function Listing() {
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
         </TitleWrapper>
         <StickyCalendarContainer>
-          <SubTitle style={{ marginBottom: '20px' }}>預約看房</SubTitle>
-          {/* <SubTitle>剩下{bookingTimesInfo.filter((el) => el.data().isBooked === false).length}個時間可以預約</SubTitle> */}
+          <SubTitle style={{ marginBottom: '20px' }}>
+            預約看房
+            <span style={{ fontSize: '16px', marginLeft: '20px' }}>
+              剩下
+              <span style={{ color: '#c77155 ' }}>
+                {bookingTimesInfo.filter((el) => el.data().isBooked === false).length}
+              </span>
+              個時間可以預約
+            </span>
+          </SubTitle>
+
           {/* <Hr /> */}
           <CalendarContainer>
             <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
@@ -521,9 +602,9 @@ function Listing() {
         </StickyCalendarContainer>
         {/* </InformationWrapper> */}
       </DividedCalendarSection>
-      <Hr style={{ margin: '40px 0px' }} />
+      {/* <Hr style={{ margin: '40px 0px' }} /> */}
       {/* <SubmitBtn onClick={() => match()}>比對</SubmitBtn> */}
-      <SubTitle style={{ marginBottom: '32px' }}>地點</SubTitle>
+      {/* <SubTitle style={{ marginBottom: '32px' }}>地點</SubTitle> */}
       <Map></Map>
     </Wrapper>
   );

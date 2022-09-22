@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { firebase, auth, onAuthStateChanged } from '../utils/firebase';
 import { RootState } from '../redux/rootReducer';
 import { BtnLink, BtnDiv } from './Button';
-import Popup from './Popup';
+import { PopupComponent } from './Popup';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -93,7 +93,7 @@ function Footer() {
   return (
     <Wrapper>
       {isShown && (
-        <Popup
+        <PopupComponent
           msg={`確定要登出嗎?`}
           notDefaultBtn={`取消`}
           defaultBtn={`登出`}
