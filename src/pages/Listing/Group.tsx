@@ -21,6 +21,8 @@ import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadR
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 import { groupType } from '../../redux/Group/GroupType';
+import { Title } from '../../components/ProfileTitle';
+import Hr from '../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -69,6 +71,13 @@ const AddToGroup = styled.div`
 const UserPic = styled(AddToGroup)<{ img: string }>`
   background-image: url(${(props) => props.img});
   background-size: 40px 40px;
+`;
+const SubTitle = styled.div`
+  font-size: 28px;
+  letter-spacing: 12px
+  font-weight: bold;
+  color: #4f5152;
+  width: 100%;
 `;
 function Group({
   peopleAmount,
@@ -119,7 +128,8 @@ function Group({
   }, [peopleAmount]);
   return (
     <Wrapper>
-      <h1>湊團</h1>
+      <Hr style={{ margin: '40px 0px' }} />
+      <SubTitle style={{ marginBottom: '32px' }}>湊團</SubTitle>
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
           <SingleGroup key={`group${gIndex}`}>

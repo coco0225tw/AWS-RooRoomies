@@ -35,10 +35,11 @@ const Wrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 80%;
+  width: 60%;
   height: 100%;
   margin: 80px auto;
   color: #4f5152;
+  padding: 80px 0px;
 `;
 
 const SectionWrapper = styled.div`
@@ -63,6 +64,7 @@ const OtherImagesWrapper = styled(SectionWrapper)`
 `;
 const TitleWrapper = styled(SectionWrapper)`
   flex-direction: column;
+  width: 60%;
   // height: 100vh;
 `;
 
@@ -70,12 +72,14 @@ const DividedCalendarSection = styled(SectionWrapper)`
   flex-direction: row;
   // align-items: flex-start;
   // background-color: grey;
+  margin: 20px 0px 32px;
+  justify-content: space-between;
 `;
 
 const SelectTimeWrapper = styled(SectionWrapper)`
   width: 48%;
   border-bottom: solid 1px #c77155;
-  padding: 10px;
+  padding: 10px 0px;
   color: #4f5152;
   // border-radius: 4px;
   // cursor: pointer;
@@ -131,11 +135,14 @@ const StickyCalendarContainer = styled.div`
   flex-direction: column;
   align-items: start;
   position: sticky;
-  top: 80px;
+  top: 100px;
   align-self: flex-start;
-  // width: 100%;
+  width: calc(350px + 40px + 20px);
   // background-color: brown;
   // background-color: black;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 20px;
+  border-radius: 20px;
 `;
 
 const Times = styled.div`
@@ -149,24 +156,32 @@ const SelectedDate = styled.div`
   font-size: 20px;
   color: #4f5152;
   width: 100%;
+  margin-top: 32px;
 `;
 const SubmitBtn = styled.div`
   background-color: grey;
   color: white;
   cursor: pointer;
 `;
-const FavoriteIcon = styled.div<{ isLiked: boolean }>`
-  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
-  height: 40px;
+
+const Icon = styled.div`
+  aspect-ratio: 1 / 1;
+  height: auto;
   width: 40px;
-  background-size: 40px 40px;
+  background-size: 100% 100%;
+  cursor: pointer;
+  // flex-grow: 1;
+  &:hover {
+    width: 48px;
+  }
+`;
+const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
+  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
 `;
 
-const CompareIcon = styled.div<{ isCompared: boolean }>`
+const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
   background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
-  height: 40px;
-  width: 40px;
-  background-size: 40px 40px;
+  margin-left: 12px;
 `;
 const IsBookedTimes = styled.div``;
 const SubTitle = styled.div`
@@ -198,6 +213,17 @@ const CannotBookedBtn = styled(BtnDiv)`
   }
 `;
 const UserBookBtn = styled(BtnDiv)``;
+const IconArea = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  // padding: 8px 8px 0px 0px;
+  align-items: end;
+  transition-duration: 0.2s;
+  align-self: flex-end;
+  width: 100%;
+  height: 52px;
+  padding-bottom: 12px;
+`;
 function Listing() {
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -206,39 +232,51 @@ function Listing() {
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const [isShown, setIsShown] = useState<boolean>(false);
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
     e.preventDefault();
-    if (!isLiked) {
-      async function addToFavoriteLists() {
-        await firebase.addToFavoriteLists(userInfo.uid, id!);
+    if (authChange) {
+      if (!isLiked) {
+        async function addToFavoriteLists() {
+          await firebase.addToFavoriteLists(userInfo.uid, id!);
+        }
+        addToFavoriteLists();
+        dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: id! } });
+      } else {
+        async function removeFromFavoriteLists() {
+          await firebase.removeFromFavoriteLists(userInfo.uid, id!);
+        }
+        removeFromFavoriteLists();
+        dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: id! } });
       }
-      addToFavoriteLists();
-      dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: id! } });
     } else {
-      async function removeFromFavoriteLists() {
-        await firebase.removeFromFavoriteLists(userInfo.uid, id!);
-      }
-      removeFromFavoriteLists();
-      dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: id! } });
+      setIsShown(true);
+      console.log('popup');
     }
   }
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
-    if (!isCompared) {
-      async function addToCompareLists() {
-        await firebase.addToCompareLists(userInfo.uid, id!);
+    if (authChange) {
+      if (!isCompared) {
+        async function addToCompareLists() {
+          await firebase.addToCompareLists(userInfo.uid, id!);
+        }
+        addToCompareLists();
+        dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: id! } });
+      } else {
+        async function removeFromCompareLists() {
+          await firebase.removeFromCompareLists(userInfo.uid, id!);
+        }
+        removeFromCompareLists();
+        handleDnd(e, isCompared);
+        dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
       }
-      addToCompareLists();
-      dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: id! } });
     } else {
-      async function removeFromCompareLists() {
-        await firebase.removeFromCompareLists(userInfo.uid, id!);
-      }
-      removeFromCompareLists();
-      handleDnd(e, isCompared);
-      dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
+      setIsShown(true);
+      console.log('popup');
     }
   }
   function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
@@ -367,6 +405,18 @@ function Listing() {
   }, [id]);
   return (
     <Wrapper>
+      <IconArea>
+        <FavoriteIcon
+          onClick={(e) => handleLiked(e!, favoriteLists.includes(id!))}
+          isLiked={favoriteLists.includes(id!)}
+        ></FavoriteIcon>
+        <CompareIcon
+          onClick={(e) => {
+            handleCompare(e!, compareLists.includes(id!) || dndLists.includes(id!));
+          }}
+          isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
+        ></CompareIcon>
+      </IconArea>
       {alreadyBookedPopup && (
         <Popup
           msg={`一團只能預約一個時間哦!!`}
@@ -376,7 +426,17 @@ function Listing() {
           clickFunction={() => navigate('/profile')}
         />
       )}
-      <div>房源id:{id}</div>
+      {isShown && (
+        <Popup
+          // style={{ zIndex: '1' }}
+          msg={`請先進行登入註冊`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`登入`}
+          clickClose={() => setIsShown(false)}
+          clickFunction={() => navigate('/signin')}
+        />
+      )}
+      {/* <div>房源id:{id}</div> */}
       <ImagesWrapper>
         <ImageWrap>
           <MainImage src={listingInfo?.mainImage!} />
@@ -394,16 +454,7 @@ function Listing() {
         {/* <InformationWrapper> */}
         <TitleWrapper>
           <Title>{listingInfo?.title}</Title>
-          <FavoriteIcon
-            onClick={(e) => handleLiked(e!, favoriteLists.includes(id!))}
-            isLiked={favoriteLists.includes(id!)}
-          ></FavoriteIcon>
-          <CompareIcon
-            onClick={(e) => {
-              handleCompare(e!, compareLists.includes(id!) || dndLists.includes(id!));
-            }}
-            isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
-          ></CompareIcon>
+
           <AddrSection>
             {listingInfo?.countyName}
             {listingInfo?.townName}
@@ -422,9 +473,9 @@ function Listing() {
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
         </TitleWrapper>
         <StickyCalendarContainer>
-          <SubTitle>預約看房</SubTitle>
+          <SubTitle style={{ marginBottom: '20px' }}>預約看房</SubTitle>
           {/* <SubTitle>剩下{bookingTimesInfo.filter((el) => el.data().isBooked === false).length}個時間可以預約</SubTitle> */}
-          <Hr />
+          {/* <Hr /> */}
           <CalendarContainer>
             <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
           </CalendarContainer>
@@ -463,13 +514,16 @@ function Listing() {
                 .map((el, index) => (
                   <SelectTimeWrapper key={`selectedTimes_${index}`}>
                     <SelectTime>{el.data().startTime}</SelectTime>
-                    <CannotBookedBtn>已預約</CannotBookedBtn>
+                    <CannotBookedBtn>已被預約</CannotBookedBtn>
                   </SelectTimeWrapper>
                 ))}
           </Times>
         </StickyCalendarContainer>
         {/* </InformationWrapper> */}
       </DividedCalendarSection>
+      <Hr style={{ margin: '40px 0px' }} />
+      {/* <SubmitBtn onClick={() => match()}>比對</SubmitBtn> */}
+      <SubTitle style={{ marginBottom: '32px' }}>地點</SubTitle>
       <Map></Map>
     </Wrapper>
   );

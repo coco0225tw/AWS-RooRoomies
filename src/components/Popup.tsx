@@ -12,7 +12,7 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   overflow: hidden;
-  z-index: 2;
+  z-index: 999;
   justify-content: center;
 `;
 
@@ -83,8 +83,24 @@ function PopupComponent({
         <Close onClick={clickClose}>x</Close>
         <Message>{msg}</Message>
         <BtnArea>
-          <NotDefaultBtn onClick={clickClose}>{notDefaultBtn}</NotDefaultBtn>
-          <DefaultBtn onClick={clickFunction}>{defaultBtn}</DefaultBtn>
+          <NotDefaultBtn
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              clickClose();
+            }}
+          >
+            {notDefaultBtn}
+          </NotDefaultBtn>
+          <DefaultBtn
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              clickFunction();
+            }}
+          >
+            {defaultBtn}
+          </DefaultBtn>
         </BtnArea>
       </Popup>
     </Wrapper>

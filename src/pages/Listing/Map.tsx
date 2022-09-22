@@ -1,5 +1,6 @@
 import { GoogleMap, useJsApiLoader, useLoadScript, Marker } from '@react-google-maps/api';
 import React, { useState, useRef, useMemo, useEffect } from 'react';
+import styled from 'styled-components';
 import GoogleMapKey from '../../key';
 const style = [
   {
@@ -130,7 +131,14 @@ function Map() {
     height: '50vh',
     width: '100%',
   };
-
+  const Wrapper = styled.div`
+    width: 100vw;
+    overflow: show;
+    // position: absolute;
+    // bottom: 0px;
+    // left: 0px;
+    transform: translateX(-20vw);
+  `;
   const chineseAddr = '台灣台北市信義區吳興街220巷73弄5號';
   const getGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${chineseAddr}&key=${GoogleMapKey}`;
   const keyword = '學校';
@@ -175,13 +183,13 @@ function Map() {
     getRestaurant();
   }, []);
   return (
-    <>
+    <Wrapper>
       {isLoaded && (
         <GoogleMap options={{ styles: style }} mapContainerStyle={mapStyles} zoom={14} center={addrs}>
-          {allRestaurants && allRestaurants.map((l, index) => <Marker position={l}></Marker>)}
+          {/* {allRestaurants && allRestaurants.map((l, index) => <Marker position={l}></Marker>)} */}
         </GoogleMap>
       )}
-    </>
+    </Wrapper>
   );
 }
 export default Map;

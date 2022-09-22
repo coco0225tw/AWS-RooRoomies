@@ -9,6 +9,8 @@ import likedIcon from '../../assets/heart.png';
 import unLikedIcon from '../../assets/unHeart.png';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
+import { Link, useNavigate } from 'react-router-dom';
+import Popup from '../../components/Popup';
 interface ImgProps {
   img: string;
 }
@@ -98,51 +100,59 @@ const Rent = styled.div`
 const Addr = styled.div``;
 const PeopleAmount = styled.div``;
 function Listing({ listingDocData }: { listingDocData: any }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const [isShown, setIsShown] = useState<boolean>(false);
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
     e.preventDefault();
-
-    if (!isLiked) {
-      async function addToFavoriteLists() {
-        await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
+    if (authChange) {
+      if (!isLiked) {
+        async function addToFavoriteLists() {
+          await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
+        }
+        addToFavoriteLists();
+        dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: listingDocData.id } });
+      } else {
+        async function removeFromFavoriteLists() {
+          await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
+        }
+        removeFromFavoriteLists();
+        dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: listingDocData.id } });
       }
-      addToFavoriteLists();
-      dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: listingDocData.id } });
     } else {
-      async function removeFromFavoriteLists() {
-        await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
-      }
-      removeFromFavoriteLists();
-      dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: listingDocData.id } });
+      setIsShown(true);
+      console.log('popup');
     }
   }
 
   function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
-    console.log(isCompared);
-    console.log(compareLists.includes(listingDocData.id));
-    console.log(dndLists.includes(listingDocData.id));
-    console.log(compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
-    if (!isCompared) {
-      async function addToCompareLists() {
-        await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
+    if (authChange) {
+      if (!isCompared) {
+        async function addToCompareLists() {
+          await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
+        }
+        addToCompareLists();
+        dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: listingDocData.id } });
+      } else {
+        async function removeFromCompareLists() {
+          console.log('removefromcom');
+          await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
+        }
+        removeFromCompareLists();
+        handleDnd(e, isCompared);
+        dispatch({ type: 'REMOVE_FROM_COMPARELISTS', payload: { id: listingDocData.id } });
       }
-      addToCompareLists();
-      dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: listingDocData.id } });
     } else {
-      async function removeFromCompareLists() {
-        console.log('removefromcom');
-        await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
-      }
-      removeFromCompareLists();
-      handleDnd(e, isCompared);
-      dispatch({ type: 'REMOVE_FROM_COMPARELISTS', payload: { id: listingDocData.id } });
+      setIsShown(true);
+      console.log('popup');
     }
   }
   function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
@@ -157,9 +167,26 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: listingDocData.id } });
     }
   }
+
+  function clickClose() {
+    setIsShown(false);
+  }
+  function clickFunction() {
+    navigate('/signin');
+  }
   // console.log(new Date(listingDocData.data().moveInDate));
   return (
     <Wrapper>
+      {isShown && (
+        <Popup
+          // style={{ zIndex: '1' }}
+          msg={`請先進行登入註冊`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`登入`}
+          clickClose={clickClose}
+          clickFunction={clickFunction}
+        />
+      )}
       <CardWrapper>
         <MainImage img={listingDocData.data().mainImage}>
           <IconArea>

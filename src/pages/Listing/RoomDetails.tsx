@@ -4,6 +4,8 @@ import { firebase } from '../../utils/firebase';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from '../../redux/UploadFacility/UploadFacilityType';
 import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { Title } from '../../components/ProfileTitle';
+import Hr from '../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -25,6 +27,13 @@ const RoomArea = styled.div`
   justify-content: space-between;
   width: 80%;
 `;
+const SubTitle = styled.div`
+  font-size: 28px;
+  letter-spacing: 12px
+  font-weight: bold;
+  color: #4f5152;
+  width: 100%;
+`;
 // const RoommatesCond
 function RoomDetails(rooms: any) {
   const [room, setRoom] = useState<roomDetailsType>([]);
@@ -39,7 +48,8 @@ function RoomDetails(rooms: any) {
   // console.log(rooms.room);
   return (
     <Wrapper>
-      <h1>房間規格</h1>
+      <Hr style={{ margin: '40px 0px' }} />
+      <SubTitle>房間規格</SubTitle>
       {room &&
         room.map((r: any, index) => (
           <RoomArea key={`room${index}`}>
