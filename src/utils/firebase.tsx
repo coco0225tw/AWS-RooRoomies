@@ -222,6 +222,27 @@ const firebase = {
       userListingId: '',
     });
   },
+  async updateUserInfo(uid: string, name: string, email: string) {
+    // const url = await this.uploadUserImage(image, uid);
+    await setDoc(
+      doc(db, 'users', uid),
+      {
+        name: name,
+        email: email,
+      },
+      { merge: true }
+    );
+  },
+  async updateUserPic(uid: string, img: Blob) {
+    const url = await this.uploadUserImage(img, uid);
+    await setDoc(
+      doc(db, 'users', uid),
+      {
+        image: url,
+      },
+      { merge: true }
+    );
+  },
   async getUserDocFromFirebase(uid: string) {
     const userRef = doc(db, 'users', uid);
     const docSnap = await getDoc(userRef);

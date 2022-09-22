@@ -62,7 +62,7 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   flex-grow: 1;
   // width: 200%;
   width: 100%;
-  align-self: center;
+  align-self: flex-start;
   @media screen and (max-width: 960px) {
     ${(props) => (props.isShowTab ? 'width: 60%' : 'width: 100%')};
   }

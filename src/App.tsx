@@ -120,7 +120,7 @@ function User() {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
-        navigate('/');
+        // navigate('/');
       } else {
         dispatch({ type: 'RETURN_INITIAL_GETUSER' });
         dispatch({ type: 'RETURN_INITIAL_AUTH' });

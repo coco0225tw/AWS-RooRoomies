@@ -67,7 +67,7 @@ const Profile = styled(Link)<{ img: string }>`
   border-radius: 50%;
   // border: solid 1px #857c7c;
   background-image: url(${(props) => props.img});
-  background-size: 40px 40px;
+  background-size: cover;
   background-position: center center;
   background-color: white;
 `;
