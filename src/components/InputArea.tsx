@@ -54,10 +54,12 @@ const FormInputWrapper = styled.div`
   // align-items: flex-start;
 `;
 const FormCheckInput = styled.input`
+  letter-spacing: 1.6px;
+  font-size: 20px;
   margin: 0;
   flex-grow: 1;
-  height: 19px;
-  padding-left: 8px;
+  // height: 19px;
+  padding: 8px;
   // background-color: #c77155;
   accent-color: #c77155;
   cursor: pointer;
@@ -76,6 +78,8 @@ const FormCheck = styled.div`
   display: flex;
   align-items: center;
   margin-right: 30px;
+  letter-spacing: 1.6px;
+  font-size: 20px;
   // & + & {
   //   margin-left: 30px;
   // }
@@ -101,12 +105,14 @@ const FormCheckLabel = styled.label`
 `;
 
 const FormControl = styled.input`
+  letter-spacing: 1.6px;
+  font-size: 20px;
   width: 574px;
-  height: 30px;
+  // height: 30px;
   border-radius: 8px;
   border: solid 1px #979797;
-  padding-left: 8px;
-
+  padding: 8px;
+  margin-top: 12px;
   @media screen and (max-width: 1279px) {
     margin-top: 10px;
     width: 100%;
