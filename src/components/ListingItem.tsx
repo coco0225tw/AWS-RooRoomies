@@ -22,8 +22,8 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
   // margin: auto;
-  padding: 10px;
-  margin-bottom: 32px;
+  //   padding: 10px;
+  //   margin-bottom: 32px;
 `;
 
 const Icon = styled.div`
@@ -60,21 +60,25 @@ const SideBarWrapper = styled.div`
 
 const CardWrapper = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   // border: solid 1px orange;
-  align-items: flex-start;
+  //   align-items: flex-start;
+  //   background-color: black;
+  width: 100%;
   color: #4f5152;
   font-size: 16px;
 `;
 
 const MainImage = styled.div<ImgProps>`
   aspect-ratio: 1 / 1;
-  width: 100%;
+  //   width: 100%;
   background-image: url(${(props) => (props.img ? props.img : '')});
+  height: 200px;
+
   background-position: cover;
   background-size: 100% 100%;
   border-radius: 12px;
-  margin-bottom: 12px;
+  //   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -88,18 +92,37 @@ const Title = styled.div`
   // margin: 0px 0px 8px 8px;
   // align-self: flex-end;
 `;
-
-const Time = styled.div``;
+const Detail = styled.div`
+  margin-top: 12px;
+`;
+const Time = styled(Detail)``;
 
 const Rent = styled.div`
-  font-size: 20px;
+  font-size: 28px;
   color: #c77155;
   align-self: flex-end;
+  //   bottom: 0;
+  //   flex-grow: 1;
+  //   vertical-align: text-bottom;
 `;
 
-const Addr = styled.div``;
-const PeopleAmount = styled.div``;
+const Addr = styled(Detail)``;
+const PeopleAmount = styled(Detail)``;
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 20px;
+  //   flex-grow: 1;
+  //   height: 100%;
+`;
+const DetailWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`;
 function ListingItem({ listingDocData }: { listingDocData: any }) {
+  console.log(listingDocData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
@@ -202,17 +225,22 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
             ></CompareIcon>
           </IconArea> */}
         </MainImage>
-        <Title>{listingDocData.data().title}</Title>
-        <Addr>
-          {listingDocData.data().countyName}
-          {listingDocData.data().townName}
-        </Addr>
+        <InfoWrapper>
+          <Title>{listingDocData.data().title}</Title>
+          <DetailWrapper>
+            <Addr>
+              {listingDocData.data().countyName}
+              {listingDocData.data().townName}
+            </Addr>
 
-        <PeopleAmount>可入住人數:{listingDocData.data().peopleAmount}</PeopleAmount>
-        <Time></Time>
-        <Rent>
-          {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
-        </Rent>
+            <PeopleAmount>可入住人數:{listingDocData.data().peopleAmount}</PeopleAmount>
+            <Time></Time>
+          </DetailWrapper>
+
+          <Rent>
+            {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
+          </Rent>
+        </InfoWrapper>
       </CardWrapper>
     </Wrapper>
   );

@@ -6,6 +6,8 @@ import { RootState } from '../../../redux/rootReducer';
 import { firebase } from '../../../utils/firebase';
 import addIcon from '../../../assets/add.png';
 import unAddIcon from '../../../assets/unAdd.png';
+import { PopupComponent, PopupImage } from '../../../components/Popup';
+import { Link } from 'react-router-dom';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
