@@ -9,14 +9,18 @@ import { createGlobalStyle } from 'styled-components';
 import { Provider } from 'react-redux';
 import store from '../../../redux/store';
 import { RootState } from '../../../redux/rootReducer';
+import { Title } from '../../../components/ProfileTitle';
+import Hr from '../../../components/Hr';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 80%;
-  height: 100%;
   margin: auto;
+  width: 70%;
+  height: 100%;
+  color: #4f5152;
+  margin-top: 20px;
 `;
 const SectionWrapper = styled(Link)`
   display: flex;
@@ -45,7 +49,8 @@ function AllHouseHunting() {
   }, [userInfo]);
   return (
     <Wrapper>
-      <h1>我的看房時間</h1>
+      <Title>我的看房時間</Title>
+      <Hr />
       {houseHuntingData &&
         houseHuntingData.map((doc, id) => (
           <SectionWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${id}`}>

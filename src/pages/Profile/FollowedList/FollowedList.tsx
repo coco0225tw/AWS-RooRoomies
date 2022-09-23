@@ -3,12 +3,12 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
 import { firebase } from '../../../utils/firebase';
-import likedIcon from '../../../assets/heart.png';
-import unLikedIcon from '../../../assets/unHeart.png';
+import likedIcon from '../../assets/heart.png';
+import unLikedIcon from '../../assets/unHeart.png';
 import Hr from '../../../components/Hr';
 import { BtnDiv } from '../../../components/Button';
 import { Title } from '../../../components/ProfileTitle';
-import Listing from '../../Home/Listing';
+import ListingItem from '../../../components/ListingItem';
 import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 
 import {
@@ -90,7 +90,7 @@ function FollowedList() {
       {favoriteLists &&
         allListingData.map((f, index) => (
           <div key={`favoriteLists${index}`}>
-            <Listing listingDocData={f}></Listing>
+            <ListingItem listingDocData={f}></ListingItem>
             <FavoriteIcon onClick={(e) => handleLiked(e, f.id)}></FavoriteIcon>
           </div>
         ))}
