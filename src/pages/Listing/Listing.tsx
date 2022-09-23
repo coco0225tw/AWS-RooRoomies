@@ -46,7 +46,7 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 80%;
   height: 100%;
-  margin: 80px auto;
+  margin: 80px auto 0;
   color: #4f5152;
   padding: 80px 0px 0px;
 `;
