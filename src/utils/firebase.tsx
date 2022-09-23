@@ -151,6 +151,17 @@ const firebase = {
       window.alert('No such document!');
     }
   },
+  async getFavoriteListing(listingId: string) {
+    const listingRef = doc(db, 'listings', listingId);
+    console.log(listingId);
+    const docSnap = await getDoc(listingRef);
+    if (docSnap.exists()) {
+      return docSnap;
+    } else {
+      window.alert('No such document!');
+    }
+  },
+
   async uploadMainImage(mainImgBlob: Blob, listingRefId: any) {
     const imagesRef = ref(storage, `${listingRefId}/images/main_image`);
     let url = await uploadBytes(imagesRef, mainImgBlob).then((uploadResult) => {
