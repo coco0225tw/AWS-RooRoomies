@@ -1,24 +1,24 @@
-import React, { useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/rootReducer';
-import { firebase, newListingRef, timestamp } from '../../../utils/firebase';
-import styled from 'styled-components';
-import UploadMainImageAndImages from './UploadMainImageAndImages';
-import SetBookingTimes from './SetBookingTimes';
-import ListingAddr from './ListingAddr';
-import ListingTitle from './ListingTitle';
-import RoommatesCondition from './RoommatesCondition';
-import Facility from './Facility';
-import RentRoomDetails from './RentRoomDetails';
-import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
-import { Title } from '../../../components/ProfileTitle';
+import React, { useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../redux/rootReducer";
+import { firebase, newListingRef, timestamp } from "../../../utils/firebase";
+import styled from "styled-components";
+import UploadMainImageAndImages from "./UploadMainImageAndImages";
+import SetBookingTimes from "./SetBookingTimes";
+import ListingAddr from "./ListingAddr";
+import ListingTitle from "./ListingTitle";
+import RoommatesCondition from "./RoommatesCondition";
+import Facility from "./Facility";
+import RentRoomDetails from "./RentRoomDetails";
+import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import { Title } from "../../../components/ProfileTitle";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 70%;
+  width: 80%;
   height: 100%;
 `;
 
@@ -32,12 +32,20 @@ const SubmitBtn = styled.div`
 function UploadMyListing() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
-  const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
-  const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
+  const getRoommatesCondition = useSelector(
+    (state: RootState) => state.UploadRoommatesConditionReducer
+  );
+  const getFacility = useSelector(
+    (state: RootState) => state.UploadFacilityReducer
+  );
   const getTitle = useSelector((state: RootState) => state.UploadTitleReducer);
-  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as any;
+  const getImages = useSelector(
+    (state: RootState) => state.UploadImagesReducer
+  ) as any;
   const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
-  const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
+  const getBookingTimes = useSelector(
+    (state: RootState) => state.UploadTimesReducer
+  );
   function setDoc() {
     console.log(getAddr);
     console.log(getRoommatesCondition);
@@ -47,9 +55,12 @@ function UploadMyListing() {
     console.log(typeof getRooms);
     console.log(getRooms);
     console.log(getBookingTimes);
-    const findPeopleAmount = (getRooms as roomDetailsType).reduce((sum, people) => sum + people.peopleAmount, 0);
-    const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent < current.rent ? prev : current
+    const findPeopleAmount = (getRooms as roomDetailsType).reduce(
+      (sum, people) => sum + people.peopleAmount,
+      0
+    );
+    const findStartRent = (getRooms as roomDetailsType).reduce(
+      (prev, current) => (prev.rent < current.rent ? prev : current)
     );
     const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
       prev.rent > current.rent ? prev : current
@@ -72,14 +83,20 @@ function UploadMyListing() {
       floor: getAddr.floor,
       // sq: getTitle.totalSq,
       // addr: 'string', //補上
-      environmentDescription: '預設描述', //補上
+      environmentDescription: "預設描述", //補上
       rentRoomDetails: getRooms,
       facility: getFacility,
       roommatesConditions: getRoommatesCondition,
       latLng: { lat: 25.026221, lng: 121.560623 }, //預設北醫
       matchGroup: [],
     };
-    firebase.setNewListingDocField(newListingRef, listingData, getBookingTimes, getImages.mainImage, getImages.images);
+    firebase.setNewListingDocField(
+      newListingRef,
+      listingData,
+      getBookingTimes,
+      getImages.mainImage,
+      getImages.images
+    );
   }
   return (
     <Wrapper>

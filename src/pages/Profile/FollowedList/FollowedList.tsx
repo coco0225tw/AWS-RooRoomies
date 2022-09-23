@@ -1,17 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/rootReducer';
-import { firebase } from '../../../utils/firebase';
-import likedIcon from '../../../assets/heart.png';
-import unLikedIcon from '../../../assets/unHeart.png';
-import Hr from '../../../components/Hr';
-import { BtnDiv } from '../../../components/Button';
-import { Title } from '../../../components/ProfileTitle';
-import ListingItem from '../../../components/ListingItem';
-import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-import { PopupComponent, PopupImage } from '../../../components/Popup';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../redux/rootReducer";
+import { firebase } from "../../../utils/firebase";
+import likedIcon from "../../../assets/heart.png";
+import unLikedIcon from "../../../assets/unHeart.png";
+import Hr from "../../../components/Hr";
+import { BtnDiv } from "../../../components/Button";
+import { Title } from "../../../components/ProfileTitle";
+import ListingItem from "../../../components/ListingItem";
+import {
+  query,
+  collection,
+  limit,
+  QuerySnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
+import { PopupComponent, PopupImage } from "../../../components/Popup";
+import { Link } from "react-router-dom";
 import {
   FormLegend,
   FormGroup,
@@ -21,15 +28,15 @@ import {
   FormCheck,
   FormCheckLabel,
   FormControl,
-} from '../../../components/InputArea';
-import { async } from '@firebase/util';
+} from "../../../components/InputArea";
+import { async } from "@firebase/util";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 70%;
+  width: 80%;
   height: 100%;
   color: #4f5152;
   margin-top: 20px;
@@ -62,12 +69,17 @@ function FollowedList() {
     return data;
   }
   const dispatch = useDispatch();
-  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  const favoriteLists = useSelector(
+    (state: RootState) => state.GetFavoriteListsReducer
+  );
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
   const [isShown, setIsShown] = useState<boolean>(false);
-  const [unLikeId, setUnLikeId] = useState<string>('');
-  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, listingId: string) {
+  const [unLikeId, setUnLikeId] = useState<string>("");
+  function handleLiked(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    listingId: string
+  ) {
     e.stopPropagation();
     e.preventDefault();
     setIsShown(true);
@@ -75,7 +87,7 @@ function FollowedList() {
   }
   async function removeFromFavoriteLists() {
     await firebase.removeFromFavoriteLists(userInfo.uid, unLikeId);
-    dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: unLikeId } });
+    dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: unLikeId } });
     setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
     setIsShown(false);
   }

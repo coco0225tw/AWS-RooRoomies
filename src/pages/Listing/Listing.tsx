@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
-import Map from './Map';
-import CalendarContainer from '../../components/Calendar';
-import { firebase } from '../../utils/firebase';
+import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import Map from "./Map";
+import CalendarContainer from "../../components/Calendar";
+import { firebase } from "../../utils/firebase";
 import {
   query,
   collection,
@@ -15,36 +15,36 @@ import {
   QueryDocumentSnapshot,
   FieldValue,
   Timestamp,
-} from 'firebase/firestore';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/rootReducer';
-import RoommatesCondition from './RoommatesCondition';
-import Facility from './Facility';
-import RoomDetails from './RoomDetails';
-import Group from './Group';
-import { Link, useNavigate } from 'react-router-dom';
-import { groupType, userInfoType } from '../../redux/Group/GroupType';
+} from "firebase/firestore";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
+import RoommatesCondition from "./RoommatesCondition";
+import Facility from "./Facility";
+import RoomDetails from "./RoomDetails";
+import Group from "./Group";
+import { Link, useNavigate } from "react-router-dom";
+import { groupType, userInfoType } from "../../redux/Group/GroupType";
 // import { groupType, userInfoType } from '../../redux/Group/GroupType';
-import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
-import bookingTimesType from '../../redux/UploadBookingTimes/UploadBookingTimesType';
-import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import facilityType from '../../redux/UploadFacility/UploadFacilityType';
+import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import bookingTimesType from "../../redux/UploadBookingTimes/UploadBookingTimesType";
+import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import facilityType from "../../redux/UploadFacility/UploadFacilityType";
 
-import likedIcon from '../../assets/heart.png';
-import unLikedIcon from '../../assets/unHeart.png';
+import likedIcon from "../../assets/heart.png";
+import unLikedIcon from "../../assets/unHeart.png";
 
-import addIcon from '../../assets/add.png';
-import unAddIcon from '../../assets/unAdd.png';
+import addIcon from "../../assets/add.png";
+import unAddIcon from "../../assets/unAdd.png";
 
-import { BtnDiv } from '../../components/Button';
-import { PopupComponent, PopupImage } from '../../components/Popup';
-import Hr from '../../components/Hr';
+import { BtnDiv } from "../../components/Button";
+import { PopupComponent, PopupImage } from "../../components/Popup";
+import Hr from "../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 60%;
+  width: 80%;
   height: 100%;
   margin: 80px auto;
   color: #4f5152;
@@ -190,7 +190,8 @@ const Icon = styled.div`
   }
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
-  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
+  background-image: url(${(props) =>
+    props.isLiked ? likedIcon : unLikedIcon});
 `;
 
 const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
@@ -268,12 +269,19 @@ function Listing() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const { id } = useParams<string>();
   const dispatch = useDispatch();
-  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
+  const compareLists = useSelector(
+    (state: RootState) => state.GetCompareListsReducer
+  );
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
-  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  const favoriteLists = useSelector(
+    (state: RootState) => state.GetFavoriteListsReducer
+  );
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
-  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
+  function handleLiked(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    isLiked: boolean
+  ) {
     e.stopPropagation();
     e.preventDefault();
     if (authChange) {
@@ -282,20 +290,23 @@ function Listing() {
           await firebase.addToFavoriteLists(userInfo.uid, id!);
         }
         addToFavoriteLists();
-        dispatch({ type: 'ADD_TO_FAVORITELISTS', payload: { id: id! } });
+        dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
       } else {
         async function removeFromFavoriteLists() {
           await firebase.removeFromFavoriteLists(userInfo.uid, id!);
         }
         removeFromFavoriteLists();
-        dispatch({ type: 'REMOVE_FROM_FAVORITELISTS', payload: { id: id! } });
+        dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
       }
     } else {
       setIsShown(true);
-      console.log('popup');
+      console.log("popup");
     }
   }
-  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
+  function handleCompare(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    isCompared: boolean
+  ) {
     e.stopPropagation();
     e.preventDefault();
     if (authChange) {
@@ -304,21 +315,24 @@ function Listing() {
           await firebase.addToCompareLists(userInfo.uid, id!);
         }
         addToCompareLists();
-        dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: id! } });
+        dispatch({ type: "ADD_TO_COMPARELISTS", payload: { id: id! } });
       } else {
         async function removeFromCompareLists() {
           await firebase.removeFromCompareLists(userInfo.uid, id!);
         }
         removeFromCompareLists();
         handleDnd(e, isCompared);
-        dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
+        dispatch({ type: "REMOVE_FROM_COMPARELIST", payload: { id: id! } });
       }
     } else {
       setIsShown(true);
-      console.log('popup');
+      console.log("popup");
     }
   }
-  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
+  function handleDnd(
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    isCompared: boolean
+  ) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
@@ -326,7 +340,7 @@ function Listing() {
         await firebase.removeFromDndLists(userInfo.uid, id!);
       }
       removeFromDndLists();
-      dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: id! } });
+      dispatch({ type: "REMOVE_FROM_DNDLISTS", payload: { id: id! } });
     }
   }
   type ListingType = {
@@ -351,13 +365,15 @@ function Listing() {
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
-  const [bookingTimesInfo, setBookingTimesInfo] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
+  const [bookingTimesInfo, setBookingTimesInfo] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
   const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
-  const [clickOnImg, setClickOnImg] = useState<string>('');
+  const [clickOnImg, setClickOnImg] = useState<string>("");
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -378,7 +394,12 @@ function Listing() {
     setPopImg(true);
     setClickOnImg(url);
   }
-  async function bookedTime(uid: string, docId: string, listingId: string, selectedDateTime: any) {
+  async function bookedTime(
+    uid: string,
+    docId: string,
+    listingId: string,
+    selectedDateTime: any
+  ) {
     let chatRoomId!: string;
     let userId!: [];
     if (checkIfUserCanBook) {
@@ -432,7 +453,10 @@ function Listing() {
         let enableDate = [];
         if (listingTimesArr?.length !== 0) {
           enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-            let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds); //console.log
+            let findIndex = acc.findIndex(
+              (item: any) =>
+                item?.data().date.seconds === curr.data().date.seconds
+            ); //console.log
             if (findIndex === -1) {
               acc.push(curr);
             } else {
@@ -441,10 +465,12 @@ function Listing() {
           }, []);
           setAbleBookingTimes(enableDate);
         }
-        let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
-          let date = s.data().date.toDate();
-          return date;
-        });
+        let enableDates = enableDate.map(
+          (s: QueryDocumentSnapshot<DocumentData>) => {
+            let date = s.data().date.toDate();
+            return date;
+          }
+        );
         setAbleBookingTimes(enableDates);
       });
     }
@@ -464,19 +490,24 @@ function Listing() {
         ></FavoriteIcon>
         <CompareIcon
           onClick={(e) => {
-            handleCompare(e!, compareLists.includes(id!) || dndLists.includes(id!));
+            handleCompare(
+              e!,
+              compareLists.includes(id!) || dndLists.includes(id!)
+            );
           }}
           isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
         ></CompareIcon>
       </IconArea>
-      {popImg && <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />}
+      {popImg && (
+        <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />
+      )}
       {alreadyBookedPopup && (
         <PopupComponent
           msg={`一團只能預約一個時間哦!!`}
           notDefaultBtn={`確認`}
           defaultBtn={`回物件管理頁面取消`}
           clickClose={() => setAlreadyBookedPopup(false)}
-          clickFunction={() => navigate('/profile')}
+          clickFunction={() => navigate("/profile")}
         />
       )}
       {isShown && (
@@ -486,13 +517,16 @@ function Listing() {
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={() => setIsShown(false)}
-          clickFunction={() => navigate('/signin')}
+          clickFunction={() => navigate("/signin")}
         />
       )}
       {/* <div>房源id:{id}</div> */}
       <ImagesWrapper>
         <ImageWrap>
-          <MainImage src={listingInfo?.mainImage!} onClick={() => clickOnImage(listingInfo?.mainImage!)} />
+          <MainImage
+            src={listingInfo?.mainImage!}
+            onClick={() => clickOnImage(listingInfo?.mainImage!)}
+          />
         </ImageWrap>
         <OtherImagesWrapper>
           {listingInfo?.images &&
@@ -533,9 +567,13 @@ function Listing() {
               {listingInfo?.startRent}~{listingInfo?.endRent}/月
             </Rent>
           </AddrSection>
-          <div style={{ margin: '20px 0px' }}>{listingInfo?.environmentDescription}</div>
+          <div style={{ margin: "20px 0px" }}>
+            {listingInfo?.environmentDescription}
+          </div>
 
-          <RoommatesCondition roommatesConditions={listingInfo?.roommatesConditions}></RoommatesCondition>
+          <RoommatesCondition
+            roommatesConditions={listingInfo?.roommatesConditions}
+          ></RoommatesCondition>
           <Group
             peopleAmount={listingInfo?.peopleAmount!}
             listingId={id!}
@@ -545,12 +583,15 @@ function Listing() {
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
         </TitleWrapper>
         <StickyCalendarContainer>
-          <SubTitle style={{ marginBottom: '20px' }}>
+          <SubTitle style={{ marginBottom: "20px" }}>
             預約看房
-            <span style={{ fontSize: '16px', marginLeft: '20px' }}>
+            <span style={{ fontSize: "16px", marginLeft: "20px" }}>
               剩下
-              <span style={{ color: '#c77155 ' }}>
-                {bookingTimesInfo.filter((el) => el.data().isBooked === false).length}
+              <span style={{ color: "#c77155 " }}>
+                {
+                  bookingTimesInfo.filter((el) => el.data().isBooked === false)
+                    .length
+                }
               </span>
               個時間可以預約
             </span>
@@ -564,23 +605,28 @@ function Listing() {
             {selectedDate && (
               <SelectedDate>
                 {selectedDate.getFullYear() +
-                  '-' +
-                  ('0' + (selectedDate.getMonth() + 1)).slice(-2) +
-                  '-' +
-                  ('0' + selectedDate.getDate()).slice(-2)}
+                  "-" +
+                  ("0" + (selectedDate.getMonth() + 1)).slice(-2) +
+                  "-" +
+                  ("0" + selectedDate.getDate()).slice(-2)}
               </SelectedDate>
             )}
             {selectedDate &&
               bookingTimesInfo
                 .filter(
-                  (el) => el.data().date.toDate().getTime() !== selectedDate.getTime() && el.data().isBooked === false
+                  (el) =>
+                    el.data().date.toDate().getTime() !==
+                      selectedDate.getTime() && el.data().isBooked === false
                 )
                 .map((el, index) => (
                   <SelectTimeWrapper key={`selectedTimes_${index}`}>
                     <SelectTime>{el.data().startTime}</SelectTime>
                     <CanBookedBtn
                       onClick={() =>
-                        bookedTime(userInfo.uid, el.id, id!, { date: el.data().date, startTime: el.data().startTime })
+                        bookedTime(userInfo.uid, el.id, id!, {
+                          date: el.data().date,
+                          startTime: el.data().startTime,
+                        })
                       }
                     >
                       預約
@@ -590,7 +636,9 @@ function Listing() {
             {selectedDate &&
               bookingTimesInfo
                 .filter(
-                  (el) => el.data().date.toDate().getTime() !== selectedDate.getTime() && el.data().isBooked === true
+                  (el) =>
+                    el.data().date.toDate().getTime() !==
+                      selectedDate.getTime() && el.data().isBooked === true
                 )
                 .map((el, index) => (
                   <SelectTimeWrapper key={`selectedTimes_${index}`}>

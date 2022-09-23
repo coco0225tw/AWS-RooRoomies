@@ -1,27 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { firebase } from '../../../utils/firebase';
-import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-import { useSelector, useDispatch } from 'react-redux';
-import { Outlet } from 'react-router-dom';
-import { createGlobalStyle } from 'styled-components';
-import { Provider } from 'react-redux';
-import store from '../../../redux/store';
-import { RootState } from '../../../redux/rootReducer';
-import { Title } from '../../../components/ProfileTitle';
-import Hr from '../../../components/Hr';
-import { PopupComponent, PopupImage } from '../../../components/Popup';
-import ListingItem from '../../../components/ListingItem';
-import { BtnDiv, BtnLink } from '../../../components/Button';
-import chat from '../../../assets/chat.png';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { firebase } from "../../../utils/firebase";
+import {
+  query,
+  collection,
+  limit,
+  QuerySnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
+import { useSelector, useDispatch } from "react-redux";
+import { Outlet } from "react-router-dom";
+import { createGlobalStyle } from "styled-components";
+import { Provider } from "react-redux";
+import store from "../../../redux/store";
+import { RootState } from "../../../redux/rootReducer";
+import { Title } from "../../../components/ProfileTitle";
+import Hr from "../../../components/Hr";
+import { PopupComponent, PopupImage } from "../../../components/Popup";
+import ListingItem from "../../../components/ListingItem";
+import { BtnDiv, BtnLink } from "../../../components/Button";
+import chat from "../../../assets/chat.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 70%;
+  width: 80%;
   height: 100%;
   color: #4f5152;
   margin-top: 20px;
@@ -75,14 +82,16 @@ const Tabs = styled.div`
   margin-bottom: 20px;
 `;
 const Tab = styled(BtnDiv)<{ isClick: boolean }>`
-  border-bottom: ${(props) => (props.isClick ? 'solid 3px #c77155 ' : 'none')};
+  border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
-const TabSelect = ['已預約', '尚未預約', '等待湊團'];
+const TabSelect = ["已預約", "尚未預約", "等待湊團"];
 function AllHouseHunting() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const [houseHuntingData, setHouseHuntingData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
+  const [houseHuntingData, setHouseHuntingData] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
-  const [clickTab, setClickTab] = useState<string>('已預約');
+  const [clickTab, setClickTab] = useState<string>("已預約");
   useEffect(() => {
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
@@ -99,7 +108,9 @@ function AllHouseHunting() {
       // getListing;
       let promise: DocumentData[] = [];
       arr.map((el, index) => {
-        promise.push(firebase.getFavoriteListing(el.data().listingId) as DocumentData);
+        promise.push(
+          firebase.getFavoriteListing(el.data().listingId) as DocumentData
+        );
       });
       let allPromises = await Promise.all(promise);
       let listingDocArr: DocumentData[] = [];
@@ -129,17 +140,27 @@ function AllHouseHunting() {
         ))}
       </Tabs>
       {allListingData.length !== 0 &&
-        clickTab === '已預約' &&
+        clickTab === "已預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked !== false)
           .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+            <ListingWrapper
+              to={`/listing/${doc.data().listingId}`}
+              key={`houseHunting${doc.data().listingId}`}
+            >
               <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                listingDocData={
+                  allListingData.find(
+                    (el) => el.id === doc.data().listingId
+                  ) as DocumentData
+                }
               ></ListingItem>
               <InfoWrapper>
                 {/* <div> */}
-                <div>{`已預約${doc.data().bookedTime.date.toDate().toDateString()} ${
+                <div>{`已預約${doc
+                  .data()
+                  .bookedTime.date.toDate()
+                  .toDateString()} ${
                   doc.data().bookedTime.startTime
                 }看房`}</div>
                 <StyledBtnDiv>取消預約</StyledBtnDiv>
@@ -149,13 +170,20 @@ function AllHouseHunting() {
             </ListingWrapper>
           ))}
       {allListingData.length !== 0 &&
-        clickTab === '尚未預約' &&
+        clickTab === "尚未預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked === false)
           .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+            <ListingWrapper
+              to={`/listing/${doc.data().listingId}`}
+              key={`houseHunting${doc.data().listingId}`}
+            >
               <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                listingDocData={
+                  allListingData.find(
+                    (el) => el.id === doc.data().listingId
+                  ) as DocumentData
+                }
               ></ListingItem>
               <InfoWrapper>
                 {/* <div> */}
@@ -166,13 +194,20 @@ function AllHouseHunting() {
             </ListingWrapper>
           ))}
       {allListingData.length !== 0 &&
-        clickTab === '等待湊團' &&
+        clickTab === "等待湊團" &&
         houseHuntingData
           .filter((doc) => doc.data().isFull === false)
           .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+            <ListingWrapper
+              to={`/listing/${doc.data().listingId}`}
+              key={`houseHunting${doc.data().listingId}`}
+            >
               <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                listingDocData={
+                  allListingData.find(
+                    (el) => el.id === doc.data().listingId
+                  ) as DocumentData
+                }
               ></ListingItem>
               <InfoWrapper>
                 {/* <div> */}

@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/rootReducer';
-import Hr from '../../../components/Hr';
-import { BtnDiv } from '../../../components/Button';
-import { Title } from '../../../components/ProfileTitle';
-import { firebase } from '../../../utils/firebase';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../redux/rootReducer";
+import Hr from "../../../components/Hr";
+import { BtnDiv } from "../../../components/Button";
+import { Title } from "../../../components/ProfileTitle";
+import { firebase } from "../../../utils/firebase";
 import {
   FormLegend,
   FormGroup,
@@ -15,14 +15,14 @@ import {
   FormCheck,
   FormCheckLabel,
   FormControl,
-} from '../../../components/InputArea';
+} from "../../../components/InputArea";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 70%;
+  width: 80%;
   height: 100%;
   color: #4f5152;
   margin-top: 20px;
@@ -40,7 +40,8 @@ const SubmitBtn = styled(BtnDiv)`
 const ProfilePic = styled.div<{ img: string; uploadedImg: string }>`
   width: 200px;
   height: 200px;
-  background-image: url(${(props) => (props.uploadedImg !== '' ? props.uploadedImg : props.img)});
+  background-image: url(${(props) =>
+    props.uploadedImg !== "" ? props.uploadedImg : props.img});
   background-size: cover;
   background-position: center center;
   border-radius: 50%;
@@ -64,7 +65,7 @@ const UploadImgBtn = styled.div`
   cursor: pointer;
 `;
 function Setting() {
-  const [mainImgUrl, setMainImgUrl] = useState<string>('');
+  const [mainImgUrl, setMainImgUrl] = useState<string>("");
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const [edit, setEdit] = useState<boolean>(false);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -80,7 +81,11 @@ function Setting() {
     }
   }
   async function submitNameOrEmail() {
-    firebase.updateUserInfo(userInfo.uid, nameRef.current!.value, emailRef.current!.value);
+    firebase.updateUserInfo(
+      userInfo.uid,
+      nameRef.current!.value,
+      emailRef.current!.value
+    );
   }
   async function submitImg() {
     firebase.updateUserPic(userInfo.uid, mainImgBlob!);
@@ -99,7 +104,12 @@ function Setting() {
             上傳
           </UploadImgBtn>
         </ProfilePic>
-        <FormControl onChange={(e) => previewMainImage(e)} ref={picRef} type="file" hidden></FormControl>
+        <FormControl
+          onChange={(e) => previewMainImage(e)}
+          ref={picRef}
+          type="file"
+          hidden
+        ></FormControl>
       </FormGroup>
       <FormGroup>
         <FormLabel>名字</FormLabel>
@@ -107,12 +117,15 @@ function Setting() {
       </FormGroup>
       <FormGroup>
         <FormLabel>信箱</FormLabel>
-        <FormControl ref={emailRef} defaultValue={userInfo!.email}></FormControl>
+        <FormControl
+          ref={emailRef}
+          defaultValue={userInfo!.email}
+        ></FormControl>
       </FormGroup>
 
       <SubmitBtn
         onClick={() => {
-          if (mainImgUrl !== '') {
+          if (mainImgUrl !== "") {
             submitImg();
           }
           submitNameOrEmail();
