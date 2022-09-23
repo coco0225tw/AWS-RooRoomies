@@ -7,6 +7,7 @@ import {
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapKey from "../../key";
+import logo from "../../../assets/searchHouse.png";
 const style = [
   {
     featureType: "administrative",
