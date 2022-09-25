@@ -7,7 +7,7 @@ import {
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import GoogleMapKey from "../../key";
-import logo from "../../../assets/searchHouse.png";
+import logo from "../../assets/searchHouse.png";
 const style = [
   {
     featureType: "administrative",
@@ -173,22 +173,22 @@ function Map() {
     }
     // getGeocode();
 
-    async function getRestaurant() {
-      await fetch(
-        `https://us-central1-rooroomies.cloudfunctions.net/googleMap?lat=${LatLng.lat}&lng=${LatLng.lng}&keyword=${keyword}`
-      ).then((res) => {
-        console.log(res);
-        res.json().then((data) => {
-          console.log(data.results);
-          let allRestaurants: [] = [];
-          let allLatLng = data.results.map((p: any, index: number) => {
-            return p.geometry.location;
-          });
-          setAllRestaurants(allLatLng);
-        });
-      });
-    }
-    getRestaurant();
+    // async function getRestaurant() {
+    //   await fetch(
+    //     `https://us-central1-rooroomies.cloudfunctions.net/googleMap?lat=${LatLng.lat}&lng=${LatLng.lng}&keyword=${keyword}`
+    //   ).then((res) => {
+    //     console.log(res);
+    //     res.json().then((data) => {
+    //       console.log(data.results);
+    //       let allRestaurants: [] = [];
+    //       let allLatLng = data.results.map((p: any, index: number) => {
+    //         return p.geometry.location;
+    //       });
+    //       setAllRestaurants(allLatLng);
+    //     });
+    //   });
+    // }
+    // getRestaurant();
   }, []);
   return (
     <Wrapper>
@@ -200,17 +200,14 @@ function Map() {
           center={addrs}
         >
           <Marker
-            // icon={
-            //   {
-            //     // path: google.maps.SymbolPath.CIRCLE,
-            //     // url: require('./../../assets/svg/location_marker.ico'),
-            //     // fillColor: '#EB00FF',
-            //     // scale: 7,
-            //   }
-            // }
+            icon={{
+              url: logo,
+              scaledSize: new google.maps.Size(28, 28), // scaled size
+              origin: new google.maps.Point(0, 0), // origin
+              anchor: new google.maps.Point(0, 0), // anchor
+            }}
             position={addrs}
           ></Marker>
-          {/* {allRestaurants && allRestaurants.map((l, index) => <Marker position={l}></Marker>)} */}
         </GoogleMap>
       )}
     </Wrapper>

@@ -185,10 +185,10 @@ const roommatesConditionFormGroups = [
       //   },
     ],
   },
-  {
-    label: "職業類別",
-    key: "career",
-  },
+  // {
+  //   label: "職業類別",
+  //   key: "career",
+  // },
 ];
 
 const SubmitBtn = styled(BtnDiv)`
@@ -213,7 +213,7 @@ function AboutMe() {
         genderFriendly: "",
         pet: "",
         smoke: "",
-        career: "",
+        // career: "",
       };
 
   const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(

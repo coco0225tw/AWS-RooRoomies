@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 const FormLegend = styled.legend`
   line-height: 19px;
   font-size: 16px;
@@ -107,7 +107,7 @@ const FormCheckLabel = styled.label`
 const FormControl = styled.input`
   letter-spacing: 1.6px;
   font-size: 20px;
-  width: 574px;
+  width: 100%;
   // height: 30px;
   border-radius: 8px;
   border: solid 1px #979797;
@@ -119,4 +119,13 @@ const FormControl = styled.input`
   }
 `;
 
-export { FormLegend, FormGroup, FormLabel, FormInputWrapper, FormCheckInput, FormCheck, FormCheckLabel, FormControl };
+export {
+  FormLegend,
+  FormGroup,
+  FormLabel,
+  FormInputWrapper,
+  FormCheckInput,
+  FormCheck,
+  FormCheckLabel,
+  FormControl,
+};

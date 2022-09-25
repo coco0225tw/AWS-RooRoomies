@@ -6,7 +6,7 @@ interface roommatesConditionType {
   genderFriendly: string;
   pet: string;
   smoke: string;
-  career: string;
+  // career: string;
 }
 
 export default roommatesConditionType;
