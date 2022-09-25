@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import { RootState } from "../../../redux/rootReducer";
 import { firebase } from "../../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
 import titleType from "../../../redux/UploadBookingTimes/UploadBookingTimesType";
@@ -77,8 +78,15 @@ function UploadMainImageAndImages({
   setClickTab: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const dispatch = useDispatch();
-  const [mainImgUrl, setMainImgUrl] = useState<string>();
-  const [imagesUrl, setImagesUrl] = useState<string[]>();
+  const getMainImage = useSelector(
+    (state: RootState) => state.PreviewImageReducer
+  );
+  const getOtherImages = useSelector(
+    (state: RootState) => state.PreviewOtherImagesReducer
+  );
+
+  const [mainImgUrl, setMainImgUrl] = useState<string>(getMainImage);
+  const [imagesUrl, setImagesUrl] = useState<string[]>(getOtherImages);
   const [imagesBlob, setImagesBlob] = useState<Blob[]>();
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
   const [images, setImages] = useState<[string, string[]]>();
@@ -117,6 +125,11 @@ function UploadMainImageAndImages({
   async function uploadAllImages() {
     let images = { mainImage: mainImgBlob, images: imagesBlob };
     dispatch({ type: "UPLOAD_IMAGES", payload: { images } });
+    dispatch({ type: "PREVIEW_MAINIMAGE", payload: { mainImage: mainImgUrl } });
+    dispatch({
+      type: "PREVIEW_OTHERIMAGES",
+      payload: { otherImages: imagesUrl },
+    });
     console.log("送出圖片");
   }
   return (

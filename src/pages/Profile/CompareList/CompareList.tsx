@@ -8,15 +8,19 @@ import addIcon from "../../../assets/add.png";
 import unAddIcon from "../../../assets/unAdd.png";
 import { PopupComponent, PopupImage } from "../../../components/Popup";
 import { Link } from "react-router-dom";
+import ListingItem from "../../../components/ListingItem";
+import { Title } from "../../../components/ProfileTitle";
+import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  width: 80%;
-  height: 50vh;
   margin: auto;
-  overflow-x: scroll;
+  width: 80%;
+  height: 100%;
+  color: #4f5152;
+  margin-top: 20px;
 `;
 
 const SideBarWrapper = styled.div`
@@ -78,7 +82,9 @@ function CompareList() {
   }
   return (
     <Wrapper>
-      <div>追蹤物件</div>
+      <Title>比較列表</Title>
+      <Hr />
+      {/* <div>追蹤物件</div> */}
       <DragDropContext
         onDragEnd={(result) => {
           const { source, destination, draggableId } = result;

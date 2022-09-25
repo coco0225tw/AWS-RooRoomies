@@ -104,7 +104,7 @@ function Footer() {
       <Title>©rooroomies 2022</Title>
       {authChange ? (
         <SectionWrapper>
-          <Notification></Notification>
+          {/* <Notification></Notification> */}
           <Profile to={"/profile"} img={userInfo.image}></Profile>
           {/* <BtnDiv onClick={clickSingOut}>登出</BtnDiv> */}
         </SectionWrapper>

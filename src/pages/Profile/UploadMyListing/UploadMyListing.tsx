@@ -110,13 +110,14 @@ function UploadMyListing() {
       latLng: getAddr.latLng, //預設北醫
       matchGroup: [],
     };
-    // firebase.setNewListingDocField(
-    //   newListingRef,
-    //   listingData,
-    //   getBookingTimes,
-    //   getImages.mainImage,
-    //   getImages.images
-    // );
+    firebase.setNewListingDocField(
+      newListingRef,
+      listingData,
+      getBookingTimes,
+      getImages.mainImage,
+      getImages.images,
+      userInfo!.uid
+    );
   }
   return (
     <Wrapper>

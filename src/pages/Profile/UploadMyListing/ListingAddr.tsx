@@ -89,7 +89,7 @@ function ListingAddr({
           <FormLabel>{label}</FormLabel>
           <FormInputWrapper>
             <FormControl
-              defaultValue={addrState[key as keyof typeof addrState]}
+              defaultValue={addrState[key as keyof typeof addrState] as string}
               onChange={(e) =>
                 setAddrState({ ...addrState, [key]: e.target.value })
               }

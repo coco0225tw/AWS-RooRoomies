@@ -94,18 +94,15 @@ function FollowedList() {
 
   useEffect(() => {
     async function getAllListing() {
-      // getListing;
       let promise: DocumentData[] = [];
       favoriteLists.map((id, index) => {
         promise.push(firebase.getFavoriteListing(id) as DocumentData);
       });
       let allPromises = await Promise.all(promise);
       let listingDocArr: DocumentData[] = [];
-      // allPromises.then((listing) => {
       allPromises.forEach((doc) => {
         listingDocArr.push(doc);
       });
-      // });
 
       setAllListingData(listingDocArr.reverse());
       console.log(listingDocArr);
@@ -116,7 +113,6 @@ function FollowedList() {
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
           msg={`確定刪除房源`}
           notDefaultBtn={`取消`}
           defaultBtn={`刪除`}
@@ -124,7 +120,7 @@ function FollowedList() {
           clickFunction={() => removeFromFavoriteLists()}
         />
       )}
-      <Title>追蹤物件</Title>
+      <Title>喜歡列表</Title>
       <Hr />
       {favoriteLists &&
         allListingData.map((f, index) => (

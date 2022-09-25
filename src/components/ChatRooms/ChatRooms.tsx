@@ -35,6 +35,7 @@ const Wrapper = styled.div<{ isShown: boolean }>`
   box-shadow: ${(props) =>
     props.isShown ? "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" : ""};
   border-radius: ${(props) => (props.isShown ? "8px 8px 0px 0px " : "50%")};
+  color: #4f5152;
 `;
 const ChatIcon = styled.div<{ isShown: boolean }>`
   width: 80px;
@@ -51,7 +52,7 @@ const ChatIcon = styled.div<{ isShown: boolean }>`
 const SectionWrapper = styled.div`
   display: flex;
   width: 100%;
-  // flex-grow: 1;
+  flex-grow: 1;
   height: 80%;
   flex-direction: column;
   overflow: scroll;
@@ -74,11 +75,15 @@ const MsgWrapper = styled.div`
   // overflow-x: hidden;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  padding: 0px 12px;
   // height: 100%;
   justify-content: flex-end;
 `;
 const InputArea = styled.div`
   display: flex;
+  padding: 4px 20px;
+  background-color: #ece2d5;
 `;
 const Message = styled.div<{ auth: boolean }>`
   display: flex;
@@ -100,12 +105,17 @@ const UserPic = styled.div<{ pic: string }>`
 `;
 const UserMessage = styled.div`
   flex-grow: 1;
-  border-radius: 16px;
+  padding: 0 12px;
+  border-radius: 8px;
 `;
 const SendTime = styled.div``;
 const InputMessageBox = styled.input`
+  border: none;
   align-self: flex-end;
   padding: 4px;
+  border-radius: 4px;
+  width: 100%;
+  // background-color: inherit;
 `;
 
 const SubmitBtn = styled.div`
@@ -154,23 +164,26 @@ const MessageWrapper = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  margin-bottom: 12px;
 `;
 
 const Close = styled.div<{ isShown: boolean }>`
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   text-align: center;
   border-radius: 50%;
-  line-height: 20px;
+  line-height: 32px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 20px;
   right: 0;
-  transform: translateY(-100%);
+  transform: translate(100%, -100%);
+  border: solid 1px #ece2d5;
+  color: #ece2d5;
   &:hover {
     color: #ffffff;
     border: solid 1px #ece2d5;
-    background-color: #4f5152;
+    background-color: #c77155;
   }
   display: ${(props) => (props.isShown ? "block" : "none")};
 `;
@@ -244,7 +257,7 @@ function ChatRooms() {
           }}
         ></ChatIcon>
         <Close isShown={isShown} onClick={() => setIsShown(false)}>
-          x
+          &#215;
         </Close>
         {isShown ? (
           houseHuntingData.length === 0 ? (
@@ -276,19 +289,29 @@ function ChatRooms() {
                       >
                         {el.userId === userInfo.uid ? (
                           <MessageWrapper>
-                            <UserMessage>{el.userMsg}</UserMessage>
+                            <UserMessage
+                              style={{
+                                marginRight: "12px",
+                                textAlign: "right",
+                                backgroundColor: "#fff7f4 ",
+                              }}
+                            >
+                              {el.userMsg}
+                            </UserMessage>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              <UserName>{el.userName}</UserName>
+                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
                           </MessageWrapper>
                         ) : (
                           <MessageWrapper>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              <UserName>{el.userName}</UserName>
+                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
-                            <UserMessage>{el.userMsg}</UserMessage>
+                            <UserMessage style={{ marginLeft: "12px" }}>
+                              {el.userMsg}
+                            </UserMessage>
                           </MessageWrapper>
                         )}
                       </Message>
@@ -298,10 +321,18 @@ function ChatRooms() {
               </SectionWrapper>
               <InputArea>
                 <InputMessageBox
-                  placeholder={"輸入訊息"}
+                  placeholder={"..."}
                   ref={msgInputRef}
+                  onKeyDown={(event) => {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    if (event.key === "Enter") {
+                      senMsg();
+                      msgInputRef.current!.value = "";
+                    }
+                  }}
                 ></InputMessageBox>
-                <SubmitBtn onClick={senMsg}>送出</SubmitBtn>
+                {/* <SubmitBtn onClick={senMsg}>送出</SubmitBtn> */}
               </InputArea>
             </HeaderBar>
           )

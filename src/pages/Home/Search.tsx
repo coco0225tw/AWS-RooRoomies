@@ -33,7 +33,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 50vh;
+  height: 100vh;
   margin: auto;
   background-image: url(${carousel});
   background-size: cover;
@@ -57,6 +57,16 @@ const SearchBox = styled.div`
   // top: 0px;
   left: 50%;
   transform: translateX(-50%);
+`;
+const Slogan = styled.div`
+  color: #4f5152;
+  font-size: 60px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  top: 60px;
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -295,6 +305,7 @@ function Search() {
   }, []);
   return (
     <Wrapper>
+      <Slogan>房子是租來的，生活不是</Slogan>
       <SearchBox>
         <StyledFormGroup
           style={{ flexDirection: "column" }}
