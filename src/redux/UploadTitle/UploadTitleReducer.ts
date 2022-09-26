@@ -12,6 +12,8 @@ const titleEmptyState = {
   totalSq: "",
   form: "",
   environmentDescription: "",
+  number: null,
+  moveInDate: null,
 };
 export default function UploadTitle(state = titleEmptyState, action: Action) {
   switch (action.type) {

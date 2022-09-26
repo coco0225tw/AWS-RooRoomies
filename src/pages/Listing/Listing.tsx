@@ -361,7 +361,8 @@ function Listing() {
     endRent: number;
     totalSq: number;
     floor: number;
-    moveInDate: Timestamp;
+    moveInDate: string;
+    latLng: { lat: number; lng: number };
   };
 
   const [listingInfo, setListingInfo] = useState<ListingType>();
@@ -440,7 +441,6 @@ function Listing() {
       const data = (await firebase.getListing(id!)) as ListingType;
       setListingInfo(data);
       // console.log(data.moveInDate.toDateString());
-      console.log(data.moveInDate.toDate());
     }
     async function getBookingTimes() {
       await firebase.getBookingTimesSubColForListing(id!).then((times) => {
@@ -531,7 +531,10 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              <ImageWrap key={`images_${index}`}>
+              <ImageWrap
+                style={{ height: "auto", marginBottom: "2%" }}
+                key={`images_${index}`}
+              >
                 <Images src={src} onClick={() => clickOnImage(src)} />
               </ImageWrap>
             ))}
@@ -552,14 +555,7 @@ function Listing() {
                 <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
                 <TitleIcon>{listingInfo?.floor}樓</TitleIcon>
                 <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
-                <TitleIcon>
-                  {listingInfo?.moveInDate.toDate().toDateString()}起可入住
-                  {/* {listingInfo?.moveInDate.toDate().getFullYear() +
-                  '-' +
-                  ('0' + (listingInfo?.moveInDate!.toDate().getMonth() + 1)).slice(-2) +
-                  '-' +
-                  ('0' + listingInfo?.moveInDate!.toDate().getDate()).slice(-2)} */}
-                </TitleIcon>
+                <TitleIcon>{listingInfo?.moveInDate}起可入住</TitleIcon>
               </TitleIconWrapper>
             </TitleDivide>
 
@@ -615,7 +611,7 @@ function Listing() {
               bookingTimesInfo
                 .filter(
                   (el) =>
-                    el.data().date.toDate().getTime() !==
+                    el.data().date.toDate().getTime() ===
                       selectedDate.getTime() && el.data().isBooked === false
                 )
                 .map((el, index) => (
@@ -653,7 +649,7 @@ function Listing() {
       {/* <Hr style={{ margin: '40px 0px' }} /> */}
       {/* <SubmitBtn onClick={() => match()}>比對</SubmitBtn> */}
       {/* <SubTitle style={{ marginBottom: '32px' }}>地點</SubTitle> */}
-      <Map></Map>
+      <Map latLng={listingInfo?.latLng!}></Map>
     </Wrapper>
   );
 }

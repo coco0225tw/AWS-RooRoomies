@@ -79,8 +79,8 @@ const MainImage = styled.div<ImgProps>`
   aspect-ratio: 1 / 1;
   width: 100%;
   background-image: url(${(props) => (props.img ? props.img : "")});
-  background-position: cover;
-  background-size: 100% 100%;
+  background-position: center bottom;
+  background-size: cover;
   border-radius: 12px;
   margin-bottom: 12px;
   display: flex;

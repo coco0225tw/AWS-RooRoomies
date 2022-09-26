@@ -1,7 +1,28 @@
 import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/rootReducer";
-import { firebase, newListingRef, timestamp } from "../../../utils/firebase";
+import { firebase, timestamp, db } from "../../../utils/firebase";
+import {
+  query,
+  getFirestore,
+  getDocs,
+  collection,
+  doc,
+  updateDoc,
+  getDoc,
+  setDoc,
+  orderBy,
+  limit,
+  startAfter,
+  DocumentData,
+  serverTimestamp,
+  addDoc,
+  onSnapshot,
+  QueryDocumentSnapshot,
+  where,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import styled from "styled-components";
 import UploadMainImageAndImages from "./UploadMainImageAndImages";
 import SetBookingTimes from "./SetBookingTimes";
@@ -12,10 +33,11 @@ import Facility from "./Facility";
 import RentRoomDetails from "./RentRoomDetails";
 import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import addrType from "../../../redux/UploadAddr/UploadAddrType";
+import titleType from "../../../redux/UploadTitle/UploadTitleType";
 import { Title } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import { Loading } from "../../../components/Loading";
-import upload from "../../../assets/upload.png";
+
 import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
@@ -71,7 +93,9 @@ function UploadMyListing({
   const getFacility = useSelector(
     (state: RootState) => state.UploadFacilityReducer
   );
-  const getTitle = useSelector((state: RootState) => state.UploadTitleReducer);
+  const getTitle = useSelector(
+    (state: RootState) => state.UploadTitleReducer
+  ) as titleType;
   const getImages = useSelector(
     (state: RootState) => state.UploadImagesReducer
   ) as any;
@@ -79,15 +103,7 @@ function UploadMyListing({
   const getBookingTimes = useSelector(
     (state: RootState) => state.UploadTimesReducer
   );
-  function setDoc() {
-    console.log(getAddr);
-    console.log(getRoommatesCondition);
-    console.log(getFacility);
-    console.log(getTitle);
-    console.log(getImages);
-    console.log(typeof getRooms);
-    console.log(getRooms);
-    console.log(getBookingTimes);
+  function setDoc(facilityOptions: any) {
     const findPeopleAmount = (getRooms as roomDetailsType).reduce(
       (sum, people) => sum + people.peopleAmount,
       0
@@ -100,24 +116,23 @@ function UploadMyListing({
     );
     const listingData = {
       ...getTitle,
-      // id: 'string',
       uploadedTime: timestamp,
       countyName: getAddr.countyname,
       townName: getAddr.townname,
       peopleAmount: findPeopleAmount,
       startRent: findStartRent.rent,
       endRent: findEndRent.rent,
-      // mainImage: getImages[0],
-      // images: getImages[1],
       floor: getAddr.floor,
       rentRoomDetails: getRooms,
-      facility: getFacility,
+      facility: facilityOptions,
       roommatesConditions: getRoommatesCondition,
-      moveInDate: new Date(2022, 12, 1), //補上
-      addr: `${getAddr.countyname}${getAddr.townname}${getAddr.floor}樓`, //補上
+      addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`, //補上
       latLng: getAddr.latLng, //預設北醫
       matchGroup: [],
     };
+    const listingCollection = collection(db, "listings");
+    const userCollection = collection(db, "users");
+    const newListingRef = doc(listingCollection);
     firebase.setNewListingDocField(
       newListingRef,
       listingData,
@@ -136,6 +151,7 @@ function UploadMyListing({
       <Tabs>
         {TabSelect.map((el, index) => (
           <Tab
+            key={`subTab${index}`}
             isClick={el === clickTab}
             onClick={() => {
               setClickTab(el);

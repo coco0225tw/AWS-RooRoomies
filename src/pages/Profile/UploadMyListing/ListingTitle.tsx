@@ -53,6 +53,8 @@ function ListingTitle({
     { label: "坪數", key: "totalSq" },
     { label: "規格 ", key: "form" },
     { label: "描述 ", key: "environmentDescription" },
+    { label: "連絡電話 ", key: "phone" },
+    { label: "入住時間 ", key: "moveInDate" },
   ];
   const [titleState, setTitleState] = useState<titleType>(initialTitleState);
   function submit(titleState: titleType) {
@@ -67,7 +69,7 @@ function ListingTitle({
           <FormLabel>{label}</FormLabel>
           <FormInputWrapper>
             <FormControl
-              value={titleState[key as keyof titleType]}
+              value={titleState[key as keyof titleType] as string}
               onChange={(e) =>
                 setTitleState({ ...titleState, [key]: e.target.value })
               }

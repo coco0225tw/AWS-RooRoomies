@@ -127,7 +127,7 @@ const style = [
     ],
   },
 ];
-function Map() {
+function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
   let map: google.maps.Map;
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: GoogleMapKey,
@@ -197,7 +197,7 @@ function Map() {
           options={{ styles: style }}
           mapContainerStyle={mapStyles}
           zoom={14}
-          center={addrs}
+          center={latLng}
         >
           <Marker
             icon={{
@@ -206,7 +206,7 @@ function Map() {
               origin: new google.maps.Point(0, 0), // origin
               anchor: new google.maps.Point(0, 0), // anchor
             }}
-            position={addrs}
+            position={latLng}
           ></Marker>
         </GoogleMap>
       )}

@@ -86,9 +86,6 @@ const firebase = {
       mainImage: mainImageUrl,
       images: imagesUrl,
     });
-    const bookingTimesDocRef = doc(
-      collection(db, "listings", newListingRef.id, bookingTimesCollection)
-    );
     let bookingTimePromises: Promise<void>[] = [];
     console.log(bookingTimes);
     bookingTimes.map((bookingTime: any, index: number) => {
@@ -175,7 +172,7 @@ const firebase = {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      window.alert("No such document!");
+      // window.alert("No such document!");
     }
   },
   async getFavoriteListing(listingId: string) {
@@ -185,7 +182,7 @@ const firebase = {
     if (docSnap.exists()) {
       return docSnap;
     } else {
-      window.alert("No such document!");
+      // window.alert("No such document!");
     }
   },
 
@@ -309,7 +306,7 @@ const firebase = {
       // console.log(docSnap.data());
       return docSnap;
     } else {
-      window.alert("No such document!");
+      // window.alert("No such document!");
     }
   },
   async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {

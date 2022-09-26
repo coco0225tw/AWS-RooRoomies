@@ -282,7 +282,7 @@ function Facility({
   const [facilityState, setFacilityState] = useState<facilityType>(
     initialFacilityEmptyState
   );
-  function submit() {
+  async function submit() {
     dispatch({ type: "UPLOAD_FACILITY", payload: { facilityState } });
     console.log("送出設施");
   }
@@ -392,7 +392,14 @@ function Facility({
           </FormInputWrapper>
         </FormGroup>
       ))}
-      <SubmitBtn onClick={() => submit()}>送出</SubmitBtn>
+      <SubmitBtn
+        onClick={async () => {
+          await submit();
+          await setDoc(facilityState);
+        }}
+      >
+        送出
+      </SubmitBtn>
       {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );

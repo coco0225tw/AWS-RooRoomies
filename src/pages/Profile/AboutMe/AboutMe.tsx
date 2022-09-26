@@ -227,10 +227,8 @@ function AboutMe({
     initialRoommatesState
   );
   async function submit(meAsRoommatesState: roommatesConditionType) {
-    // 先檢查有沒有預約的時間
-    // 要做popup
-    // dispatch({ type: 'UPLOAD_MEASROOMMATE', payload: { meAsRoommatesState } });
-    // await firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState);
+    dispatch({ type: "UPLOAD_MEASROOMMATE", payload: { meAsRoommatesState } });
+    await firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState);
   }
   return (
     <Wrapper>
