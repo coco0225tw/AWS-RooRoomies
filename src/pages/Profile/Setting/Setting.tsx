@@ -6,6 +6,7 @@ import Hr from "../../../components/Hr";
 import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import { firebase } from "../../../utils/firebase";
+import { Loading } from "../../../components/Loading";
 import {
   FormLegend,
   FormGroup,
@@ -64,7 +65,13 @@ const UploadImgBtn = styled.div`
   line-height: 60px;
   cursor: pointer;
 `;
-function Setting() {
+function Setting({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const [mainImgUrl, setMainImgUrl] = useState<string>("");
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const [edit, setEdit] = useState<boolean>(false);
@@ -94,45 +101,54 @@ function Setting() {
     <Wrapper>
       <Title>設定</Title>
       <Hr />
-      <FormGroup>
-        <ProfilePic img={userInfo!.image} uploadedImg={mainImgUrl}>
-          <UploadImgBtn
+      {loading ? (
+        <Loading />
+      ) : (
+        <React.Fragment>
+          <FormGroup>
+            <ProfilePic img={userInfo!.image} uploadedImg={mainImgUrl}>
+              <UploadImgBtn
+                onClick={() => {
+                  picRef.current!.click();
+                }}
+              >
+                上傳
+              </UploadImgBtn>
+            </ProfilePic>
+            <FormControl
+              onChange={(e) => previewMainImage(e)}
+              ref={picRef}
+              type="file"
+              hidden
+            ></FormControl>
+          </FormGroup>
+          <FormGroup>
+            <FormLabel>名字</FormLabel>
+            <FormControl
+              ref={nameRef}
+              defaultValue={userInfo!.name}
+            ></FormControl>
+          </FormGroup>
+          <FormGroup>
+            <FormLabel>信箱</FormLabel>
+            <FormControl
+              ref={emailRef}
+              defaultValue={userInfo!.email}
+            ></FormControl>
+          </FormGroup>
+
+          <SubmitBtn
             onClick={() => {
-              picRef.current!.click();
+              if (mainImgUrl !== "") {
+                submitImg();
+              }
+              submitNameOrEmail();
             }}
           >
-            上傳
-          </UploadImgBtn>
-        </ProfilePic>
-        <FormControl
-          onChange={(e) => previewMainImage(e)}
-          ref={picRef}
-          type="file"
-          hidden
-        ></FormControl>
-      </FormGroup>
-      <FormGroup>
-        <FormLabel>名字</FormLabel>
-        <FormControl ref={nameRef} defaultValue={userInfo!.name}></FormControl>
-      </FormGroup>
-      <FormGroup>
-        <FormLabel>信箱</FormLabel>
-        <FormControl
-          ref={emailRef}
-          defaultValue={userInfo!.email}
-        ></FormControl>
-      </FormGroup>
-
-      <SubmitBtn
-        onClick={() => {
-          if (mainImgUrl !== "") {
-            submitImg();
-          }
-          submitNameOrEmail();
-        }}
-      >
-        儲存變更
-      </SubmitBtn>
+            儲存變更
+          </SubmitBtn>
+        </React.Fragment>
+      )}
     </Wrapper>
   );
 }

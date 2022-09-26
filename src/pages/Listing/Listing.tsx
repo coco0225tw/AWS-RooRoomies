@@ -488,7 +488,7 @@ function Listing() {
           onClick={(e) => handleLiked(e!, favoriteLists.includes(id!))}
           isLiked={favoriteLists.includes(id!)}
         ></FavoriteIcon>
-        <CompareIcon
+        {/* <CompareIcon
           onClick={(e) => {
             handleCompare(
               e!,
@@ -496,7 +496,7 @@ function Listing() {
             );
           }}
           isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
-        ></CompareIcon>
+        ></CompareIcon> */}
       </IconArea>
       {popImg && (
         <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />

@@ -22,6 +22,7 @@ import { PopupComponent, PopupImage } from "../../../components/Popup";
 import ListingItem from "../../../components/ListingItem";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import chat from "../../../assets/chat.png";
+import { Loading } from "../../../components/Loading";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -85,7 +86,13 @@ const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
 const TabSelect = ["已預約", "尚未預約", "等待湊團"];
-function AllHouseHunting() {
+function AllHouseHunting({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
@@ -139,6 +146,7 @@ function AllHouseHunting() {
           </Tab>
         ))}
       </Tabs>
+
       {allListingData.length !== 0 &&
         clickTab === "已預約" &&
         houseHuntingData

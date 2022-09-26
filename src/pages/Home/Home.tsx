@@ -1,15 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { query, collection, limit, QuerySnapshot, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
-import styled from 'styled-components';
-import { firebase } from '../../utils/firebase';
-import Listing from './Listing';
-import Search from './Search';
-import { RootState } from '../../redux/rootReducer';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  query,
+  collection,
+  limit,
+  QuerySnapshot,
+  DocumentData,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
+import styled from "styled-components";
+import { firebase } from "../../utils/firebase";
+import Listing from "./Listing";
+import Search from "./Search";
+import { RootState } from "../../redux/rootReducer";
+import { useSelector, useDispatch } from "react-redux";
+import { Loading } from "../../components/Loading";
 interface Props {
   key: string;
 }
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -72,45 +81,42 @@ function Home() {
     data: DocumentData;
     key: string;
   }
-  const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
-  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
+  const listingDocData = useSelector(
+    (state: RootState) => state.GetListingInHomePageReducer
+  );
+  const lastDocData = useSelector(
+    (state: RootState) => state.GetLastDocReducer
+  );
 
   // console.log(listingDocData);
-  useEffect(() => {
-    // console.log('homeFromUseEffect');
-    // firebase.getAllListings(null, null).then((listing) => {
-    //   const lastDoc = listing.docs[listing.docs.length - 1];
-    //   dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
-    //   let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-    //   listing.forEach((doc) => {
-    //     listingDocArr.push(doc);
-    //   });
-    //   dispatch({ type: 'GET_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
-    // });
-  }, []);
+  useEffect(() => {}, []);
   const arr = [];
 
-  // async function nextPage() {
-  //   firebase.getNextPageListing(lastDocData as DocumentData).then((listing) => {
-  //     const lastDoc = listing.docs[listing.docs.length - 1];
-  //     dispatch({ type: 'GET_LAST_LISTING_DOC', payload: { lastDocData: lastDoc } });
-  //     let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-  //     listing.forEach((doc) => {
-  //       listingDocArr.push(doc);
-  //     });
-  //     dispatch({ type: 'GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE', payload: { listingDocData: listingDocArr } });
-  //   });
-  // }
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
   return (
     <Wrapper>
-      <Search></Search>
+      <Search loading={loading} setLoading={setLoading}></Search>
       <ListingWrapper>
-        {listingDocData &&
+        {loading ? (
+          <Loading />
+        ) : (
+          listingDocData &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
-            <ListingLink key={`listing_${index}`} target="_blank" to={`/listing/${listingDocData.id}`}>
+            <ListingLink
+              key={`listing_${index}`}
+              target="_blank"
+              to={`/listing/${listingDocData.id}`}
+            >
               <Listing listingDocData={listingDocData}></Listing>
             </ListingLink>
-          ))}
+          ))
+        )}
       </ListingWrapper>
       <PageArea>
         {/* <PrevPageBtn>上一頁</PrevPageBtn>

@@ -1,16 +1,16 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { firebase } from '../../utils/firebase';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/rootReducer';
-import UploadMyListing from './UploadMyListing/UploadMyListing';
-import Setting from './Setting/Setting';
-import FollowedList from './FollowedList/FollowedList';
-import CompareList from './CompareList/CompareList';
-import AllHouseHunting from './AllHouseHunting/AllHouseHunting';
-import AboutMe from './AboutMe/AboutMe';
-import SideBarTab from './SideBarTab';
-import { BtnDiv } from '../../components/Button';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { firebase } from "../../utils/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
+import UploadMyListing from "./UploadMyListing/UploadMyListing";
+import Setting from "./Setting/Setting";
+import FollowedList from "./FollowedList/FollowedList";
+import CompareList from "./CompareList/CompareList";
+import AllHouseHunting from "./AllHouseHunting/AllHouseHunting";
+import AboutMe from "./AboutMe/AboutMe";
+import SideBarTab from "./SideBarTab";
+import { BtnDiv } from "../../components/Button";
 const Wrapper = styled.div`
   display: flex;
   // display:
@@ -37,8 +37,9 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
   // display: inline-block;
   background-color: #f3f2ef;
   border-radius: 12px;
-  // ${(props) => (props.isShowTab ? null : 'transform: translateX(calc(-100% + 10px))')};
-  ${(props) => (props.isShowTab ? null : 'display: none')};
+  // ${(props) =>
+    props.isShowTab ? null : "transform: translateX(calc(-100% + 10px))"};
+  ${(props) => (props.isShowTab ? null : "display: none")};
   transition-duration: 0.2s;
   z-index: 2;
   @media screen and (max-width: 960px) {
@@ -47,13 +48,13 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
   @media screen and (max-width: 425px) {
     position: absolute;
     width: 100%;
-    // ${(props) => (props.isShowTab ? 'width: 60%' : 'width: 100%')};
+    // ${(props) => (props.isShowTab ? "width: 60%" : "width: 100%")};
   }
 `;
 // <{ isShowTab: boolean }>
 const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   // display: inline-block;
-  // ${(props) => (props.isShowTab ? 'width: 72%' : 'width: 100%')};
+  // ${(props) => (props.isShowTab ? "width: 72%" : "width: 100%")};
   // position: absolute;
   // right: 0;
   // top: 0;
@@ -64,20 +65,20 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   width: 100%;
   align-self: flex-start;
   @media screen and (max-width: 960px) {
-    ${(props) => (props.isShowTab ? 'width: 60%' : 'width: 100%')};
+    ${(props) => (props.isShowTab ? "width: 60%" : "width: 100%")};
   }
   @media screen and (max-width: 425px) {
     // width: 100%;
     // position: absolute;
     top: 0;
-    ${(props) => (props.isShowTab ? 'width: 100%' : 'width: 60%')};
+    ${(props) => (props.isShowTab ? "width: 100%" : "width: 60%")};
   }
 `;
 
 const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
-  position: ${(props) => (props.isShowTab ? 'static' : 'absolute')};
+  position: ${(props) => (props.isShowTab ? "static" : "absolute")};
   left: 0px;
-  // transform: translateX(${(props) => (props.windowState ? '180%' : '200%')});
+  // transform: translateX(${(props) => (props.windowState ? "180%" : "200%")});
   // display: block !important;
   background-color: #f3f2ef;
   height: 50px;
@@ -97,6 +98,7 @@ const ArrowWrap = styled.div`
   color: inherit;
 `;
 function Profile() {
+  const [loading, setLoading] = useState(false);
   const [windowState, setWindowState] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [showTab, setShowTab] = useState<boolean>(true);
@@ -109,22 +111,43 @@ function Profile() {
   return (
     <Wrapper>
       <SideBarWrapper isShowTab={showTab}>
-        <SideBarTab showTab={showTab} setShowTab={setShowTab} />
+        <SideBarTab
+          showTab={showTab}
+          setShowTab={setShowTab}
+          setLoading={setLoading}
+          loading={loading}
+        />
       </SideBarWrapper>
       <Arrow
         windowState={windowState}
         isShowTab={showTab}
         onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
       >
-        {showTab ? <ArrowWrap>&#171;</ArrowWrap> : <ArrowWrap>&#187;</ArrowWrap>}
+        {showTab ? (
+          <ArrowWrap>&#171;</ArrowWrap>
+        ) : (
+          <ArrowWrap>&#187;</ArrowWrap>
+        )}
       </Arrow>
       <SectionWrapper isShowTab={showTab}>
-        {getTab.tab === 'aboutMe' && <AboutMe />}
-        {getTab.tab === 'allHouseHunting' && <AllHouseHunting />}
-        {getTab.tab === 'compareList' && <CompareList />}
-        {getTab.tab === 'followedList' && <FollowedList />}
-        {getTab.tab === 'uploadMyListing' && <UploadMyListing />}
-        {getTab.tab === 'setting' && <Setting />}
+        {getTab.tab === "aboutMe" && (
+          <AboutMe setLoading={setLoading} loading={loading} />
+        )}
+        {getTab.tab === "allHouseHunting" && (
+          <AllHouseHunting setLoading={setLoading} loading={loading} />
+        )}
+        {/* {getTab.tab === "compareList" && (
+          <CompareList setLoading={setLoading} loading={loading} />
+        )} */}
+        {getTab.tab === "followedList" && (
+          <FollowedList setLoading={setLoading} loading={loading} />
+        )}
+        {getTab.tab === "uploadMyListing" && (
+          <UploadMyListing setLoading={setLoading} loading={loading} />
+        )}
+        {getTab.tab === "setting" && (
+          <Setting setLoading={setLoading} loading={loading} />
+        )}
       </SectionWrapper>
     </Wrapper>
   );

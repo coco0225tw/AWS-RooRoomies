@@ -25,7 +25,7 @@ import {
   FormControl,
 } from "../../components/InputArea";
 import arrow from "../../assets/arrow.png";
-// import { RootState } from '../../../redux/rootReducer';
+import { Loading } from "../../components/Loading";
 import { BtnDiv } from "../../components/Button";
 const Wrapper = styled.div`
   display: flex;
@@ -139,7 +139,13 @@ const DropDownIcon = styled.div<{ openDropDown: boolean }>`
   margin-left: 20px;
   border: solid 1px #fff7f4;
 `;
-function Search() {
+function Search({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const dispatch = useDispatch();
   const [selectCounty, setSelectCounty] = useState<County>({
     countyCode: 63000,
@@ -245,6 +251,10 @@ function Search() {
           });
         }
       });
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   }
   async function nextPage(
     county: string | null,
@@ -293,6 +303,10 @@ function Search() {
           payload: { listingDocData: listingDocArr },
         });
       });
+    // setLoading(true);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 3000);
   }
   function clickOnDropDown() {
     setOpenDropDown(true);
@@ -300,6 +314,7 @@ function Search() {
   function selectCountyFunction() {
     setOpenDropDown(false);
   }
+
   useEffect(() => {
     handleOnchange(selectCounty.countyName!, "不限", "不限");
   }, []);

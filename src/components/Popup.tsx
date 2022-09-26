@@ -144,27 +144,6 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
         >
           x
         </Close>
-        {/* <Message>{msg}</Message> */}
-        {/* <BtnArea>
-          <NotDefaultBtn
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              clickClose();
-            }}
-          >
-            {notDefaultBtn}
-          </NotDefaultBtn>
-          <DefaultBtn
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              clickFunction();
-            }}
-          >
-            {defaultBtn}
-          </DefaultBtn>
-        </BtnArea> */}
       </PopImg>
     </Wrapper>
   );

@@ -14,6 +14,8 @@ import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetail
 import addrType from "../../../redux/UploadAddr/UploadAddrType";
 import { Title } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
+import { Loading } from "../../../components/Loading";
+
 import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
@@ -51,7 +53,13 @@ const TabSelect = [
   "設定室友條件",
   "設施",
 ];
-function UploadMyListing() {
+function UploadMyListing({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getAddr = useSelector(
     (state: RootState) => state.UploadAddrReducer
@@ -123,6 +131,7 @@ function UploadMyListing() {
     <Wrapper>
       <Title>管理物件</Title>
       <Hr />
+      {/* {loading ?  <Loading/> && } */}
       {userInfo!.userListingId?.length !== 0 && <div>你有一個上傳物件</div>}
       <Tabs>
         {TabSelect.map((el, index) => (

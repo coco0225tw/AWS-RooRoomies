@@ -9,6 +9,8 @@ import Hr from "../../../components/Hr";
 import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import ListingItem from "../../../components/ListingItem";
+import { Loading } from "../../../components/Loading";
+
 import {
   query,
   collection,
@@ -63,7 +65,13 @@ const ListingWrapper = styled(Link)`
   padding: 20px;
   border-radius: 12px;
 `;
-function FollowedList() {
+function FollowedList({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   async function getListing(listingId: string) {
     let data = firebase.getListing(listingId);
     return data;
@@ -122,13 +130,17 @@ function FollowedList() {
       )}
       <Title>喜歡列表</Title>
       <Hr />
-      {favoriteLists &&
+      {loading ? (
+        <Loading />
+      ) : (
+        favoriteLists &&
         allListingData.map((f, index) => (
           <ListingWrapper to={`/listing/${f.id}`} key={`favoriteLists${index}`}>
             <ListingItem listingDocData={f}></ListingItem>
             <FavoriteIcon onClick={(e) => handleLiked(e, f.id)}></FavoriteIcon>
           </ListingWrapper>
-        ))}
+        ))
+      )}
     </Wrapper>
   );
 }

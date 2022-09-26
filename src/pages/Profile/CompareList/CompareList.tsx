@@ -47,7 +47,13 @@ const SectionWrapper = styled.div`
 const Drop = styled.div`
   height: 100px;
 `;
-function CompareList() {
+function CompareList({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const dispatch = useDispatch();
   const compareLists = useSelector(
     (state: RootState) => state.GetCompareListsReducer

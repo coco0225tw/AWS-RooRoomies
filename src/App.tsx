@@ -27,7 +27,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatRooms from "./components/ChatRooms/ChatRooms";
 import userType from "./redux/GetAuth/GetAuthType";
-
+import { Loading } from "./components/Loading";
 import { groupType, userInfoType } from "./redux/Group/GroupType";
 import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import bookingTimesType from "./redux/UploadBookingTimes/UploadBookingTimesType";
@@ -60,7 +60,7 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-    border: solid 1px black;
+    // border: solid 1px black;
     // color: #4f5152;
     position: relative;
   }
@@ -278,6 +278,7 @@ function App() {
       {/* <Reset /> */}
       <GlobalStyle />
       <ChatRooms />
+      {/* <Loading /> */}
       <Header />
       <User />
       <Outlet />

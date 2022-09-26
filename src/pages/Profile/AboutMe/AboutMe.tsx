@@ -7,6 +7,7 @@ import { firebase } from "../../../utils/firebase";
 import Hr from "../../../components/Hr";
 import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
+import { Loading } from "../../../components/Loading";
 import {
   FormLegend,
   FormGroup,
@@ -196,7 +197,13 @@ const SubmitBtn = styled(BtnDiv)`
   align-self: flex-end;
   margin-top: 20px;
 `;
-function AboutMe() {
+function AboutMe({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const userAsRoommate = useSelector(
@@ -229,62 +236,66 @@ function AboutMe() {
     <Wrapper>
       <Title>關於我</Title>
       <Hr />
-      {roommatesConditionFormGroups.map(({ label, key, options }) => (
-        <FormGroup key={key}>
-          <FormLabel>{label}</FormLabel>
-          <FormInputWrapper>
-            {options ? (
-              options.map((option) => (
-                <FormCheck key={option.value}>
-                  {initialRoommatesState &&
-                  initialRoommatesState[key] === option.value ? (
-                    <>
-                      <FormCheckInput
-                        // checked
-                        defaultChecked
-                        onChange={(e) => {
-                          if (e.target.checked)
-                            setMeAsRoommatesState({
-                              ...meAsRoommatesState,
-                              [key]: option.value,
-                            });
-                        }}
-                        type="radio"
-                        name={label}
-                        value={option.value || ""}
-                      />
-                      <FormCheckLabel>{option.text}</FormCheckLabel>
-                    </>
-                  ) : (
-                    <>
-                      <FormCheckInput
-                        onChange={(e) => {
-                          if (e.target.checked)
-                            setMeAsRoommatesState({
-                              ...meAsRoommatesState,
-                              [key]: option.value,
-                            });
-                        }}
-                        type="radio"
-                        value={option.value || ""}
-                        name={label}
-                      />
-                      <FormCheckLabel>{option.text}</FormCheckLabel>
-                    </>
-                  )}
-                </FormCheck>
-              ))
-            ) : (
-              <FormControl />
-            )}
-          </FormInputWrapper>
-        </FormGroup>
-      ))}
-      <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>
-        儲存變更
-      </SubmitBtn>
-      {/* <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>送出</SubmitBtn> */}
-      {/* <SubmitBtn>下一頁</SubmitBtn> */}
+      {loading ? (
+        <Loading />
+      ) : (
+        <React.Fragment>
+          {roommatesConditionFormGroups.map(({ label, key, options }) => (
+            <FormGroup key={key}>
+              <FormLabel>{label}</FormLabel>
+              <FormInputWrapper>
+                {options ? (
+                  options.map((option) => (
+                    <FormCheck key={option.value}>
+                      {initialRoommatesState &&
+                      initialRoommatesState[key] === option.value ? (
+                        <>
+                          <FormCheckInput
+                            // checked
+                            defaultChecked
+                            onChange={(e) => {
+                              if (e.target.checked)
+                                setMeAsRoommatesState({
+                                  ...meAsRoommatesState,
+                                  [key]: option.value,
+                                });
+                            }}
+                            type="radio"
+                            name={label}
+                            value={option.value || ""}
+                          />
+                          <FormCheckLabel>{option.text}</FormCheckLabel>
+                        </>
+                      ) : (
+                        <>
+                          <FormCheckInput
+                            onChange={(e) => {
+                              if (e.target.checked)
+                                setMeAsRoommatesState({
+                                  ...meAsRoommatesState,
+                                  [key]: option.value,
+                                });
+                            }}
+                            type="radio"
+                            value={option.value || ""}
+                            name={label}
+                          />
+                          <FormCheckLabel>{option.text}</FormCheckLabel>
+                        </>
+                      )}
+                    </FormCheck>
+                  ))
+                ) : (
+                  <FormControl />
+                )}
+              </FormInputWrapper>
+            </FormGroup>
+          ))}
+          <SubmitBtn onClick={() => submit(meAsRoommatesState!)}>
+            儲存變更
+          </SubmitBtn>
+        </React.Fragment>
+      )}
     </Wrapper>
   );
 }
