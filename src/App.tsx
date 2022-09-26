@@ -82,8 +82,8 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     // padding: 140px 0 115px;
     position: relative;
-    // display: flex;
-    // flex-direction: column;
+    display: flex;
+    flex-direction: column;
     // flex-grow: 1;
   }
   a {

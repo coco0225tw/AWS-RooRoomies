@@ -9,7 +9,7 @@ import { SubTitle } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import { RootState } from "../../../redux/rootReducer";
 import previewMainImage from "../../../redux/PreviewMainImage/PreviewMainImageReducer";
-
+import bin from "../../../assets/bin.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,6 +68,18 @@ const SelectTime = styled.div`
   padding: 0 8px 8px;
   width: 84px;
 `;
+const Cross = styled.div`
+  background-image: url(${bin});
+  background-size: 20px 20px;
+  width: 20px;
+  height: 20px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
 function SetBookingTimes({
   setClickTab,
 }: {
@@ -106,12 +118,6 @@ function SetBookingTimes({
     );
   };
 
-  const Cross = styled.div`
-    cursor: pointer;
-    &:hover {
-      transform: scale(1.2);
-    }
-  `;
   function clickDate(date: Date) {
     // window.alert(`確定選擇${date}`);
     setSelectedDays((prev) => [...prev, date]);
@@ -199,13 +205,11 @@ function SetBookingTimes({
                             onClick={() =>
                               deleteTime(time.date, time.startTime)
                             }
-                          >
-                            &#10060;
-                          </Cross>
+                          ></Cross>
                         </SelectTime>
                       ))}
                 </SelectTimes>
-                <Cross onClick={() => deleteDay(s)}>&#10060;</Cross>
+                <Cross onClick={() => deleteDay(s)}></Cross>
               </SelectedDays>
             ))}
         </SectionWrapper>

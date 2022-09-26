@@ -15,7 +15,7 @@ import addrType from "../../../redux/UploadAddr/UploadAddrType";
 import { Title } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import { Loading } from "../../../components/Loading";
-
+import upload from "../../../assets/upload.png";
 import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;

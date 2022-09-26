@@ -17,6 +17,7 @@ import {
   FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -55,7 +56,7 @@ const UploadImgBtn = styled.div`
   bottom: 0;
   transform: translate(20%, 20%);
   border: none;
-  font-size: 20px;
+  // font-size: 20px;
   background: #c77155;
   color: whitesmoke;
   width: 60px;
@@ -64,6 +65,10 @@ const UploadImgBtn = styled.div`
   text-align: center;
   line-height: 60px;
   cursor: pointer;
+  background-size: 40px 40px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url(${upload});
 `;
 function Setting({
   setLoading,
@@ -111,9 +116,7 @@ function Setting({
                 onClick={() => {
                   picRef.current!.click();
                 }}
-              >
-                上傳
-              </UploadImgBtn>
+              ></UploadImgBtn>
             </ProfilePic>
             <FormControl
               onChange={(e) => previewMainImage(e)}

@@ -227,12 +227,12 @@ const facilityFormGroups = [
       {
         label: "scooterParkingLot",
         text: "機車停車位",
-        value: "scooterParkingLot",
+        value: Icons.parking.motorbike,
       },
       {
         label: "carParkingLot",
         text: "汽車停車位",
-        value: "carParkingLot",
+        value: Icons.parking.car,
       },
       {
         label: "none",

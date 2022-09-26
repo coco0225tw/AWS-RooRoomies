@@ -201,6 +201,10 @@ function Search({
     ],
   };
   function handleOnchange(county: string, town: string | null, rent: string) {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
     if (town === "不限") {
       town = null;
     }
@@ -251,10 +255,6 @@ function Search({
           });
         }
       });
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
   }
   async function nextPage(
     county: string | null,
@@ -303,10 +303,10 @@ function Search({
           payload: { listingDocData: listingDocArr },
         });
       });
-    // setLoading(true);
-    // setTimeout(() => {
-    //   setLoading(false);
-    // }, 3000);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
   }
   function clickOnDropDown() {
     setOpenDropDown(true);

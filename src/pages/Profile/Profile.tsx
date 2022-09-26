@@ -23,7 +23,8 @@ const Wrapper = styled.div`
   padding: 20px 0px;
   // overflow-x: hidden;
   // overflow-y: visible;
-  // flex-grow: 1;
+  flex-grow: 1;
+  height: 100%;
   position: relative;
   align-items: flex-start;
   // @media screen and (max-width: 960px) {

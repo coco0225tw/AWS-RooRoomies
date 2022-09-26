@@ -4,6 +4,16 @@ import { useSelector, useDispatch } from "react-redux";
 import { firebase } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
 import { BtnDiv } from "../../components/Button";
+import user from "../../assets/user.png";
+import usero from "../../assets/usero.png";
+import house from "../../assets/houseo.png";
+import houseo from "../../assets/house.png";
+import deadline from "../../assets/deadline.png";
+import deadlineo from "../../assets/deadlineo.png";
+import heart from "../../assets/unHeart.png";
+import unHeart from "../../assets/heart.png";
+import setting from "../../assets/settingso.png";
+import settingo from "../../assets/settings.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,42 +32,39 @@ const TabWrapper = styled.div<{ isChoose: boolean; isShowTab: boolean }>`
   align-items: center;
   padding: 8px;
   width: 100%;
-  // width: ${(props) => (props.isShowTab ? "100%" : "0%")};
   border-radius: 12px;
+  color: ${(props) => (props.isChoose ? "#fff " : "#4f5152")};
   background-color: ${(props) => (props.isChoose ? "#c77155 " : "#ffffff")};
-  color: ${(props) => (props.isChoose ? "#ffffff " : "#4f5152")};
-  // display: ${(props) => (props.isShowTab ? "flex" : "none")};
   transition-duration: 0.2s;
   &:hover {
-    background-color: #f3f2ef;
-    color: #4f5152;
-    // color: ${(props) => (props.isChoose ? "#4f5152 " : "#ffffff")};
-  }
-  @media screen and (max-width: 960px) {
-    padding: 4px;
+    color: ${(props) => (props.isChoose ? "#fff " : "#4f5152")};
   }
 `;
-const Tab = styled.div<{ isShowTab: boolean }>`
+const Tab = styled.div<{ isShowTab: boolean; isChoose: boolean }>`
   font-size: 20px;
   letter-spacing: 4px;
   margin-left: 8px;
   color: inherit;
-  // display: block;
-  // display: ${(props) => (props.isShowTab ? "block" : "none")};
   &:hover {
   }
-  @media screen and (max-width: 960px) {
-    font-size: 16px;
-  }
 `;
-const Img = styled.img<{ img: string; isShowTab: boolean }>`
+const Img = styled.div<{
+  img: string;
+  isShowTab: boolean;
+  oimg: string;
+  isChoose: boolean;
+}>`
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  // display: ${(props) => (props.isShowTab ? "block" : "none")};
-  @media screen and (max-width: 960px) {
-    width: 20px;
-    height: 20px;
+  background-image: url(${(props) =>
+    props.isChoose ? props.oimg : props.img});
+  background-position: center center;
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-color: #f3f2ef;
+  &:hover {
+    background-image: url(${(props) => props.oimg});
   }
 `;
 
@@ -108,12 +115,17 @@ function SideBarTab({
   }
 
   const tabsOptions = [
-    { key: "aboutMe", img: "", label: "關於我" },
-    { key: "allHouseHunting", img: "", label: "所有看房消息" },
+    { key: "aboutMe", img: usero, label: "關於我", value: user },
+    {
+      key: "allHouseHunting",
+      img: deadlineo,
+      label: "所有看房消息",
+      value: deadline,
+    },
     // { key: "compareList", img: "", label: "比較列表" },
-    { key: "followedList", img: "", label: "喜歡列表" },
-    { key: "uploadMyListing", img: "", label: "管理物件" },
-    { key: "setting", img: "", label: "設定" },
+    { key: "followedList", img: unHeart, label: "喜歡列表", value: heart },
+    { key: "uploadMyListing", img: houseo, label: "管理物件", value: house },
+    { key: "setting", img: settingo, label: "設定", value: setting },
   ];
 
   return (
@@ -130,8 +142,15 @@ function SideBarTab({
             }
           }}
         >
-          <Img isShowTab={showTab} img={options.img}></Img>
-          <Tab isShowTab={showTab}>{options.label}</Tab>
+          <Img
+            isChoose={getTab.tab === options.key}
+            isShowTab={showTab}
+            img={options.value}
+            oimg={options.img}
+          ></Img>
+          <Tab isChoose={getTab.tab === options.key} isShowTab={showTab}>
+            {options.label}
+          </Tab>
         </TabWrapper>
       ))}
     </Wrapper>

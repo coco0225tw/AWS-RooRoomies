@@ -16,6 +16,7 @@ import {
   FormControl,
 } from "../../../components/InputArea";
 import { BtnDiv, BtnLink } from "../../../components/Button";
+import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -56,9 +57,6 @@ const SubmitBtn = styled(BtnDiv)`
   align-self: flex-end;
 `;
 const UploadImgBtn = styled.div`
-  // position: absolute;
-  // right: 0;
-  // bottom: 0;
   transform: translate(20%, 20%);
   border: none;
   font-size: 12px;
@@ -71,6 +69,11 @@ const UploadImgBtn = styled.div`
   line-height: 60px;
   cursor: pointer;
   margin-bottom: 20px;
+  background-size: cover;
+  background-image: url(${upload});
+  background-size: 40px 40px;
+  background-position: center center;
+  background-repeat: no-repeat;
 `;
 function UploadMainImageAndImages({
   setClickTab,
@@ -139,9 +142,7 @@ function UploadMainImageAndImages({
         onClick={() => {
           mainImgRef.current!.click();
         }}
-      >
-        首頁
-      </UploadImgBtn>
+      ></UploadImgBtn>
       <UploadMainImage
         hidden
         ref={mainImgRef}
@@ -152,9 +153,7 @@ function UploadMainImageAndImages({
         onClick={() => {
           otherImgRef.current!.click();
         }}
-      >
-        其他照片
-      </UploadImgBtn>
+      ></UploadImgBtn>
       <UploadImages
         hidden
         ref={otherImgRef}

@@ -103,10 +103,7 @@ function Home() {
     <Wrapper>
       <Search loading={loading} setLoading={setLoading}></Search>
       <ListingWrapper>
-        {loading ? (
-          <Loading />
-        ) : (
-          listingDocData &&
+        {listingDocData &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
             <ListingLink
               key={`listing_${index}`}
@@ -115,14 +112,10 @@ function Home() {
             >
               <Listing listingDocData={listingDocData}></Listing>
             </ListingLink>
-          ))
-        )}
+          ))}
       </ListingWrapper>
-      <PageArea>
-        {/* <PrevPageBtn>上一頁</PrevPageBtn>
-        <Page>頁碼</Page> */}
-        {/* <NextPageBtn onClick={() => nextPage()}>下一頁</NextPageBtn> */}
-      </PageArea>
+      {loading && <Loading />}
+      <PageArea></PageArea>
     </Wrapper>
   );
 }

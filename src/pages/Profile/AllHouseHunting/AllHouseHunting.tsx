@@ -110,6 +110,10 @@ function AllHouseHunting({
         setHouseHuntingData(houseHuntingDocArr);
         getAllListing(houseHuntingDocArr);
       });
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
     async function getAllListing(arr: QueryDocumentSnapshot<DocumentData>[]) {
       // getListing;
@@ -137,17 +141,24 @@ function AllHouseHunting({
       <Tabs>
         {TabSelect.map((el, index) => (
           <Tab
+            key={`tab${el}`}
             isClick={el === clickTab}
             onClick={() => {
               setClickTab(el);
+              setLoading(true);
+              setTimeout(() => {
+                setLoading(false);
+              }, 3000);
             }}
           >
             {el}
           </Tab>
         ))}
       </Tabs>
-
-      {allListingData.length !== 0 &&
+      {clickTab === "已預約" && loading ? (
+        <Loading />
+      ) : (
+        allListingData.length !== 0 &&
         clickTab === "已預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked !== false)
@@ -176,8 +187,12 @@ function AllHouseHunting({
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>
-          ))}
-      {allListingData.length !== 0 &&
+          ))
+      )}
+      {clickTab === "尚未預約" && loading ? (
+        <Loading />
+      ) : (
+        allListingData.length !== 0 &&
         clickTab === "尚未預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked === false)
@@ -200,8 +215,12 @@ function AllHouseHunting({
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>
-          ))}
-      {allListingData.length !== 0 &&
+          ))
+      )}
+      {clickTab === "等待湊團" && loading ? (
+        <Loading />
+      ) : (
+        allListingData.length !== 0 &&
         clickTab === "等待湊團" &&
         houseHuntingData
           .filter((doc) => doc.data().isFull === false)
@@ -224,7 +243,8 @@ function AllHouseHunting({
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>
-          ))}
+          ))
+      )}
     </Wrapper>
   );
 }
