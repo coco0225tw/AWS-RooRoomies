@@ -33,7 +33,7 @@ const Wrapper = styled.div`
   flex-grow: 1;
   background-image: url(${loginPage});
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 80px);
   background-size: cover;
   background-position: right;
   ${"" /* border: solid 5px brown; */};

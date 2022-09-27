@@ -30,7 +30,8 @@ const Wrapper = styled.div<{ isShown: boolean }>`
   //   align-items: flex-start;
   z-index: 1;
   background-color: white;
-  // width: 44;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: ${(props) => (props.isShown ? "30vw" : "auto")};
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   height: ${(props) => (props.isShown ? "500px" : "auto")};
   box-shadow: ${(props) =>
     props.isShown ? "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" : ""};
@@ -55,8 +56,8 @@ const SectionWrapper = styled.div`
   flex-grow: 1;
   height: 80%;
   flex-direction: column;
-  overflow: scroll;
-  overflow-x: hidden;
+  // overflow: scroll;
+  // overflow-x: hidden;
 `;
 const SideBarWrapper = styled.div`
   width: 30%;
@@ -73,7 +74,8 @@ const MessagesArea = styled.div`
 const MsgWrapper = styled.div`
   // overflow: scroll;
   // overflow-x: hidden;
-  display: flex;
+  display: inline-flex;
+  flex-wrap: nowrap;
   flex-direction: column;
   flex-grow: 1;
   padding: 0px 12px;
@@ -82,11 +84,12 @@ const MsgWrapper = styled.div`
 `;
 const InputArea = styled.div`
   display: flex;
-  padding: 4px 20px;
-  background-color: #ece2d5;
+  // padding: 4px 20px;
+  background-color: #c77155;
+  height: 48px;
 `;
 const Message = styled.div<{ auth: boolean }>`
-  display: flex;
+  // display: flex;
   width: 80%;
   align-self: ${(props) => (props.auth ? "flex-end" : "flex-start")};
 `;
@@ -104,18 +107,28 @@ const UserPic = styled.div<{ pic: string }>`
   background-position: center center;
 `;
 const UserMessage = styled.div`
-  flex-grow: 1;
+  // flex: 0 1 auto;
+  // max-width: px;
+  word-break: break-all;
+  // flex-grow: 1;
   padding: 0 12px;
   border-radius: 8px;
+  // line-break: auto;
 `;
 const SendTime = styled.div``;
 const InputMessageBox = styled.input`
   border: none;
-  align-self: flex-end;
-  padding: 4px;
-  border-radius: 4px;
-  width: 100%;
-  // background-color: inherit;
+  outline: none;
+  // align-self: flex-end;
+  padding: 12px;
+  font-size: 20px;
+  border-radius: 20px;
+  width: 96%;
+  height: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const SubmitBtn = styled.div`
@@ -133,29 +146,37 @@ const SubmitBtn = styled.div`
 const HeaderBar = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  // overflow-x: scroll;
 `;
 const Tabs = styled.div`
-  // flex-grow: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow-x: scroll;
+  // display: flex;
+  // flex-direction: row;
+  // align-items: center;
+  // overflow-x: scroll;
+  // height: 100%;
+  width: 100%;
   // overflow-y: hidden;
+`;
+const TabsWrapper = styled.div`
+  // width: 100%;
+  // overflow: hidden;
+  // align-items: center;
+  display: -webkit-box;
 `;
 const Tab = styled.div<{ isChoose: boolean }>`
   // width: 20%;
+  // display: inline-block;
   font-size: 20px;
   letter-spacing: 4px;
   height: 100%;
   padding: 10px;
   border-bottom: ${(props) => (props.isChoose ? "solid 2px #c77155" : "")};
-  // background-color: ${(props) => (props.isChoose ? "#c77155" : "#ffffff")};
   color: ${(props) => (props.isChoose ? "#c77155" : "#4f5152")};
   cursor: pointer;
   &:hover {
     background-color: ${(props) => (props.isChoose ? "#c77155" : "#ffffff")};
     color: ${(props) => (props.isChoose ? "#ffffff" : "#4f5152")};
-    // border: ${(props) => (props.isChoose ? "#ffffff" : "1px solid #c77155")};
     border-bottom: ${(props) => (props.isChoose ? "" : "solid 2px #4f5152")};
   }
 `;
@@ -187,6 +208,7 @@ const Close = styled.div<{ isShown: boolean }>`
   }
   display: ${(props) => (props.isShown ? "block" : "none")};
 `;
+
 function ChatRooms() {
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
@@ -228,7 +250,6 @@ function ChatRooms() {
     async function getAllHouseHuntingData() {
       await firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        // console.log(listing);
         listing.forEach((doc) => {
           houseHuntingDocArr.push(doc);
         });
@@ -236,10 +257,6 @@ function ChatRooms() {
       });
     }
     getAllHouseHuntingData();
-    // console.log(authChange);
-    // console.log(isShown);
-    // console.log(houseHuntingData.length);
-    // console.log(houseHuntingData);
   }, [authChange]);
 
   if (authChange) {
@@ -265,18 +282,20 @@ function ChatRooms() {
           ) : (
             <HeaderBar>
               <Tabs>
-                {houseHuntingData.map((h, index) => (
-                  <Tab
-                    isChoose={h.id === chooseRoomId}
-                    onClick={() => {
-                      onSnapshotMessages(h.id);
-                      setChooseRoomId(h.id);
-                    }}
-                    key={`house${index}`}
-                  >
-                    {h.data().listingTitle}
-                  </Tab>
-                ))}
+                <TabsWrapper>
+                  {houseHuntingData.map((h, index) => (
+                    <Tab
+                      isChoose={h.id === chooseRoomId}
+                      onClick={() => {
+                        onSnapshotMessages(h.id);
+                        setChooseRoomId(h.id);
+                      }}
+                      key={`house${index}`}
+                    >
+                      {h.data().listingTitle}
+                    </Tab>
+                  ))}
+                </TabsWrapper>
               </Tabs>
               <SectionWrapper>
                 {/* <MessagesArea> */}
@@ -288,7 +307,9 @@ function ChatRooms() {
                         key={`message${index}`}
                       >
                         {el.userId === userInfo.uid ? (
-                          <MessageWrapper>
+                          <MessageWrapper
+                            style={{ justifyContent: "flex-end" }}
+                          >
                             <UserMessage
                               style={{
                                 marginRight: "12px",
@@ -323,12 +344,16 @@ function ChatRooms() {
                 <InputMessageBox
                   placeholder={"..."}
                   ref={msgInputRef}
-                  onKeyDown={(event) => {
+                  onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                     event.stopPropagation();
-                    event.preventDefault();
                     if (event.key === "Enter") {
-                      senMsg();
-                      msgInputRef.current!.value = "";
+                      if (msgInputRef.current.value.trim() === "") {
+                        msgInputRef.current!.value = "";
+                        return;
+                      } else {
+                        senMsg();
+                        msgInputRef.current!.value = "";
+                      }
                     }
                   }}
                 ></InputMessageBox>
