@@ -149,7 +149,7 @@ function Group({
         }
       });
       await firebase.createChatRoom(
-        userIds,
+        userIds as any,
         listingId,
         listingTitle,
         getGroup,
