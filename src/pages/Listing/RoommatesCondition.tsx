@@ -1,11 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/rootReducer';
-import { firebase } from '../../utils/firebase';
-import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import { Title } from '../../components/ProfileTitle';
-import Hr from '../../components/Hr';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
+import { firebase } from "../../utils/firebase";
+import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import { Title } from "../../components/ProfileTitle";
+import Hr from "../../components/Hr";
+import { BtnDiv } from "../../components/Button";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,15 +31,15 @@ const ConditionArea = styled.div`
   align-items: center;
   // flex-wrap: wrap;
 `;
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
+const SubmitBtn = styled(BtnDiv)`
+  // background-color: grey;
+  // color: white;
   cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
+  // border-radius: 10px;
+  // padding: 4px;
   align-self: flex-end;
   &:hover {
-    background-color: #222;
+    // background-color: #222;
   }
 `;
 const Label = styled.div`
@@ -69,164 +70,174 @@ const SubTitle = styled.div`
 `;
 const roommatesConditionFormGroups = [
   {
-    label: '性別',
-    key: 'gender',
+    label: "性別",
+    key: "gender",
     options: [
       {
-        label: 'female',
-        text: '限女',
-        value: 'female',
+        label: "female",
+        text: "限女",
+        value: "female",
       },
       {
-        label: 'male',
-        text: '限男',
-        value: 'male',
+        label: "male",
+        text: "限男",
+        value: "male",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '帶朋友過夜',
-    key: 'bringFriendToStay',
+    label: "帶朋友過夜",
+    key: "bringFriendToStay",
     options: [
       {
-        label: 'true',
-        text: '可以',
-        value: 'true',
+        label: "true",
+        text: "可以",
+        value: "true",
       },
       {
-        label: 'false',
-        text: '不行',
-        value: 'false',
+        label: "false",
+        text: "不行",
+        value: "false",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '衛生習慣',
-    key: 'hygiene',
+    label: "衛生習慣",
+    key: "hygiene",
     options: [
       {
-        label: 'good',
-        text: '良好',
-        value: 'good',
+        label: "good",
+        text: "良好",
+        value: "good",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '生活習慣',
-    key: 'livingHabit',
+    label: "生活習慣",
+    key: "livingHabit",
     options: [
       {
-        label: 'sleepEarly',
-        text: '早睡',
-        value: 'sleepEarly',
+        label: "sleepEarly",
+        text: "早睡",
+        value: "sleepEarly",
       },
       {
-        label: 'nightCat',
-        text: '夜貓子',
-        value: 'nightCat',
+        label: "nightCat",
+        text: "夜貓子",
+        value: "nightCat",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '性別友善',
-    key: 'genderFriendly',
+    label: "性別友善",
+    key: "genderFriendly",
     options: [
       {
-        label: 'true',
-        text: '是',
-        value: 'true',
+        label: "true",
+        text: "是",
+        value: "true",
       },
       {
-        label: 'false',
-        text: '不是',
-        value: 'false',
+        label: "false",
+        text: "不是",
+        value: "false",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '養寵物',
-    key: 'pet',
+    label: "養寵物",
+    key: "pet",
     options: [
       {
-        label: 'true',
-        text: '可以',
-        value: 'true',
+        label: "true",
+        text: "可以",
+        value: "true",
       },
       {
-        label: 'false',
-        text: '不行',
-        value: 'false',
+        label: "false",
+        text: "不行",
+        value: "false",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
   {
-    label: '抽菸',
-    key: 'smoke',
+    label: "抽菸",
+    key: "smoke",
     options: [
       {
-        label: 'true',
-        text: '可以',
-        value: 'true',
+        label: "true",
+        text: "可以",
+        value: "true",
       },
       {
-        label: 'false',
-        text: '不行',
-        value: 'false',
+        label: "false",
+        text: "不行",
+        value: "false",
       },
       {
-        label: 'unlimited',
-        text: '不限',
-        value: 'unlimited',
+        label: "unlimited",
+        text: "不限",
+        value: "unlimited",
       },
     ],
   },
-  {
-    label: '職業類別',
-    key: 'career',
-  },
+  // {
+  //   label: '職業類別',
+  //   key: 'career',
+  // },
 ];
-function RoommatesCondition(roommatesConditions: any) {
+function RoommatesCondition({
+  roommatesConditions,
+  match,
+  setMatch,
+}: {
+  roommatesConditions: any;
+  match: boolean;
+  setMatch: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [keys, setKeys] = useState<string[]>([]);
-  const userAsRoommate = useSelector((state: RootState) => state.UserAsRoommateReducer);
+  const userAsRoommate = useSelector(
+    (state: RootState) => state.UserAsRoommateReducer
+  );
 
-  function match() {
+  function checkMatch() {
     function getTrueKey(object: any) {
-      let keys = ['bringFriendToStay', 'pet', 'smoke'];
+      let keys = ["bringFriendToStay", "pet", "smoke"];
       let newObj = { ...object };
       for (let key of keys) {
-        if (newObj[key] === 'true') {
+        if (newObj[key] === "true") {
           console.log(key);
-          newObj[key] = 'unlimited';
+          newObj[key] = "unlimited";
           // const newObj = { ...object, [key]: 'unlimited' };
         } else {
         }
@@ -234,7 +245,9 @@ function RoommatesCondition(roommatesConditions: any) {
       return newObj;
     }
     function getNonUnlimitedKey(object: any, value: any) {
-      let unlimitedKey = Object.keys(object).filter((key) => object[key] === value);
+      let unlimitedKey = Object.keys(object).filter(
+        (key) => object[key] === value
+      );
       for (let key of unlimitedKey) {
         delete object[key];
       }
@@ -246,23 +259,25 @@ function RoommatesCondition(roommatesConditions: any) {
       const keys2 = Object.keys(object2);
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
-          window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
+          // window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
+          setMatch(false);
           return false;
         }
       }
-      window.alert('符合');
+      // window.alert("符合");
+      setMatch(true);
       return true;
     }
 
     shallowEqual(
-      getNonUnlimitedKey(getTrueKey(roommatesConditions.roommatesConditions), 'unlimited'),
+      getNonUnlimitedKey(getTrueKey(roommatesConditions), "unlimited"),
       userAsRoommate.userAsRoommatesConditions
     ); // => true
   }
   useEffect(() => {
     function findObjectKeys() {
-      console.log(roommatesConditions.roommatesConditions);
-      let keys = Object.keys(roommatesConditions.roommatesConditions);
+      console.log(roommatesConditions);
+      let keys = Object.keys(roommatesConditions);
       console.log(keys);
       setKeys(keys);
       // console.log()
@@ -270,29 +285,33 @@ function RoommatesCondition(roommatesConditions: any) {
     if (roommatesConditions?.roommatesConditions) {
       findObjectKeys();
     }
-  }, [roommatesConditions.roommatesConditions]);
+  }, [roommatesConditions]);
   return (
     <Wrapper>
-      <Hr style={{ margin: '40px 0px' }} />
-      {/* <SubmitBtn onClick={() => match()}>比對</SubmitBtn> */}
-      <SubTitle style={{ marginBottom: '32px' }}>室友條件</SubTitle>
+      <Hr style={{ margin: "40px 0px" }} />
+
+      <SubTitle style={{ marginBottom: "32px" }}>室友條件</SubTitle>
 
       <Conditions>
         {keys &&
-          roommatesConditions.roommatesConditions &&
+          roommatesConditions &&
           roommatesConditionFormGroups.map((el, index) => (
             <ConditionArea key={`roommatesCondition${index}`}>
               <Label>{el.label}</Label>
               <Condition>
                 {el.options
                   ? (el.options.filter((o) => {
-                      return o.value === roommatesConditions.roommatesConditions[el.key as keyof typeof keys];
+                      return (
+                        o.value ===
+                        roommatesConditions[el.key as keyof typeof keys]
+                      );
                     })[0]?.text as string)
-                  : ''}
+                  : ""}
               </Condition>
             </ConditionArea>
           ))}
       </Conditions>
+      <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn>
     </Wrapper>
   );
 }

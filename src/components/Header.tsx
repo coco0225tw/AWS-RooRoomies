@@ -1,14 +1,14 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/rootReducer';
-import Logo from '../assets/logo.png';
-import { BtnLink, BtnDiv } from './Button';
-import { PopupComponent } from './Popup';
-import search from '../assets/search.svg';
-import { firebase, auth, onAuthStateChanged } from '../utils/firebase';
-import user2 from '../assets/user2.png';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../redux/rootReducer";
+import Logo from "../assets/logo.png";
+import { BtnLink, BtnDiv } from "./Button";
+import { PopupComponent } from "./Popup";
+import search from "../assets/search.svg";
+import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
+import user2 from "../assets/user2.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -35,7 +35,7 @@ const Title = styled.div`
 const SectionWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 200px;
+  width: 160px;
   justify-content: space-between;
   @media screen and (max-width: 960px) {
     display: none;
@@ -103,7 +103,7 @@ function Header() {
   const [isShown, setIsShown] = useState<boolean>(false);
   const navigate = useNavigate();
   function clickSingOut() {
-    console.log('signout');
+    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {
@@ -112,7 +112,7 @@ function Header() {
   async function logOut() {
     await firebase.signOutUser();
     setIsShown(false);
-    navigate('/signin');
+    navigate("/signin");
   }
   return (
     <Wrapper>
@@ -126,19 +126,19 @@ function Header() {
         />
       )}
 
-      <LogoWrapper to={'./'}>
+      <LogoWrapper to={"./"}>
         {/* <LogoImg /> */}
         <LogoText>rooroomies</LogoText>
       </LogoWrapper>
       <Search />
       {authChange ? (
         <SectionWrapper>
-          <Notification></Notification>
-          <Profile to={'/profile'} img={userInfo.image}></Profile>
-          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>{' '}
+          {/* <Notification></Notification> */}
+          <Profile to={"/profile"} img={userInfo.image}></Profile>
+          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>{" "}
         </SectionWrapper>
       ) : (
-        <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
+        <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
       )}
     </Wrapper>
   );

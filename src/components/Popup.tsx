@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
-import { BtnLink, BtnDiv } from './Button';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+import { BtnLink, BtnDiv } from "./Button";
 
 const Wrapper = styled.div`
   display: flex;
@@ -30,6 +30,7 @@ const Message = styled.div`
   font-size: 32px;
   letter-spacing: 8px;
   height: 20vh;
+  color: #4f5152;
 `;
 const BtnArea = styled.div`
   display: flex;
@@ -51,14 +52,17 @@ const NotDefaultBtn = styled(BtnDiv)`
 `;
 const Close = styled.div`
   position: absolute;
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   text-align: center;
   border-radius: 50%;
-  line-height: 20px;
+  line-height: 40px;
   cursor: pointer;
-  font-size: 12px;
-  transform: translate(-200%, -200%);
+  font-size: 20px;
+  right: 12px;
+  top: 12px;
+  text-align: center;
+  // border: solid 1px #ffffff;
   &:hover {
     border: solid 1px #ece2d5;
     background-color: #fff7f4;
@@ -67,9 +71,9 @@ const Close = styled.div`
 const PopImg = styled(Popup)<{ img: string }>`
   width: 50vw;
   height: 50vh;
-  background-size: 50vw 50vh;
+  background-size: cover;
 
-  background-position: cover;
+  background-position: center center;
   background-image: url(${(props) => props.img});
   // margin: auto;
   display: flex;
@@ -99,7 +103,7 @@ function PopupComponent({
             clickClose();
           }}
         >
-          x
+          &#215;
         </Close>
         <Message>{msg}</Message>
         <BtnArea>
@@ -140,27 +144,6 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
         >
           x
         </Close>
-        {/* <Message>{msg}</Message> */}
-        {/* <BtnArea>
-          <NotDefaultBtn
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              clickClose();
-            }}
-          >
-            {notDefaultBtn}
-          </NotDefaultBtn>
-          <DefaultBtn
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              clickFunction();
-            }}
-          >
-            {defaultBtn}
-          </DefaultBtn>
-        </BtnArea> */}
       </PopImg>
     </Wrapper>
   );

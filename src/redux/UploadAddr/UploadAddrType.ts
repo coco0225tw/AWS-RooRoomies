@@ -1,12 +1,9 @@
 interface addressType {
   countyname: string;
   townname: string;
-  roadOrStreetNameOrVillage: string;
-  roadSection: string;
-  lane: string;
-  alley: string;
-  number: string;
+  completeAddr: string;
   floor: string;
+  latLng: { lat: number | null; lng: number | null };
 }
 
 export default addressType;

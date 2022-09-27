@@ -1,11 +1,12 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../../redux/rootReducer';
-import Hr from '../../../components/Hr';
-import { BtnDiv } from '../../../components/Button';
-import { Title } from '../../../components/ProfileTitle';
-import { firebase } from '../../../utils/firebase';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../redux/rootReducer";
+import Hr from "../../../components/Hr";
+import { BtnDiv } from "../../../components/Button";
+import { Title } from "../../../components/ProfileTitle";
+import { firebase } from "../../../utils/firebase";
+import { Loading } from "../../../components/Loading";
 import {
   FormLegend,
   FormGroup,
@@ -15,14 +16,15 @@ import {
   FormCheck,
   FormCheckLabel,
   FormControl,
-} from '../../../components/InputArea';
+} from "../../../components/InputArea";
+import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
   margin: auto;
-  width: 70%;
+  width: 80%;
   height: 100%;
   color: #4f5152;
   margin-top: 20px;
@@ -40,7 +42,8 @@ const SubmitBtn = styled(BtnDiv)`
 const ProfilePic = styled.div<{ img: string; uploadedImg: string }>`
   width: 200px;
   height: 200px;
-  background-image: url(${(props) => (props.uploadedImg !== '' ? props.uploadedImg : props.img)});
+  background-image: url(${(props) =>
+    props.uploadedImg !== "" ? props.uploadedImg : props.img});
   background-size: cover;
   background-position: center center;
   border-radius: 50%;
@@ -53,7 +56,7 @@ const UploadImgBtn = styled.div`
   bottom: 0;
   transform: translate(20%, 20%);
   border: none;
-  font-size: 20px;
+  // font-size: 20px;
   background: #c77155;
   color: whitesmoke;
   width: 60px;
@@ -62,9 +65,19 @@ const UploadImgBtn = styled.div`
   text-align: center;
   line-height: 60px;
   cursor: pointer;
+  background-size: 40px 40px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-image: url(${upload});
 `;
-function Setting() {
-  const [mainImgUrl, setMainImgUrl] = useState<string>('');
+function Setting({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
+  const [mainImgUrl, setMainImgUrl] = useState<string>("");
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const [edit, setEdit] = useState<boolean>(false);
   const nameRef = useRef<HTMLInputElement>(null);
@@ -80,7 +93,11 @@ function Setting() {
     }
   }
   async function submitNameOrEmail() {
-    firebase.updateUserInfo(userInfo.uid, nameRef.current!.value, emailRef.current!.value);
+    firebase.updateUserInfo(
+      userInfo.uid,
+      nameRef.current!.value,
+      emailRef.current!.value
+    );
   }
   async function submitImg() {
     firebase.updateUserPic(userInfo.uid, mainImgBlob!);
@@ -89,37 +106,52 @@ function Setting() {
     <Wrapper>
       <Title>設定</Title>
       <Hr />
-      <FormGroup>
-        <ProfilePic img={userInfo!.image} uploadedImg={mainImgUrl}>
-          <UploadImgBtn
+      {loading ? (
+        <Loading />
+      ) : (
+        <React.Fragment>
+          <FormGroup>
+            <ProfilePic img={userInfo!.image} uploadedImg={mainImgUrl}>
+              <UploadImgBtn
+                onClick={() => {
+                  picRef.current!.click();
+                }}
+              ></UploadImgBtn>
+            </ProfilePic>
+            <FormControl
+              onChange={(e) => previewMainImage(e)}
+              ref={picRef}
+              type="file"
+              hidden
+            ></FormControl>
+          </FormGroup>
+          <FormGroup>
+            <FormLabel>名字</FormLabel>
+            <FormControl
+              ref={nameRef}
+              defaultValue={userInfo!.name}
+            ></FormControl>
+          </FormGroup>
+          <FormGroup>
+            <FormLabel>信箱</FormLabel>
+            <FormControl
+              ref={emailRef}
+              defaultValue={userInfo!.email}
+            ></FormControl>
+          </FormGroup>
+
+          <SubmitBtn
             onClick={() => {
-              picRef.current!.click();
+              if (mainImgUrl !== "") {
+                submitImg();
+              }
+              submitNameOrEmail();
             }}
           >
-            上傳
-          </UploadImgBtn>
-        </ProfilePic>
-        <FormControl onChange={(e) => previewMainImage(e)} ref={picRef} type="file" hidden></FormControl>
-      </FormGroup>
-      <FormGroup>
-        <FormLabel>名字</FormLabel>
-        <FormControl ref={nameRef} defaultValue={userInfo!.name}></FormControl>
-      </FormGroup>
-      <FormGroup>
-        <FormLabel>信箱</FormLabel>
-        <FormControl ref={emailRef} defaultValue={userInfo!.email}></FormControl>
-      </FormGroup>
-
-      <SubmitBtn
-        onClick={() => {
-          if (mainImgUrl !== '') {
-            submitImg();
-          }
-          submitNameOrEmail();
-        }}
-      >
-        儲存變更
-      </SubmitBtn>
+            儲存變更
+          </SubmitBtn>
+        </React.Fragment>
+      )}
     </Wrapper>
   );
 }

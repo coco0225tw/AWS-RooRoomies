@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 const BtnLink = styled(Link)`
   color: #4f5152;
   font-size: 16px;
@@ -8,7 +8,8 @@ const BtnLink = styled(Link)`
   padding: 4px 12px;
   transition-duration: 0.2s;
   cursor: pointer;
-  display: block
+  display: block;
+  border-bottom: solid 1px #4f5152;
   &:hover {
     background-color: #ece2d5;
   }
@@ -21,6 +22,7 @@ const BtnDiv = styled.div`
   padding: 4px 12px;
   transition-duration: 0.2s;
   cursor: pointer;
+  border: solid 1px #4f5152;
   &:hover {
     background-color: #ece2d5;
   }

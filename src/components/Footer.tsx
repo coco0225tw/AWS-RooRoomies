@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { firebase, auth, onAuthStateChanged } from '../utils/firebase';
-import { RootState } from '../redux/rootReducer';
-import { BtnLink, BtnDiv } from './Button';
-import { PopupComponent } from './Popup';
+import React, { useState, useRef } from "react";
+import styled from "styled-components";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
+import { RootState } from "../redux/rootReducer";
+import { BtnLink, BtnDiv } from "./Button";
+import { PopupComponent } from "./Popup";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -16,7 +16,7 @@ const Wrapper = styled.div`
   margin: auto;
   background-color: #f3f2ef;
   flex-shrink: 0;
-  position: fixed;
+  // position: fixed;
   bottom: 0px;
   @media screen and (max-width: 960px) {
     position: fixed;
@@ -79,7 +79,7 @@ function Footer() {
   const [isShown, setIsShown] = useState<boolean>(false);
   const navigate = useNavigate();
   function clickSingOut() {
-    console.log('signout');
+    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {
@@ -88,7 +88,7 @@ function Footer() {
   async function logOut() {
     await firebase.signOutUser();
     setIsShown(false);
-    navigate('/signin');
+    navigate("/signin");
   }
   return (
     <Wrapper>
@@ -104,13 +104,13 @@ function Footer() {
       <Title>©rooroomies 2022</Title>
       {authChange ? (
         <SectionWrapper>
-          <Notification></Notification>
-          <Profile to={'/profile'} img={userInfo.image}></Profile>
+          {/* <Notification></Notification> */}
+          <Profile to={"/profile"} img={userInfo.image}></Profile>
           {/* <BtnDiv onClick={clickSingOut}>登出</BtnDiv> */}
         </SectionWrapper>
       ) : (
         <SectionWrapper>
-          <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
+          <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
         </SectionWrapper>
       )}
     </Wrapper>
