@@ -356,7 +356,7 @@ function Listing() {
     rentRoomDetails: roomDetailsType;
     peopleAmount: number;
     matchGroup: Array<groupType>;
-    listingTitle: string;
+    // title: string;
     startRent: number;
     endRent: number;
     totalSq: number;
@@ -375,6 +375,7 @@ function Listing() {
   const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>("");
+  const [match, setMatch] = useState<boolean>(false);
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -403,6 +404,10 @@ function Listing() {
   ) {
     let chatRoomId!: string;
     let userId!: [];
+
+    await firebase.findChatId(listingId).then((listing) => {
+      listing.forEach((doc) => (chatRoomId = doc.id));
+    });
     if (checkIfUserCanBook) {
       const bookedRecord = {
         chatRoomId,
@@ -413,7 +418,7 @@ function Listing() {
         await Promise.all([
           firebase.bookedTime(listingId, docId),
           firebase.bookedTimeInChatRoom(chatRoomId as string, selectedDateTime),
-          firebase.createBookedTimeInfo(listingId, bookedRecord),
+          // firebase.createBookedTimeInfo(listingId, bookedRecord),
         ]);
       }
       updateAllBookedTime();
@@ -569,11 +574,15 @@ function Listing() {
 
           <RoommatesCondition
             roommatesConditions={listingInfo?.roommatesConditions}
+            match={match}
+            setMatch={setMatch}
           ></RoommatesCondition>
           <Group
+            match={match}
+            setMatch={setMatch}
             peopleAmount={listingInfo?.peopleAmount!}
             listingId={id!}
-            listingTitle={listingInfo?.listingTitle!}
+            listingTitle={listingInfo?.title as string}
           ></Group>
           <Facility facility={listingInfo?.facility}></Facility>
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
@@ -633,7 +642,7 @@ function Listing() {
               bookingTimesInfo
                 .filter(
                   (el) =>
-                    el.data().date.toDate().getTime() !==
+                    el.data().date.toDate().getTime() ===
                       selectedDate.getTime() && el.data().isBooked === true
                 )
                 .map((el, index) => (

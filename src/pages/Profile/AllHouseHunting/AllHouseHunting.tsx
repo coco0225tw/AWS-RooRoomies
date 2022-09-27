@@ -83,6 +83,7 @@ const Tabs = styled.div`
   margin-bottom: 20px;
 `;
 const Tab = styled(BtnDiv)<{ isClick: boolean }>`
+  border: none;
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
 const TabSelect = ["已預約", "尚未預約", "等待湊團"];
@@ -195,7 +196,9 @@ function AllHouseHunting({
         allListingData.length !== 0 &&
         clickTab === "尚未預約" &&
         houseHuntingData
-          .filter((doc) => doc.data().isBooked === false)
+          .filter(
+            (doc) => doc.data().isFull === true && doc.data().isBooked === false
+          )
           .map((doc, id) => (
             <ListingWrapper
               to={`/listing/${doc.data().listingId}`}

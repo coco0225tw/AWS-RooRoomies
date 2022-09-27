@@ -326,8 +326,6 @@ const firebase = {
     );
   },
   async addUserToGroup(listingId: string, updateGroup: any) {
-    console.log(updateGroup);
-    console.log(listingId);
     await setDoc(
       doc(db, "listings", listingId),
       {
@@ -337,7 +335,7 @@ const firebase = {
     );
   },
   async createChatRoom(
-    userId: string[],
+    userId: string | null[],
     listingId: string,
     listingTitle: string,
     updateGroup: any,
@@ -353,12 +351,46 @@ const firebase = {
       msg: [],
       isFull: false,
     });
-    await this.updateChatRoomIdInListing(
-      listingId,
-      updateGroup,
-      index,
-      newChatRoomRef.id
+    // await this.updateChatRoomIdInListing(
+    //   listingId,
+    //   updateGroup,
+    //   index,
+    //   newChatRoomRef.id
+    // );
+  },
+  async updateChatRoom(
+    chatId: string,
+    isFull: boolean,
+    userId: string | null[]
+  ) {
+    await setDoc(
+      doc(db, "chatRooms", chatId),
+      {
+        userId: [...userId],
+        isFull: isFull,
+      },
+      { merge: true }
     );
+  },
+  // async findChatId(listingId: string, uids: string[]) {
+  //   const chatIdRef = collection(db, "chatRooms");
+  //   const userChatRef = query(
+  //     chatIdRef,
+  //     where("userId", "in", uids),
+  //     where("listingId", "==", listingId)
+  //   );
+  //   const querySnapshot = await getDocs(userChatRef);
+  //   return querySnapshot;
+  // },
+  async findChatId(listingId: string) {
+    const chatIdRef = collection(db, "chatRooms");
+    const userChatRef = query(
+      chatIdRef,
+      // where("userId", "in", uids),
+      where("listingId", "==", listingId)
+    );
+    const querySnapshot = await getDocs(userChatRef);
+    return querySnapshot;
   },
   async bookedTimeInChatRoom(chatRoomId: string, bookedTime: any) {
     await setDoc(

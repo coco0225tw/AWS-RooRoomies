@@ -71,9 +71,9 @@ const Close = styled.div`
 const PopImg = styled(Popup)<{ img: string }>`
   width: 50vw;
   height: 50vh;
-  background-size: 50vw 50vh;
+  background-size: cover;
 
-  background-position: cover;
+  background-position: center center;
   background-image: url(${(props) => props.img});
   // margin: auto;
   display: flex;

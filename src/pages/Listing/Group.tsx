@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { firebase, db, timestamp } from '../../utils/firebase';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { firebase, db, timestamp } from "../../utils/firebase";
 import {
   getFirestore,
   getDocs,
@@ -16,14 +16,14 @@ import {
   query,
   FieldValue,
   serverTimestamp,
-} from 'firebase/firestore';
-import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/rootReducer';
-import { groupType } from '../../redux/Group/GroupType';
-import { Title } from '../../components/ProfileTitle';
-import { BtnDiv } from '../../components/Button';
-import Hr from '../../components/Hr';
+} from "firebase/firestore";
+import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
+import { groupType } from "../../redux/Group/GroupType";
+import { Title } from "../../components/ProfileTitle";
+import { BtnDiv } from "../../components/Button";
+import Hr from "../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -97,6 +97,8 @@ const GroupIndex = styled.div`
   font-size: 16px;
 `;
 function Group({
+  match,
+  setMatch,
   peopleAmount,
   listingId,
   listingTitle,
@@ -104,49 +106,88 @@ function Group({
   peopleAmount: number;
   listingId: string;
   listingTitle: string;
+  match: boolean;
+  setMatch: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState<Array<groupType>>([]);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const getGroup = useSelector((state: RootState) => state.GroupReducer) as Array<groupType>;
+  const getGroup = useSelector(
+    (state: RootState) => state.GroupReducer
+  ) as Array<groupType>;
   const newGroup = {
     users: Array(peopleAmount).fill(null),
-    chatRoomId: '',
+    chatRoomId: "",
     isBooked: false,
   };
   function addGroup() {
-    dispatch({ type: 'ADD_GROUP', payload: { newGroup } });
+    dispatch({ type: "ADD_GROUP", payload: { newGroup } });
   }
   function removeGroup(index: number) {
-    dispatch({ type: 'REMOVE_GROUP', payload: { index } });
+    dispatch({ type: "REMOVE_GROUP", payload: { index } });
   }
   async function addUserToGroup(groupId: number, userId: number) {
-    dispatch({ type: 'ADD_USER_TO_GROUP', payload: { groupId, userId, userInfo } });
+    dispatch({
+      type: "ADD_USER_TO_GROUP",
+      payload: { groupId, userId, userInfo },
+    });
     await firebase.addUserToGroup(listingId, getGroup);
     let index = getGroup[groupId].users.indexOf(null);
-    if (index === -1) {
-      console.log('make chatRooms');
+    let nullLength = getGroup[groupId].users.filter((el) => el === null);
+    let users = getGroup[groupId].users.filter((el) => el !== null);
+    if (
+      nullLength.length !== peopleAmount &&
+      nullLength.length === peopleAmount - 1
+    ) {
+      console.log("make chatRooms");
+      console.log(getGroup[groupId]);
       let userIds = getGroup[groupId].users.map((u, index) => {
+        if (u === null) {
+          return null;
+        } else {
+          return u!.userId;
+        }
+      });
+      await firebase.createChatRoom(
+        userIds,
+        listingId,
+        listingTitle,
+        getGroup,
+        groupId
+      );
+    } else {
+      let userIds = users.map((u, index) => {
         return u!.userId;
       });
-      console.log(userIds);
-      await firebase.createChatRoom(userIds, listingId, listingTitle, getGroup, groupId);
+      // await firebase.findChatId(listingId, userIds).then((listing) => {
+      //   let chatId: string;
+      //   listing.forEach((doc) => (chatId = doc.id));
+      //   updateChatRoom();
+      //   async function updateChatRoom() {
+      //     await firebase.updateChatRoom(
+      //       chatId!,
+      //       nullLength.length === 0,
+      //       userIds
+      //     );
+      //   }
+      // });
     }
   }
   useEffect(() => {
     if (peopleAmount !== undefined) {
-      const groupQuery = doc(db, 'listings', listingId);
+      const groupQuery = doc(db, "listings", listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
         console.log(snapshot.data()!.matchGroup);
         const groups = [...snapshot.data()!.matchGroup];
-        dispatch({ type: 'ADD_GROUP_FROM_FIREBASE', payload: { groups } });
+        dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
       });
     }
   }, [peopleAmount]);
   return (
     <Wrapper>
-      <Hr style={{ margin: '40px 0px' }} />
-      <SubTitle style={{ marginBottom: '32px' }}>湊團看房</SubTitle>
+      <Hr style={{ margin: "40px 0px" }} />
+      <SubTitle style={{ marginBottom: "32px" }}>湊團看房</SubTitle>
+
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
           <SingleGroup key={`group${gIndex}`}>
@@ -154,7 +195,10 @@ function Group({
             <GroupIndex>團{gIndex + 1}</GroupIndex>
             {group.users.map((user, index) =>
               user === null ? (
-                <AddToGroup onClick={() => addUserToGroup(gIndex, index)} key={`user${index}`}>
+                <AddToGroup
+                  onClick={() => (match ? addUserToGroup(gIndex, index) : null)}
+                  key={`user${index}`}
+                >
                   +
                 </AddToGroup>
               ) : (
@@ -169,7 +213,9 @@ function Group({
             {/* </SingleGroupWrapper> */}
           </SingleGroup>
         ))}
-      <BtnDiv onClick={() => addGroup()}>加新的團</BtnDiv>
+      {match && (
+        <BtnDiv onClick={() => (match ? addGroup() : null)}>加新的團</BtnDiv>
+      )}
     </Wrapper>
   );
 }

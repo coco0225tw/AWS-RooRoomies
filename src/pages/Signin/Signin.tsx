@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, useRef } from "react";
 // import ProfileLogin from "./ProfileLogin";
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { keyframes } from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { keyframes } from "styled-components";
 
-import { firebase, auth, onAuthStateChanged } from '../../utils/firebase';
-import loginPage from '../../assets/loginPage.png';
-import { Title, SubTitle } from '../../components/ProfileTitle';
+import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
+import loginPage from "../../assets/loginPage.png";
+import { Title, SubTitle } from "../../components/ProfileTitle";
 import {
   FormLegend,
   FormGroup,
@@ -16,9 +16,9 @@ import {
   FormCheck,
   FormCheckLabel,
   FormControl,
-} from '../../components/InputArea';
-import { BtnDiv } from '../../components/Button';
-import userDefaultPic from '../../assets/user2.png';
+} from "../../components/InputArea";
+import { BtnDiv } from "../../components/Button";
+import userDefaultPic from "../../assets/user2.png";
 interface IsActiveBtnProps {
   $isActive: boolean;
 }
@@ -36,7 +36,7 @@ const Wrapper = styled.div`
   height: 100vh;
   background-size: cover;
   background-position: right;
-  ${'' /* border: solid 5px brown; */};
+  ${"" /* border: solid 5px brown; */};
   // transform: scale(-1); // width: 960px;
   @media screen and (max-width: 1279px) {
     width: 100vw;
@@ -98,7 +98,7 @@ const FormInput = styled.input.attrs((props) => ({
   @media screen and (max-width: 1279px) {
     margin-left: 0px;
     width: 100%;
-    ${'' /* height: 26px; */}
+    ${"" /* height: 26px; */}
   }
 `;
 
@@ -129,32 +129,32 @@ const SwitchBtn = styled(BtnDiv)<IsActiveBtnProps>`
   display: inline-block;
   width: 50%;
   padding: 10px;
-
+  border: none;
   text-align: center;
   cursor: pointer;
   transition-duration: 0.2s;
-  color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#4f5152')};
-  background-color: ${(props) => (props.$isActive ? '#c77155 ' : '#ffffff')};
+  color: ${(props) => (props.$isActive ? "#fff7f4 " : "#4f5152")};
+  background-color: ${(props) => (props.$isActive ? "#c77155 " : "#ffffff")};
   &:hover {
-    color: ${(props) => (props.$isActive ? '#c77155 ' : 'ece2d5')};
-    background-color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#ece2d5')};
+    color: ${(props) => (props.$isActive ? "#c77155 " : "ece2d5")};
+    background-color: ${(props) => (props.$isActive ? "#fff7f4 " : "#ece2d5")};
   }
 `;
 
-const LoginOptionGroup = ['登入', '建立新帳號'];
+const LoginOptionGroup = ["登入", "建立新帳號"];
 const registerFormGroup = [
-  { label: '使用者名稱', key: 'regName' },
-  { label: '信箱', key: 'regEmail' },
-  { label: '密碼', key: 'regPassword' },
+  { label: "使用者名稱", key: "regName" },
+  { label: "信箱", key: "regEmail" },
+  { label: "密碼", key: "regPassword" },
   // { label: '上傳使用者照片', key: 'regPicture' },
 ];
 const signInFormGroup = [
-  { label: '信箱', key: 'signInEmail' },
-  { label: '密碼', key: 'signInPassword' },
+  { label: "信箱", key: "signInEmail" },
+  { label: "密碼", key: "signInPassword" },
 ];
 const FormGroups = [signInFormGroup, registerFormGroup];
 
-const submitBtnGroups = ['登入', '註冊', '登出'];
+const submitBtnGroups = ["登入", "註冊", "登出"];
 
 function SignIn() {
   const navigate = useNavigate();
@@ -177,19 +177,26 @@ function SignIn() {
     signInPassword: string;
   }
 
-  const initialRegInfo = { regEmail: '', regPassword: '' };
+  const initialRegInfo = { regEmail: "", regPassword: "" };
 
-  const initialSignInInfo = { signInEmail: '', signInPassword: '' };
+  const initialSignInInfo = { signInEmail: "", signInPassword: "" };
 
   const regInfoRef = useRef<HTMLInputElement[]>([]);
   const signInInfoRef = useRef<HTMLInputElement[]>([]);
 
   const [regInfo, setRegInfo] = useState<regInfoType>(initialRegInfo);
-  const [signInInfo, setSignInInfo] = useState<signInInfoType>(initialSignInInfo);
+  const [signInInfo, setSignInInfo] =
+    useState<signInInfoType>(initialSignInInfo);
 
   const regSubmit = async function () {
-    setRegInfo({ regEmail: regInfoRef.current[1].value, regPassword: regInfoRef.current[2].value });
-    let newUser = await firebase.createNewUser(regInfoRef.current[1].value, regInfoRef.current[2].value);
+    setRegInfo({
+      regEmail: regInfoRef.current[1].value,
+      regPassword: regInfoRef.current[2].value,
+    });
+    let newUser = await firebase.createNewUser(
+      regInfoRef.current[1].value,
+      regInfoRef.current[2].value
+    );
     await firebase.setNewUserDocField(
       newUser?.user.uid as string,
       regInfoRef.current[1].value,
@@ -197,11 +204,17 @@ function SignIn() {
       userDefaultPic
       // regInfoRef.current[3].files![0]
     );
-    navigate('/');
+    navigate("/");
   };
   const signInSubmit = async function () {
-    setSignInInfo({ signInEmail: signInInfoRef.current[0].value, signInPassword: signInInfoRef.current[1].value });
-    let newUser = await firebase.signInUser(signInInfoRef.current[0]!.value, signInInfoRef.current[1]!.value);
+    setSignInInfo({
+      signInEmail: signInInfoRef.current[0].value,
+      signInPassword: signInInfoRef.current[1].value,
+    });
+    let newUser = await firebase.signInUser(
+      signInInfoRef.current[0]!.value,
+      signInInfoRef.current[1]!.value
+    );
     console.log(newUser);
     // console.log('登入');
     // navigate('/');
@@ -213,15 +226,17 @@ function SignIn() {
   };
 
   async function getProfile() {
-    let jwtToken = window.localStorage.getItem('Authorization'); //之後要打開
+    let jwtToken = window.localStorage.getItem("Authorization"); //之後要打開
   }
 
   const validationForInput = {
-    validRegEmail: /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
+    validRegEmail:
+      /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
     validRegName: /\s*[\u4e00-\u9FFFa-zA-Z]+\s*/,
     validRegPassword: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
     validRegConfirm_Password: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
-    validUserEmail: /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
+    validUserEmail:
+      /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
     validUserPassword: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
   };
 
@@ -246,11 +261,14 @@ function SignIn() {
           {activeOptionIndex === 0 && (
             <>
               {signInFormGroup.map(({ label, key }, index) => (
-                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={key}>
+                <FormGroup
+                  style={{ marginTop: "0px", marginBottom: "20px" }}
+                  key={key}
+                >
                   <FormLabel>{label}</FormLabel>
                   <FormInputWrapper>
                     <FormControlFullWidth
-                      type={key.includes('Password') ? 'password' : 'input'}
+                      type={key.includes("Password") ? "password" : "input"}
                       ref={(el) => ((signInInfoRef.current[index] as any) = el)}
                     ></FormControlFullWidth>
                   </FormInputWrapper>
@@ -263,11 +281,20 @@ function SignIn() {
           {activeOptionIndex === 1 && (
             <>
               {registerFormGroup.map(({ label, key }, index) => (
-                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={key}>
+                <FormGroup
+                  style={{ marginTop: "0px", marginBottom: "20px" }}
+                  key={key}
+                >
                   <FormLabel>{label}</FormLabel>
                   <FormInputWrapper>
                     <FormControlFullWidth
-                      type={key.includes('Password') ? 'password' : key.includes('Picture') ? 'file' : 'input'}
+                      type={
+                        key.includes("Password")
+                          ? "password"
+                          : key.includes("Picture")
+                          ? "file"
+                          : "input"
+                      }
                       ref={(el) => ((regInfoRef.current[index] as any) = el)}
                     ></FormControlFullWidth>
                   </FormInputWrapper>

@@ -7,6 +7,7 @@ import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetail
 import { RootState } from "../../../redux/rootReducer";
 import { SubTitle } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
+import bin from "../../../assets/bin.png";
 import {
   FormLegend,
   FormGroup,
@@ -56,7 +57,19 @@ const Td = styled.td`
   text-align: center;
   padding: 8px 4px;
 `;
-const Cross = styled(Td)`
+// const Cross = styled(Td)`
+//   cursor: pointer;
+//   &:hover {
+//     transform: scale(1.2);
+//   }
+// `;
+const Cross = styled.div`
+  background-image: url(${bin});
+  background-size: 20px 20px;
+  width: 100%;
+  height: 20px;
+  background-position: center center;
+  background-repeat: no-repeat;
   cursor: pointer;
   &:hover {
     transform: scale(1.2);
@@ -147,7 +160,9 @@ function RentRoomDetails({
               <Td>{r.sq}坪</Td>
               <Td>{r.form}</Td>
               <Td>{r.peopleAmount}人</Td>
-              <Cross onClick={() => deleteRoom(index)}> &#10060;</Cross>
+              <Td>
+                <Cross onClick={() => deleteRoom(index)}></Cross>
+              </Td>
             </Tr>
           ))}
         </Table>

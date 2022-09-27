@@ -63,6 +63,7 @@ const Tabs = styled.div`
   margin-bottom: 20px;
 `;
 const Tab = styled(BtnDiv)<{ isClick: boolean }>`
+  border: none;
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
 

@@ -74,8 +74,8 @@ const CheckedFormCheckInput = styled(FormCheckInput)`
     color: #c77155;
   }
   &:checked + ${CheckedFormCheckLabel} span ${Icon} {
-    // background: #c77155;
-    border: solid 2px #c77155;
+    // background-color: #c77155;
+    border: solid 3px #c77155;
   }
 `;
 const facilityFormGroups = [

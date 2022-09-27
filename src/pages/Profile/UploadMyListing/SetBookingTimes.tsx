@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
+  align-items: flex-end;
   width: 100%;
   height: 100%;
   color: #4f5152;
@@ -54,7 +54,8 @@ const SubmitBtn = styled(BtnDiv)`
   // align-self: flex-end;
 `;
 const SectionWrapper = styled.div`
-  flex-grow: 1;
+  // flex-grow: 1;
+  flex-basis: 54%;
 `;
 const StartTime = styled(TimeInput)``;
 const EndTime = styled(TimeInput)``;
@@ -62,6 +63,7 @@ const SectionDivider = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  justify-content: space-between;
 `;
 const SelectTime = styled.div`
   display: flex;
