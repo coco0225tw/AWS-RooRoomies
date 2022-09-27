@@ -26,6 +26,7 @@ import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatRooms from "./components/ChatRooms/ChatRooms";
+import Alert from "./components/Alert";
 import userType from "./redux/GetAuth/GetAuthType";
 import { Loading } from "./components/Loading";
 import { groupType, userInfoType } from "./redux/Group/GroupType";
@@ -115,6 +116,7 @@ function User() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+
   useEffect(() => {
     console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
@@ -141,6 +143,7 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_MEASROOMMATE" });
         dispatch({ type: "RETURN_INITIAL_IMAGE" });
         dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
+        dispatch({ type: "RETURN_INITIAL_ALERT" });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(
@@ -272,13 +275,23 @@ const style = {
   },
 } as const;
 
+function AlertInfo() {
+  const alertInfo = useSelector((state: RootState) => state.AlertReducer);
+  return (
+    <Alert
+      alertType={alertInfo.alertType}
+      alertMessage={alertInfo.alertMessage}
+      isAlert={alertInfo.isAlert}
+    />
+  );
+}
 function App() {
   return (
     <Provider store={store}>
       {/* <Reset /> */}
       <GlobalStyle />
       <ChatRooms />
-      {/* <Loading /> */}
+      <AlertInfo />
       <Header />
       <User />
       <Outlet />

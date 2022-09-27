@@ -94,10 +94,29 @@ function FollowedList({
     setUnLikeId(listingId);
   }
   async function removeFromFavoriteLists() {
-    await firebase.removeFromFavoriteLists(userInfo.uid, unLikeId);
-    dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: unLikeId } });
-    setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
-    setIsShown(false);
+    firebase.removeFromFavoriteLists(userInfo.uid, unLikeId).then(() => {
+      dispatch({
+        type: "REMOVE_FROM_FAVORITELISTS",
+        payload: { id: unLikeId },
+      });
+      dispatch({
+        type: "OPEN_ALERT",
+        payload: {
+          alert: {
+            alertType: "提示",
+            alertMessage: "從喜歡列表刪除",
+            isAlert: true,
+          },
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+      setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
+      setIsShown(false);
+    });
   }
 
   useEffect(() => {

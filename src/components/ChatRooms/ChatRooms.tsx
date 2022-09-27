@@ -25,9 +25,6 @@ const Wrapper = styled.div<{ isShown: boolean }>`
   right: ${(props) => (props.isShown ? "120px" : "50px")};
   position: fixed;
   display: flex;
-  //   flex-direction: row;
-  //   justify-content: center;
-  //   align-items: flex-start;
   z-index: 1;
   background-color: white;
   width: ${(props) => (props.isShown ? "30vw" : "auto")};

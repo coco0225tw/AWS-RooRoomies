@@ -289,14 +289,46 @@ function Listing() {
         async function addToFavoriteLists() {
           await firebase.addToFavoriteLists(userInfo.uid, id!);
         }
-        addToFavoriteLists();
-        dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
+        addToFavoriteLists().then(() => {
+          dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: "OPEN_ALERT",
+            payload: {
+              alert: {
+                alertType: "提示",
+                alertMessage: "加入喜歡列表",
+                isAlert: true,
+              },
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+          }, 3000);
+        });
       } else {
         async function removeFromFavoriteLists() {
           await firebase.removeFromFavoriteLists(userInfo.uid, id!);
         }
-        removeFromFavoriteLists();
-        dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
+        removeFromFavoriteLists().then(() => {
+          dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: "OPEN_ALERT",
+            payload: {
+              alert: {
+                alertType: "提示",
+                alertMessage: "從喜歡列表刪除",
+                isAlert: true,
+              },
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+          }, 3000);
+        });
       }
     } else {
       setIsShown(true);
