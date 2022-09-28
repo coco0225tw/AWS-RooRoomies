@@ -39,6 +39,7 @@ import unAddIcon from "../../assets/unAdd.png";
 import { BtnDiv } from "../../components/Button";
 import { PopupComponent, PopupImage } from "../../components/Popup";
 import Hr from "../../components/Hr";
+import SpanLink from "../../components/SpanLink";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -264,6 +265,11 @@ const TitleIconWrapper = styled.div`
   display: flex;
   margin-top: 20px;
 `;
+const Span = styled.span`
+  font-size: 16px;
+  letter-spacing: 1.2px;
+  color: grey;
+`;
 function Listing() {
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -399,7 +405,14 @@ function Listing() {
   const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>("");
+
+  //條件
+  const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
+    useState<boolean>(false);
   const [match, setMatch] = useState<boolean>(false);
+  const [isInGroup, setIsInGroup] = useState<boolean>(false);
+  const [canBook, setCanBook] = useState<boolean>(false);
+  //
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -460,10 +473,40 @@ function Listing() {
         chatRoomId = doc.id;
         userId = doc.data().userId;
       });
-      console.log(isBooked!);
-      console.log(!isBooked!);
       setCheckIfUserCanBook(!isBooked!);
     });
+  }
+  function notAddUserAsRoommatesConditionAlert() {
+    dispatch({
+      type: "OPEN_NOTIFY_ALERT",
+      payload: {
+        alertMessage: (
+          <Span
+            style={{
+              fontSize: "inherit",
+              letterSpacing: "inherit",
+              color: "inherit",
+            }}
+          >
+            尚未填寫條件,到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "aboutMe" },
+              })}
+            />
+            更新
+          </Span>
+        ),
+      },
+    });
+    setTimeout(() => {
+      dispatch({
+        type: "CLOSE_ALERT",
+      });
+    }, 3000);
   }
   useEffect(() => {
     async function getListing() {
@@ -600,6 +643,8 @@ function Listing() {
             roommatesConditions={listingInfo?.roommatesConditions}
             match={match}
             setMatch={setMatch}
+            addUserAsRoommatesCondition={addUserAsRoommatesCondition}
+            setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
           ></RoommatesCondition>
           <Group
             match={match}
@@ -607,6 +652,11 @@ function Listing() {
             peopleAmount={listingInfo?.peopleAmount!}
             listingId={id!}
             listingTitle={listingInfo?.title as string}
+            addUserAsRoommatesCondition={addUserAsRoommatesCondition}
+            setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
+            notAddUserAsRoommatesConditionAlert={
+              notAddUserAsRoommatesConditionAlert
+            }
           ></Group>
           <Facility facility={listingInfo?.facility}></Facility>
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
@@ -651,12 +701,18 @@ function Listing() {
                   <SelectTimeWrapper key={`selectedTimes_${index}`}>
                     <SelectTime>{el.data().startTime}</SelectTime>
                     <CanBookedBtn
-                      onClick={() =>
-                        bookedTime(userInfo.uid, el.id, id!, {
-                          date: el.data().date,
-                          startTime: el.data().startTime,
-                        })
-                      }
+                      onClick={() => {
+                        if (!authChange) {
+                          setIsShown(true);
+                        } else if (!addUserAsRoommatesCondition) {
+                          notAddUserAsRoommatesConditionAlert();
+                        } else {
+                          bookedTime(userInfo.uid, el.id, id!, {
+                            date: el.data().date,
+                            startTime: el.data().startTime,
+                          });
+                        }
+                      }}
                     >
                       預約
                     </CanBookedBtn>

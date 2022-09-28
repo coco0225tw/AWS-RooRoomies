@@ -33,7 +33,7 @@ function Alert({
   isAlert,
 }: {
   alertType: string;
-  alertMessage: string;
+  alertMessage: any;
   isAlert: boolean;
 }) {
   return (

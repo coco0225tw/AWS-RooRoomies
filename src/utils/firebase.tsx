@@ -167,7 +167,7 @@ const firebase = {
   },
   async getListing(listingId: string) {
     const listingRef = doc(db, "listings", listingId);
-    console.log(listingId);
+    // console.log(listingId);
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -424,7 +424,7 @@ const firebase = {
       where("userId", "array-contains", uid),
       where("listingId", "==", listingId)
     );
-    console.log("check");
+    // console.log("check");
     const querySnapshot = await getDocs(userChatRef);
     return querySnapshot;
   },

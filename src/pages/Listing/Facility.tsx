@@ -91,7 +91,7 @@ const SubTitle = styled.div`
 function Facility(facility: any) {
   const [facilities, setFacilities] = useState<facilityType>();
   const [keys, setKeys] = useState<string[]>([]);
-  console.log(facility?.facility);
+  // console.log(facility?.facility);
   useEffect(() => {
     function findObjectKeys() {
       let keys = Object.keys(facility.facility);

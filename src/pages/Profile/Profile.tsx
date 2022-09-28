@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { firebase } from "../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +11,8 @@ import AllHouseHunting from "./AllHouseHunting/AllHouseHunting";
 import AboutMe from "./AboutMe/AboutMe";
 import SideBarTab from "./SideBarTab";
 import { BtnDiv } from "../../components/Button";
+import { PopupComponent, PopupImage } from "../../components/Popup";
+import { useNavigate } from "react-router-dom";
 const Wrapper = styled.div`
   display: flex;
   // display:
@@ -104,48 +106,78 @@ function Profile() {
   const dispatch = useDispatch();
   const [showTab, setShowTab] = useState<boolean>(true);
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const [isShown, setIsShown] = useState<boolean>(false);
+  const navigate = useNavigate();
   const tab = getTab.tab;
+  function clickClose() {
+    setIsShown(false);
+    navigate("/");
+  }
+  function clickFunction() {
+    navigate("/signin");
+  }
+  useEffect(() => {
+    if (!authChange) {
+      setIsShown(true);
+      // navigate("/");
+    }
+  }, []);
   return (
     <Wrapper>
-      <SideBarWrapper isShowTab={showTab}>
-        <SideBarTab
-          showTab={showTab}
-          setShowTab={setShowTab}
-          setLoading={setLoading}
-          loading={loading}
+      {!authChange && isShown ? (
+        <PopupComponent
+          // style={{ zIndex: '1' }}
+          msg={`請先進行登入註冊`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`登入`}
+          clickClose={clickClose}
+          clickFunction={clickFunction}
         />
-      </SideBarWrapper>
-      <Arrow
-        windowState={windowState}
-        isShowTab={showTab}
-        onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
-      >
-        {showTab ? (
-          <ArrowWrap>&#171;</ArrowWrap>
-        ) : (
-          <ArrowWrap>&#187;</ArrowWrap>
-        )}
-      </Arrow>
-      <SectionWrapper isShowTab={showTab}>
-        {getTab.tab === "aboutMe" && (
-          <AboutMe setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "allHouseHunting" && (
-          <AllHouseHunting setLoading={setLoading} loading={loading} />
-        )}
-        {/* {getTab.tab === "compareList" && (
+      ) : (
+        <React.Fragment>
+          {" "}
+          <SideBarWrapper isShowTab={showTab}>
+            <SideBarTab
+              showTab={showTab}
+              setShowTab={setShowTab}
+              setLoading={setLoading}
+              loading={loading}
+            />
+          </SideBarWrapper>
+          <Arrow
+            windowState={windowState}
+            isShowTab={showTab}
+            onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
+          >
+            {showTab ? (
+              <ArrowWrap>&#171;</ArrowWrap>
+            ) : (
+              <ArrowWrap>&#187;</ArrowWrap>
+            )}
+          </Arrow>
+          <SectionWrapper isShowTab={showTab}>
+            {getTab.tab === "aboutMe" && (
+              <AboutMe setLoading={setLoading} loading={loading} />
+            )}
+            {getTab.tab === "allHouseHunting" && (
+              <AllHouseHunting setLoading={setLoading} loading={loading} />
+            )}
+            {/* {getTab.tab === "compareList" && (
           <CompareList setLoading={setLoading} loading={loading} />
         )} */}
-        {getTab.tab === "followedList" && (
-          <FollowedList setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "uploadMyListing" && (
-          <UploadMyListing setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "setting" && (
-          <Setting setLoading={setLoading} loading={loading} />
-        )}
-      </SectionWrapper>
+            {getTab.tab === "followedList" && (
+              <FollowedList setLoading={setLoading} loading={loading} />
+            )}
+            {getTab.tab === "uploadMyListing" && (
+              <UploadMyListing setLoading={setLoading} loading={loading} />
+            )}
+            {getTab.tab === "setting" && (
+              <Setting setLoading={setLoading} loading={loading} />
+            )}
+          </SectionWrapper>
+        </React.Fragment>
+      )}
     </Wrapper>
   );
 }

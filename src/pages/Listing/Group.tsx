@@ -24,6 +24,9 @@ import { groupType } from "../../redux/Group/GroupType";
 import { Title } from "../../components/ProfileTitle";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
+import SpanLink from "../../components/SpanLink";
+import { PopupComponent, PopupImage } from "../../components/Popup";
+import { Link, useNavigate } from "react-router-dom";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -85,6 +88,11 @@ const AddToGroup = styled.div`
 const UserPic = styled(AddToGroup)<{ img: string }>`
   background-image: url(${(props) => props.img});
   background-size: 40px 40px;
+  cursor: default;
+  &:hover {
+    transform: none;
+    box-shadow: none;
+  }
 `;
 const SubTitle = styled.div`
   font-size: 28px;
@@ -96,25 +104,39 @@ const SubTitle = styled.div`
 const GroupIndex = styled.div`
   font-size: 16px;
 `;
+const Span = styled.span`
+  font-size: 16px;
+  letter-spacing: 1.2px;
+  color: grey;
+`;
 function Group({
   match,
   setMatch,
   peopleAmount,
   listingId,
   listingTitle,
+  addUserAsRoommatesCondition,
+  setAddUserAsRoommatesCondition,
+  notAddUserAsRoommatesConditionAlert,
 }: {
   peopleAmount: number;
   listingId: string;
   listingTitle: string;
   match: boolean;
   setMatch: React.Dispatch<React.SetStateAction<boolean>>;
+  addUserAsRoommatesCondition: boolean;
+  setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
+  notAddUserAsRoommatesConditionAlert: any;
 }) {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState<Array<groupType>>([]);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getGroup = useSelector(
     (state: RootState) => state.GroupReducer
   ) as Array<groupType>;
+  const [isShown, setIsShown] = useState<boolean>(false);
+  const navigate = useNavigate();
   const newGroup = {
     users: Array(peopleAmount).fill(null),
     chatRoomId: "",
@@ -177,7 +199,7 @@ function Group({
     if (peopleAmount !== undefined) {
       const groupQuery = doc(db, "listings", listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
-        console.log(snapshot.data()!.matchGroup);
+        // console.log(snapshot.data()!.matchGroup);
         const groups = [...snapshot.data()!.matchGroup];
         dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
       });
@@ -185,8 +207,34 @@ function Group({
   }, [peopleAmount]);
   return (
     <Wrapper>
+      {isShown && (
+        <PopupComponent
+          // style={{ zIndex: '1' }}
+          msg={`請先進行登入註冊`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`登入`}
+          clickClose={() => setIsShown(false)}
+          clickFunction={() => navigate("/signin")}
+        />
+      )}
       <Hr style={{ margin: "40px 0px" }} />
-      <SubTitle style={{ marginBottom: "32px" }}>湊團看房</SubTitle>
+      <SubTitle style={{ marginBottom: "32px" }}>
+        湊團看房{" "}
+        {authChange && !addUserAsRoommatesCondition && (
+          <Span>
+            尚未填寫條件,到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "aboutMe" },
+              })}
+            />
+            更新
+          </Span>
+        )}
+      </SubTitle>
 
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
@@ -196,7 +244,15 @@ function Group({
             {group.users.map((user, index) =>
               user === null ? (
                 <AddToGroup
-                  onClick={() => (match ? addUserToGroup(gIndex, index) : null)}
+                  onClick={() => {
+                    if (!authChange) {
+                      setIsShown(true);
+                    } else if (!addUserAsRoommatesCondition) {
+                      notAddUserAsRoommatesConditionAlert();
+                    } else if (match) {
+                      addUserToGroup(gIndex, index);
+                    }
+                  }}
                   key={`user${index}`}
                 >
                   +

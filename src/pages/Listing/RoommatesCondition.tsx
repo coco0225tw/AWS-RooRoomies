@@ -220,10 +220,14 @@ function RoommatesCondition({
   roommatesConditions,
   match,
   setMatch,
+  addUserAsRoommatesCondition,
+  setAddUserAsRoommatesCondition,
 }: {
   roommatesConditions: any;
   match: boolean;
   setMatch: React.Dispatch<React.SetStateAction<boolean>>;
+  addUserAsRoommatesCondition: boolean;
+  setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [keys, setKeys] = useState<string[]>([]);
   const userAsRoommate = useSelector(
@@ -274,15 +278,25 @@ function RoommatesCondition({
       userAsRoommate.userAsRoommatesConditions
     ); // => true
   }
+
+  // function checkIfUserConditionIsEmpty(keys) {
+  //   for (const keys in userAsRoommate.userAsRoommatesConditions) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
   useEffect(() => {
+    console.log(userAsRoommate.userAsRoommatesConditions);
     function findObjectKeys() {
-      console.log(roommatesConditions);
       let keys = Object.keys(roommatesConditions);
-      console.log(keys);
       setKeys(keys);
-      // console.log()
+      if (userAsRoommate.userAsRoommatesConditions) {
+        setAddUserAsRoommatesCondition(true);
+      } else {
+        setAddUserAsRoommatesCondition(false);
+      }
     }
-    if (roommatesConditions?.roommatesConditions) {
+    if (roommatesConditions) {
       findObjectKeys();
     }
   }, [roommatesConditions]);
