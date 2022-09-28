@@ -118,10 +118,11 @@ function Profile() {
     navigate("/signin");
   }
   useEffect(() => {
-    if (!authChange) {
-      setIsShown(true);
-      // navigate("/");
-    }
+    // console.log(authChange);
+    // if (!authChange) {
+    //   setIsShown(true);
+    //   // navigate("/");
+    // }
   }, []);
   return (
     <Wrapper>

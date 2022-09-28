@@ -21,7 +21,6 @@ function SpanLink({
       style={{
         fontSize: "inherit",
         letterSpacing: "inherit",
-        // color: "inherit",
       }}
       onClick={() => otherFn()}
       to={path}

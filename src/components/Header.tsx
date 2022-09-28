@@ -101,6 +101,7 @@ function Header() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   function clickSingOut() {
     console.log("signout");
@@ -110,9 +111,21 @@ function Header() {
     setIsShown(false);
   }
   async function logOut() {
-    await firebase.signOutUser();
-    setIsShown(false);
-    navigate("/signin");
+    firebase.signOutUser().then(() => {
+      dispatch({
+        type: "OPEN_NOTIFY_ALERT",
+        payload: {
+          alertMessage: "已登出",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+      setIsShown(false);
+      navigate("/signin");
+    });
   }
   return (
     <Wrapper>

@@ -78,6 +78,7 @@ function Footer() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   function clickSingOut() {
     console.log("signout");
     setIsShown(true);
@@ -86,9 +87,21 @@ function Footer() {
     setIsShown(false);
   }
   async function logOut() {
-    await firebase.signOutUser();
-    setIsShown(false);
-    navigate("/signin");
+    firebase.signOutUser().then(() => {
+      setIsShown(false);
+      navigate("/signin");
+      dispatch({
+        type: "OPEN_NOTIFY_ALERT",
+        payload: {
+          alertMessage: "已登出",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+    });
   }
   return (
     <Wrapper>

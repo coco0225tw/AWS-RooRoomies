@@ -124,6 +124,7 @@ function User() {
         getUser();
         // navigate('/');
       } else {
+        console.log("no user");
         dispatch({ type: "RETURN_INITIAL_GETUSER" });
         dispatch({ type: "RETURN_INITIAL_AUTH" });
         dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
