@@ -103,12 +103,8 @@ function Profile() {
   const [windowState, setWindowState] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [showTab, setShowTab] = useState<boolean>(true);
-  // if (window.innerWidth < 425) {
-  //   setWindowState(true);
-  // }
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
   const tab = getTab.tab;
-  // console.log(getTab);
   return (
     <Wrapper>
       <SideBarWrapper isShowTab={showTab}>

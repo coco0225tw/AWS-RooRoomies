@@ -1,26 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-const Wrapper = styled.div<{ isAlert: boolean }>`
+const Wrapper = styled.div<{ isAlert: boolean; alertType: string }>`
   position: fixed;
   display: flex;
   z-index: 1;
-  background-color: #222;
+  background-color: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  color: #4f5152;
+  // color: #fff7f4;
   top: 20vh;
   right: 80px;
   padding: 20px 40px;
-  border-radius: 20px;
+  border-radius: 4px;
   transform: translateX(${(props) => (props.isAlert ? "0%" : "200%")});
   transition-duration: 2s;
+  border-left: solid 12px
+    ${(props) =>
+      (props.alertType === "notify" && "#c77155") ||
+      (props.alertType === "error" && "#cc0000") ||
+      (props.alertType === "success" && "green")};
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
 `;
-const Message = styled.div<{ alertType: string }>`
-  font-size: 28px;
-  color: ${(props) =>
-    (props.alertType === "提示" && "#eee") ||
-    (props.alertType === "錯誤" && "red") ||
-    (props.alertType === "成功" && "green")};
+const Message = styled.div`
+  font-size: 24px;
+  letter-spacing: 4px;
+  color: #4f5152;
 `;
 
 function Alert({
@@ -33,8 +37,8 @@ function Alert({
   isAlert: boolean;
 }) {
   return (
-    <Wrapper isAlert={isAlert}>
-      <Message alertType={alertType}>{alertMessage}</Message>
+    <Wrapper isAlert={isAlert} alertType={alertType}>
+      <Message>{alertMessage}</Message>
     </Wrapper>
   );
 }

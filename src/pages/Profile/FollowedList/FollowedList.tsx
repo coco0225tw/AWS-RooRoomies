@@ -100,13 +100,9 @@ function FollowedList({
         payload: { id: unLikeId },
       });
       dispatch({
-        type: "OPEN_ALERT",
+        type: "OPEN_NOTIFY_ALERT",
         payload: {
-          alert: {
-            alertType: "提示",
-            alertMessage: "從喜歡列表刪除",
-            isAlert: true,
-          },
+          alertMessage: "從喜歡列表刪除",
         },
       });
       setTimeout(() => {

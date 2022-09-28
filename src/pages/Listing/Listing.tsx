@@ -292,13 +292,9 @@ function Listing() {
         addToFavoriteLists().then(() => {
           dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
           dispatch({
-            type: "OPEN_ALERT",
+            type: "OPEN_NOTIFY_ALERT",
             payload: {
-              alert: {
-                alertType: "提示",
-                alertMessage: "加入喜歡列表",
-                isAlert: true,
-              },
+              alertMessage: "加入喜歡列表",
             },
           });
           setTimeout(() => {
@@ -314,13 +310,9 @@ function Listing() {
         removeFromFavoriteLists().then(() => {
           dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
           dispatch({
-            type: "OPEN_ALERT",
+            type: "OPEN_NOTIFY_ALERT",
             payload: {
-              alert: {
-                alertType: "提示",
-                alertMessage: "從喜歡列表刪除",
-                isAlert: true,
-              },
+              alertMessage: "從喜歡列表刪除",
             },
           });
           setTimeout(() => {

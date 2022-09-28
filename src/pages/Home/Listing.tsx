@@ -137,13 +137,9 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             payload: { id: listingDocData.id },
           });
           dispatch({
-            type: "OPEN_ALERT",
+            type: "OPEN_NOTIFY_ALERT",
             payload: {
-              alert: {
-                alertType: "提示",
-                alertMessage: "加入喜歡列表",
-                isAlert: true,
-              },
+              alertMessage: "加入喜歡列表",
             },
           });
           setTimeout(() => {
@@ -165,13 +161,9 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             payload: { id: listingDocData.id },
           });
           dispatch({
-            type: "OPEN_ALERT",
+            type: "OPEN_NOTIFY_ALERT",
             payload: {
-              alert: {
-                alertType: "提示",
-                alertMessage: "從喜歡列表刪除",
-                isAlert: true,
-              },
+              alertMessage: "從喜歡列表刪除",
             },
           });
           setTimeout(() => {
