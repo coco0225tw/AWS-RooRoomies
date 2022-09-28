@@ -260,9 +260,11 @@ function RoommatesCondition({
 
     function shallowEqual(object1: any, object2: any) {
       const keys1 = Object.keys(object1);
-      const keys2 = Object.keys(object2);
+      console.log(object1);
+      console.log(object2);
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
+          console.log(`${key}: ${object1[key]} ${object2[key]} 不符`);
           // window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
           setMatch(false);
           return false;
@@ -275,31 +277,51 @@ function RoommatesCondition({
 
     shallowEqual(
       getNonUnlimitedKey(getTrueKey(roommatesConditions), "unlimited"),
-      userAsRoommate.userAsRoommatesConditions
+      userAsRoommate
     ); // => true
   }
 
-  // function checkIfUserConditionIsEmpty(keys) {
-  //   for (const keys in userAsRoommate.userAsRoommatesConditions) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
   useEffect(() => {
-    console.log(userAsRoommate.userAsRoommatesConditions);
-    function findObjectKeys() {
-      let keys = Object.keys(roommatesConditions);
-      setKeys(keys);
-      if (userAsRoommate.userAsRoommatesConditions) {
-        setAddUserAsRoommatesCondition(true);
-      } else {
-        setAddUserAsRoommatesCondition(false);
+    console.log(userAsRoommate);
+    // function findObjectKeys() {
+    //   if (userAsRoommate.userAsRoommatesConditions) {
+    //     setAddUserAsRoommatesCondition(true);
+    //     let keys = Object.keys(roommatesConditions);
+    //     setKeys(keys);
+    //     checkMatch();
+    //   } else {
+    //     console.log("沒有填");
+    //     setAddUserAsRoommatesCondition(false);
+    //   }
+    // }
+    function checkIfUserConditionIsEmpty(userAsRoommate: any) {
+      for (const key in userAsRoommate) {
+        if (userAsRoommate[key] === "") {
+          return false;
+        }
+        return true;
       }
     }
     if (roommatesConditions) {
-      findObjectKeys();
+      let keys = Object.keys(roommatesConditions);
+      if (checkIfUserConditionIsEmpty(userAsRoommate)) {
+        setAddUserAsRoommatesCondition(true);
+
+        setKeys(keys);
+        checkMatch();
+      } else {
+        console.log("沒有填");
+        // console.log(checkIfUserConditionIsEmpty(userAsRoommate));
+        setAddUserAsRoommatesCondition(false);
+      }
     }
-  }, [roommatesConditions]);
+
+    // if (roommatesConditions && userAsRoommate) {
+
+    // } else if (roommatesConditions && !userAsRoommate) {
+
+    // }
+  }, [roommatesConditions, userAsRoommate]);
   return (
     <Wrapper>
       <Hr style={{ margin: "40px 0px" }} />
@@ -325,7 +347,7 @@ function RoommatesCondition({
             </ConditionArea>
           ))}
       </Conditions>
-      <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn>
+      {/* <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn> */}
     </Wrapper>
   );
 }

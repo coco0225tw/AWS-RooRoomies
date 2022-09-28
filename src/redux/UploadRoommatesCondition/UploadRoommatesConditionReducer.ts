@@ -28,6 +28,7 @@ export default function UploadRoommatesCondition(
       return action.payload.roommatesState;
     case "GET_ROOMMATESCONDITION_FROM_FIREBASE":
       console.log(action.payload);
+      console.log(action.payload.roommatesState);
       return action.payload.roommatesState;
     case "RETURN_INITIAL_ROOMMATES_CONDITION":
       return roommatesConditionEmptyState;

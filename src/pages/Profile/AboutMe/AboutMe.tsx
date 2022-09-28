@@ -230,8 +230,8 @@ function AboutMe({
   );
   const [edit, setEdit] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const initialRoommatesState = userAsRoommate.userAsRoommatesConditions
-    ? userAsRoommate.userAsRoommatesConditions
+  const initialRoommatesState = userAsRoommate
+    ? userAsRoommate
     : {
         gender: "",
         bringFriendToStay: "",
@@ -242,17 +242,13 @@ function AboutMe({
         smoke: "",
         // career: "",
       };
-  console.log(userAsRoommate.userAsRoommatesConditions);
+  console.log(userAsRoommate);
   const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(
     initialRoommatesState
   );
   async function submit(meAsRoommatesState: roommatesConditionType) {
     setSubmitting(true);
     firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState).then(() => {
-      dispatch({
-        type: "UPLOAD_MEASROOMMATE",
-        payload: { meAsRoommatesState },
-      });
       dispatch({
         type: "OPEN_SUCCESS_ALERT",
         payload: {
@@ -264,6 +260,11 @@ function AboutMe({
           type: "CLOSE_ALERT",
         });
       }, 3000);
+    });
+    console.log(meAsRoommatesState);
+    dispatch({
+      type: "UPLOAD_MEASROOMMATE",
+      payload: { meAsRoommatesState: meAsRoommatesState },
     });
     setSubmitting(false);
   }

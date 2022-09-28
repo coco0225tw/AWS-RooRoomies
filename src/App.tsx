@@ -180,8 +180,10 @@ function User() {
         });
         dispatch({ type: "GETUSER_FROMFIREBASE", payload: { user } });
         dispatch({
-          type: "UPLOAD_MEASROOMMATE",
-          payload: { meAsRoommatesState },
+          type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
+          payload: {
+            meAsRoommatesState: data?.data().userAsRoommatesConditions,
+          },
         });
         dispatch({ type: "AUTH_CHANGE" });
         if (data?.data().userListingId.length !== 0) {

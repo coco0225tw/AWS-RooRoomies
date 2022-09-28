@@ -87,7 +87,8 @@ const AddToGroup = styled.div`
 
 const UserPic = styled(AddToGroup)<{ img: string }>`
   background-image: url(${(props) => props.img});
-  background-size: 40px 40px;
+  background-size: cover;
+  background-position: center center;
   cursor: default;
   &:hover {
     transform: none;
@@ -234,6 +235,12 @@ function Group({
             更新
           </Span>
         )}
+        {authChange && addUserAsRoommatesCondition && match && (
+          <Span>符合室友條件</Span>
+        )}
+        {authChange && addUserAsRoommatesCondition && !match && (
+          <Span>不符合室友條件</Span>
+        )}
       </SubTitle>
 
       {getGroup.length !== 0 &&
@@ -250,7 +257,20 @@ function Group({
                     } else if (!addUserAsRoommatesCondition) {
                       notAddUserAsRoommatesConditionAlert();
                     } else if (match) {
+                      //且沒有加入 //加入是TRUE就不能加入
                       addUserToGroup(gIndex, index);
+                    } else if (!match) {
+                      dispatch({
+                        type: "OPEN_ERROR_ALERT",
+                        payload: {
+                          alertMessage: "不符合室友條件，無法加入",
+                        },
+                      });
+                      setTimeout(() => {
+                        dispatch({
+                          type: "CLOSE_ALERT",
+                        });
+                      }, 3000);
                     }
                   }}
                   key={`user${index}`}
@@ -269,7 +289,7 @@ function Group({
             {/* </SingleGroupWrapper> */}
           </SingleGroup>
         ))}
-      {match && (
+      {match && ( //且沒有加入 //加入是TRUE就不能加入
         <BtnDiv onClick={() => (match ? addGroup() : null)}>加新的團</BtnDiv>
       )}
     </Wrapper>

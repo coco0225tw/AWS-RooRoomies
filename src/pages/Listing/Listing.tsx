@@ -705,6 +705,7 @@ function Listing() {
                         if (!authChange) {
                           setIsShown(true);
                         } else if (!addUserAsRoommatesCondition) {
+                          //團滿1個且沒有預約
                           notAddUserAsRoommatesConditionAlert();
                         } else {
                           bookedTime(userInfo.uid, el.id, id!, {
