@@ -325,7 +325,28 @@ const firebase = {
       { merge: true }
     );
   },
-  async addUserToGroup(listingId: string, updateGroup: any) {
+  async addUserToGroupAndCreateChatRoom(
+    //空的組加入
+    listingId: string,
+    updateGroup: any,
+    chatRoomId: string,
+    index: number
+  ) {
+    let newGroup = [...updateGroup];
+    newGroup[index].chatRoomId = chatRoomId;
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: newGroup,
+      },
+      { merge: true }
+    );
+  },
+  async addUserToGroup(
+    //既有的組加入(match)
+    listingId: string,
+    updateGroup: any
+  ) {
     await setDoc(
       doc(db, "listings", listingId),
       {
@@ -335,6 +356,7 @@ const firebase = {
     );
   },
   async createChatRoom(
+    //開新的聊天室
     userId: string | null[],
     listingId: string,
     listingTitle: string,
@@ -351,14 +373,15 @@ const firebase = {
       msg: [],
       isFull: false,
     });
-    // await this.updateChatRoomIdInListing(
-    //   listingId,
-    //   updateGroup,
-    //   index,
-    //   newChatRoomRef.id
-    // );
+    await this.addUserToGroupAndCreateChatRoom(
+      listingId,
+      updateGroup,
+      newChatRoomRef.id,
+      index
+    );
   },
   async updateChatRoom(
+    //既有的組加入(chatRoom)
     chatId: string,
     isFull: boolean,
     userId: string | null[]

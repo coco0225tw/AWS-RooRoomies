@@ -145,6 +145,7 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_IMAGE" });
         dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
         dispatch({ type: "RETURN_INITIAL_ALERT" });
+        dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(

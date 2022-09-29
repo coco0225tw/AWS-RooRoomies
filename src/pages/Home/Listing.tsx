@@ -35,13 +35,16 @@ const Wrapper = styled.div`
 
 const Icon = styled.div`
   aspect-ratio: 1 / 1;
-  height: auto;
-  width: 24px;
-  background-size: 100% 100%;
+  height: 32px;
+  width: 32px;
+  background-size: 24px 24px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
   // flex-grow: 1;
-  &:hover {
-    width: 32px;
-  }
+  // &:hover {
+  //   width: 32px;
+  // }
 `;
 
 const IconArea = styled.div`
@@ -54,7 +57,9 @@ const IconArea = styled.div`
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) =>
     props.isLiked ? likedIcon : unLikedIcon});
-  right: 8px;
+  // right: 8px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
@@ -120,13 +125,16 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   function handleLiked(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     isLiked: boolean
   ) {
     e.stopPropagation();
     e.preventDefault();
-    if (authChange) {
+
+    if (authChange && !submitting) {
+      setSubmitting(true);
       if (!isLiked) {
         async function addToFavoriteLists() {
           await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
@@ -146,6 +154,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             dispatch({
               type: "CLOSE_ALERT",
             });
+            setSubmitting(false);
           }, 3000);
         });
       } else {
@@ -170,10 +179,11 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             dispatch({
               type: "CLOSE_ALERT",
             });
+            setSubmitting(false);
           }, 3000);
         });
       }
-    } else {
+    } else if (!authChange) {
       setIsShown(true);
       console.log("popup");
     }
@@ -257,9 +267,11 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         <MainImage img={listingDocData.data().mainImage}>
           <IconArea>
             <FavoriteIcon
-              onClick={(e) =>
-                handleLiked(e!, favoriteLists.includes(listingDocData.id))
-              }
+              onClick={(e) => {
+                // if (!submitting) {
+                handleLiked(e!, favoriteLists.includes(listingDocData.id));
+                // }
+              }}
               isLiked={favoriteLists.includes(listingDocData.id)}
             ></FavoriteIcon>
             {/* <CompareIcon

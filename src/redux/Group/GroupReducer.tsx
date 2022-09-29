@@ -6,7 +6,7 @@ type Action =
   | { type: "ADD_GROUP"; payload: { newGroup: userInfoType } }
   | {
       type: "ADD_USER_TO_GROUP";
-      payload: { groupId: number; userId: number; userInfo: userType };
+      payload: { groupId: number; userIndex: number; userInfo: userType };
     }
   | { type: "ADD_GROUP_FROM_FIREBASE"; payload: { groups: Array<groupType> } };
 
@@ -24,7 +24,7 @@ export default function Tab(state = groupInitialState, action: Action) {
     }
     case "ADD_USER_TO_GROUP": {
       const newGroup = [...state];
-      newGroup[action.payload.groupId].users[action.payload.userId] = {
+      newGroup[action.payload.groupId].users[action.payload.userIndex] = {
         userId: action.payload.userInfo.uid,
         userPic: action.payload.userInfo.image,
         userName: action.payload.userInfo.name,

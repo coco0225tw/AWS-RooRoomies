@@ -19,6 +19,7 @@ import AuthChange from "./OnAuthChange/OnAuthChangeReducer";
 import PreviewImage from "./PreviewMainImage/PreviewMainImageReducer";
 import PreviewOtherImages from "./PreviewOtherImages/PreviewOtherImagesReducer";
 import Alert from "./Alert/AlertReducer";
+import SubTab from "./SubTab/SubTabReducer";
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
   UploadRoommatesConditionReducer: UploadRoommatesCondition,
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
   PreviewImageReducer: PreviewImage,
   PreviewOtherImagesReducer: PreviewOtherImages,
   AlertReducer: Alert,
+  SubTabReducer: SubTab,
 });
 
 export default rootReducer;

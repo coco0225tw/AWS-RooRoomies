@@ -22,7 +22,10 @@ function SpanLink({
         fontSize: "inherit",
         letterSpacing: "inherit",
       }}
-      onClick={() => otherFn()}
+      onClick={() => {
+        otherFn();
+        console.log("clickTab");
+      }}
       to={path}
     >
       {msg}

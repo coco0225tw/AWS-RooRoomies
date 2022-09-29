@@ -104,10 +104,7 @@ function SideBarTab({
   const dispatch = useDispatch();
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
   function clickTab(tabString: string) {
-    const tab = {
-      tab: tabString,
-    };
-    dispatch({ type: "SELECT_TYPE", payload: { tab } });
+    dispatch({ type: "SELECT_TYPE", payload: { tab: tabString } });
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -134,7 +131,7 @@ function SideBarTab({
         <TabWrapper
           key={options.key}
           isShowTab={showTab}
-          isChoose={getTab.tab === options.key}
+          isChoose={getTab === options.key}
           onClick={() => {
             clickTab(options.key);
             if (window.innerWidth < 425) {
@@ -143,12 +140,12 @@ function SideBarTab({
           }}
         >
           <Img
-            isChoose={getTab.tab === options.key}
+            isChoose={getTab === options.key}
             isShowTab={showTab}
             img={options.value}
             oimg={options.img}
           ></Img>
-          <Tab isChoose={getTab.tab === options.key} isShowTab={showTab}>
+          <Tab isChoose={getTab === options.key} isShowTab={showTab}>
             {options.label}
           </Tab>
         </TabWrapper>

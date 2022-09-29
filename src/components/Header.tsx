@@ -9,6 +9,7 @@ import { PopupComponent } from "./Popup";
 import search from "../assets/search.svg";
 import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
 import user2 from "../assets/user2.png";
+import { connectStorageEmulator } from "firebase/storage";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -147,8 +148,18 @@ function Header() {
       {authChange ? (
         <SectionWrapper>
           {/* <Notification></Notification> */}
-          <Profile to={"/profile"} img={userInfo.image}></Profile>
-          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>{" "}
+          <Profile
+            to={"/profile"}
+            img={userInfo.image}
+            onClick={() => {
+              console.log("type");
+              dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "aboutMe" },
+              });
+            }}
+          ></Profile>
+          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>
         </SectionWrapper>
       ) : (
         <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>

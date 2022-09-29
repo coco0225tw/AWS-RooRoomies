@@ -71,6 +71,7 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   width: 49%;
   justify-content: space-between;
   align-items: flex-start;
+  row-gap: 3%;
 `;
 const TitleWrapper = styled(SectionWrapper)`
   font-size: 20px;
@@ -112,6 +113,9 @@ const ImageWrap = styled.div`
   &:hover {
     filter: brightness(70%);
   }
+`;
+const OtherImageWrap = styled(ImageWrap)`
+  height: auto;
 `;
 const MainImage = styled.div<{ src: string }>`
   width: 100%;
@@ -186,9 +190,6 @@ const Icon = styled.div`
   background-size: 100% 100%;
   cursor: pointer;
   // flex-grow: 1;
-  &:hover {
-    width: 48px;
-  }
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) =>
@@ -290,7 +291,8 @@ function Listing() {
   ) {
     e.stopPropagation();
     e.preventDefault();
-    if (authChange) {
+    if (authChange && !submitting) {
+      setSubmitting(true);
       if (!isLiked) {
         async function addToFavoriteLists() {
           await firebase.addToFavoriteLists(userInfo.uid, id!);
@@ -308,6 +310,7 @@ function Listing() {
               type: "CLOSE_ALERT",
             });
           }, 3000);
+          setSubmitting(false);
         });
       } else {
         async function removeFromFavoriteLists() {
@@ -325,10 +328,11 @@ function Listing() {
             dispatch({
               type: "CLOSE_ALERT",
             });
+            setSubmitting(false);
           }, 3000);
         });
       }
-    } else {
+    } else if (!authChange) {
       setIsShown(true);
       console.log("popup");
     }
@@ -405,12 +409,13 @@ function Listing() {
   const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>("");
-
+  const [submitting, setSubmitting] = useState<boolean>(false);
   //條件
   const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
     useState<boolean>(false);
   const [match, setMatch] = useState<boolean>(false);
   const [isInGroup, setIsInGroup] = useState<boolean>(false);
+  const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
   const [canBook, setCanBook] = useState<boolean>(false);
   //
   type tileDisabledType = { date: Date };
@@ -603,12 +608,9 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              <ImageWrap
-                style={{ height: "auto", marginBottom: "2%" }}
-                key={`images_${index}`}
-              >
+              <OtherImageWrap key={`images_${index}`}>
                 <Images src={src} onClick={() => clickOnImage(src)} />
-              </ImageWrap>
+              </OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
@@ -657,6 +659,12 @@ function Listing() {
             notAddUserAsRoommatesConditionAlert={
               notAddUserAsRoommatesConditionAlert
             }
+            isInGroup={isInGroup}
+            setIsInGroup={setIsInGroup}
+            isInFullGroup={isInFullGroup}
+            setIsInFullGroup={setIsInFullGroup}
+            canBook={canBook}
+            setCanBook={setCanBook}
           ></Group>
           <Facility facility={listingInfo?.facility}></Facility>
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>

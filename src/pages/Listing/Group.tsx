@@ -110,6 +110,9 @@ const Span = styled.span`
   letter-spacing: 1.2px;
   color: grey;
 `;
+const Text = styled.div`
+  color: grey;
+`;
 function Group({
   match,
   setMatch,
@@ -119,6 +122,12 @@ function Group({
   addUserAsRoommatesCondition,
   setAddUserAsRoommatesCondition,
   notAddUserAsRoommatesConditionAlert,
+  isInGroup,
+  setIsInGroup,
+  isInFullGroup,
+  setIsInFullGroup,
+  canBook,
+  setCanBook,
 }: {
   peopleAmount: number;
   listingId: string;
@@ -128,6 +137,12 @@ function Group({
   addUserAsRoommatesCondition: boolean;
   setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
   notAddUserAsRoommatesConditionAlert: any;
+  isInGroup: boolean;
+  setIsInGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  isInFullGroup: boolean;
+  setIsInFullGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  canBook: boolean;
+  setCanBook: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState<Array<groupType>>([]);
@@ -137,6 +152,9 @@ function Group({
     (state: RootState) => state.GroupReducer
   ) as Array<groupType>;
   const [isShown, setIsShown] = useState<boolean>(false);
+  const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] =
+    useState<boolean>(false);
+  const [groupId, setGroupId] = useState<number>();
   const navigate = useNavigate();
   const newGroup = {
     users: Array(peopleAmount).fill(null),
@@ -146,64 +164,68 @@ function Group({
   function addGroup() {
     dispatch({ type: "ADD_GROUP", payload: { newGroup } });
   }
-  function removeGroup(index: number) {
-    dispatch({ type: "REMOVE_GROUP", payload: { index } });
-  }
-  async function addUserToGroup(groupId: number, userId: number) {
+  async function createNewChatRoom(
+    uid: string,
+    listingId: string,
+    listingTitle: string,
+    getGroup: any,
+    groupId: number
+  ) {
+    let nullUsersArray = Array(peopleAmount).fill(null);
+    console.log(Array(peopleAmount).fill(null));
+    console.log(uid);
+    nullUsersArray.splice(0, 1, uid);
+    console.log(nullUsersArray);
     dispatch({
       type: "ADD_USER_TO_GROUP",
-      payload: { groupId, userId, userInfo },
+      payload: { groupId, userIndex: 0, userInfo },
     });
-    await firebase.addUserToGroup(listingId, getGroup);
-    let index = getGroup[groupId].users.indexOf(null);
-    let nullLength = getGroup[groupId].users.filter((el) => el === null);
-    let users = getGroup[groupId].users.filter((el) => el !== null);
-    if (
-      nullLength.length !== peopleAmount &&
-      nullLength.length === peopleAmount - 1
-    ) {
-      console.log("make chatRooms");
-      console.log(getGroup[groupId]);
-      let userIds = getGroup[groupId].users.map((u, index) => {
-        if (u === null) {
-          return null;
-        } else {
-          return u!.userId;
-        }
-      });
-      await firebase.createChatRoom(
-        userIds as any,
+    console.log(getGroup);
+    firebase
+      .createChatRoom(
+        nullUsersArray,
         listingId,
         listingTitle,
         getGroup,
         groupId
-      );
-    } else {
-      let userIds = users.map((u, index) => {
-        return u!.userId;
+      )
+      .then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "成功加入",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
       });
-      // await firebase.findChatId(listingId, userIds).then((listing) => {
-      //   let chatId: string;
-      //   listing.forEach((doc) => (chatId = doc.id));
-      //   updateChatRoom();
-      //   async function updateChatRoom() {
-      //     await firebase.updateChatRoom(
-      //       chatId!,
-      //       nullLength.length === 0,
-      //       userIds
-      //     );
-      //   }
-      // });
+  }
+
+  async function addUserToGroup(groupId: number, userId: number) {
+    console.log(getGroup);
+
+    let userState = getGroup[groupId].users;
+    setGroupId(groupId);
+    if (userState.filter((u) => u !== null).length === 0) {
+      setFirstTimeAddGroupPopup(true);
     }
   }
   useEffect(() => {
+    console.log(peopleAmount);
     if (peopleAmount !== undefined) {
       const groupQuery = doc(db, "listings", listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
         // console.log(snapshot.data()!.matchGroup);
         const groups = [...snapshot.data()!.matchGroup];
         dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
+        setIsInGroup(
+          groups.some((g) => g.users.some((u) => u.userId === userInfo.uid))
+        );
       });
+      // addGroup();
     }
   }, [peopleAmount]);
   return (
@@ -218,6 +240,26 @@ function Group({
           clickFunction={() => navigate("/signin")}
         />
       )}
+      {firstTimeAddGroupPopup && (
+        <PopupComponent
+          msg={`加入新的團?`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`加入`}
+          clickClose={() => {
+            setFirstTimeAddGroupPopup(false);
+          }}
+          clickFunction={() => {
+            createNewChatRoom(
+              userInfo.uid,
+              listingId,
+              listingTitle,
+              getGroup,
+              groupId
+            );
+            setFirstTimeAddGroupPopup(false);
+          }}
+        />
+      )}
       <Hr style={{ margin: "40px 0px" }} />
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
@@ -227,21 +269,54 @@ function Group({
             <SpanLink
               path={"/profile"}
               msg={"個人頁面"}
-              otherFn={dispatch({
-                type: "SELECT_TYPE",
-                payload: { tab: "aboutMe" },
-              })}
+              otherFn={() => {
+                dispatch({
+                  type: "SELECT_TYPE",
+                  payload: { tab: "aboutMe" },
+                });
+              }}
             />
             更新
           </Span>
         )}
-        {authChange && addUserAsRoommatesCondition && match && (
+        {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
           <Span>符合室友條件</Span>
+        )}
+        {authChange && addUserAsRoommatesCondition && match && isInGroup && (
+          <Span>
+            你已加入湊團，到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={() => {
+                dispatch({
+                  type: "SELECT_TYPE",
+                  payload: { tab: "allHouseHunting" },
+                });
+
+                dispatch({
+                  type: "SELECT_SUB_TAB",
+                  payload: { subTab: "等待湊團" },
+                });
+              }}
+            />
+            查看
+          </Span>
         )}
         {authChange && addUserAsRoommatesCondition && !match && (
           <Span>不符合室友條件</Span>
         )}
       </SubTitle>
+      {getGroup.length === 0 && match && (
+        <Text>
+          目前無人湊團
+          <span style={{ display: "inline-block", left: "12px" }}>
+            <BtnDiv onClick={() => (match ? addGroup() : null)}>
+              加新的團
+            </BtnDiv>
+          </span>
+        </Text>
+      )}
 
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
@@ -278,22 +353,20 @@ function Group({
                   +
                 </AddToGroup>
               ) : (
-                <UserPic
-                  // onClick={() => addUserToGroup(gIndex, index)}
-                  key={`user${index}`}
-                  img={user.userPic}
-                ></UserPic>
+                <UserPic key={`user${index}`} img={user.userPic}></UserPic>
               )
             )}
             {/* <BtnDiv onClick={() => removeGroup(gIndex)}>刪除團</BtnDiv> */}
             {/* </SingleGroupWrapper> */}
+            {getGroup.length !== 0 && match && !isInGroup && (
+              <BtnDiv onClick={() => (match ? addGroup() : null)}>
+                加新的團優
+              </BtnDiv>
+            )}
           </SingleGroup>
         ))}
-      {match && ( //且沒有加入 //加入是TRUE就不能加入
-        <BtnDiv onClick={() => (match ? addGroup() : null)}>加新的團</BtnDiv>
-      )}
     </Wrapper>
   );
 }
-
+//且沒有加入加入是TRUE就不能加入
 export default Group;

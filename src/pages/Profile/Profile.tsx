@@ -109,7 +109,6 @@ function Profile() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
   const navigate = useNavigate();
-  const tab = getTab.tab;
   function clickClose() {
     setIsShown(false);
     navigate("/");
@@ -123,6 +122,7 @@ function Profile() {
     //   setIsShown(true);
     //   // navigate("/");
     // }
+    console.log(getTab);
   }, []);
   return (
     <Wrapper>
@@ -137,7 +137,6 @@ function Profile() {
         />
       ) : (
         <React.Fragment>
-          {" "}
           <SideBarWrapper isShowTab={showTab}>
             <SideBarTab
               showTab={showTab}
@@ -158,22 +157,22 @@ function Profile() {
             )}
           </Arrow>
           <SectionWrapper isShowTab={showTab}>
-            {getTab.tab === "aboutMe" && (
+            {getTab === "aboutMe" && (
               <AboutMe setLoading={setLoading} loading={loading} />
             )}
-            {getTab.tab === "allHouseHunting" && (
+            {getTab === "allHouseHunting" && (
               <AllHouseHunting setLoading={setLoading} loading={loading} />
             )}
-            {/* {getTab.tab === "compareList" && (
+            {/* {getTab=== "compareList" && (
           <CompareList setLoading={setLoading} loading={loading} />
         )} */}
-            {getTab.tab === "followedList" && (
+            {getTab === "followedList" && (
               <FollowedList setLoading={setLoading} loading={loading} />
             )}
-            {getTab.tab === "uploadMyListing" && (
+            {getTab === "uploadMyListing" && (
               <UploadMyListing setLoading={setLoading} loading={loading} />
             )}
-            {getTab.tab === "setting" && (
+            {getTab === "setting" && (
               <Setting setLoading={setLoading} loading={loading} />
             )}
           </SectionWrapper>

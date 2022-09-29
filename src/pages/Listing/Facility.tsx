@@ -68,7 +68,7 @@ const FacilityIcon = styled.div<{ img: string }>`
   width: 50px;
   height: 50px;
   background-image: url(${(props) => props.img});
-  background-size: 50px 50px;
+  background-size: cover;
   background-position: center center;
 `;
 const Facilities = styled.div`

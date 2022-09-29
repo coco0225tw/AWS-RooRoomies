@@ -87,6 +87,7 @@ const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
 const TabSelect = ["已預約", "尚未預約", "等待湊團"];
+
 function AllHouseHunting({
   setLoading,
   loading,
@@ -95,11 +96,13 @@ function AllHouseHunting({
   loading: boolean;
 }) {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const getSubTab = useSelector((state: RootState) => state.SubTabReducer);
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
   const [clickTab, setClickTab] = useState<string>("已預約");
+  const dispatch = useDispatch();
   useEffect(() => {
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
@@ -143,9 +146,13 @@ function AllHouseHunting({
         {TabSelect.map((el, index) => (
           <Tab
             key={`tab${el}`}
-            isClick={el === clickTab}
+            isClick={el === getSubTab}
             onClick={() => {
-              setClickTab(el);
+              dispatch({ type: "SELECT_SUB_TAB", payload: { subTab: el } });
+              dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "allHouseHunting" },
+              });
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);
@@ -156,11 +163,11 @@ function AllHouseHunting({
           </Tab>
         ))}
       </Tabs>
-      {clickTab === "已預約" && loading ? (
+      {getSubTab === "已預約" && loading ? (
         <Loading />
       ) : (
         allListingData.length !== 0 &&
-        clickTab === "已預約" &&
+        getSubTab === "已預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked !== false)
           .map((doc, id) => (
@@ -190,11 +197,11 @@ function AllHouseHunting({
             </ListingWrapper>
           ))
       )}
-      {clickTab === "尚未預約" && loading ? (
+      {getSubTab === "尚未預約" && loading ? (
         <Loading />
       ) : (
         allListingData.length !== 0 &&
-        clickTab === "尚未預約" &&
+        getSubTab === "尚未預約" &&
         houseHuntingData
           .filter(
             (doc) => doc.data().isFull === true && doc.data().isBooked === false
@@ -220,11 +227,11 @@ function AllHouseHunting({
             </ListingWrapper>
           ))
       )}
-      {clickTab === "等待湊團" && loading ? (
+      {getSubTab === "等待湊團" && loading ? (
         <Loading />
       ) : (
         allListingData.length !== 0 &&
-        clickTab === "等待湊團" &&
+        getSubTab === "等待湊團" &&
         houseHuntingData
           .filter((doc) => doc.data().isFull === false)
           .map((doc, id) => (
