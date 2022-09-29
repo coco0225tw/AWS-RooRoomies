@@ -2,7 +2,7 @@ import { groupType, userInfoType } from "./GroupType";
 import userType from "../GetAuth/GetAuthType";
 type Action =
   | { type: "UPDATE_GROUP"; payload: { group: Array<groupType> } }
-  | { type: "REMOVE_GROUP"; payload: { index: number } }
+  | { type: "REMOVE_GROUP" }
   | { type: "ADD_GROUP"; payload: { newGroup: userInfoType } }
   | {
       type: "ADD_USER_TO_GROUP";
@@ -17,7 +17,10 @@ export default function Tab(state = groupInitialState, action: Action) {
       return action.payload.group;
     case "REMOVE_GROUP": {
       const newGroup = [...state];
-      return newGroup.filter((g, id) => id !== action.payload.index);
+      console.log(
+        newGroup.filter((g, id) => !g.users.every((u) => u === null))
+      );
+      return newGroup.filter((g, id) => !g.users.every((u) => u === null));
     }
     case "ADD_GROUP": {
       return [...state, action.payload.newGroup];
@@ -29,7 +32,7 @@ export default function Tab(state = groupInitialState, action: Action) {
         userPic: action.payload.userInfo.image,
         userName: action.payload.userInfo.name,
       };
-      // console.log(newGroup);
+      console.log(newGroup);
       return newGroup;
     }
     case "ADD_GROUP_FROM_FIREBASE": {

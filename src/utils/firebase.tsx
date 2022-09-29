@@ -342,7 +342,7 @@ const firebase = {
       { merge: true }
     );
   },
-  async addUserToGroup(
+  async updateAddUserToGroup(
     //既有的組加入(match)
     listingId: string,
     updateGroup: any
@@ -355,6 +355,22 @@ const firebase = {
       { merge: true }
     );
   },
+  async updateChatRoom(
+    //既有的組加入(chatRoom)
+    chatId: string,
+    isFull: boolean,
+    userId: any
+  ) {
+    await setDoc(
+      doc(db, "chatRooms", chatId),
+      {
+        userId: [...userId],
+        isFull: isFull,
+      },
+      { merge: true }
+    );
+  },
+
   async createChatRoom(
     //開新的聊天室
     userId: string | null[],
@@ -380,31 +396,7 @@ const firebase = {
       index
     );
   },
-  async updateChatRoom(
-    //既有的組加入(chatRoom)
-    chatId: string,
-    isFull: boolean,
-    userId: string | null[]
-  ) {
-    await setDoc(
-      doc(db, "chatRooms", chatId),
-      {
-        userId: [...userId],
-        isFull: isFull,
-      },
-      { merge: true }
-    );
-  },
-  // async findChatId(listingId: string, uids: string[]) {
-  //   const chatIdRef = collection(db, "chatRooms");
-  //   const userChatRef = query(
-  //     chatIdRef,
-  //     where("userId", "in", uids),
-  //     where("listingId", "==", listingId)
-  //   );
-  //   const querySnapshot = await getDocs(userChatRef);
-  //   return querySnapshot;
-  // },
+
   async findChatId(listingId: string) {
     const chatIdRef = collection(db, "chatRooms");
     const userChatRef = query(
@@ -421,6 +413,19 @@ const firebase = {
       {
         bookedTime: bookedTime,
         isBooked: true,
+      },
+      { merge: true }
+    );
+  },
+  async bookedTimeInMatch(
+    //既有的組加入(match)
+    listingId: string,
+    updateGroup: any
+  ) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
       },
       { merge: true }
     );

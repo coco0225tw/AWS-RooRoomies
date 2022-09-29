@@ -149,10 +149,7 @@ function AllHouseHunting({
             isClick={el === getSubTab}
             onClick={() => {
               dispatch({ type: "SELECT_SUB_TAB", payload: { subTab: el } });
-              dispatch({
-                type: "SELECT_TYPE",
-                payload: { tab: "allHouseHunting" },
-              });
+
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);
@@ -221,6 +218,7 @@ function AllHouseHunting({
               <InfoWrapper>
                 {/* <div> */}
                 <StyledBtnDiv>去預約</StyledBtnDiv>
+                <StyledBtnDiv>退團</StyledBtnDiv>
                 <ChatIcon></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>

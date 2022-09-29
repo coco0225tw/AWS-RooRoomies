@@ -27,6 +27,7 @@ import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
 import { PopupComponent, PopupImage } from "../../components/Popup";
 import { Link, useNavigate } from "react-router-dom";
+import { connectStorageEmulator } from "firebase/storage";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -152,7 +153,10 @@ function Group({
     (state: RootState) => state.GroupReducer
   ) as Array<groupType>;
   const [isShown, setIsShown] = useState<boolean>(false);
+  const [createNewGroup, setCreateNewGroup] = useState<boolean>(false);
   const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] =
+    useState<boolean>(false);
+  const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] =
     useState<boolean>(false);
   const [groupId, setGroupId] = useState<number>();
   const navigate = useNavigate();
@@ -201,16 +205,58 @@ function Group({
             type: "CLOSE_ALERT",
           });
         }, 3000);
+        setIsInGroup(true);
       });
+  }
+  async function addUserToFormerGroup() {
+    let userIndex = getGroup[groupId].users.indexOf(null);
+    console.log(userIndex);
+
+    dispatch({
+      type: "ADD_USER_TO_GROUP",
+      payload: { groupId, userIndex: userIndex, userInfo },
+    });
+    let newGroup = [...getGroup];
+    Promise.all([
+      firebase.updateAddUserToGroup(listingId, getGroup),
+      firebase.updateChatRoom(
+        newGroup[groupId].chatRoomId,
+        userIndex + 1 === peopleAmount,
+        newGroup[groupId].users.map((u) => {
+          if (u) {
+            return u.userId;
+          } else {
+            return null;
+          }
+        })
+      ),
+    ]).then(() => {
+      setIsInFullGroup(userIndex + 1 === peopleAmount);
+      dispatch({
+        type: "OPEN_SUCCESS_ALERT",
+        payload: {
+          alertMessage: "成功加入",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+      setIsInGroup(true);
+    });
   }
 
   async function addUserToGroup(groupId: number, userId: number) {
     console.log(getGroup);
 
     let userState = getGroup[groupId].users;
+    console.log(groupId);
     setGroupId(groupId);
     if (userState.filter((u) => u !== null).length === 0) {
       setFirstTimeAddGroupPopup(true);
+    } else if (userState.filter((u) => u !== null).length !== 0) {
+      setOtherTimeAddGroupPopup(true);
     }
   }
   useEffect(() => {
@@ -221,11 +267,26 @@ function Group({
         // console.log(snapshot.data()!.matchGroup);
         const groups = [...snapshot.data()!.matchGroup];
         dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
-        setIsInGroup(
-          groups.some((g) => g.users.some((u) => u.userId === userInfo.uid))
+        let inGroup = groups.some((g) =>
+          g.users
+            .filter((u) => u !== null)
+            .some((u) => u.userId === userInfo.uid)
         );
+        if (inGroup) {
+          console.log(groups);
+          let findGroup = groups.find((g) =>
+            g.users.some((u) => u.userId === userInfo.uid)
+          );
+          setIsInFullGroup(!findGroup.users.includes(null));
+          if (!findGroup.users.includes(null)) {
+            console.log(findGroup);
+            console.log(!findGroup.isBooked);
+            setCanBook(!findGroup.isBooked);
+          }
+        }
+        console.log(inGroup);
+        setIsInGroup(inGroup);
       });
-      // addGroup();
     }
   }, [peopleAmount]);
   return (
@@ -260,6 +321,27 @@ function Group({
           }}
         />
       )}
+      {otherTimeAddGroupPopup && (
+        <PopupComponent
+          msg={`確認加入?`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`加入`}
+          clickClose={() => {
+            setOtherTimeAddGroupPopup(false);
+          }}
+          clickFunction={() => {
+            addUserToFormerGroup();
+            // createNewChatRoom(
+            //   userInfo.uid,
+            //   listingId,
+            //   listingTitle,
+            //   getGroup,
+            //   groupId
+            // );
+            setOtherTimeAddGroupPopup(false);
+          }}
+        />
+      )}
       <Hr style={{ margin: "40px 0px" }} />
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
@@ -282,27 +364,67 @@ function Group({
         {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
           <Span>符合室友條件</Span>
         )}
-        {authChange && addUserAsRoommatesCondition && match && isInGroup && (
-          <Span>
-            你已加入湊團，到
-            <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
-              otherFn={() => {
-                dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "allHouseHunting" },
-                });
+        {authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          !isInFullGroup && (
+            <Span>
+              你已加入湊團，到
+              <SpanLink
+                path={"/profile"}
+                msg={"個人頁面"}
+                otherFn={() => {
+                  dispatch({
+                    type: "SELECT_TYPE",
+                    payload: { tab: "allHouseHunting" },
+                  });
 
-                dispatch({
-                  type: "SELECT_SUB_TAB",
-                  payload: { subTab: "等待湊團" },
-                });
-              }}
-            />
-            查看
-          </Span>
-        )}
+                  dispatch({
+                    type: "SELECT_SUB_TAB",
+                    payload: {
+                      subTab: isInFullGroup ? "尚未預約" : "等待湊團",
+                    },
+                  });
+                }}
+              />
+              查看
+            </Span>
+          )}
+        {authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          isInFullGroup &&
+          !canBook && (
+            <Span>
+              你已預約，到
+              <SpanLink
+                path={"/profile"}
+                msg={"個人頁面"}
+                otherFn={() => {
+                  dispatch({
+                    type: "SELECT_TYPE",
+                    payload: { tab: "allHouseHunting" },
+                  });
+
+                  dispatch({
+                    type: "SELECT_SUB_TAB",
+                    payload: {
+                      subTab: "已預約",
+                    },
+                  });
+                }}
+              />
+              查看
+            </Span>
+          )}
+        {authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          isInFullGroup &&
+          canBook && <Span>已湊滿團，可以預約</Span>}
         {authChange && addUserAsRoommatesCondition && !match && (
           <Span>不符合室友條件</Span>
         )}
@@ -311,7 +433,14 @@ function Group({
         <Text>
           目前無人湊團
           <span style={{ display: "inline-block", left: "12px" }}>
-            <BtnDiv onClick={() => (match ? addGroup() : null)}>
+            <BtnDiv
+              onClick={() => {
+                setCreateNewGroup(true);
+                if (match) {
+                  addGroup();
+                }
+              }}
+            >
               加新的團
             </BtnDiv>
           </span>
@@ -331,9 +460,20 @@ function Group({
                       setIsShown(true);
                     } else if (!addUserAsRoommatesCondition) {
                       notAddUserAsRoommatesConditionAlert();
-                    } else if (match) {
-                      //且沒有加入 //加入是TRUE就不能加入
+                    } else if (match && !isInGroup) {
                       addUserToGroup(gIndex, index);
+                    } else if (match && isInGroup) {
+                      dispatch({
+                        type: "OPEN_ERROR_ALERT",
+                        payload: {
+                          alertMessage: "不可以重新加入",
+                        },
+                      });
+                      setTimeout(() => {
+                        dispatch({
+                          type: "CLOSE_ALERT",
+                        });
+                      }, 3000);
                     } else if (!match) {
                       dispatch({
                         type: "OPEN_ERROR_ALERT",
@@ -358,15 +498,39 @@ function Group({
             )}
             {/* <BtnDiv onClick={() => removeGroup(gIndex)}>刪除團</BtnDiv> */}
             {/* </SingleGroupWrapper> */}
-            {getGroup.length !== 0 && match && !isInGroup && (
-              <BtnDiv onClick={() => (match ? addGroup() : null)}>
-                加新的團優
-              </BtnDiv>
-            )}
           </SingleGroup>
         ))}
+      {getGroup.length !== 0 && match && !isInGroup && !createNewGroup && (
+        <span style={{ display: "inline-block" }}>
+          <BtnDiv
+            onClick={() => {
+              setCreateNewGroup(true);
+              console.log(getGroup);
+              if (match) {
+                addGroup();
+              }
+            }}
+          >
+            加新的團
+          </BtnDiv>
+        </span>
+      )}
+      {getGroup.length !== 0 && match && !isInGroup && createNewGroup && (
+        <span style={{ display: "inline-block" }}>
+          <BtnDiv
+            onClick={() => {
+              setCreateNewGroup(false);
+              dispatch({
+                type: "REMOVE_GROUP",
+              });
+            }}
+          >
+            取消
+          </BtnDiv>
+        </span>
+      )}
     </Wrapper>
   );
 }
-//且沒有加入加入是TRUE就不能加入
+
 export default Group;

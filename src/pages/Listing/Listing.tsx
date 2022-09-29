@@ -5,7 +5,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Map from "./Map";
 import CalendarContainer from "../../components/Calendar";
-import { firebase } from "../../utils/firebase";
+import { firebase, db } from "../../utils/firebase";
 import {
   query,
   collection,
@@ -14,6 +14,7 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
   FieldValue,
+  onSnapshot,
   Timestamp,
 } from "firebase/firestore";
 import { useSelector, useDispatch } from "react-redux";
@@ -38,6 +39,7 @@ import unAddIcon from "../../assets/unAdd.png";
 
 import { BtnDiv } from "../../components/Button";
 import { PopupComponent, PopupImage } from "../../components/Popup";
+
 import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
 const Wrapper = styled.div`
@@ -200,7 +202,6 @@ const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
   background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
   margin-left: 12px;
 `;
-const IsBookedTimes = styled.div``;
 const SubTitle = styled.div`
   font-size: 28px;
   letter-spacing: 12px
@@ -279,6 +280,9 @@ function Listing() {
   const compareLists = useSelector(
     (state: RootState) => state.GetCompareListsReducer
   );
+  const getGroup = useSelector(
+    (state: RootState) => state.GroupReducer
+  ) as Array<groupType>;
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
@@ -405,11 +409,18 @@ function Listing() {
   >([]);
   const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
-  const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
+  // const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
+  // const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>("");
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
+  const [bookTimeInfo, setBookTimeInfo] = useState<{
+    uid: string;
+    docId: string;
+    listingId: string;
+    selectedDateTime: any;
+  }>();
   //條件
   const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
     useState<boolean>(false);
@@ -439,48 +450,71 @@ function Listing() {
     setClickOnImg(url);
   }
   async function bookedTime(
-    uid: string,
-    docId: string,
-    listingId: string,
-    selectedDateTime: any
+    bookTimeInfo
+    // uid: string,
+    // docId: string,
+    // listingId: string,
+    // selectedDateTime: any
   ) {
     let chatRoomId!: string;
-    let userId!: [];
-
-    await firebase.findChatId(listingId).then((listing) => {
-      listing.forEach((doc) => (chatRoomId = doc.id));
-    });
-    if (checkIfUserCanBook) {
-      const bookedRecord = {
-        chatRoomId,
-        ...selectedDateTime,
-        userId,
-      };
-      async function updateAllBookedTime() {
-        await Promise.all([
-          firebase.bookedTime(listingId, docId),
-          firebase.bookedTimeInChatRoom(chatRoomId as string, selectedDateTime),
-          // firebase.createBookedTimeInfo(listingId, bookedRecord),
-        ]);
-      }
-      updateAllBookedTime();
-    } else {
-      setAlreadyBookedPopup(true);
-    }
-  }
-  async function check(uid: string, listingId: string) {
-    await firebase.checkIfUserCanBook(uid, listingId).then((listing) => {
-      let chatRoomId!: string;
-      let userId!: [];
-      let isBooked: boolean;
-      listing.forEach((doc) => {
-        isBooked = doc.data().isBooked;
-        chatRoomId = doc.id;
-        userId = doc.data().userId;
+    let groupId!: number;
+    console.log(bookTimeInfo.listingId);
+    console.log(bookTimeInfo.docId);
+    console.log(
+      getGroup.find((g) => g.users.some((u) => u.userId === userInfo.uid))
+        .chatRoomId
+    );
+    chatRoomId = getGroup.find((g) =>
+      g.users.some((u) => u.userId === userInfo.uid)
+    ).chatRoomId;
+    groupId = getGroup.findIndex((g) =>
+      g.users.some((u) => u.userId === userInfo.uid)
+    );
+    let newGroup = [...getGroup];
+    console.log(newGroup);
+    console.log(chatRoomId);
+    console.log(groupId);
+    newGroup[groupId].isBooked = true;
+    console.log(newGroup);
+    async function updateAllBookedTime() {
+      Promise.all([
+        firebase.bookedTime(bookTimeInfo.listingId, bookTimeInfo.docId),
+        firebase.bookedTimeInChatRoom(
+          chatRoomId as string,
+          bookTimeInfo.selectedDateTime
+        ),
+        firebase.bookedTimeInMatch(bookTimeInfo.listingId, newGroup),
+      ]).then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "預約成功",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+          setCanBook(false);
+        }, 3000);
+        setBookedTimePopup(false);
       });
-      setCheckIfUserCanBook(!isBooked!);
-    });
+    }
+    updateAllBookedTime();
   }
+  // async function check(uid: string, listingId: string) {
+  //   await firebase.checkIfUserCanBook(uid, listingId).then((listing) => {
+  //     let chatRoomId!: string;
+  //     let userId!: [];
+  //     let isBooked: boolean;
+  //     listing.forEach((doc) => {
+  //       isBooked = doc.data().isBooked;
+  //       chatRoomId = doc.id;
+  //       userId = doc.data().userId;
+  //     });
+  //     setCheckIfUserCanBook(!isBooked!);
+  //   });
+  // }
   function notAddUserAsRoommatesConditionAlert() {
     dispatch({
       type: "OPEN_NOTIFY_ALERT",
@@ -517,14 +551,32 @@ function Listing() {
     async function getListing() {
       const data = (await firebase.getListing(id!)) as ListingType;
       setListingInfo(data);
-      // console.log(data.moveInDate.toDateString());
     }
-    async function getBookingTimes() {
-      await firebase.getBookingTimesSubColForListing(id!).then((times) => {
+    const subColRef = collection(db, "listings", id!, "bookingTimes");
+    const getAllMessages = onSnapshot(subColRef, (snapshot) => {
+      let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+      snapshot.forEach((doc) => {
+        listingTimesArr.push(doc);
+      });
+      // setBookingTimesInfo(listingTimesArr);
+      console.log(listingTimesArr);
+    });
+    // async function getBookingTimes() {
+    function getBookingTimes() {
+      const getAllMessages = onSnapshot(subColRef, (snapshot) => {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        times.forEach((doc) => {
+        snapshot.forEach((doc) => {
           listingTimesArr.push(doc);
         });
+        // setBookingTimesInfo(listingTimesArr);
+        console.log(listingTimesArr);
+        //  });
+        // await firebase.getBookingTimesSubColForListing(id!).then((times) => {
+        //   let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        //   times.forEach((doc) => {
+        //     listingTimesArr.push(doc);
+        //   });
+        //   console.log(listingTimesArr);
         setBookingTimesInfo(listingTimesArr);
 
         let enableDate = [];
@@ -552,9 +604,11 @@ function Listing() {
       });
     }
     async function promise() {
-      await Promise.all([getBookingTimes(), getListing()]);
-      await check(userInfo.uid, id!);
+      // await Promise.all([getBookingTimes(), getListing()]);
+      // await check(userInfo.uid, id!);
+      getListing();
     }
+    getBookingTimes();
 
     promise();
   }, [id]);
@@ -578,13 +632,22 @@ function Listing() {
       {popImg && (
         <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />
       )}
-      {alreadyBookedPopup && (
+      {/* {alreadyBookedPopup && (
         <PopupComponent
           msg={`一團只能預約一個時間哦!!`}
           notDefaultBtn={`確認`}
           defaultBtn={`回物件管理頁面取消`}
           clickClose={() => setAlreadyBookedPopup(false)}
           clickFunction={() => navigate("/profile")}
+        />
+      )} */}
+      {bookedTimePopup && (
+        <PopupComponent
+          msg={`確認預約?`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`確認`}
+          clickClose={() => setBookedTimePopup(false)}
+          clickFunction={() => bookedTime(bookTimeInfo)}
         />
       )}
       {isShown && (
@@ -710,16 +773,81 @@ function Listing() {
                     <SelectTime>{el.data().startTime}</SelectTime>
                     <CanBookedBtn
                       onClick={() => {
-                        if (!authChange) {
-                          setIsShown(true);
-                        } else if (!addUserAsRoommatesCondition) {
-                          //團滿1個且沒有預約
-                          notAddUserAsRoommatesConditionAlert();
-                        } else {
-                          bookedTime(userInfo.uid, el.id, id!, {
-                            date: el.data().date,
-                            startTime: el.data().startTime,
+                        if (!canBook) {
+                          if (!authChange) setIsShown(true);
+                          if (!addUserAsRoommatesCondition)
+                            notAddUserAsRoommatesConditionAlert();
+                          if (!match) {
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "條件不符，不能湊團預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          if (!isInGroup) {
+                            console.log(!isInGroup);
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "請先加入團再預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          if (!isInFullGroup) {
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "尚未湊滿團，無法預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          dispatch({
+                            type: "OPEN_ERROR_ALERT",
+                            payload: {
+                              alertMessage: "已經預約過",
+                            },
                           });
+                          setTimeout(() => {
+                            dispatch({
+                              type: "CLOSE_ALERT",
+                            });
+                          }, 3000);
+                          return;
+                        } else {
+                          console.log("可以預約");
+                          setBookedTimePopup(true);
+                          setBookTimeInfo({
+                            uid: userInfo.uid,
+                            docId: el.id,
+                            listingId: id!,
+                            selectedDateTime: {
+                              date: el.data().date,
+                              startTime: el.data().startTime,
+                            },
+                          });
+                          // bookedTime(userInfo.uid, el.id, id!, {
+                          //   date: el.data().date,
+                          //   startTime: el.data().startTime,
+                          // });
                         }
                       }}
                     >
