@@ -340,7 +340,7 @@ function Search({
           {openDropDown && (
             <DropDownMenuWrapper>
               {countyGroup.countyOptions.map((option: any, oIndex) => (
-                <div key={`${option.key}${oIndex}`}>
+                <React.Fragment key={`${option.key}${oIndex}`}>
                   <FormCheck style={{ padding: "8px 0px" }}>
                     <CheckedFormCheckInput
                       defaultChecked={
@@ -363,10 +363,9 @@ function Search({
                     />
                     <CheckedFormCheckLabel htmlFor={`${option.countyname}`}>
                       {option.countyname}
-                      {/* {option.countycode01} */}
                     </CheckedFormCheckLabel>
                   </FormCheck>
-                </div>
+                </React.Fragment>
               ))}
             </DropDownMenuWrapper>
           )}

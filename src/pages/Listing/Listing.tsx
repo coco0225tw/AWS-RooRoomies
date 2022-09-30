@@ -471,11 +471,7 @@ function Listing() {
       g.users.some((u) => u.userId === userInfo.uid)
     );
     let newGroup = [...getGroup];
-    console.log(newGroup);
-    console.log(chatRoomId);
-    console.log(groupId);
     newGroup[groupId].isBooked = true;
-    console.log(newGroup);
     async function updateAllBookedTime() {
       Promise.all([
         firebase.bookedTime(bookTimeInfo.listingId, bookTimeInfo.docId),
