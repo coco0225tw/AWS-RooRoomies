@@ -33,13 +33,14 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 200px);
   margin: auto;
   background-image: url(${carousel});
   background-size: cover;
   // background-position: cover;
   background-position: bottom;
   position: static;
+  background-attachment: fixed;
 `;
 
 const SideBarWrapper = styled.div`
@@ -47,26 +48,43 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 
-const SearchBox = styled.div`
+const SearchBox = styled.div<{ openSearch: boolean }>`
   position: absolute;
-  margin: 80px auto;
+  // margin: 0px auto;
+  top: 20vh;
   background-color: rgba(255, 255, 255, 0.8);
-  padding: 0px 20px 30px;
+  padding: 0px 40px 30px;
+  border-radius: 12px;
   width: 80%;
   // top: 20%;
   // top: 0px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, ${(props) => (props.openSearch ? "0" : "-100%")});
+  opacity: ${(props) => (props.openSearch ? "1" : "0")};
 `;
-const Slogan = styled.div`
+const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
+  background-color: #c77155;
+  color: #fff7f4;
+  border-color: #fff7f4;
+  &:hover {
+    background-color: #c77155;
+    color: #fff7f4;
+    filter: grayscale(0.2);
+  }
+  margin: auto;
+  padding: 12px;
+`;
+const Slogan = styled.p<{ openSearch: boolean }>`
   color: #4f5152;
-  font-size: 60px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
+  font-size: 28px;
+  display: table-cell;
   text-align: center;
-  top: 60px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  margin: auto;
+  letter-spacing: 12px;
+  opacity: ${(props) => (props.openSearch ? "0" : "1")};
+  // transform: translateY(${(props) => (props.openSearch ? "100%" : "0")});
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -153,6 +171,7 @@ function Search({
   });
   const [selectTown, setSelectTown] = useState<string>("不限");
   const [selectRent, setSelectRent] = useState<string>("不限");
+  const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const lastDocData = useSelector(
     (state: RootState) => state.GetLastDocReducer
@@ -202,9 +221,7 @@ function Search({
   };
   function handleOnchange(county: string, town: string | null, rent: string) {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+
     if (town === "不限") {
       town = null;
     }
@@ -226,6 +243,9 @@ function Search({
     firebase
       .getAllListings(county, town, startRent, endRent)
       .then((listing) => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
         if (listing.empty) {
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
@@ -279,6 +299,7 @@ function Search({
       startRent = Number(rent.replace("以上", ""));
       endRent = null;
     }
+    setLoading(true);
     firebase
       .getNextPageListing(
         lastDocData as QueryDocumentSnapshot<DocumentData>,
@@ -288,7 +309,11 @@ function Search({
         endRent
       )
       .then((listing) => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
         if (listing.empty) return;
+
         const lastDoc = listing.docs[listing.docs.length - 1];
         dispatch({
           type: "GET_LAST_LISTING_DOC",
@@ -303,10 +328,6 @@ function Search({
           payload: { listingDocData: listingDocArr },
         });
       });
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
   }
   function clickOnDropDown() {
     setOpenDropDown(true);
@@ -320,8 +341,20 @@ function Search({
   }, []);
   return (
     <Wrapper>
-      <Slogan>房子是租來的，生活不是</Slogan>
-      <SearchBox>
+      <Slogan openSearch={openSearch}>房子是租來的，生活不是</Slogan>
+      <SearchIcon
+        openSearch={openSearch}
+        onClick={() => {
+          if (openSearch) {
+            setOpenSearch(false);
+          } else {
+            setOpenSearch(true);
+          }
+        }}
+      >
+        {openSearch ? "關閉搜尋" : "開始搜尋"}
+      </SearchIcon>
+      <SearchBox openSearch={openSearch}>
         <StyledFormGroup
           style={{ flexDirection: "column" }}
           key={countyGroup.key}
@@ -435,13 +468,13 @@ function Search({
           </StyledFormInputWrapper>
         </StyledFormGroup>
       </SearchBox>
-      <NextPageBtn
+      {/* <NextPageBtn
         onClick={() =>
           nextPage(selectCounty?.countyName, selectTown!, selectRent!)
         }
       >
         下一頁
-      </NextPageBtn>
+      </NextPageBtn> */}
     </Wrapper>
   );
 }

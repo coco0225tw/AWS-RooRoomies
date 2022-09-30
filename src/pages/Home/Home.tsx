@@ -15,6 +15,7 @@ import Search from "./Search";
 import { RootState } from "../../redux/rootReducer";
 import { useSelector, useDispatch } from "react-redux";
 import { Loading } from "../../components/Loading";
+import Logo from "../../assets/noHouse.png";
 interface Props {
   key: string;
 }
@@ -50,8 +51,9 @@ const ListingWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   margin: 32px auto;
-  justify-content: flex-start;
+  // justify-content: flex-start;
   // background-color: grey;
+  justify-content: space-between;
 `;
 
 const Btn = styled.div`
@@ -67,13 +69,36 @@ const PageArea = styled.div`
   display: flex;
 `;
 const ListingLink = styled(Link)`
-  width: 25%;
+  width: 24%;
   height: 100%;
+  // flex-basis: 20px;
 `;
 const NextPageBtn = styled(Btn)``;
 const PrevPageBtn = styled(Btn)``;
 const Page = styled.div`
   padding: 10px;
+`;
+const NoLogo = styled.div`
+  width: 10vw;
+  // top: 10vh;
+  aspect-ratio: 1/1;
+  background-image: url(${Logo});
+  background-size: cover;
+  background-position: center center;
+`;
+const NoText = styled.div`
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: #d7d7d7;
+  margin-left: 20px;
+  font-weight: bold;
+`;
+const NoArea = styled.div`
+  margin: auto;
+  margin-top: 10vh;
+  display: flex;
+  align-items: center;
+  // flex-direction: column;
 `;
 function Home() {
   const dispatch = useDispatch();
@@ -103,6 +128,12 @@ function Home() {
     <Wrapper>
       <Search loading={loading} setLoading={setLoading}></Search>
       <ListingWrapper>
+        {!listingDocData && !loading && (
+          <NoArea>
+            <NoLogo />
+            <NoText>沒有符合的物件</NoText>
+          </NoArea>
+        )}
         {listingDocData &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
             <ListingLink

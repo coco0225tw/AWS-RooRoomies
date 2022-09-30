@@ -64,6 +64,7 @@ const GlobalStyle = createGlobalStyle`
     // border: solid 1px black;
     // color: #4f5152;
     position: relative;
+    transition-duration: 1s;
   }
 
   body {
@@ -206,6 +207,7 @@ function User() {
               listingTitle: string;
               totalSq: number;
             };
+
             const listingData = await firebase.getListing(
               data?.data().userListingId
             );

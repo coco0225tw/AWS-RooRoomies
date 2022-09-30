@@ -31,6 +31,13 @@ const Wrapper = styled.div`
   // margin: auto;
   padding: 10px;
   margin-bottom: 32px;
+  flex-grow: 1;
+  transition-duration: 0.2s;
+  border-radius: 12px;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transform: translate(-1%, -1%);
+  }
 `;
 
 const Icon = styled.div`
@@ -93,11 +100,23 @@ const MainImage = styled.div<ImgProps>`
   justify-content: space-between;
 `;
 
-const Title = styled.div`
+const Title = styled.p`
   font-size: 20px;
   color: #4f5152;
   letter-spacing: 2px;
   font-weight: 600;
+  // word-break: keep-all;
+  // display: table-cell;
+  // display: table-cell;
+  // text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  // white-space: nowrap;
+  // // display: table;
+  // overflow: auto;
+  // overflow: hidden;
   // margin: 0px 0px 8px 8px;
   // align-self: flex-end;
 `;

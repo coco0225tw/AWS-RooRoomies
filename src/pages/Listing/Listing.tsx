@@ -545,8 +545,11 @@ function Listing() {
   }
   useEffect(() => {
     async function getListing() {
-      const data = (await firebase.getListing(id!)) as ListingType;
-      setListingInfo(data);
+      const data = (await firebase.getListing(id!)) as ListingType | boolean;
+      if (data) {
+        setListingInfo(data as ListingType);
+      } else {
+      }
     }
     const subColRef = collection(db, "listings", id!, "bookingTimes");
     const getAllMessages = onSnapshot(subColRef, (snapshot) => {
