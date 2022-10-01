@@ -30,8 +30,8 @@ const Wrapper = styled.div`
   height: 100%;
   // margin: auto;
   position: relative;
-  margin: 80px auto 160px;
-  padding-bottom: 20px;
+  margin: 80px auto 0px;
+  // padding-bottom: 20px;
 `;
 
 const HomePageTitle = styled.div`
@@ -53,7 +53,8 @@ const ListingWrapper = styled.div`
   margin: 32px auto;
   // justify-content: flex-start;
   // background-color: grey;
-  justify-content: space-between;
+  // justify-content: space-between;
+  column-gap: 1.25%;
 `;
 
 const Btn = styled.div`
@@ -100,6 +101,12 @@ const NoArea = styled.div`
   align-items: center;
   // flex-direction: column;
 `;
+const ScrollComponent = styled.div`
+  position: absolute;
+  border: solid 1px orange;
+  width: 10vw;
+  bottom: 32px;
+`;
 function Home() {
   const dispatch = useDispatch();
   interface Props {
@@ -113,20 +120,27 @@ function Home() {
     (state: RootState) => state.GetLastDocReducer
   );
 
-  // console.log(listingDocData);
-  useEffect(() => {}, []);
   const arr = [];
-
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [loadFirstPage, setLoadFirstPage] = useState(false);
+  const [loadNextPage, setLoadNextPage] = useState(false);
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+    // setLoading(true);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 3000);
   }, []);
   return (
     <Wrapper>
-      <Search loading={loading} setLoading={setLoading}></Search>
+      <Search
+        loading={loading}
+        setLoading={setLoading}
+        loadNextPage={loadNextPage}
+        loadFirstPage={loadFirstPage}
+        setLoadFirstPage={setLoadFirstPage}
+        scrollRef={scrollRef}
+      ></Search>
       <ListingWrapper>
         {!listingDocData && !loading && (
           <NoArea>
@@ -146,7 +160,9 @@ function Home() {
           ))}
       </ListingWrapper>
       {loading && <Loading />}
-      <PageArea></PageArea>
+      {listingDocData && <ScrollComponent ref={scrollRef} />}
+
+      {/* <PageArea></PageArea> */}
     </Wrapper>
   );
 }

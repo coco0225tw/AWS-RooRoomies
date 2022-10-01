@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { firebase } from "../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
@@ -160,15 +160,26 @@ const DropDownIcon = styled.div<{ openDropDown: boolean }>`
 function Search({
   setLoading,
   loading,
+  loadNextPage,
+  loadFirstPage,
+  setLoadFirstPage,
+  scrollRef,
 }: {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  loadNextPage: boolean;
+  loadFirstPage: boolean;
+  setLoadFirstPage: React.Dispatch<React.SetStateAction<boolean>>;
+  scrollRef: React.MutableRefObject<HTMLDivElement>;
 }) {
   const dispatch = useDispatch();
   const [selectCounty, setSelectCounty] = useState<County>({
     countyCode: 63000,
     countyName: "臺北市",
   });
+  const listingDocData = useSelector(
+    (state: RootState) => state.GetListingInHomePageReducer
+  );
   const [selectTown, setSelectTown] = useState<string>("不限");
   const [selectRent, setSelectRent] = useState<string>("不限");
   const [openSearch, setOpenSearch] = useState<boolean>(false);
@@ -251,16 +262,17 @@ function Search({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
           });
-          dispatch({
-            type: "GET_LISTINGDOC_FROM_FIREBASE",
-            payload: { listingDocData: null },
-          });
+          // dispatch({
+          //   type: "GET_LAST_LISTING_DOC",
+          //   payload: { lastDocData: null },
+          // });
         } else {
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
           });
           const lastDoc = listing.docs[listing.docs.length - 1];
+          console.log(lastDoc.id);
           dispatch({
             type: "GET_LAST_LISTING_DOC",
             payload: { lastDocData: lastDoc },
@@ -299,6 +311,7 @@ function Search({
       startRent = Number(rent.replace("以上", ""));
       endRent = null;
     }
+    console.log(lastDocData);
     setLoading(true);
     firebase
       .getNextPageListing(
@@ -312,9 +325,11 @@ function Search({
         setTimeout(() => {
           setLoading(false);
         }, 1000);
+        console.log();
         if (listing.empty) return;
 
         const lastDoc = listing.docs[listing.docs.length - 1];
+        console.log(lastDoc.id);
         dispatch({
           type: "GET_LAST_LISTING_DOC",
           payload: { lastDocData: lastDoc },
@@ -336,9 +351,41 @@ function Search({
     setOpenDropDown(false);
   }
 
+  const handleObserver = useCallback(
+    (entries: any, observer: any) => {
+      let isFetching = false;
+      // let firstPage = false;
+      // let lastDoc = lastDocData;
+      if (entries[0].intersectionRatio <= 0) return;
+      if (isFetching) return;
+      console.log(lastDocData);
+      function fetchListing() {
+        // setLoadNextPage(true);
+      }
+      console.log(loadFirstPage);
+      isFetching = true;
+      if (!loadFirstPage) {
+        console.log(!loadFirstPage);
+        console.log("第一頁");
+        handleOnchange(selectCounty.countyName!, "不限", "不限");
+        setLoadFirstPage(true);
+      } else {
+        console.log("其他頁");
+        nextPage(selectCounty?.countyName, selectTown!, selectRent!);
+      }
+      isFetching = false;
+      // setLoadNextPage(false);
+    },
+    [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage]
+  );
   useEffect(() => {
-    handleOnchange(selectCounty.countyName!, "不限", "不限");
-  }, []);
+    const intersectionObserver = new IntersectionObserver(handleObserver);
+    intersectionObserver.observe(scrollRef!.current);
+    const waypoint = scrollRef!.current;
+    return () => {
+      intersectionObserver.unobserve(waypoint);
+    };
+  }, [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage]);
   return (
     <Wrapper>
       <Slogan openSearch={openSearch}>房子是租來的，生活不是</Slogan>
