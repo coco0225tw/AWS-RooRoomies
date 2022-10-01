@@ -16,6 +16,7 @@ import { RootState } from "../../redux/rootReducer";
 import { useSelector, useDispatch } from "react-redux";
 import { Loading } from "../../components/Loading";
 import Logo from "../../assets/noHouse.png";
+import NoListing from "../../components/NoData";
 interface Props {
   key: string;
 }
@@ -103,7 +104,7 @@ const NoArea = styled.div`
 `;
 const ScrollComponent = styled.div`
   position: absolute;
-  border: solid 1px orange;
+  // border: solid 1px orange;
   width: 10vw;
   bottom: 32px;
 `;
@@ -142,13 +143,10 @@ function Home() {
         scrollRef={scrollRef}
       ></Search>
       <ListingWrapper>
-        {!listingDocData && !loading && (
-          <NoArea>
-            <NoLogo />
-            <NoText>沒有符合的物件</NoText>
-          </NoArea>
+        {listingDocData.length === 0 && !loading && (
+          <NoListing msg="沒有符合的物件" />
         )}
-        {listingDocData &&
+        {listingDocData.length !== 0 &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
             <ListingLink
               key={`listing_${index}`}

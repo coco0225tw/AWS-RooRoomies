@@ -259,7 +259,7 @@ function AboutMe({
         dispatch({
           type: "CLOSE_ALERT",
         });
-      }, 3000);
+      }, 1000);
     });
     console.log(meAsRoommatesState);
     dispatch({

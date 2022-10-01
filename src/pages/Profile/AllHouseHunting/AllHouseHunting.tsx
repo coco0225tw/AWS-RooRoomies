@@ -23,6 +23,7 @@ import ListingItem from "../../../components/ListingItem";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import chat from "../../../assets/chat.png";
 import { Loading } from "../../../components/Loading";
+import NoListing from "../../../components/NoData";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -117,7 +118,7 @@ function AllHouseHunting({
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-      }, 3000);
+      }, 1000);
     }
     async function getAllListing(arr: QueryDocumentSnapshot<DocumentData>[]) {
       // getListing;
@@ -153,7 +154,7 @@ function AllHouseHunting({
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);
-              }, 3000);
+              }, 1000);
             }}
           >
             {el}
@@ -162,8 +163,10 @@ function AllHouseHunting({
       </Tabs>
       {getSubTab === "已預約" && loading ? (
         <Loading />
+      ) : houseHuntingData.filter((doc) => doc.data().isBooked !== false)
+          .length === 0 && getSubTab === "已預約" ? (
+        <NoListing msg="沒有預約的房源" />
       ) : (
-        allListingData.length !== 0 &&
         getSubTab === "已預約" &&
         houseHuntingData
           .filter((doc) => doc.data().isBooked !== false)
@@ -196,8 +199,11 @@ function AllHouseHunting({
       )}
       {getSubTab === "尚未預約" && loading ? (
         <Loading />
+      ) : houseHuntingData.filter(
+          (doc) => doc.data().isFull === true && doc.data().isBooked === false
+        ).length === 0 && getSubTab === "尚未預約" ? (
+        <NoListing msg="沒有尚未預約的房源" />
       ) : (
-        allListingData.length !== 0 &&
         getSubTab === "尚未預約" &&
         houseHuntingData
           .filter(
@@ -227,8 +233,10 @@ function AllHouseHunting({
       )}
       {getSubTab === "等待湊團" && loading ? (
         <Loading />
+      ) : houseHuntingData.filter((doc) => doc.data().isFull === false)
+          .length === 0 && getSubTab === "等待湊團" ? (
+        <NoListing msg="沒有等待湊房的房源" />
       ) : (
-        allListingData.length !== 0 &&
         getSubTab === "等待湊團" &&
         houseHuntingData
           .filter((doc) => doc.data().isFull === false)

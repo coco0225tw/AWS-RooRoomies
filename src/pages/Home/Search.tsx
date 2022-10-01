@@ -184,6 +184,7 @@ function Search({
   const [selectRent, setSelectRent] = useState<string>("不限");
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
+  const [noData, setNoData] = useState<boolean>(false);
   const lastDocData = useSelector(
     (state: RootState) => state.GetLastDocReducer
   );
@@ -254,19 +255,18 @@ function Search({
     firebase
       .getAllListings(county, town, startRent, endRent)
       .then((listing) => {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
         if (listing.empty) {
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
           });
+          setNoData(true);
           // dispatch({
           //   type: "GET_LAST_LISTING_DOC",
           //   payload: { lastDocData: null },
           // });
         } else {
+          setNoData(false);
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
@@ -286,6 +286,9 @@ function Search({
             payload: { listingDocData: listingDocArr },
           });
         }
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       });
   }
   async function nextPage(
@@ -322,12 +325,11 @@ function Search({
         endRent
       )
       .then((listing) => {
-        setTimeout(() => {
+        if (listing.empty) {
           setLoading(false);
-        }, 1000);
-        console.log();
-        if (listing.empty) return;
-
+          setNoData(true);
+        }
+        setNoData(false);
         const lastDoc = listing.docs[listing.docs.length - 1];
         console.log(lastDoc.id);
         dispatch({
@@ -342,6 +344,9 @@ function Search({
           type: "GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE",
           payload: { listingDocData: listingDocArr },
         });
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       });
   }
   function clickOnDropDown() {
@@ -358,6 +363,7 @@ function Search({
       // let lastDoc = lastDocData;
       if (entries[0].intersectionRatio <= 0) return;
       if (isFetching) return;
+      if (noData) return;
       console.log(lastDocData);
       function fetchListing() {
         // setLoadNextPage(true);
@@ -376,7 +382,7 @@ function Search({
       isFetching = false;
       // setLoadNextPage(false);
     },
-    [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage]
+    [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage, noData]
   );
   useEffect(() => {
     const intersectionObserver = new IntersectionObserver(handleObserver);
@@ -385,7 +391,14 @@ function Search({
     return () => {
       intersectionObserver.unobserve(waypoint);
     };
-  }, [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage]);
+  }, [
+    lastDocData,
+    selectCounty,
+    selectTown,
+    selectRent,
+    loadFirstPage,
+    noData,
+  ]);
   return (
     <Wrapper>
       <Slogan openSearch={openSearch}>房子是租來的，生活不是</Slogan>

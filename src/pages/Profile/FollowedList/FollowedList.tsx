@@ -10,7 +10,7 @@ import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import ListingItem from "../../../components/ListingItem";
 import { Loading } from "../../../components/Loading";
-
+import NoListing from "../../../components/NoData";
 import {
   query,
   collection,
@@ -109,7 +109,7 @@ function FollowedList({
         dispatch({
           type: "CLOSE_ALERT",
         });
-      }, 3000);
+      }, 1000);
       setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
       setIsShown(false);
     });
@@ -147,8 +147,9 @@ function FollowedList({
       <Hr />
       {loading ? (
         <Loading />
+      ) : favoriteLists.length === 0 ? (
+        <NoListing msg="尚未加入任何房源" />
       ) : (
-        favoriteLists &&
         allListingData.map((f, index) => (
           <ListingWrapper to={`/listing/${f.id}`} key={`favoriteLists${index}`}>
             <ListingItem listingDocData={f}></ListingItem>
