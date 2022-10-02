@@ -70,6 +70,10 @@ const UploadImgBtn = styled.div`
   background-repeat: no-repeat;
   background-image: url(${upload});
 `;
+const BtnWrapper = styled.div`
+  display: flex;
+  align-self: flex-end;
+`;
 function Setting({
   setLoading,
   loading,
@@ -84,6 +88,7 @@ function Setting({
   const emailRef = useRef<HTMLInputElement>(null);
   const picRef = useRef<HTMLInputElement>(null);
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
+  const dispatch = useDispatch();
   function previewMainImage(e: React.ChangeEvent<HTMLInputElement>) {
     let target = e.target as HTMLInputElement;
     let files = target.files;
@@ -93,11 +98,28 @@ function Setting({
     }
   }
   async function submitNameOrEmail() {
-    firebase.updateUserInfo(
-      userInfo.uid,
-      nameRef.current!.value,
-      emailRef.current!.value
-    );
+    firebase
+      .updateUserInfo(
+        userInfo.uid,
+        nameRef.current!.value,
+        emailRef.current!.value
+      )
+      .then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "更新使用者資料成功",
+          },
+        });
+      })
+      .catch(() => {
+        dispatch({
+          type: "OPEN_ERROR_ALERT",
+          payload: {
+            alertMessage: "更新使用者資料失敗",
+          },
+        });
+      });
   }
   async function submitImg() {
     firebase.updateUserPic(userInfo.uid, mainImgBlob!);
@@ -123,6 +145,7 @@ function Setting({
               ref={picRef}
               type="file"
               hidden
+              disabled={!edit}
             ></FormControl>
           </FormGroup>
           <FormGroup>
@@ -130,6 +153,7 @@ function Setting({
             <FormControl
               ref={nameRef}
               defaultValue={userInfo!.name}
+              disabled={!edit}
             ></FormControl>
           </FormGroup>
           <FormGroup>
@@ -137,19 +161,42 @@ function Setting({
             <FormControl
               ref={emailRef}
               defaultValue={userInfo!.email}
+              disabled={!edit}
             ></FormControl>
           </FormGroup>
-
-          <SubmitBtn
-            onClick={() => {
-              if (mainImgUrl !== "") {
-                submitImg();
-              }
-              submitNameOrEmail();
-            }}
-          >
-            儲存變更
-          </SubmitBtn>
+          {edit ? (
+            <BtnWrapper>
+              <SubmitBtn
+                onClick={() => {
+                  setEdit(false);
+                  emailRef.current.value = userInfo!.email;
+                  nameRef.current.value = userInfo!.name;
+                }}
+              >
+                取消
+              </SubmitBtn>
+              <SubmitBtn
+                style={{ marginLeft: "12px" }}
+                onClick={() => {
+                  setEdit(false);
+                  if (mainImgUrl !== "") {
+                    submitImg();
+                  }
+                  submitNameOrEmail();
+                }}
+              >
+                儲存變更
+              </SubmitBtn>
+            </BtnWrapper>
+          ) : (
+            <SubmitBtn
+              onClick={() => {
+                setEdit(true);
+              }}
+            >
+              編輯
+            </SubmitBtn>
+          )}
         </React.Fragment>
       )}
     </Wrapper>
