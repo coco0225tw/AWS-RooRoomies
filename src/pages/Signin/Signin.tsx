@@ -3,6 +3,7 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
+import { RootState } from "../../redux/rootReducer";
 
 import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
@@ -161,12 +162,17 @@ function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [user, setUser] = useState<User>();
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser as User);
-    });
-  }, []);
+    console.log(authChange);
+    if (authChange) {
+      onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser as User);
+      });
+      navigate("/profile");
+    }
+  }, [authChange]);
   interface User {
     email: string;
   }

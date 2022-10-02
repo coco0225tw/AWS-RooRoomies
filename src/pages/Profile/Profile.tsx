@@ -117,13 +117,11 @@ function Profile() {
     navigate("/signin");
   }
   useEffect(() => {
-    // console.log(authChange);
-    // if (!authChange) {
-    //   setIsShown(true);
-    //   // navigate("/");
-    // }
-    console.log(getTab);
-  }, []);
+    console.log(!authChange);
+    if (!authChange) {
+      navigate("/signin");
+    }
+  }, [authChange]);
   return (
     <Wrapper>
       {!authChange && isShown ? (
