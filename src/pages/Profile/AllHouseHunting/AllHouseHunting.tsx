@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { firebase } from "../../../utils/firebase";
+import { firebase, db } from "../../../utils/firebase";
 import {
   query,
   collection,
@@ -9,6 +9,9 @@ import {
   QuerySnapshot,
   DocumentData,
   QueryDocumentSnapshot,
+  onSnapshot,
+  doc,
+  where,
 } from "firebase/firestore";
 import { useSelector, useDispatch } from "react-redux";
 import { Outlet } from "react-router-dom";
@@ -24,6 +27,7 @@ import { BtnDiv, BtnLink } from "../../../components/Button";
 import chat from "../../../assets/chat.png";
 import { Loading } from "../../../components/Loading";
 import NoListing from "../../../components/NoData";
+import previewMainImage from "../../../redux/PreviewMainImage/PreviewMainImageReducer";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -104,16 +108,157 @@ function AllHouseHunting({
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
   const [clickTab, setClickTab] = useState<string>("已預約");
   const dispatch = useDispatch();
+  const [cancelBookTimePopup, setCancelBookTimePopup] =
+    useState<boolean>(false);
+  const [cancelBookTimeInfo, setCancelBookTimeInfo] = useState<any>(null);
+  const [removeFromGroupPopup, setRemoveFromGroupPopup] =
+    useState<boolean>(false);
+  const [removeUserInfo, setRemoveUserInfo] = useState<any>(null);
+
+  async function removeFromGroup(removeUserInfo: any) {
+    let data = await firebase.getListing(removeUserInfo.listingId);
+    let matchGroup = data.matchGroup;
+    let index = matchGroup.findIndex((e: any) =>
+      e.users.some((u: any) => u && u.userId === userInfo.uid)
+    );
+    console.log(matchGroup);
+    console.log(index);
+    matchGroup[index].isFull = false;
+    let userIndex = matchGroup[index].users.findIndex(
+      (u: any) => u && u.userId === userInfo.uid
+    );
+    matchGroup[index].users.splice(userIndex, 1);
+    matchGroup[index].users.push(null);
+    if (matchGroup[index].users.filter((u: any) => u !== null).length === 0) {
+      matchGroup.splice(index, 1);
+      console.log(index);
+      console.log(matchGroup);
+      console.log(removeUserInfo);
+      Promise.all([
+        firebase.removeChatRoom(removeUserInfo.chatRoomId),
+        firebase.removeUserFromGroupInMatch(
+          removeUserInfo.listingId,
+          matchGroup
+        ),
+      ]).then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "成功退團",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
+      });
+    } else {
+      let userIndex = matchGroup[index].users.findIndex(
+        (u: any) => u && u.userId === userInfo.uid
+      );
+      matchGroup[index].users.splice(userIndex, 1);
+      matchGroup[index].users.push(null);
+      let userIds = matchGroup[index].users.map((u: any) => {
+        if (u) {
+          return u.userId;
+        } else {
+          return null;
+        }
+      });
+      console.log(userIds);
+      console.log(matchGroup);
+      Promise.all([
+        firebase.removeUserInChatRoom(removeUserInfo.chatRoomId, userIds),
+        firebase.removeUserFromGroupInMatch(
+          removeUserInfo.listingId,
+          matchGroup
+        ),
+      ]).then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "成功退團",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
+      });
+    }
+  }
+  async function cancelBookTime(cancelBookTimeInfo: any) {
+    let data = await firebase.getListing(cancelBookTimeInfo.listingId);
+    let matchGroup = data.matchGroup;
+    let index = matchGroup.findIndex((e: any) =>
+      e.users.some((u) => u.userId === userInfo.uid)
+    );
+    matchGroup[index].isBooked = false;
+    Promise.all([
+      firebase.cancelBookedTimeInChatRoom(cancelBookTimeInfo.chatRoomId),
+      firebase.cancelBookedTimeInMatch(
+        cancelBookTimeInfo.listingId,
+        matchGroup
+      ),
+      firebase.cancelBookedTime(
+        cancelBookTimeInfo.listingId,
+        cancelBookTimeInfo.date,
+        cancelBookTimeInfo.time
+      ),
+    ]).then(() => {
+      let index = houseHuntingData.findIndex(
+        (h: any) => h.id === cancelBookTimeInfo.chatRoomId
+      );
+      let updatedArr = [...houseHuntingData];
+      updatedArr[index].data().isBooked = false;
+      updatedArr[index].data().bookedTime = {};
+
+      console.log(updatedArr[index].data());
+      // setHouseHuntingData(updatedArr);
+      dispatch({
+        type: "OPEN_SUCCESS_ALERT",
+        payload: {
+          alertMessage: "已取消預約",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+    });
+  }
   useEffect(() => {
+    const houseHuntingRef = collection(db, "chatRooms");
+    const userChatRef = query(
+      houseHuntingRef,
+      where("userId", "array-contains", userInfo.uid)
+    );
+    if (userInfo) {
+      let onSnapShotData = onSnapshot(userChatRef, (querySnapshot) => {
+        let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        querySnapshot.forEach((doc) => {
+          houseHuntingDocArr.push(doc);
+          console.log(doc);
+          console.log(doc.id);
+          console.log(doc.data());
+        });
+        setHouseHuntingData(houseHuntingDocArr);
+        getAllListing(houseHuntingDocArr);
+      });
+    }
+
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
         listing.forEach((doc) => {
           houseHuntingDocArr.push(doc);
-          console.log(doc.data());
+          console.log(doc);
         });
         setHouseHuntingData(houseHuntingDocArr);
-        getAllListing(houseHuntingDocArr);
+        // getAllListing(houseHuntingDocArr);
       });
       setLoading(true);
       setTimeout(() => {
@@ -137,10 +282,39 @@ function AllHouseHunting({
 
       setAllListingData(listingDocArr);
     }
-    getAllHouseHuntingData();
+    // getAllHouseHuntingData();
   }, [userInfo]);
   return (
     <Wrapper>
+      {cancelBookTimePopup && (
+        <PopupComponent
+          msg={`確認取消預約時間?`}
+          notDefaultBtn={`讓我再想想`}
+          defaultBtn={`取消預約`}
+          clickClose={() => {
+            setCancelBookTimePopup(false);
+          }}
+          clickFunction={() => {
+            cancelBookTime(cancelBookTimeInfo);
+            setCancelBookTimePopup(false);
+          }}
+        />
+      )}
+      {removeFromGroupPopup && (
+        <PopupComponent
+          msg={`確認退團?`}
+          notDefaultBtn={`讓我再想想`}
+          defaultBtn={`退團`}
+          clickClose={() => {
+            setRemoveFromGroupPopup(false);
+          }}
+          clickFunction={() => {
+            removeFromGroup(removeUserInfo);
+            // cancelBookTime(cancelBookTimeInfo);
+            setRemoveFromGroupPopup(false);
+          }}
+        />
+      )}
       <Title>我的看房時間</Title>
       <Hr />
       <Tabs>
@@ -164,7 +338,9 @@ function AllHouseHunting({
       {getSubTab === "已預約" && loading ? (
         <Loading />
       ) : houseHuntingData.filter((doc) => doc.data().isBooked !== false)
-          .length === 0 && getSubTab === "已預約" ? (
+          .length === 0 &&
+        allListingData.length !== 0 &&
+        getSubTab === "已預約" ? (
         <NoListing msg="沒有預約的房源" />
       ) : (
         getSubTab === "已預約" &&
@@ -190,7 +366,21 @@ function AllHouseHunting({
                   .toDateString()} ${
                   doc.data().bookedTime.startTime
                 }看房`}</div>
-                <StyledBtnDiv>取消預約</StyledBtnDiv>
+                <StyledBtnDiv
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setCancelBookTimePopup(true);
+                    setCancelBookTimeInfo({
+                      chatRoomId: doc.id,
+                      listingId: doc.data().listingId,
+                      date: doc.data().bookedTime.date,
+                      time: doc.data().bookedTime.startTime,
+                    });
+                  }}
+                >
+                  取消預約
+                </StyledBtnDiv>
                 <ChatIcon></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>
@@ -201,7 +391,9 @@ function AllHouseHunting({
         <Loading />
       ) : houseHuntingData.filter(
           (doc) => doc.data().isFull === true && doc.data().isBooked === false
-        ).length === 0 && getSubTab === "尚未預約" ? (
+        ).length === 0 &&
+        allListingData.length !== 0 &&
+        getSubTab === "尚未預約" ? (
         <NoListing msg="沒有尚未預約的房源" />
       ) : (
         getSubTab === "尚未預約" &&
@@ -223,8 +415,20 @@ function AllHouseHunting({
               ></ListingItem>
               <InfoWrapper>
                 {/* <div> */}
-                <StyledBtnDiv>去預約</StyledBtnDiv>
-                <StyledBtnDiv>退團</StyledBtnDiv>
+                {/* <StyledBtnDiv>去預約</StyledBtnDiv> */}
+                <StyledBtnDiv
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setRemoveFromGroupPopup(true);
+                    setRemoveUserInfo({
+                      chatRoomId: doc.id,
+                      listingId: doc.data().listingId,
+                    });
+                  }}
+                >
+                  退團
+                </StyledBtnDiv>
                 <ChatIcon></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>
@@ -234,7 +438,9 @@ function AllHouseHunting({
       {getSubTab === "等待湊團" && loading ? (
         <Loading />
       ) : houseHuntingData.filter((doc) => doc.data().isFull === false)
-          .length === 0 && getSubTab === "等待湊團" ? (
+          .length === 0 &&
+        allListingData.length !== 0 &&
+        getSubTab === "等待湊團" ? (
         <NoListing msg="沒有等待湊房的房源" />
       ) : (
         getSubTab === "等待湊團" &&
@@ -254,7 +460,19 @@ function AllHouseHunting({
               ></ListingItem>
               <InfoWrapper>
                 {/* <div> */}
-                <StyledBtnDiv>退團</StyledBtnDiv>
+                <StyledBtnDiv
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setRemoveFromGroupPopup(true);
+                    setRemoveUserInfo({
+                      chatRoomId: doc.id,
+                      listingId: doc.data().listingId,
+                    });
+                  }}
+                >
+                  退團
+                </StyledBtnDiv>
                 <ChatIcon></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>

@@ -65,6 +65,7 @@ const GlobalStyle = createGlobalStyle`
     // color: #4f5152;
     position: relative;
     transition-duration: 1s;
+    letter-spacing: 0.8px;
   }
 
   body {

@@ -28,6 +28,7 @@ import SpanLink from "../../components/SpanLink";
 import { PopupComponent, PopupImage } from "../../components/Popup";
 import { Link, useNavigate } from "react-router-dom";
 import { connectStorageEmulator } from "firebase/storage";
+import { Loading } from "../../components/Loading";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -129,6 +130,8 @@ function Group({
   setIsInFullGroup,
   canBook,
   setCanBook,
+  hintTextLoading,
+  setHintTextLoading,
 }: {
   peopleAmount: number;
   listingId: string;
@@ -144,9 +147,12 @@ function Group({
   setIsInFullGroup: React.Dispatch<React.SetStateAction<boolean>>;
   canBook: boolean;
   setCanBook: React.Dispatch<React.SetStateAction<boolean>>;
+  hintTextLoading: boolean;
+  setHintTextLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
   const [groups, setGroups] = useState<Array<groupType>>([]);
+
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getGroup = useSelector(
@@ -185,6 +191,7 @@ function Group({
       payload: { groupId, userIndex: 0, userInfo },
     });
     console.log(getGroup);
+    setHintTextLoading(true);
     firebase
       .createChatRoom(
         nullUsersArray,
@@ -194,6 +201,7 @@ function Group({
         groupId
       )
       .then(() => {
+        setIsInGroup(true);
         dispatch({
           type: "OPEN_SUCCESS_ALERT",
           payload: {
@@ -205,13 +213,14 @@ function Group({
             type: "CLOSE_ALERT",
           });
         }, 3000);
-        setIsInGroup(true);
+
+        setHintTextLoading(false);
       });
   }
   async function addUserToFormerGroup() {
     let userIndex = getGroup[groupId].users.indexOf(null);
     console.log(userIndex);
-
+    setHintTextLoading(true);
     dispatch({
       type: "ADD_USER_TO_GROUP",
       payload: { groupId, userIndex: userIndex, userInfo },
@@ -239,6 +248,7 @@ function Group({
         },
       });
       setTimeout(() => {
+        setHintTextLoading(false);
         dispatch({
           type: "CLOSE_ALERT",
         });
@@ -249,7 +259,6 @@ function Group({
 
   async function addUserToGroup(groupId: number, userId: number) {
     console.log(getGroup);
-
     let userState = getGroup[groupId].users;
     console.log(groupId);
     setGroupId(groupId);
@@ -275,7 +284,7 @@ function Group({
         if (inGroup) {
           console.log(groups);
           let findGroup = groups.find((g) =>
-            g.users.some((u) => u.userId === userInfo.uid)
+            g.users.some((u: any) => u && u.userId === userInfo.uid)
           );
           setIsInFullGroup(!findGroup.users.includes(null));
           if (!findGroup.users.includes(null)) {
@@ -284,11 +293,12 @@ function Group({
             setCanBook(!findGroup.isBooked);
           }
         }
+
         console.log(inGroup);
         setIsInGroup(inGroup);
       });
     }
-  }, [peopleAmount]);
+  }, [peopleAmount, userInfo]);
   return (
     <Wrapper>
       {isShown && (
@@ -345,7 +355,9 @@ function Group({
       <Hr style={{ margin: "40px 0px" }} />
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
-        {authChange && !addUserAsRoommatesCondition && (
+        {hintTextLoading ? (
+          <Loading />
+        ) : authChange && !addUserAsRoommatesCondition ? (
           <Span>
             尚未填寫條件,到
             <SpanLink
@@ -360,11 +372,93 @@ function Group({
             />
             更新
           </Span>
-        )}
-        {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
+        ) : authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          !isInFullGroup ? (
+          <Span>
+            你已加入湊團，到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={() => {
+                dispatch({
+                  type: "SELECT_TYPE",
+                  payload: { tab: "allHouseHunting" },
+                });
+
+                dispatch({
+                  type: "SELECT_SUB_TAB",
+                  payload: {
+                    subTab: isInFullGroup ? "尚未預約" : "等待湊團",
+                  },
+                });
+              }}
+            />
+            查看
+          </Span>
+        ) : authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          isInFullGroup &&
+          !canBook ? (
+          <Span>
+            你已預約，到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={() => {
+                dispatch({
+                  type: "SELECT_TYPE",
+                  payload: { tab: "allHouseHunting" },
+                });
+
+                dispatch({
+                  type: "SELECT_SUB_TAB",
+                  payload: {
+                    subTab: "已預約",
+                  },
+                });
+              }}
+            />
+            查看
+          </Span>
+        ) : authChange &&
+          addUserAsRoommatesCondition &&
+          match &&
+          isInGroup &&
+          isInFullGroup &&
+          canBook ? (
+          <Span>已湊滿團，可以預約</Span>
+        ) : authChange && addUserAsRoommatesCondition && match && !isInGroup ? (
           <Span>符合室友條件</Span>
+        ) : (
+          authChange &&
+          addUserAsRoommatesCondition &&
+          !match && <Span>不符合室友條件</Span>
         )}
-        {authChange &&
+        {/* {authChange && !addUserAsRoommatesCondition && (
+          <Span>
+            尚未填寫條件,到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={() => {
+                dispatch({
+                  type: "SELECT_TYPE",
+                  payload: { tab: "aboutMe" },
+                });
+              }}
+            />
+            更新
+          </Span>
+        )} */}
+        {/* {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
+          <Span>符合室友條件</Span>
+        )} */}
+        {/* {authChange &&
           addUserAsRoommatesCondition &&
           match &&
           isInGroup &&
@@ -390,8 +484,8 @@ function Group({
               />
               查看
             </Span>
-          )}
-        {authChange &&
+          )} */}
+        {/* {authChange &&
           addUserAsRoommatesCondition &&
           match &&
           isInGroup &&
@@ -418,16 +512,16 @@ function Group({
               />
               查看
             </Span>
-          )}
-        {authChange &&
+          )} */}
+        {/* {authChange &&
           addUserAsRoommatesCondition &&
           match &&
           isInGroup &&
           isInFullGroup &&
-          canBook && <Span>已湊滿團，可以預約</Span>}
-        {authChange && addUserAsRoommatesCondition && !match && (
+          canBook && <Span>已湊滿團，可以預約</Span>} */}
+        {/* {authChange && addUserAsRoommatesCondition && !match && (
           <Span>不符合室友條件</Span>
-        )}
+        )} */}
       </SubTitle>
       {getGroup.length === 0 && match && (
         <Text>

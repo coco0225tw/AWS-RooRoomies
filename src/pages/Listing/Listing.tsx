@@ -402,7 +402,7 @@ function Listing() {
     moveInDate: string;
     latLng: { lat: number; lng: number };
   };
-
+  const [hintTextLoading, setHintTextLoading] = useState<boolean>(false);
   const [listingInfo, setListingInfo] = useState<ListingType>();
   const [bookingTimesInfo, setBookingTimesInfo] = useState<
     QueryDocumentSnapshot<DocumentData>[]
@@ -456,6 +456,7 @@ function Listing() {
     // listingId: string,
     // selectedDateTime: any
   ) {
+    setHintTextLoading(true);
     let chatRoomId!: string;
     let groupId!: number;
     console.log(bookTimeInfo.listingId);
@@ -487,30 +488,18 @@ function Listing() {
             alertMessage: "預約成功",
           },
         });
+        setBookedTimePopup(false);
         setTimeout(() => {
           dispatch({
             type: "CLOSE_ALERT",
           });
           setCanBook(false);
+          setHintTextLoading(false);
         }, 3000);
-        setBookedTimePopup(false);
       });
     }
     updateAllBookedTime();
   }
-  // async function check(uid: string, listingId: string) {
-  //   await firebase.checkIfUserCanBook(uid, listingId).then((listing) => {
-  //     let chatRoomId!: string;
-  //     let userId!: [];
-  //     let isBooked: boolean;
-  //     listing.forEach((doc) => {
-  //       isBooked = doc.data().isBooked;
-  //       chatRoomId = doc.id;
-  //       userId = doc.data().userId;
-  //     });
-  //     setCheckIfUserCanBook(!isBooked!);
-  //   });
-  // }
   function notAddUserAsRoommatesConditionAlert() {
     dispatch({
       type: "OPEN_NOTIFY_ALERT",
@@ -727,6 +716,8 @@ function Listing() {
             setIsInFullGroup={setIsInFullGroup}
             canBook={canBook}
             setCanBook={setCanBook}
+            hintTextLoading={hintTextLoading}
+            setHintTextLoading={setHintTextLoading}
           ></Group>
           <Facility facility={listingInfo?.facility}></Facility>
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>

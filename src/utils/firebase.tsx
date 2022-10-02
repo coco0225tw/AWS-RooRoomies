@@ -19,6 +19,7 @@ import {
   where,
   arrayUnion,
   arrayRemove,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -516,6 +517,69 @@ const firebase = {
     await updateDoc(doc(db, "users", uid), {
       dndLists: arrayRemove(listingId),
     });
+  },
+
+  // cancelBookTime
+
+  async cancelBookedTimeInChatRoom(chatRoomId: string) {
+    await setDoc(
+      doc(db, "chatRooms", chatRoomId),
+      {
+        bookedTime: {},
+        isBooked: false,
+      },
+      { merge: true }
+    );
+  },
+  async cancelBookedTimeInMatch(listingId: string, updateGroup: any) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
+      },
+      { merge: true }
+    );
+  },
+  async cancelBookedTime(listingId: string, date: Date, time: string) {
+    const bookedRef = collection(db, "listings", listingId, "bookingTimes");
+    const bookedTimeRef = query(
+      bookedRef,
+      where("date", "==", date),
+      where("startTime", "==", time)
+    );
+    const querySnapshot = await getDocs(bookedTimeRef);
+    let bookTimeId: string | null;
+    querySnapshot.forEach((listing) => (bookTimeId = listing.id));
+
+    await updateDoc(
+      doc(db, "listings", listingId, "bookingTimes", bookTimeId),
+      {
+        isBooked: false,
+      }
+    );
+  },
+  //退團
+  async removeUserFromGroupInMatch(listingId: string, updateGroup: any) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
+      },
+      { merge: true }
+    );
+  },
+  async removeUserInChatRoom(chatId: string, userId: any) {
+    await setDoc(
+      doc(db, "chatRooms", chatId),
+      {
+        userId: [...userId],
+        isFull: false,
+      },
+      { merge: true }
+    );
+  },
+  async removeChatRoom(chatRoomId: string) {
+    await deleteDoc(doc(db, "chatRooms", chatRoomId));
   },
 };
 

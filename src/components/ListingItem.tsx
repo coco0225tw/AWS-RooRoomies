@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { firebase } from "../utils/firebase";
 import {
@@ -239,6 +239,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
   function clickFunction() {
     navigate("/signin");
   }
+  useEffect(() => {}, [listingDocData]);
   // console.log(new Date(listingDocData.data().moveInDate));
   return (
     <Wrapper>
@@ -253,7 +254,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         />
       )}
       <CardWrapper>
-        <MainImage img={listingDocData.data().mainImage}>
+        <MainImage img={listingDocData?.data().mainImage}>
           {/* <IconArea>
             <FavoriteIcon
               onClick={(e) => handleLiked(e!, favoriteLists.includes(listingDocData.id))}
@@ -268,21 +269,22 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
           </IconArea> */}
         </MainImage>
         <InfoWrapper>
-          <Title>{listingDocData.data().title}</Title>
+          <Title>{listingDocData?.data().title}</Title>
           <DetailWrapper>
             <Addr>
-              {listingDocData.data().countyName}
-              {listingDocData.data().townName}
+              {listingDocData?.data().countyName}
+              {listingDocData?.data().townName}
             </Addr>
 
             <PeopleAmount>
-              可入住人數:{listingDocData.data().peopleAmount}
+              可入住人數:{listingDocData?.data().peopleAmount}
             </PeopleAmount>
             <Time></Time>
           </DetailWrapper>
 
           <Rent>
-            {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
+            {listingDocData?.data().startRent}~{listingDocData?.data().endRent}
+            /月
           </Rent>
         </InfoWrapper>
       </CardWrapper>

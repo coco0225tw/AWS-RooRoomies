@@ -109,7 +109,7 @@ function FollowedList({
         dispatch({
           type: "CLOSE_ALERT",
         });
-      }, 1000);
+      }, 3000);
       setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
       setIsShown(false);
     });

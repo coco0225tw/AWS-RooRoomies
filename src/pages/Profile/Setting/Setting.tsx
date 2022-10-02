@@ -111,6 +111,11 @@ function Setting({
             alertMessage: "更新使用者資料成功",
           },
         });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
       })
       .catch(() => {
         dispatch({
@@ -119,6 +124,11 @@ function Setting({
             alertMessage: "更新使用者資料失敗",
           },
         });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
       });
   }
   async function submitImg() {
