@@ -183,12 +183,15 @@ function User() {
           payload: { favoriteLists },
         });
         dispatch({ type: "GETUSER_FROMFIREBASE", payload: { user } });
-        dispatch({
-          type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
-          payload: {
-            meAsRoommatesState: data?.data().userAsRoommatesConditions,
-          },
-        });
+        if (data?.data().userAsRoommatesConditions) {
+          dispatch({
+            type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
+            payload: {
+              meAsRoommatesState: data?.data().userAsRoommatesConditions,
+            },
+          });
+        }
+
         dispatch({ type: "AUTH_CHANGE" });
         if (data?.data().userListingId.length !== 0) {
           console.log(data?.data().userListingId);
