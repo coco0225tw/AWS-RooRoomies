@@ -231,7 +231,7 @@ function ListingTitle({
   }, [titleInfo]);
   return (
     <Wrapper>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      {/* <form onSubmit={handleSubmit(onSubmit)}>
         {hookFormGroup.map(({ label, key, required, pattern, options }) => (
           <FormGroup key={key}>
             <FormLabel htmlFor={key}>{label}</FormLabel>
@@ -246,15 +246,11 @@ function ListingTitle({
                     }
                   >
                     {selectedForm}
-                    {/* {titleInfo.form === null ? selectedForm : titleInfo.form} */}
                     <span>
                       <DropDownIcon openDropDown={openDropDown} />
                     </span>
                   </DropDown>
-                  {/* <DropDownMenuWrapper
-                    id={key}
-                    aria-invalid={errors[key] ? "true" : "false"}
-                  > */}
+
                   {openDropDown && (
                     <DropDownMenuWrapper
                       id={key}
@@ -321,8 +317,8 @@ function ListingTitle({
         ))}
 
         <InputBtn type="submit" />
-      </form>
-      {/* {titleFormGroups.map(({ label, key }) => (
+      </form> */}
+      {titleFormGroups.map(({ label, key }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
           <FormInputWrapper>
@@ -342,7 +338,7 @@ function ListingTitle({
         }}
       >
         儲存
-      </SubmitBtn> */}
+      </SubmitBtn>
     </Wrapper>
   );
 }

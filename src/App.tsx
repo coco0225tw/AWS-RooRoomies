@@ -64,8 +64,8 @@ const GlobalStyle = createGlobalStyle`
     // border: solid 1px black;
     // color: #4f5152;
     position: relative;
-    transition-duration: 1s;
-    letter-spacing: 0.8px;
+    // transition-duration: 1s;
+    letter-spacing: 0.4px;
   }
 
   body {
@@ -148,6 +148,7 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
         dispatch({ type: "RETURN_INITIAL_ALERT" });
         dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
+        dispatch({ type: "INITIAL_CHATROOM_STATE" });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(

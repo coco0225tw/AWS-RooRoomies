@@ -292,7 +292,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           </IconArea>
         </MainImage>
         <Title>{listingDocData.data().title}</Title>
-        <div>{listingDocData.id}</div>
+        {/* <div>{listingDocData.id}</div> */}
         <Addr>
           {listingDocData.data().countyName}
           {listingDocData.data().townName}

@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/rootReducer";
 import { firebase, db, timestamp } from "../../utils/firebase";
+import { PopupComponent } from "../../components/Popup";
 import {
   getFirestore,
   getDocs,
@@ -18,6 +20,7 @@ import {
   query,
   FieldValue,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
 import chat from "../../assets/chat.png";
 const Wrapper = styled.div<{ isShown: boolean }>`
@@ -27,7 +30,7 @@ const Wrapper = styled.div<{ isShown: boolean }>`
   display: flex;
   z-index: 1;
   background-color: white;
-  width: ${(props) => (props.isShown ? "30vw" : "auto")};
+  width: ${(props) => (props.isShown ? "20vw" : "auto")};
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   height: ${(props) => (props.isShown ? "500px" : "auto")};
   box-shadow: ${(props) =>
@@ -162,12 +165,15 @@ const TabsWrapper = styled.div`
   display: -webkit-box;
 `;
 const Tab = styled.div<{ isChoose: boolean }>`
-  // width: 20%;
+  width: 100%;
   // display: inline-block;
   font-size: 20px;
   letter-spacing: 4px;
   height: 100%;
   padding: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   border-bottom: ${(props) => (props.isChoose ? "solid 2px #c77155" : "")};
   color: ${(props) => (props.isChoose ? "#c77155" : "#4f5152")};
   cursor: pointer;
@@ -207,6 +213,8 @@ const Close = styled.div<{ isShown: boolean }>`
 `;
 
 function ChatRooms() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
@@ -215,6 +223,7 @@ function ChatRooms() {
   const [allMessages, setAllMessages] = useState<DocumentData[]>();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
   interface Msg {
     userMsg: string;
     sendTime: number;
@@ -232,7 +241,7 @@ function ChatRooms() {
       userId: userInfo.uid,
       userPic: userInfo.image,
     };
-    await firebase.sendMessage(chooseRoomId!, allMessages, msg);
+    await firebase.sendMessage(getChatRoom.chatRoomId!, allMessages, msg);
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
@@ -244,58 +253,89 @@ function ChatRooms() {
     });
   }
   useEffect(() => {
-    async function getAllHouseHuntingData() {
-      await firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
+    const houseHuntingRef = collection(db, "chatRooms");
+    const userChatRef = query(
+      houseHuntingRef,
+      where("userId", "array-contains", userInfo.uid)
+    );
+    console.log("chatroomId");
+    console.log(getChatRoom.chatRoomId);
+    console.log("authChange");
+    console.log(authChange);
+    if (authChange) {
+      let onSnapShotData = onSnapshot(userChatRef, (querySnapshot) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        listing.forEach((doc) => {
+        querySnapshot.forEach((doc) => {
           houseHuntingDocArr.push(doc);
         });
+        console.log(houseHuntingDocArr);
         setHouseHuntingData(houseHuntingDocArr);
       });
     }
-    getAllHouseHuntingData();
-  }, [authChange]);
+    // if (getChatRoom.chatRoomId) onSnapshotMessages(getChatRoom.chatRoomId);
+  }, [userInfo]);
 
   if (authChange) {
     return (
-      <Wrapper isShown={isShown}>
+      <Wrapper isShown={getChatRoom.isOpen}>
         <ChatIcon
-          isShown={isShown}
+          isShown={getChatRoom.isOpen}
           onClick={() => {
-            setIsShown(true);
-            // console.log(houseHuntingData);
+            dispatch({ type: "OPEN_CHAT" });
             if (houseHuntingData.length !== 0) {
-              setChooseRoomId(houseHuntingData[0]?.id);
-              setAllMessages(houseHuntingData[0]?.data().msg);
+              console.log("yes");
+              onSnapshotMessages(houseHuntingData[0]?.id);
+              dispatch({
+                type: "CHECK_CHATROOM",
+                payload: { chatRoom: true },
+              });
+              dispatch({
+                type: "OPEN_CHATROOM",
+                payload: {
+                  chatRoomId: houseHuntingData[0]?.id,
+                },
+              });
+            } else {
+              console.log("no");
+              dispatch({
+                type: "CHECK_CHATROOM",
+                payload: { chatRoom: false },
+              });
             }
           }}
         ></ChatIcon>
-        <Close isShown={isShown} onClick={() => setIsShown(false)}>
+        <Close
+          isShown={getChatRoom.isOpen}
+          onClick={() => dispatch({ type: "CLOSE_CHAT" })}
+        >
           &#215;
         </Close>
-        {isShown ? (
-          houseHuntingData.length === 0 ? (
-            <div>popup</div>
-          ) : (
+        {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
+          <PopupComponent
+            msg={`你沒有預湊團哦`}
+            notDefaultBtn={`取消`}
+            defaultBtn={`去逛逛`}
+            clickClose={() => dispatch({ type: "CLOSE_CHAT" })}
+            clickFunction={() => {
+              dispatch({ type: "CLOSE_CHAT" });
+              navigate("/");
+            }}
+          />
+        ) : (
+          houseHuntingData.length !== 0 &&
+          getChatRoom.isOpen && (
             <HeaderBar>
               <Tabs>
                 <TabsWrapper>
-                  {houseHuntingData.map((h, index) => (
-                    <Tab
-                      isChoose={h.id === chooseRoomId}
-                      onClick={() => {
-                        onSnapshotMessages(h.id);
-                        setChooseRoomId(h.id);
-                      }}
-                      key={`house${index}`}
-                    >
-                      {h.data().listingTitle}
-                    </Tab>
-                  ))}
+                  <Tab isChoose={true}>
+                    {getChatRoom.chatRoomId &&
+                      houseHuntingData
+                        .find((h) => h && h.id === getChatRoom.chatRoomId)
+                        .data().listingTitle}
+                  </Tab>
                 </TabsWrapper>
               </Tabs>
               <SectionWrapper>
-                {/* <MessagesArea> */}
                 <MsgWrapper>
                   {allMessages &&
                     allMessages.map((el, index) => (
@@ -358,7 +398,7 @@ function ChatRooms() {
               </InputArea>
             </HeaderBar>
           )
-        ) : null}
+        )}
       </Wrapper>
     );
   } else {

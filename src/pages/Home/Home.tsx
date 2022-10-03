@@ -123,9 +123,10 @@ function Home() {
 
   const arr = [];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [loading, setLoading] = useState(false);
-  const [loadFirstPage, setLoadFirstPage] = useState(false);
-  const [loadNextPage, setLoadNextPage] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadFirstPage, setLoadFirstPage] = useState<boolean>(false);
+  const [loadNextPage, setLoadNextPage] = useState<boolean>(false);
+  const [noData, setNoData] = useState<boolean>(false);
   useEffect(() => {
     // setLoading(true);
     // setTimeout(() => {
@@ -141,6 +142,8 @@ function Home() {
         loadFirstPage={loadFirstPage}
         setLoadFirstPage={setLoadFirstPage}
         scrollRef={scrollRef}
+        noData={noData}
+        setNoData={setNoData}
       ></Search>
       <ListingWrapper>
         {listingDocData.length === 0 && !loading && (
@@ -159,8 +162,6 @@ function Home() {
       </ListingWrapper>
       {loading && <Loading />}
       {listingDocData && <ScrollComponent ref={scrollRef} />}
-
-      {/* <PageArea></PageArea> */}
     </Wrapper>
   );
 }

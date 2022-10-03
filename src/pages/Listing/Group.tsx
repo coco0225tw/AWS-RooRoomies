@@ -115,6 +115,9 @@ const Span = styled.span`
 const Text = styled.div`
   color: grey;
 `;
+const HintTextLoading = styled(Loading)`
+  transform: scale(0.1);
+`;
 function Group({
   match,
   setMatch,
@@ -356,7 +359,7 @@ function Group({
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
         {hintTextLoading ? (
-          <Loading />
+          <HintTextLoading />
         ) : authChange && !addUserAsRoommatesCondition ? (
           <Span>
             尚未填寫條件,到

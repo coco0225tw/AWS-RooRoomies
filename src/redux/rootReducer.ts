@@ -20,6 +20,7 @@ import PreviewImage from "./PreviewMainImage/PreviewMainImageReducer";
 import PreviewOtherImages from "./PreviewOtherImages/PreviewOtherImagesReducer";
 import Alert from "./Alert/AlertReducer";
 import SubTab from "./SubTab/SubTabReducer";
+import ChatRoom from "./ChatRoom/ChatRoomReducer";
 const rootReducer = combineReducers({
   UploadAddrReducer: UploadAddr,
   UploadRoommatesConditionReducer: UploadRoommatesCondition,
@@ -42,6 +43,7 @@ const rootReducer = combineReducers({
   PreviewOtherImagesReducer: PreviewOtherImages,
   AlertReducer: Alert,
   SubTabReducer: SubTab,
+  ChatRoomReducer: ChatRoom,
 });
 
 export default rootReducer;

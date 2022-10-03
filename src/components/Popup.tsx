@@ -62,6 +62,7 @@ const Close = styled.div`
   right: 12px;
   top: 12px;
   text-align: center;
+  z-index: 1;
   // border: solid 1px #ffffff;
   &:hover {
     border: solid 1px #ece2d5;

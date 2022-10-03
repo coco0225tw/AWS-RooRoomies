@@ -193,7 +193,7 @@ function AllHouseHunting({
     let data = await firebase.getListing(cancelBookTimeInfo.listingId);
     let matchGroup = data.matchGroup;
     let index = matchGroup.findIndex((e: any) =>
-      e.users.some((u) => u.userId === userInfo.uid)
+      e.users.some((u) => u && u.userId === userInfo.uid)
     );
     matchGroup[index].isBooked = false;
     Promise.all([
@@ -381,7 +381,19 @@ function AllHouseHunting({
                 >
                   取消預約
                 </StyledBtnDiv>
-                <ChatIcon></ChatIcon>
+                <ChatIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    dispatch({
+                      type: "OPEN_CHATROOM",
+                      payload: { chatRoomId: doc.id },
+                    });
+                    dispatch({
+                      type: "OPEN_CHAT",
+                    });
+                  }}
+                ></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>
@@ -429,7 +441,19 @@ function AllHouseHunting({
                 >
                   退團
                 </StyledBtnDiv>
-                <ChatIcon></ChatIcon>
+                <ChatIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    dispatch({
+                      type: "OPEN_CHATROOM",
+                      payload: { chatRoomId: doc.id },
+                    });
+                    dispatch({
+                      type: "OPEN_CHAT",
+                    });
+                  }}
+                ></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>
@@ -473,7 +497,19 @@ function AllHouseHunting({
                 >
                   退團
                 </StyledBtnDiv>
-                <ChatIcon></ChatIcon>
+                <ChatIcon
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    dispatch({
+                      type: "OPEN_CHATROOM",
+                      payload: { chatRoomId: doc.id },
+                    });
+                    dispatch({
+                      type: "OPEN_CHAT",
+                    });
+                  }}
+                ></ChatIcon>
                 {/* </div> */}
               </InfoWrapper>
             </ListingWrapper>

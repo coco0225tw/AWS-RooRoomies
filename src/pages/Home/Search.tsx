@@ -164,6 +164,8 @@ function Search({
   loadFirstPage,
   setLoadFirstPage,
   scrollRef,
+  noData,
+  setNoData,
 }: {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
@@ -171,6 +173,8 @@ function Search({
   loadFirstPage: boolean;
   setLoadFirstPage: React.Dispatch<React.SetStateAction<boolean>>;
   scrollRef: React.MutableRefObject<HTMLDivElement>;
+  noData: boolean;
+  setNoData: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
   const [selectCounty, setSelectCounty] = useState<County>({
@@ -184,7 +188,7 @@ function Search({
   const [selectRent, setSelectRent] = useState<string>("不限");
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
-  const [noData, setNoData] = useState<boolean>(false);
+  // let loadFirstPage = false;
   const lastDocData = useSelector(
     (state: RootState) => state.GetLastDocReducer
   );
@@ -231,9 +235,12 @@ function Search({
       { label: "4", key: "people4" },
     ],
   };
-  function handleOnchange(county: string, town: string | null, rent: string) {
+  async function handleOnchange(
+    county: string,
+    town: string | null,
+    rent: string
+  ) {
     setLoading(true);
-
     if (town === "不限") {
       town = null;
     }
@@ -252,25 +259,26 @@ function Search({
       startRent = Number(rent.replace("以上", ""));
       endRent = null;
     }
+
     firebase
       .getAllListings(county, town, startRent, endRent)
       .then((listing) => {
+        dispatch({
+          type: "GET_LISTINGDOC_FROM_FIREBASE",
+          payload: { listingDocData: [] },
+        });
+        console.log("listing");
         if (listing.empty) {
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
           });
           setNoData(true);
-          // dispatch({
-          //   type: "GET_LAST_LISTING_DOC",
-          //   payload: { lastDocData: null },
-          // });
+          console.log("empty");
         } else {
           setNoData(false);
-          dispatch({
-            type: "GET_LISTINGDOC_FROM_FIREBASE",
-            payload: { listingDocData: [] },
-          });
+          console.log("123");
+          if (!loadFirstPage) setLoadFirstPage(true);
           const lastDoc = listing.docs[listing.docs.length - 1];
           console.log(lastDoc.id);
           dispatch({
@@ -328,25 +336,28 @@ function Search({
         if (listing.empty) {
           setLoading(false);
           setNoData(true);
+          console.log("empty");
+        } else {
+          setNoData(false);
+          console.log("not empty");
+          const lastDoc = listing.docs[listing.docs.length - 1];
+          console.log(lastDoc.id);
+          dispatch({
+            type: "GET_LAST_LISTING_DOC",
+            payload: { lastDocData: lastDoc },
+          });
+          let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+          listing.forEach((doc) => {
+            listingDocArr.push(doc);
+          });
+          dispatch({
+            type: "GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE",
+            payload: { listingDocData: listingDocArr },
+          });
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
         }
-        setNoData(false);
-        const lastDoc = listing.docs[listing.docs.length - 1];
-        console.log(lastDoc.id);
-        dispatch({
-          type: "GET_LAST_LISTING_DOC",
-          payload: { lastDocData: lastDoc },
-        });
-        let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        listing.forEach((doc) => {
-          listingDocArr.push(doc);
-        });
-        dispatch({
-          type: "GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE",
-          payload: { listingDocData: listingDocArr },
-        });
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
       });
   }
   function clickOnDropDown() {
@@ -357,30 +368,25 @@ function Search({
   }
 
   const handleObserver = useCallback(
-    (entries: any, observer: any) => {
+    async (entries: any, observer: any) => {
       let isFetching = false;
-      // let firstPage = false;
-      // let lastDoc = lastDocData;
+
       if (entries[0].intersectionRatio <= 0) return;
       if (isFetching) return;
       if (noData) return;
-      console.log(lastDocData);
-      function fetchListing() {
-        // setLoadNextPage(true);
-      }
-      console.log(loadFirstPage);
       isFetching = true;
+      console.log(loadFirstPage);
       if (!loadFirstPage) {
-        console.log(!loadFirstPage);
         console.log("第一頁");
-        handleOnchange(selectCounty.countyName!, "不限", "不限");
-        setLoadFirstPage(true);
+        await handleOnchange(selectCounty?.countyName, "不限", "不限");
+
+        console.log(loadFirstPage);
+        isFetching = false;
       } else {
         console.log("其他頁");
-        nextPage(selectCounty?.countyName, selectTown!, selectRent!);
+        await nextPage(selectCounty?.countyName, selectTown!, selectRent!);
+        isFetching = false;
       }
-      isFetching = false;
-      // setLoadNextPage(false);
     },
     [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage, noData]
   );
@@ -528,13 +534,6 @@ function Search({
           </StyledFormInputWrapper>
         </StyledFormGroup>
       </SearchBox>
-      {/* <NextPageBtn
-        onClick={() =>
-          nextPage(selectCounty?.countyName, selectTown!, selectRent!)
-        }
-      >
-        下一頁
-      </NextPageBtn> */}
     </Wrapper>
   );
 }

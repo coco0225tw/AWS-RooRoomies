@@ -462,14 +462,14 @@ function Listing() {
     console.log(bookTimeInfo.listingId);
     console.log(bookTimeInfo.docId);
     console.log(
-      getGroup.find((g) => g.users.some((u) => u.userId === userInfo.uid))
+      getGroup.find((g) => g.users.some((u) => u && u.userId === userInfo.uid))
         .chatRoomId
     );
     chatRoomId = getGroup.find((g) =>
-      g.users.some((u) => u.userId === userInfo.uid)
+      g.users.some((u) => u && u.userId === userInfo.uid)
     ).chatRoomId;
     groupId = getGroup.findIndex((g) =>
-      g.users.some((u) => u.userId === userInfo.uid)
+      g.users.some((u) => u && u.userId === userInfo.uid)
     );
     let newGroup = [...getGroup];
     newGroup[groupId].isBooked = true;

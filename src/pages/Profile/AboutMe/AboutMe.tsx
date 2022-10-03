@@ -230,19 +230,7 @@ function AboutMe({
   );
   const [edit, setEdit] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const initialRoommatesState = userAsRoommate
-    ? userAsRoommate
-    : {
-        gender: "",
-        bringFriendToStay: "",
-        hygiene: "",
-        livingHabit: "",
-        genderFriendly: "",
-        pet: "",
-        smoke: "",
-        // career: "",
-      };
-  console.log(userAsRoommate);
+  const initialRoommatesState = userAsRoommate;
   const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(
     initialRoommatesState
   );
@@ -269,8 +257,7 @@ function AboutMe({
     setSubmitting(false);
   }
   useEffect(() => {
-    if (userAsRoommate.userAsRoommatesConditions)
-      setMeAsRoommatesState(userAsRoommate.userAsRoommatesConditions);
+    if (userAsRoommate) setMeAsRoommatesState(userAsRoommate);
   }, [userAsRoommate]);
   return (
     <Wrapper>
