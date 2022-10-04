@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styled from 'styled-components';
-import { firebase } from '../../utils/firebase';
-import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import facilityType from '../../redux/UploadFacility/UploadFacilityType';
-import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
-import { Title } from '../../components/ProfileTitle';
-import Hr from '../../components/Hr';
+import React, { useState, useRef, useEffect } from "react";
+import styled from "styled-components";
+import { firebase } from "../../utils/firebase";
+import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import facilityType from "../../redux/UploadFacility/UploadFacilityType";
+import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import { Title } from "../../components/ProfileTitle";
+import Hr from "../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -53,23 +53,22 @@ function RoomDetails(rooms: any) {
   const [keys, setKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    // console.log(rooms?.room);
     if (rooms?.room) {
       setRoom(rooms?.room);
     }
   }, [rooms]);
-  // console.log(rooms.room);
+
   return (
     <Wrapper>
-      <Hr style={{ margin: '40px 0px' }} />
-      <SubTitle style={{ marginBottom: '32px' }}>房間規格</SubTitle>
-      <Table style={{ border: 'solid 1px #ece2d5' }}>
-        <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}></Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
+      <Hr style={{ margin: "40px 0px" }} />
+      <SubTitle style={{ marginBottom: "32px" }}>房間規格</SubTitle>
+      <Table style={{ border: "solid 1px #ece2d5" }}>
+        <Tr style={{ borderBottom: " solid 1px #ece2d5 " }}>
+          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}></Td>
+          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>價錢</Td>
+          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>坪數</Td>
+          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>規格</Td>
+          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>入住人數</Td>
         </Tr>
         {room &&
           room.map((r: any, index) => (

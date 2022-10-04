@@ -268,7 +268,7 @@ function AboutMe({
         });
       }, 3000);
     });
-    console.log(meAsRoommatesState);
+
     dispatch({
       type: "UPLOAD_MEASROOMMATE",
       payload: { meAsRoommatesState: meAsRoommatesState },
@@ -278,16 +278,12 @@ function AboutMe({
   useEffect(() => {
     //
     async function getAllHouseHuntingData() {
-      console.log(userInfo);
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
-        console.log(userInfo);
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        console.log(listing.size);
+
         if (listing.size === 0) {
-          console.log(false);
           setHouseHuntingData(false);
         } else {
-          console.log(true);
           setHouseHuntingData(true);
         }
       });

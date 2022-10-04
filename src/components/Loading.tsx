@@ -1,17 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import styled, { keyframes } from "styled-components";
-import { Link } from "react-router-dom";
-import { BtnLink, BtnDiv } from "./Button";
-
-const Wrapper = styled.div<{ style: any }>`
-  display: flex;
-  width: 100%;
-  height: 100%;
-
-  overflow: hidden;
-  z-index: 999;
-  justify-content: center;
-`;
 
 const LoaderWrapper = styled.div`
   display: flex;
@@ -43,13 +31,11 @@ const LoaderComponent = styled.span`
 
 function Loading({ style }: { style: any }) {
   return (
-    // <Wrapper style={style}>
     <LoaderWrapper style={style}>
       <LoaderComponent />
       <LoaderComponent />
       <LoaderComponent />
     </LoaderWrapper>
-    // </Wrapper>
   );
 }
 export { Loading };

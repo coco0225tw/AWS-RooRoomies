@@ -194,7 +194,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       }
     } else if (!authChange) {
       setIsShown(true);
-      console.log("popup");
     }
   }
 
@@ -216,7 +215,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         });
       } else {
         async function removeFromCompareLists() {
-          console.log("removefromcom");
           await firebase.removeFromCompareLists(
             userInfo.uid,
             listingDocData.id
@@ -231,7 +229,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleDnd(
@@ -241,7 +238,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
-      console.log("removefromDnd");
       async function removeFromDndLists() {
         await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
       }
@@ -259,7 +255,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   function clickFunction() {
     navigate("/signin");
   }
-  // console.log(new Date(listingDocData.data().moveInDate));
+
   return (
     <Wrapper>
       {isShown && (

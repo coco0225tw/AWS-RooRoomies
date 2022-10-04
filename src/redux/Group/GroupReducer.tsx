@@ -17,9 +17,7 @@ export default function Tab(state = groupInitialState, action: Action) {
       return action.payload.group;
     case "REMOVE_GROUP": {
       const newGroup = [...state];
-      console.log(
-        newGroup.filter((g, id) => !g.users.every((u) => u === null))
-      );
+
       return newGroup.filter((g, id) => !g.users.every((u) => u === null));
     }
     case "ADD_GROUP": {
@@ -32,11 +30,10 @@ export default function Tab(state = groupInitialState, action: Action) {
         userPic: action.payload.userInfo.image,
         userName: action.payload.userInfo.name,
       };
-      console.log(newGroup);
+
       return newGroup;
     }
     case "ADD_GROUP_FROM_FIREBASE": {
-      // console.log(action.payload.groups);
       return [...action.payload.groups];
     }
     default:

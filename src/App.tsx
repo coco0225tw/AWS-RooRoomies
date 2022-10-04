@@ -120,13 +120,11 @@ function User() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
 
   useEffect(() => {
-    // console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
         // navigate('/');
       } else {
-        console.log("no user");
         dispatch({ type: "RETURN_INITIAL_GETUSER" });
         dispatch({ type: "RETURN_INITIAL_AUTH" });
         dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
@@ -194,7 +192,6 @@ function User() {
 
         dispatch({ type: "AUTH_CHANGE" });
         if (data?.data().userListingId.length !== 0) {
-          console.log(data?.data().userListingId);
           async function getListing() {
             type ListingType = {
               mainImage: string;
@@ -221,7 +218,7 @@ function User() {
               totalSq: listingData?.totalSq,
               form: listingData?.form,
             };
-            console.log(listingData?.roommatesConditions);
+
             dispatch({
               type: "GET_LISTING_TITLE_FROM_FIREBASE",
               payload: { listingTitle },
@@ -246,7 +243,7 @@ function User() {
           //     let enableDate = [];
           //     if (listingTimesArr?.length !== 0) {
           //       enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds); //console.log
+          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds);
           //         if (findIndex === -1) {
           //           acc.push(curr);
           //         } else {

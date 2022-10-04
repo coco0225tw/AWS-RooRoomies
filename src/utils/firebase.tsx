@@ -80,7 +80,6 @@ const firebase = {
       newListingRef.id
     );
     const imagesUrl = await this.uploadImages(imagesBlob, newListingRef.id);
-    console.log(newListingRef.id);
 
     await setDoc(newListingRef, {
       ...fieldData,
@@ -88,9 +87,8 @@ const firebase = {
       images: imagesUrl,
     });
     let bookingTimePromises: Promise<void>[] = [];
-    console.log(bookingTimes);
+
     bookingTimes.map((bookingTime: any, index: number) => {
-      console.log(newListingRef.id);
       bookingTimePromises.push(
         setDoc(
           doc(
@@ -99,7 +97,6 @@ const firebase = {
           { ...bookingTime }
         )
       );
-      console.log(bookingTimePromises);
     });
     await this.updateUserListingId(uid, newListingRef.id);
     await Promise.all(bookingTimePromises);
@@ -168,7 +165,7 @@ const firebase = {
   },
   async getListing(listingId: string) {
     const listingRef = doc(db, "listings", listingId);
-    // console.log(listingId);
+
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -178,7 +175,7 @@ const firebase = {
   },
   async getFavoriteListing(listingId: string) {
     const listingRef = doc(db, "listings", listingId);
-    console.log(listingId);
+
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap;
@@ -226,9 +223,7 @@ const firebase = {
         password
       );
       return newUser;
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    } catch (error: any) {}
   },
   async signOutUser() {
     await signOut(auth);
@@ -236,11 +231,7 @@ const firebase = {
   async signInUser(email: string, password: string) {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-
-      console.log(user);
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    } catch (error: any) {}
   },
   async getBookingTimesSubColForListing(listingId: string) {
     const subColRef = collection(db, "listings", listingId, "bookingTimes");
@@ -304,7 +295,6 @@ const firebase = {
     const userRef = doc(db, "users", uid);
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
-      // console.log(docSnap.data());
       return docSnap;
     } else {
       // window.alert("No such document!");
@@ -312,7 +302,7 @@ const firebase = {
   },
   async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {
     const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-    console.log(chatRoomId);
+
     await updateDoc(chatRoomRef, {
       msg: [...oldMsg, newMsg],
     });
@@ -453,7 +443,7 @@ const firebase = {
       where("userId", "array-contains", uid),
       where("listingId", "==", listingId)
     );
-    // console.log("check");
+
     const querySnapshot = await getDocs(userChatRef);
     return querySnapshot;
   },
@@ -463,10 +453,8 @@ const firebase = {
     index: number,
     chatRoomId: string
   ) {
-    console.log(updateGroup);
-    console.log(listingId);
     updateGroup[index].chatRoomId = chatRoomId;
-    console.log(updateGroup[index]);
+
     await setDoc(
       doc(db, "listings", listingId),
       {

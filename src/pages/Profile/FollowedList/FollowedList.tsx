@@ -128,7 +128,6 @@ function FollowedList({
       });
 
       setAllListingData(listingDocArr.reverse());
-      console.log(listingDocArr);
     }
     getAllListing();
   }, []);

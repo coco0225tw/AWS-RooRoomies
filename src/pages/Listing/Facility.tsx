@@ -91,7 +91,7 @@ const SubTitle = styled.div`
 function Facility(facility: any) {
   const [facilities, setFacilities] = useState<facilityType>();
   const [keys, setKeys] = useState<string[]>([]);
-  // console.log(facility?.facility);
+
   useEffect(() => {
     function findObjectKeys() {
       let keys = Object.keys(facility.facility);
@@ -276,7 +276,7 @@ function Facility(facility: any) {
       ],
     },
   ];
-  // console.log(facility.facility);
+
   return (
     <Wrapper>
       <Hr style={{ margin: "40px 0px" }} />

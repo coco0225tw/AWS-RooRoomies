@@ -267,20 +267,19 @@ function Search({
           type: "GET_LISTINGDOC_FROM_FIREBASE",
           payload: { listingDocData: [] },
         });
-        console.log("listing");
+
         if (listing.empty) {
           dispatch({
             type: "GET_LISTINGDOC_FROM_FIREBASE",
             payload: { listingDocData: [] },
           });
           setNoData(true);
-          console.log("empty");
         } else {
           setNoData(false);
-          console.log("123");
+
           if (!loadFirstPage) setLoadFirstPage(true);
           const lastDoc = listing.docs[listing.docs.length - 1];
-          console.log(lastDoc.id);
+
           dispatch({
             type: "GET_LAST_LISTING_DOC",
             payload: { lastDocData: lastDoc },
@@ -322,7 +321,7 @@ function Search({
       startRent = Number(rent.replace("以上", ""));
       endRent = null;
     }
-    console.log(lastDocData);
+
     setLoading(true);
     firebase
       .getNextPageListing(
@@ -336,12 +335,11 @@ function Search({
         if (listing.empty) {
           setLoading(false);
           setNoData(true);
-          console.log("empty");
         } else {
           setNoData(false);
-          console.log("not empty");
+
           const lastDoc = listing.docs[listing.docs.length - 1];
-          console.log(lastDoc.id);
+
           dispatch({
             type: "GET_LAST_LISTING_DOC",
             payload: { lastDocData: lastDoc },
@@ -375,15 +373,12 @@ function Search({
       if (isFetching) return;
       if (noData) return;
       isFetching = true;
-      console.log(loadFirstPage);
+
       if (!loadFirstPage) {
-        console.log("第一頁");
         await handleOnchange(selectCounty?.countyName, "不限", "不限");
 
-        console.log(loadFirstPage);
         isFetching = false;
       } else {
-        console.log("其他頁");
         await nextPage(selectCounty?.countyName, selectTown!, selectRent!);
         isFetching = false;
       }

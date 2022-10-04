@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
+import { firebase } from "../utils/firebase";
 import { RootState } from "../redux/rootReducer";
-import { BtnLink, BtnDiv } from "./Button";
+import { BtnLink } from "./Button";
 import { PopupComponent } from "./Popup";
 const Wrapper = styled.div`
   display: flex;
@@ -80,7 +80,6 @@ function Footer() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   function clickSingOut() {
-    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {

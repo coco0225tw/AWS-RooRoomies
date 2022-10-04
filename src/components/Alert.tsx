@@ -1,13 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+
 const Wrapper = styled.div<{ isAlert: boolean; alertType: string }>`
   position: fixed;
   display: flex;
   z-index: 1;
   background-color: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  // color: #fff7f4;
   top: 20vh;
   right: 80px;
   padding: 20px 40px;

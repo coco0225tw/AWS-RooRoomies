@@ -266,7 +266,7 @@ function Facility({
   const facilityInfo = useSelector(
     (state: RootState) => state.UploadFacilityReducer
   );
-  console.log(facilityInfo);
+
   const initialFacilityEmptyState =
     // userInfo!.userListingId?.length !== 0
     //   ?
@@ -284,7 +284,6 @@ function Facility({
   );
   async function submit() {
     dispatch({ type: "UPLOAD_FACILITY", payload: { facilityState } });
-    console.log("送出設施");
   }
   const [checked, setChecked] = useState<boolean>(false);
   return (

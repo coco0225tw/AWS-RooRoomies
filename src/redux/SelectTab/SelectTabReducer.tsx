@@ -7,7 +7,6 @@ const tabInitialState = "aboutMe";
 export default function Tab(state = tabInitialState, action: Action) {
   switch (action.type) {
     case "SELECT_TYPE":
-      console.log(action.payload);
       return action.payload.tab;
     case "RETURN_INITIAL_TAB":
       return tabInitialState;

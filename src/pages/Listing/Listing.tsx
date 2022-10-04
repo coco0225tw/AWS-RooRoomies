@@ -338,7 +338,6 @@ function Listing() {
       }
     } else if (!authChange) {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleCompare(
@@ -364,7 +363,6 @@ function Listing() {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleDnd(
@@ -459,12 +457,6 @@ function Listing() {
     setHintTextLoading(true);
     let chatRoomId!: string;
     let groupId!: number;
-    console.log(bookTimeInfo.listingId);
-    console.log(bookTimeInfo.docId);
-    console.log(
-      getGroup.find((g) => g.users.some((u) => u && u.userId === userInfo.uid))
-        .chatRoomId
-    );
     chatRoomId = getGroup.find((g) =>
       g.users.some((u) => u && u.userId === userInfo.uid)
     ).chatRoomId;
@@ -547,7 +539,6 @@ function Listing() {
         listingTimesArr.push(doc);
       });
       // setBookingTimesInfo(listingTimesArr);
-      console.log(listingTimesArr);
     });
     // async function getBookingTimes() {
     function getBookingTimes() {
@@ -557,14 +548,14 @@ function Listing() {
           listingTimesArr.push(doc);
         });
         // setBookingTimesInfo(listingTimesArr);
-        console.log(listingTimesArr);
+
         //  });
         // await firebase.getBookingTimesSubColForListing(id!).then((times) => {
         //   let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
         //   times.forEach((doc) => {
         //     listingTimesArr.push(doc);
         //   });
-        //   console.log(listingTimesArr);
+        //
         setBookingTimesInfo(listingTimesArr);
 
         let enableDate = [];
@@ -573,7 +564,7 @@ function Listing() {
             let findIndex = acc.findIndex(
               (item: any) =>
                 item?.data().date.seconds === curr.data().date.seconds
-            ); //console.log
+            );
             if (findIndex === -1) {
               acc.push(curr);
             } else {
@@ -782,7 +773,6 @@ function Listing() {
                             return;
                           }
                           if (!isInGroup) {
-                            console.log(!isInGroup);
                             dispatch({
                               type: "OPEN_ERROR_ALERT",
                               payload: {
@@ -823,7 +813,6 @@ function Listing() {
                           }, 3000);
                           return;
                         } else {
-                          console.log("可以預約");
                           setBookedTimePopup(true);
                           setBookTimeInfo({
                             uid: userInfo.uid,
@@ -834,10 +823,6 @@ function Listing() {
                               startTime: el.data().startTime,
                             },
                           });
-                          // bookedTime(userInfo.uid, el.id, id!, {
-                          //   date: el.data().date,
-                          //   startTime: el.data().startTime,
-                          // });
                         }
                       }}
                     >

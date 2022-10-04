@@ -117,7 +117,6 @@ function RentRoomDetails({
   }
   function submit(roomState: roomDetailsType) {
     dispatch({ type: "UPLOAD_ROOMS", payload: { roomState } });
-    console.log("送出房間");
   }
   function deleteRoom(index: number) {
     setRoomState(roomState.filter((el, i) => i !== index));

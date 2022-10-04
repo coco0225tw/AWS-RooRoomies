@@ -79,7 +79,6 @@ function ListingAddr({
       });
     }
     await getGeocode();
-    console.log("送出地址");
   }
   return (
     <Wrapper>
@@ -100,7 +99,6 @@ function ListingAddr({
       <SubmitBtn
         onClick={() => {
           submit(addrState!);
-          console.log(addrState);
         }}
       >
         儲存

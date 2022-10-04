@@ -130,6 +130,6 @@
 
   function clickDate(date: Date) {
     window.alert(`確定選擇${date}`);
-    console.log(date);
+ 
     setSelectedDays((prev) => [...prev, date]);
   } */

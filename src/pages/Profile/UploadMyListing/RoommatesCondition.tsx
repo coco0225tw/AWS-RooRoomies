@@ -217,7 +217,6 @@ function RoommatesCondition({
       type: "UPLOAD_ROOMMATESCONDITION",
       payload: { roommatesState },
     });
-    console.log("送出室友條件");
   }
   return (
     <Wrapper>

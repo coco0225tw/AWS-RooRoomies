@@ -115,7 +115,6 @@ function Profile() {
     navigate("/signin");
   }
   useEffect(() => {
-    console.log(!authChange);
     if (!authChange) {
       navigate("/signin");
     }

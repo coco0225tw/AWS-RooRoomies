@@ -1,36 +1,25 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
+import { RootState } from "../redux/rootReducer";
 import { firebase } from "../utils/firebase";
-import {
-  query,
-  collection,
-  limit,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import favoriteIcon from "../../assets/icons8-favorite-30.png";
+
+import { PopupComponent } from "./Popup";
+
 import addIcon from "../assets/add.png";
 import unAddIcon from "../assets/unAdd.png";
 import likedIcon from "../assets/heart.png";
 import unLikedIcon from "../assets/unHeart.png";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/rootReducer";
-import { Link, useNavigate } from "react-router-dom";
-import { PopupComponent } from "./Popup";
+
 interface ImgProps {
   img: string;
 }
 const Wrapper = styled.div`
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // margin: auto;
-  //   padding: 10px;
-  //   margin-bottom: 32px;
 `;
 
 const Icon = styled.div`
@@ -38,7 +27,6 @@ const Icon = styled.div`
   height: auto;
   width: 24px;
   background-size: 100% 100%;
-  // flex-grow: 1;
   &:hover {
     width: 32px;
   }
@@ -69,9 +57,6 @@ const SideBarWrapper = styled.div`
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  // border: solid 1px orange;
-  //   align-items: flex-start;
-  //   background-color: black;
   width: 100%;
   color: #4f5152;
   font-size: 16px;
@@ -79,14 +64,12 @@ const CardWrapper = styled.div`
 
 const MainImage = styled.div<ImgProps>`
   aspect-ratio: 1 / 1;
-  //   width: 100%;
   background-image: url(${(props) => (props.img ? props.img : "")});
   height: 200px;
 
   background-position: cover;
   background-size: 100% 100%;
   border-radius: 12px;
-  //   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -97,8 +80,6 @@ const Title = styled.div`
   color: #4f5152;
   letter-spacing: 2px;
   font-weight: 600;
-  // margin: 0px 0px 8px 8px;
-  // align-self: flex-end;
 `;
 const Detail = styled.div`
   margin-top: 12px;
@@ -121,8 +102,6 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   margin-left: 20px;
-  //   flex-grow: 1;
-  //   height: 100%;
 `;
 const DetailWrapper = styled.div`
   display: flex;
@@ -130,7 +109,6 @@ const DetailWrapper = styled.div`
   flex-grow: 1;
 `;
 function ListingItem({ listingDocData }: { listingDocData: any }) {
-  console.log(listingDocData);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const favoriteLists = useSelector(
@@ -174,7 +152,6 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
 
@@ -196,7 +173,6 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         });
       } else {
         async function removeFromCompareLists() {
-          console.log("removefromcom");
           await firebase.removeFromCompareLists(
             userInfo.uid,
             listingDocData.id
@@ -211,7 +187,6 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleDnd(
@@ -221,7 +196,6 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
-      console.log("removefromDnd");
       async function removeFromDndLists() {
         await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
       }
@@ -240,7 +214,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     navigate("/signin");
   }
   useEffect(() => {}, [listingDocData]);
-  // console.log(new Date(listingDocData.data().moveInDate));
+
   return (
     <Wrapper>
       {isShown && (

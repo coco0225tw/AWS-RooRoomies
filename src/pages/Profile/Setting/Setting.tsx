@@ -35,7 +35,7 @@ const SideBarWrapper = styled.div`
   padding: 20px;
 `;
 const SubmitBtn = styled(BtnDiv)`
-  border: solid 1px #4f5152;
+  // border: solid 1px #4f5152;
   align-self: flex-end;
   margin-top: 20px;
 `;

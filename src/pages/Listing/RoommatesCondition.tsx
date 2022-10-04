@@ -240,7 +240,6 @@ function RoommatesCondition({
       let newObj = { ...object };
       for (let key of keys) {
         if (newObj[key] === "true") {
-          console.log(key);
           newObj[key] = "unlimited";
           // const newObj = { ...object, [key]: 'unlimited' };
         } else {
@@ -260,11 +259,9 @@ function RoommatesCondition({
 
     function shallowEqual(object1: any, object2: any) {
       const keys1 = Object.keys(object1);
-      console.log(object1);
-      console.log(object2);
+
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
-          console.log(`${key}: ${object1[key]} ${object2[key]} 不符`);
           // window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
           setMatch(false);
           return false;
@@ -282,7 +279,6 @@ function RoommatesCondition({
   }
 
   useEffect(() => {
-    console.log(userAsRoommate);
     // function findObjectKeys() {
     //   if (userAsRoommate.userAsRoommatesConditions) {
     //     setAddUserAsRoommatesCondition(true);
@@ -290,7 +286,7 @@ function RoommatesCondition({
     //     setKeys(keys);
     //     checkMatch();
     //   } else {
-    //     console.log("沒有填");
+    //
     //     setAddUserAsRoommatesCondition(false);
     //   }
     // }
@@ -310,8 +306,6 @@ function RoommatesCondition({
         setKeys(keys);
         checkMatch();
       } else {
-        console.log("沒有填");
-        // console.log(checkIfUserConditionIsEmpty(userAsRoommate));
         setAddUserAsRoommatesCondition(false);
       }
     }

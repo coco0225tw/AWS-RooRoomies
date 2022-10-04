@@ -122,8 +122,7 @@ function AllHouseHunting({
     let index = matchGroup.findIndex((e: any) =>
       e.users.some((u: any) => u && u.userId === userInfo.uid)
     );
-    console.log(matchGroup);
-    console.log(index);
+
     matchGroup[index].isFull = false;
     let userIndex = matchGroup[index].users.findIndex(
       (u: any) => u && u.userId === userInfo.uid
@@ -132,9 +131,7 @@ function AllHouseHunting({
     matchGroup[index].users.push(null);
     if (matchGroup[index].users.filter((u: any) => u !== null).length === 0) {
       matchGroup.splice(index, 1);
-      console.log(index);
-      console.log(matchGroup);
-      console.log(removeUserInfo);
+
       Promise.all([
         firebase.removeChatRoom(removeUserInfo.chatRoomId),
         firebase.removeUserFromGroupInMatch(
@@ -167,8 +164,7 @@ function AllHouseHunting({
           return null;
         }
       });
-      console.log(userIds);
-      console.log(matchGroup);
+
       Promise.all([
         firebase.removeUserInChatRoom(removeUserInfo.chatRoomId, userIds),
         firebase.removeUserFromGroupInMatch(
@@ -216,7 +212,6 @@ function AllHouseHunting({
       updatedArr[index].data().isBooked = false;
       updatedArr[index].data().bookedTime = {};
 
-      console.log(updatedArr[index].data());
       // setHouseHuntingData(updatedArr);
       dispatch({
         type: "OPEN_SUCCESS_ALERT",
@@ -242,9 +237,6 @@ function AllHouseHunting({
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
         querySnapshot.forEach((doc) => {
           houseHuntingDocArr.push(doc);
-          console.log(doc);
-          console.log(doc.id);
-          console.log(doc.data());
         });
         setHouseHuntingData(houseHuntingDocArr);
         getAllListing(houseHuntingDocArr);
@@ -256,7 +248,6 @@ function AllHouseHunting({
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
         listing.forEach((doc) => {
           houseHuntingDocArr.push(doc);
-          console.log(doc);
         });
         setHouseHuntingData(houseHuntingDocArr);
       });
@@ -277,7 +268,6 @@ function AllHouseHunting({
       let listingDocArr: DocumentData[] = [];
       allPromises.forEach((doc) => {
         listingDocArr.push(doc);
-        // console.log(doc.data());
       });
 
       setAllListingData(listingDocArr);

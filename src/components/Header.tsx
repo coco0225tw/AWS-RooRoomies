@@ -1,15 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+
 import { RootState } from "../redux/rootReducer";
-import Logo from "../assets/logo.png";
+import { firebase } from "../utils/firebase";
 import { BtnLink, BtnDiv } from "./Button";
 import { PopupComponent } from "./Popup";
+
+import Logo from "../assets/logo.png";
 import search from "../assets/search.svg";
-import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
-import user2 from "../assets/user2.png";
-import { connectStorageEmulator } from "firebase/storage";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -105,7 +105,6 @@ function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   function clickSingOut() {
-    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {
@@ -152,7 +151,6 @@ function Header() {
             to={"/profile"}
             img={userInfo.image}
             onClick={() => {
-              console.log("type");
               dispatch({
                 type: "SELECT_TYPE",
                 payload: { tab: "aboutMe" },

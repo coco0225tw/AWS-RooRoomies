@@ -119,7 +119,6 @@ function ListingTitle({
     control,
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
     submit(data);
     setClickTab("地址");
   };
@@ -127,14 +126,14 @@ function ListingTitle({
     // userInfo!.userListingId?.length !== 0
     //   ?
     titleInfo;
-  console.log(titleInfo);
+
   // : {
   //     title: "",
   //     totalSq: "",
   //     form: "",
   //     environmentDescription: "",
   //   };
-  console.log(initialTitleState);
+
   const titleFormGroups = [
     { label: "名稱", key: "title" },
     { label: "坪數", key: "totalSq" },
@@ -218,7 +217,6 @@ function ListingTitle({
   const [titleState, setTitleState] = useState<titleType>(initialTitleState);
   function submit(titleState: titleType) {
     dispatch({ type: "UPLOAD_TITLE", payload: { titleState } });
-    console.log("送出基本資料");
   }
   useEffect(() => {
     // const object = localStorage.getItem("object");
@@ -269,7 +267,7 @@ function ListingTitle({
                               })}
                               onChange={(e) => {
                                 if (e.target.checked) {
-                                  console.log("checked");
+                               
                                   setSelectedForm(o.label);
                                   setOpenDropDown(false);
                                 }

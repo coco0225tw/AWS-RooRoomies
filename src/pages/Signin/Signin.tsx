@@ -165,7 +165,6 @@ function SignIn() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [user, setUser] = useState<User>();
   useEffect(() => {
-    console.log(authChange);
     if (authChange) {
       onAuthStateChanged(auth, (currentUser) => {
         setUser(currentUser as User);
@@ -256,7 +255,6 @@ function SignIn() {
 
   const handleLogout = async function () {
     await firebase.signOutUser();
-    // console.log('登出');
   };
 
   async function getProfile() {

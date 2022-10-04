@@ -187,15 +187,14 @@ function Group({
     groupId: number
   ) {
     let nullUsersArray = Array(peopleAmount).fill(null);
-    console.log(Array(peopleAmount).fill(null));
-    console.log(uid);
+
     nullUsersArray.splice(0, 1, uid);
-    console.log(nullUsersArray);
+
     dispatch({
       type: "ADD_USER_TO_GROUP",
       payload: { groupId, userIndex: 0, userInfo },
     });
-    console.log(getGroup);
+
     setHintTextLoading(true);
     firebase
       .createChatRoom(
@@ -224,7 +223,7 @@ function Group({
   }
   async function addUserToFormerGroup() {
     let userIndex = getGroup[groupId].users.indexOf(null);
-    console.log(userIndex);
+
     setHintTextLoading(true);
     dispatch({
       type: "ADD_USER_TO_GROUP",
@@ -263,9 +262,8 @@ function Group({
   }
 
   async function addUserToGroup(groupId: number, userId: number) {
-    console.log(getGroup);
     let userState = getGroup[groupId].users;
-    console.log(groupId);
+
     setGroupId(groupId);
     if (userState.filter((u) => u !== null).length === 0) {
       setFirstTimeAddGroupPopup(true);
@@ -274,11 +272,9 @@ function Group({
     }
   }
   useEffect(() => {
-    console.log(peopleAmount);
     if (peopleAmount !== undefined) {
       const groupQuery = doc(db, "listings", listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
-        // console.log(snapshot.data()!.matchGroup);
         const groups = [...snapshot.data()!.matchGroup];
         dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
         let inGroup = groups.some((g) =>
@@ -287,19 +283,15 @@ function Group({
             .some((u) => u.userId === userInfo.uid)
         );
         if (inGroup) {
-          console.log(groups);
           let findGroup = groups.find((g) =>
             g.users.some((u: any) => u && u.userId === userInfo.uid)
           );
           setIsInFullGroup(!findGroup.users.includes(null));
           if (!findGroup.users.includes(null)) {
-            console.log(findGroup);
-            console.log(!findGroup.isBooked);
             setCanBook(!findGroup.isBooked);
           }
         }
 
-        console.log(inGroup);
         setIsInGroup(inGroup);
       });
     }
@@ -624,7 +616,7 @@ function Group({
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(true);
-              console.log(getGroup);
+
               if (match) {
                 addGroup();
               }

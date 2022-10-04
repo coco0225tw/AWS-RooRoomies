@@ -1,28 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../../redux/rootReducer";
-import { firebase, db, timestamp } from "../../utils/firebase";
-import { PopupComponent } from "../../components/Popup";
+import styled from "styled-components";
 import {
-  getFirestore,
-  getDocs,
-  updateDoc,
   doc,
-  addDoc,
   collection,
-  Timestamp,
   onSnapshot,
   QueryDocumentSnapshot,
   DocumentData,
-  orderBy,
   query,
-  FieldValue,
-  serverTimestamp,
   where,
 } from "firebase/firestore";
+
+import { RootState } from "../../redux/rootReducer";
+import { firebase, db } from "../../utils/firebase";
+import { PopupComponent } from "../../components/Popup";
 import chat from "../../assets/chat.png";
+
 const Wrapper = styled.div<{ isShown: boolean }>`
   bottom: ${(props) => (props.isShown ? "0px" : "50px")};
   right: ${(props) => (props.isShown ? "120px" : "50px")};
@@ -56,19 +50,6 @@ const SectionWrapper = styled.div`
   flex-grow: 1;
   height: 80%;
   flex-direction: column;
-  // overflow: scroll;
-  // overflow-x: hidden;
-`;
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
-const MessagesArea = styled.div`
-  flex-grow: 1;
-  // overflow: scroll;
-  // overflow-x: hidden;
-  // display: flex;
-  // flex-direction: column;
 `;
 
 const MsgWrapper = styled.div`
@@ -107,19 +88,14 @@ const UserPic = styled.div<{ pic: string }>`
   background-position: center center;
 `;
 const UserMessage = styled.div`
-  // flex: 0 1 auto;
-  // max-width: px;
   word-break: break-all;
-  // flex-grow: 1;
   padding: 0 12px;
   border-radius: 8px;
-  // line-break: auto;
 `;
-const SendTime = styled.div``;
+
 const InputMessageBox = styled.input`
   border: none;
   outline: none;
-  // align-self: flex-end;
   padding: 12px;
   font-size: 20px;
   border-radius: 20px;
@@ -131,37 +107,15 @@ const InputMessageBox = styled.input`
   transform: translate(-50%, -50%);
 `;
 
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  align-self: flex-end;
-  &:hover {
-    background-color: #222;
-  }
-`;
-
 const HeaderBar = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  // overflow-x: scroll;
 `;
 const Tabs = styled.div`
-  // display: flex;
-  // flex-direction: row;
-  // align-items: center;
-  // overflow-x: scroll;
-  // height: 100%;
   width: 100%;
-  // overflow-y: hidden;
 `;
 const TabsWrapper = styled.div`
-  // width: 100%;
-  // overflow: hidden;
-  // align-items: center;
   display: -webkit-box;
 `;
 const Tab = styled.div<{ isChoose: boolean }>`
@@ -246,9 +200,8 @@ function ChatRooms() {
 
   function onSnapshotMessages(chooseRoomId: string) {
     const chatRoomQuery = doc(db, "chatRooms", chooseRoomId);
-    // console.log('choose');
+
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
-      // console.log(snapshot);
       setAllMessages(snapshot.data()!.msg);
     });
   }
@@ -258,21 +211,17 @@ function ChatRooms() {
       houseHuntingRef,
       where("userId", "array-contains", userInfo.uid)
     );
-    console.log("chatroomId");
-    console.log(getChatRoom.chatRoomId);
-    console.log("authChange");
-    console.log(authChange);
+
     if (authChange) {
       let onSnapShotData = onSnapshot(userChatRef, (querySnapshot) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
         querySnapshot.forEach((doc) => {
           houseHuntingDocArr.push(doc);
         });
-        console.log(houseHuntingDocArr);
+
         setHouseHuntingData(houseHuntingDocArr);
       });
     }
-    // if (getChatRoom.chatRoomId) onSnapshotMessages(getChatRoom.chatRoomId);
   }, [userInfo]);
 
   if (authChange) {
@@ -283,7 +232,6 @@ function ChatRooms() {
           onClick={() => {
             dispatch({ type: "OPEN_CHAT" });
             if (houseHuntingData.length !== 0) {
-              console.log("yes");
               onSnapshotMessages(houseHuntingData[0]?.id);
               dispatch({
                 type: "CHECK_CHATROOM",
@@ -296,7 +244,6 @@ function ChatRooms() {
                 },
               });
             } else {
-              console.log("no");
               dispatch({
                 type: "CHECK_CHATROOM",
                 payload: { chatRoom: false },
@@ -312,7 +259,7 @@ function ChatRooms() {
         </Close>
         {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
           <PopupComponent
-            msg={`你目前沒有預約和湊團哦`}
+            msg={`你目前/n沒有預約和湊團哦`}
             notDefaultBtn={`取消`}
             defaultBtn={`去逛逛`}
             clickClose={() => dispatch({ type: "CLOSE_CHAT" })}
@@ -358,14 +305,12 @@ function ChatRooms() {
                             </UserMessage>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
                           </MessageWrapper>
                         ) : (
                           <MessageWrapper>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
                             <UserMessage style={{ marginLeft: "12px" }}>
                               {el.userMsg}
@@ -375,7 +320,6 @@ function ChatRooms() {
                       </Message>
                     ))}
                 </MsgWrapper>
-                {/* </MessagesArea> */}
               </SectionWrapper>
               <InputArea>
                 <InputMessageBox
@@ -394,7 +338,6 @@ function ChatRooms() {
                     }
                   }}
                 ></InputMessageBox>
-                {/* <SubmitBtn onClick={senMsg}>送出</SubmitBtn> */}
               </InputArea>
             </HeaderBar>
           )

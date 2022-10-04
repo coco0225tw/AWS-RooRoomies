@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
 import Logo from "../assets/noHouse.png";
+
 const NoLogo = styled.div`
   width: 10vw;
-  // top: 10vh;
   aspect-ratio: 1/1;
   background-image: url(${Logo});
   background-size: cover;
@@ -22,7 +21,6 @@ const NoArea = styled.div`
   margin-top: 10vh;
   display: flex;
   align-items: center;
-  // flex-direction: column;
 `;
 
 function NoListing({ msg }: { msg: string }) {
