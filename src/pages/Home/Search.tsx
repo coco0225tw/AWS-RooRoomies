@@ -1,32 +1,27 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
-import { firebase } from "../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 import { RootState } from "../../redux/rootReducer";
+
+import { firebase } from "../../utils/firebase";
+
 import countyItem from "../../utils/county";
 import allTowns from "../../utils/town";
-import {
-  query,
-  collection,
-  limit,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
 import carousel from "../../assets/carousel.jpg";
+
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
   FormCheck,
   FormCheckLabel,
-  FormControl,
 } from "../../components/InputArea";
 import arrow from "../../assets/arrow.png";
-import { Loading } from "../../components/Loading";
 import { BtnDiv } from "../../components/Button";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,14 +45,11 @@ const SideBarWrapper = styled.div`
 
 const SearchBox = styled.div<{ openSearch: boolean }>`
   position: absolute;
-  // margin: 0px auto;
   top: 20vh;
   background-color: rgba(255, 255, 255, 0.8);
   padding: 0px 40px 30px;
   border-radius: 12px;
   width: 80%;
-  // top: 20%;
-  // top: 0px;
   left: 50%;
   transform: translate(-50%, ${(props) => (props.openSearch ? "0" : "-100%")});
   opacity: ${(props) => (props.openSearch ? "1" : "0")};
@@ -84,7 +76,6 @@ const Slogan = styled.p<{ openSearch: boolean }>`
   margin: auto;
   letter-spacing: 12px;
   opacity: ${(props) => (props.openSearch ? "0" : "1")};
-  // transform: translateY(${(props) => (props.openSearch ? "100%" : "0")});
 `;
 const Btn = styled.div`
   cursor: pointer;
@@ -108,7 +99,6 @@ const CheckedFormCheckLabel = styled(FormCheckLabel)`
 const CheckedFormCheckInput = styled(FormCheckInput)`
   display: none;
   &:checked + ${CheckedFormCheckLabel} {
-    // background: #c77155;
     color: #c77155;
   }
 `;
@@ -159,8 +149,6 @@ const DropDownIcon = styled.div<{ openDropDown: boolean }>`
 `;
 function Search({
   setLoading,
-  loading,
-  loadNextPage,
   loadFirstPage,
   setLoadFirstPage,
   scrollRef,
@@ -168,8 +156,6 @@ function Search({
   setNoData,
 }: {
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  loading: boolean;
-  loadNextPage: boolean;
   loadFirstPage: boolean;
   setLoadFirstPage: React.Dispatch<React.SetStateAction<boolean>>;
   scrollRef: React.MutableRefObject<HTMLDivElement>;
@@ -177,18 +163,11 @@ function Search({
   setNoData: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
-  const [selectCounty, setSelectCounty] = useState<County>({
-    countyCode: 63000,
-    countyName: "臺北市",
-  });
-  const listingDocData = useSelector(
-    (state: RootState) => state.GetListingInHomePageReducer
-  );
+
   const [selectTown, setSelectTown] = useState<string>("不限");
   const [selectRent, setSelectRent] = useState<string>("不限");
   const [openSearch, setOpenSearch] = useState<boolean>(false);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
-  // let loadFirstPage = false;
   const lastDocData = useSelector(
     (state: RootState) => state.GetLastDocReducer
   );
@@ -196,7 +175,10 @@ function Search({
     countyCode: number | null;
     countyName: string | null;
   }
-  const [towns, setTowns] = useState<any>();
+  const [selectCounty, setSelectCounty] = useState<County>({
+    countyCode: 63000,
+    countyName: "臺北市",
+  });
 
   const countyGroup = {
     label: "縣市",
@@ -358,12 +340,6 @@ function Search({
         }
       });
   }
-  function clickOnDropDown() {
-    setOpenDropDown(true);
-  }
-  function selectCountyFunction() {
-    setOpenDropDown(false);
-  }
 
   const handleObserver = useCallback(
     async (entries: any, observer: any) => {
@@ -420,7 +396,6 @@ function Search({
           style={{ flexDirection: "column" }}
           key={countyGroup.key}
         >
-          {/* <StyledFormLabel>{countyGroup.label}</StyledFormLabel> */}
           <DropDown
             onClick={() =>
               openDropDown ? setOpenDropDown(false) : setOpenDropDown(true)
@@ -521,7 +496,6 @@ function Search({
                   />
                   <CheckedFormCheckLabel htmlFor={`${option.key}`}>
                     {option.label}
-                    {/* {option.key ? option.label : option.townname} */}
                   </CheckedFormCheckLabel>
                 </FormCheck>
               </div>

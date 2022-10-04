@@ -1,12 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
 import { RootState } from "../../../redux/rootReducer";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { BtnDiv, BtnLink } from "../../../components/Button";
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
@@ -15,6 +11,9 @@ import {
   FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import { BtnDiv } from "../../../components/Button";
+import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -25,14 +24,6 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 
-const FormText = styled.div`
-  line-height: 19px;
-  font-size: 16px;
-  color: #8b572a;
-  margin-top: 10px;
-  width: 100%;
-  text-align: right;
-`;
 const roommatesConditionFormGroups = [
   {
     label: "性別",
@@ -176,10 +167,6 @@ const roommatesConditionFormGroups = [
       },
     ],
   },
-  // {
-  //   label: '職業類別',
-  //   key: 'career',
-  // },
 ];
 
 const SubmitBtn = styled(BtnDiv)`
@@ -196,20 +183,8 @@ function RoommatesCondition({
   const roommatesConditionsInfo = useSelector(
     (state: RootState) => state.UploadRoommatesConditionReducer
   );
-  const initialRoommatesState =
-    // userInfo!.userListingId?.length !== 0
-    // ?
-    roommatesConditionsInfo;
-  // : {
-  //     gender: "",
-  //     bringFriendToStay: "",
-  //     hygiene: "",
-  //     livingHabit: "",
-  //     genderFriendly: "",
-  //     pet: "",
-  //     smoke: "",
-  //     career: "",
-  //   };
+  const initialRoommatesState = roommatesConditionsInfo;
+
   const [roommatesState, setRoommatesStateState] =
     useState<roommatesConditionType>(initialRoommatesState);
   function submit(roommatesState: roommatesConditionType) {
@@ -220,7 +195,6 @@ function RoommatesCondition({
   }
   return (
     <Wrapper>
-      {/* <SubTitle>室友條件</SubTitle> */}
       {roommatesConditionFormGroups.map(({ label, key, options }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
@@ -231,35 +205,31 @@ function RoommatesCondition({
                   {initialRoommatesState &&
                   initialRoommatesState[key as keyof roommatesConditionType] ===
                     option.value ? (
-                    <>
-                      <FormCheckInput
-                        defaultChecked
-                        onChange={(e) => {
-                          if (e.target.checked)
-                            setRoommatesStateState({
-                              ...roommatesState,
-                              [key]: option.value,
-                            });
-                        }}
-                        type="radio"
-                        name={label}
-                      />
-                    </>
+                    <FormCheckInput
+                      defaultChecked
+                      onChange={(e) => {
+                        if (e.target.checked)
+                          setRoommatesStateState({
+                            ...roommatesState,
+                            [key]: option.value,
+                          });
+                      }}
+                      type="radio"
+                      name={label}
+                    />
                   ) : (
-                    <>
-                      <FormCheckInput
-                        onChange={(e) => {
-                          if (e.target.checked)
-                            setRoommatesStateState({
-                              ...roommatesState,
-                              [key]: option.value,
-                            });
-                        }}
-                        type="radio"
-                        value={option.value || ""}
-                        name={label}
-                      />
-                    </>
+                    <FormCheckInput
+                      onChange={(e) => {
+                        if (e.target.checked)
+                          setRoommatesStateState({
+                            ...roommatesState,
+                            [key]: option.value,
+                          });
+                      }}
+                      type="radio"
+                      value={option.value || ""}
+                      name={label}
+                    />
                   )}
                   <FormCheckLabel>{option.text}</FormCheckLabel>
                 </FormCheck>
@@ -278,7 +248,6 @@ function RoommatesCondition({
       >
         儲存
       </SubmitBtn>
-      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

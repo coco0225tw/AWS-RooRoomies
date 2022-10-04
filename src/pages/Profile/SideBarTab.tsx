@@ -1,9 +1,8 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
-import { BtnDiv } from "../../components/Button";
+
 import user from "../../assets/user.png";
 import usero from "../../assets/usero.png";
 import house from "../../assets/houseo.png";
@@ -14,6 +13,7 @@ import heart from "../../assets/unHeart.png";
 import unHeart from "../../assets/heart.png";
 import setting from "../../assets/settingso.png";
 import settingo from "../../assets/settings.png";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -80,16 +80,12 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   font-size: 20px;
   line-height: 50px;
   transition-duration: 0.2s;
-  // border: solid 1px #4f5152;
-  // z-index: 3;
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;
   }
 `;
-const ArrowWrap = styled.div`
-  color: inherit;
-`;
+
 function SideBarTab({
   showTab,
   setShowTab,
@@ -103,14 +99,6 @@ function SideBarTab({
 }) {
   const dispatch = useDispatch();
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
-  function clickTab(tabString: string) {
-    dispatch({ type: "SELECT_TYPE", payload: { tab: tabString } });
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }
-
   const tabsOptions = [
     { key: "aboutMe", img: usero, label: "關於我", value: user },
     {
@@ -124,6 +112,13 @@ function SideBarTab({
     { key: "uploadMyListing", img: houseo, label: "管理物件", value: house },
     { key: "setting", img: settingo, label: "設定", value: setting },
   ];
+  function clickTab(tabString: string) {
+    dispatch({ type: "SELECT_TYPE", payload: { tab: tabString } });
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }
 
   return (
     <Wrapper>
@@ -144,7 +139,7 @@ function SideBarTab({
             isShowTab={showTab}
             img={options.value}
             oimg={options.img}
-          ></Img>
+          />
           <Tab isChoose={getTab === options.key} isShowTab={showTab}>
             {options.label}
           </Tab>

@@ -1,47 +1,26 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
-import { firebase } from "../../utils/firebase";
-import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import { Title } from "../../components/ProfileTitle";
+
 import Hr from "../../components/Hr";
 import { BtnDiv } from "../../components/Button";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  // height: 100%;
   margin: auto;
-`;
-
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
 `;
 
 const ConditionArea = styled.div`
   display: flex;
-  //   flex-direction: column;
   justify-content: space-between;
   width: 45%;
   margin-bottom: 40px;
   align-items: center;
-  // flex-wrap: wrap;
 `;
-const SubmitBtn = styled(BtnDiv)`
-  // background-color: grey;
-  // color: white;
-  cursor: pointer;
-  // border-radius: 10px;
-  // padding: 4px;
-  align-self: flex-end;
-  &:hover {
-    // background-color: #222;
-  }
-`;
+
 const Label = styled.div`
   font-size: 16px;
   // letter-spacing: 32px;
@@ -59,7 +38,6 @@ const Conditions = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   width: 100%;
-  // align-items: center;
 `;
 const SubTitle = styled.div`
   font-size: 28px;
@@ -211,28 +189,20 @@ const roommatesConditionFormGroups = [
       },
     ],
   },
-  // {
-  //   label: '職業類別',
-  //   key: 'career',
-  // },
 ];
 function RoommatesCondition({
   roommatesConditions,
-  match,
   setMatch,
-  addUserAsRoommatesCondition,
   setAddUserAsRoommatesCondition,
 }: {
   roommatesConditions: any;
-  match: boolean;
   setMatch: React.Dispatch<React.SetStateAction<boolean>>;
-  addUserAsRoommatesCondition: boolean;
   setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [keys, setKeys] = useState<string[]>([]);
   const userAsRoommate = useSelector(
     (state: RootState) => state.UserAsRoommateReducer
   );
+  const [keys, setKeys] = useState<string[]>([]);
 
   function checkMatch() {
     function getTrueKey(object: any) {
@@ -241,8 +211,6 @@ function RoommatesCondition({
       for (let key of keys) {
         if (newObj[key] === "true") {
           newObj[key] = "unlimited";
-          // const newObj = { ...object, [key]: 'unlimited' };
-        } else {
         }
       }
       return newObj;
@@ -262,12 +230,10 @@ function RoommatesCondition({
 
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
-          // window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
           setMatch(false);
           return false;
         }
       }
-      // window.alert("符合");
       setMatch(true);
       return true;
     }
@@ -275,21 +241,10 @@ function RoommatesCondition({
     shallowEqual(
       getNonUnlimitedKey(getTrueKey(roommatesConditions), "unlimited"),
       userAsRoommate
-    ); // => true
+    );
   }
 
   useEffect(() => {
-    // function findObjectKeys() {
-    //   if (userAsRoommate.userAsRoommatesConditions) {
-    //     setAddUserAsRoommatesCondition(true);
-    //     let keys = Object.keys(roommatesConditions);
-    //     setKeys(keys);
-    //     checkMatch();
-    //   } else {
-    //
-    //     setAddUserAsRoommatesCondition(false);
-    //   }
-    // }
     function checkIfUserConditionIsEmpty(userAsRoommate: any) {
       for (const key in userAsRoommate) {
         if (userAsRoommate[key] === "") {
@@ -309,19 +264,11 @@ function RoommatesCondition({
         setAddUserAsRoommatesCondition(false);
       }
     }
-
-    // if (roommatesConditions && userAsRoommate) {
-
-    // } else if (roommatesConditions && !userAsRoommate) {
-
-    // }
   }, [roommatesConditions, userAsRoommate]);
   return (
     <Wrapper>
       <Hr style={{ margin: "40px 0px" }} />
-
       <SubTitle style={{ marginBottom: "32px" }}>室友條件</SubTitle>
-
       <Conditions>
         {keys &&
           roommatesConditions &&
@@ -329,19 +276,17 @@ function RoommatesCondition({
             <ConditionArea key={`roommatesCondition${index}`}>
               <Label>{el.label}</Label>
               <Condition>
-                {el.options
-                  ? (el.options.filter((o) => {
-                      return (
-                        o.value ===
-                        roommatesConditions[el.key as keyof typeof keys]
-                      );
-                    })[0]?.text as string)
-                  : ""}
+                {el.options &&
+                  (el.options.filter((o) => {
+                    return (
+                      o.value ===
+                      roommatesConditions[el.key as keyof typeof keys]
+                    );
+                  })[0]?.text as string)}
               </Condition>
             </ConditionArea>
           ))}
       </Conditions>
-      {/* <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn> */}
     </Wrapper>
   );
 }

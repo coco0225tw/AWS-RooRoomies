@@ -1,40 +1,30 @@
-import { initializeApp } from "firebase/app";
-import {
-  query,
-  getFirestore,
-  getDocs,
-  collection,
-  doc,
-  onSnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useEffect, Fragment } from "react";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
 import { Provider } from "react-redux";
+import { Outlet } from "react-router-dom";
+
+import { createGlobalStyle } from "styled-components";
+
 import store from "./redux/store";
 import { firebase, auth, onAuthStateChanged, db } from "./utils/firebase";
 import { RootState } from "./redux/rootReducer";
+
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import ChatRooms from "./components/ChatRooms/ChatRooms";
+import Alert from "./components/Alert";
+
+import { groupType } from "./redux/Group/GroupType";
+import userType from "./redux/GetAuth/GetAuthType";
+import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import facilityType from "./redux/UploadFacility/UploadFacilityType";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
 import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
 import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ChatRooms from "./components/ChatRooms/ChatRooms";
-import Alert from "./components/Alert";
-import userType from "./redux/GetAuth/GetAuthType";
-import { Loading } from "./components/Loading";
-import { groupType, userInfoType } from "./redux/Group/GroupType";
-import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
-import bookingTimesType from "./redux/UploadBookingTimes/UploadBookingTimesType";
-import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import facilityType from "./redux/UploadFacility/UploadFacilityType";
-import { useNavigate } from "react-router-dom";
 const GlobalStyle = createGlobalStyle`
 @font-face {
   font-family: PingFangTC;
@@ -62,9 +52,7 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
     // border: solid 1px black;
-    // color: #4f5152;
     position: relative;
-    // transition-duration: 1s;
     letter-spacing: 0.4px;
   }
 
@@ -73,21 +61,17 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
     padding: 0;
     margin: 0;
-    // height: 100vh;
   }
 
   html {
     padding: 0;
     margin: 0;
-    // height: 100vh;
   }
   #root {
     min-height: 100vh;
-    // padding: 140px 0 115px;
     position: relative;
     display: flex;
     flex-direction: column;
-    // flex-grow: 1;
   }
   a {
     color: inherit; /* blue colors for links too */
@@ -116,14 +100,11 @@ const GlobalStyle = createGlobalStyle`
 
 function User() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
-        // navigate('/');
       } else {
         dispatch({ type: "RETURN_INITIAL_GETUSER" });
         dispatch({ type: "RETURN_INITIAL_AUTH" });
@@ -159,15 +140,7 @@ function User() {
           name: data?.data().name,
           userListingId: data?.data().userListingId,
         };
-        const meAsRoommatesState = {
-          userAsRoommatesConditions: data?.data().userAsRoommatesConditions,
-        };
-        const userOnSnapShotQuery = doc(db, "users", data?.id!);
-        const userQuery = onSnapshot(userOnSnapShotQuery, (snapshot) => {
-          const favoriteLists = [...snapshot.data()!.favoriteLists];
-          const compareLists = [...snapshot.data()!.compareLists];
-          const dndLists = [...snapshot.data()!.dndLists];
-        });
+
         const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
         const dndLists = data?.data().dndLists;
@@ -232,33 +205,6 @@ function User() {
               payload: { facilityState: listingData?.facility },
             });
           }
-          // async function getBookingTimes() {
-          //   await firebase.getBookingTimesSubColForListing(data?.data().listingId).then((times) => {
-          //     let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
-          //     times.forEach((doc) => {
-          //       listingTimesArr.push(doc);
-          //     });
-          //     // setBookingTimesInfo(listingTimesArr);
-
-          //     let enableDate = [];
-          //     if (listingTimesArr?.length !== 0) {
-          //       enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds);
-          //         if (findIndex === -1) {
-          //           acc.push(curr);
-          //         } else {
-          //         }
-          //         return acc;
-          //       }, []);
-          //       // setAbleBookingTimes(enableDate);
-          //     }
-          //     let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
-          //       let date = s.data().date.toDate();
-          //       return date;
-          //     });
-          //     // setAbleBookingTimes(enableDates);
-          //   });
-          // }
           async function promise() {
             await Promise.all([getListing()]);
           }
@@ -270,18 +216,6 @@ function User() {
   }, []);
   return null;
 }
-
-const style = {
-  header: {
-    flexShrink: "0",
-  },
-  outlet: {
-    flex: "1 0 auto",
-  },
-  footer: {
-    flexShrink: "0",
-  },
-} as const;
 
 function AlertInfo() {
   const alertInfo = useSelector((state: RootState) => state.AlertReducer);
@@ -296,7 +230,6 @@ function AlertInfo() {
 function App() {
   return (
     <Provider store={store}>
-      {/* <Reset /> */}
       <GlobalStyle />
       <ChatRooms />
       <AlertInfo />

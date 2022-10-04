@@ -1,72 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
-import { firebase, db, timestamp } from "../../utils/firebase";
-import {
-  getFirestore,
-  getDocs,
-  updateDoc,
-  doc,
-  addDoc,
-  collection,
-  Timestamp,
-  onSnapshot,
-  QueryDocumentSnapshot,
-  DocumentData,
-  orderBy,
-  query,
-  FieldValue,
-  serverTimestamp,
-} from "firebase/firestore";
-import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { doc, onSnapshot } from "firebase/firestore";
+
+import { firebase, db } from "../../utils/firebase";
+
 import { RootState } from "../../redux/rootReducer";
 import { groupType } from "../../redux/Group/GroupType";
-import { Title } from "../../components/ProfileTitle";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
-import { PopupComponent, PopupImage } from "../../components/Popup";
-import { Link, useNavigate } from "react-router-dom";
-import { connectStorageEmulator } from "firebase/storage";
+import { PopupComponent } from "../../components/Popup";
 import { Loading } from "../../components/Loading";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  // height: 100%;
   margin: auto;
 `;
 
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
-
-const ConditionArea = styled.div`
-  display: flex;
-  //   flex-direction: column;
-  justify-content: space-between;
-  width: 80%;
-`;
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  align-self: flex-end;
-  &:hover {
-    background-color: #222;
-  }
-`;
 const SingleGroup = styled.div`
   margin-bottom: 20px;
-  align-items: center;
-  display: flex;
-`;
-const SingleGroupWrapper = styled.div`
   align-items: center;
   display: flex;
 `;
@@ -113,21 +69,17 @@ const Span = styled.span`
   color: grey;
   position: relative;
 `;
-// const HintTextLoading = styled(Loading)`
-//   background-color: black;
-// `;
 const Text = styled.div`
   color: grey;
 `;
 
 function Group({
   match,
-  setMatch,
   peopleAmount,
   listingId,
   listingTitle,
   addUserAsRoommatesCondition,
-  setAddUserAsRoommatesCondition,
+
   notAddUserAsRoommatesConditionAlert,
   isInGroup,
   setIsInGroup,
@@ -142,9 +94,7 @@ function Group({
   listingId: string;
   listingTitle: string;
   match: boolean;
-  setMatch: React.Dispatch<React.SetStateAction<boolean>>;
   addUserAsRoommatesCondition: boolean;
-  setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
   notAddUserAsRoommatesConditionAlert: any;
   isInGroup: boolean;
   setIsInGroup: React.Dispatch<React.SetStateAction<boolean>>;
@@ -156,13 +106,13 @@ function Group({
   setHintTextLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
-  const [groups, setGroups] = useState<Array<groupType>>([]);
-
+  const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getGroup = useSelector(
     (state: RootState) => state.GroupReducer
   ) as Array<groupType>;
+
   const [isShown, setIsShown] = useState<boolean>(false);
   const [createNewGroup, setCreateNewGroup] = useState<boolean>(false);
   const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] =
@@ -170,7 +120,7 @@ function Group({
   const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] =
     useState<boolean>(false);
   const [groupId, setGroupId] = useState<number>();
-  const navigate = useNavigate();
+
   const newGroup = {
     users: Array(peopleAmount).fill(null),
     chatRoomId: "",
@@ -300,7 +250,6 @@ function Group({
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
@@ -338,13 +287,6 @@ function Group({
           }}
           clickFunction={() => {
             addUserToFormerGroup();
-            // createNewChatRoom(
-            //   userInfo.uid,
-            //   listingId,
-            //   listingTitle,
-            //   getGroup,
-            //   groupId
-            // );
             setOtherTimeAddGroupPopup(false);
           }}
         />
@@ -353,11 +295,8 @@ function Group({
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
         {hintTextLoading ? (
-          // <span>
           <Span
             style={{
-              // width: "100px",
-              // height: "100px",
               position: "relative",
             }}
           >
@@ -373,8 +312,7 @@ function Group({
               }}
             />
           </Span>
-        ) : // </span>
-        authChange && !addUserAsRoommatesCondition ? (
+        ) : authChange && !addUserAsRoommatesCondition ? (
           <Span>
             尚未填寫條件,到
             <SpanLink
@@ -456,89 +394,6 @@ function Group({
           addUserAsRoommatesCondition &&
           !match && <Span>不符合室友條件</Span>
         )}
-        {/* {authChange && !addUserAsRoommatesCondition && (
-          <Span>
-            尚未填寫條件,到
-            <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
-              otherFn={() => {
-                dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "aboutMe" },
-                });
-              }}
-            />
-            更新
-          </Span>
-        )} */}
-        {/* {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
-          <Span>符合室友條件</Span>
-        )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          !isInFullGroup && (
-            <Span>
-              你已加入湊團，到
-              <SpanLink
-                path={"/profile"}
-                msg={"個人頁面"}
-                otherFn={() => {
-                  dispatch({
-                    type: "SELECT_TYPE",
-                    payload: { tab: "allHouseHunting" },
-                  });
-
-                  dispatch({
-                    type: "SELECT_SUB_TAB",
-                    payload: {
-                      subTab: isInFullGroup ? "尚未預約" : "等待湊團",
-                    },
-                  });
-                }}
-              />
-              查看
-            </Span>
-          )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          !canBook && (
-            <Span>
-              你已預約，到
-              <SpanLink
-                path={"/profile"}
-                msg={"個人頁面"}
-                otherFn={() => {
-                  dispatch({
-                    type: "SELECT_TYPE",
-                    payload: { tab: "allHouseHunting" },
-                  });
-
-                  dispatch({
-                    type: "SELECT_SUB_TAB",
-                    payload: {
-                      subTab: "已預約",
-                    },
-                  });
-                }}
-              />
-              查看
-            </Span>
-          )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          canBook && <Span>已湊滿團，可以預約</Span>} */}
-        {/* {authChange && addUserAsRoommatesCondition && !match && (
-          <Span>不符合室友條件</Span>
-        )} */}
       </SubTitle>
       {getGroup.length === 0 && match && (
         <Text>
@@ -561,7 +416,6 @@ function Group({
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
           <SingleGroup key={`group${gIndex}`}>
-            {/* <SingleGroupWrapper> */}
             <GroupIndex>團{gIndex + 1}</GroupIndex>
             {group.users.map((user, index) =>
               user === null ? (
@@ -607,8 +461,6 @@ function Group({
                 <UserPic key={`user${index}`} img={user.userPic}></UserPic>
               )
             )}
-            {/* <BtnDiv onClick={() => removeGroup(gIndex)}>刪除團</BtnDiv> */}
-            {/* </SingleGroupWrapper> */}
           </SingleGroup>
         ))}
       {getGroup.length !== 0 && match && !isInGroup && !createNewGroup && (
@@ -616,7 +468,6 @@ function Group({
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(true);
-
               if (match) {
                 addGroup();
               }

@@ -1,30 +1,19 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { firebase } from "../../utils/firebase";
-import {
-  query,
-  collection,
-  limit,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import favoriteIcon from "../../assets/icons8-favorite-30.png";
+
 import addIcon from "../../assets/add.png";
 import unAddIcon from "../../assets/unAdd.png";
 import likedIcon from "../../assets/heart.png";
 import unLikedIcon from "../../assets/unHeart.png";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PopupComponent } from "../../components/Popup";
 interface ImgProps {
   img: string;
 }
 const Wrapper = styled.div`
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: center;
   align-items: flex-start;
   width: 100%;
   height: 100%;
@@ -48,10 +37,6 @@ const Icon = styled.div`
   background-position: center center;
   background-repeat: no-repeat;
   border-radius: 8px;
-  // flex-grow: 1;
-  // &:hover {
-  //   width: 32px;
-  // }
 `;
 
 const IconArea = styled.div`
@@ -64,7 +49,6 @@ const IconArea = styled.div`
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) =>
     props.isLiked ? likedIcon : unLikedIcon});
-  // right: 8px;
   background-color: #fefefe;
   box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
 `;
@@ -73,15 +57,9 @@ const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
   background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
 `;
 
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
-
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  // border: solid 1px orange;
   align-items: flex-start;
   color: #4f5152;
   font-size: 16px;
@@ -124,17 +102,20 @@ const PeopleAmount = styled.div``;
 function Listing({ listingDocData }: { listingDocData: any }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
   );
   const compareLists = useSelector(
     (state: RootState) => state.GetCompareListsReducer
   );
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+
   const [isShown, setIsShown] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+
   function handleLiked(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     isLiked: boolean
@@ -273,12 +254,10 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           <IconArea>
             <FavoriteIcon
               onClick={(e) => {
-                // if (!submitting) {
                 handleLiked(e!, favoriteLists.includes(listingDocData.id));
-                // }
               }}
               isLiked={favoriteLists.includes(listingDocData.id)}
-            ></FavoriteIcon>
+            />
             {/* <CompareIcon
               onClick={(e) => {
                 handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
@@ -288,7 +267,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           </IconArea>
         </MainImage>
         <Title>{listingDocData.data().title}</Title>
-        {/* <div>{listingDocData.id}</div> */}
         <Addr>
           {listingDocData.data().countyName}
           {listingDocData.data().townName}
@@ -297,14 +275,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         <PeopleAmount>
           可入住人數:{listingDocData.data().peopleAmount}
         </PeopleAmount>
-        <Time>
-          {/* {listingDocData.data().moveInDate.getFullYear() +
-            '-' +
-            ('0' + (listingDocData.data().moveInDate.getMonth() + 1)).slice(-2) +
-            '-' +
-            ('0' + listingDocData.data().moveInDate.getDate()).slice(-2)} */}
-          {/* {listingDocData.data().uploadedTime?.toDate().toDateString()} */}
-        </Time>
+        <Time></Time>
         <Rent>
           {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
         </Rent>

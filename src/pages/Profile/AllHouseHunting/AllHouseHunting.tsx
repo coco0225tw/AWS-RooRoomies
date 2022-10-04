@@ -1,33 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
 import styled from "styled-components";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { firebase, db } from "../../../utils/firebase";
 import {
   query,
   collection,
-  limit,
-  QuerySnapshot,
   DocumentData,
   QueryDocumentSnapshot,
   onSnapshot,
-  doc,
   where,
 } from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import { Provider } from "react-redux";
-import store from "../../../redux/store";
+import { firebase, db } from "../../../utils/firebase";
+
 import { RootState } from "../../../redux/rootReducer";
-import { Title } from "../../../components/ProfileTitle";
-import Hr from "../../../components/Hr";
-import { PopupComponent, PopupImage } from "../../../components/Popup";
+
 import ListingItem from "../../../components/ListingItem";
-import { BtnDiv, BtnLink } from "../../../components/Button";
+import Hr from "../../../components/Hr";
 import chat from "../../../assets/chat.png";
-import { Loading } from "../../../components/Loading";
 import NoListing from "../../../components/NoData";
-import previewMainImage from "../../../redux/PreviewMainImage/PreviewMainImageReducer";
+
+import { Loading } from "../../../components/Loading";
+import { Title } from "../../../components/ProfileTitle";
+import { PopupComponent } from "../../../components/Popup";
+import { BtnDiv } from "../../../components/Button";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,15 +36,7 @@ const Wrapper = styled.div`
   color: #4f5152;
   margin-top: 20px;
 `;
-const SectionWrapper = styled(Link)`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-`;
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
+
 const ListingWrapper = styled(Link)`
   display: flex;
   flex-direction: row;
@@ -57,16 +46,13 @@ const ListingWrapper = styled(Link)`
   padding: 20px;
   border-radius: 12px;
 `;
-const StyledBtnDiv = styled(BtnDiv)`
-  // position: absolute;
-`;
+const StyledBtnDiv = styled(BtnDiv)``;
 const InfoWrapper = styled.div`
   position: absolute;
   display: flex;
   flex-direction: row;
   right: 20px;
   top: 40%;
-  // transform: translateY(-70%);
   width: 50%;
   align-items: center;
   justify-content: space-between;
@@ -101,14 +87,14 @@ function AllHouseHunting({
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {
+  const dispatch = useDispatch();
+
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getSubTab = useSelector((state: RootState) => state.SubTabReducer);
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
-  const [clickTab, setClickTab] = useState<string>("已預約");
-  const dispatch = useDispatch();
   const [cancelBookTimePopup, setCancelBookTimePopup] =
     useState<boolean>(false);
   const [cancelBookTimeInfo, setCancelBookTimeInfo] = useState<any>(null);
@@ -212,7 +198,6 @@ function AllHouseHunting({
       updatedArr[index].data().isBooked = false;
       updatedArr[index].data().bookedTime = {};
 
-      // setHouseHuntingData(updatedArr);
       dispatch({
         type: "OPEN_SUCCESS_ALERT",
         payload: {
@@ -257,7 +242,6 @@ function AllHouseHunting({
       }, 1000);
     }
     async function getAllListing(arr: QueryDocumentSnapshot<DocumentData>[]) {
-      // getListing;
       let promise: DocumentData[] = [];
       arr.map((el, index) => {
         promise.push(
@@ -272,7 +256,6 @@ function AllHouseHunting({
 
       setAllListingData(listingDocArr);
     }
-    // getAllHouseHuntingData();
   }, [userInfo]);
   return (
     <Wrapper>
@@ -300,7 +283,6 @@ function AllHouseHunting({
           }}
           clickFunction={() => {
             removeFromGroup(removeUserInfo);
-            // cancelBookTime(cancelBookTimeInfo);
             setRemoveFromGroupPopup(false);
           }}
         />
@@ -345,9 +327,8 @@ function AllHouseHunting({
                     (el) => el.id === doc.data().listingId
                   ) as DocumentData
                 }
-              ></ListingItem>
+              />
               <InfoWrapper>
-                {/* <div> */}
                 <div>{`已預約${doc
                   .data()
                   .bookedTime.date.toDate()
@@ -381,8 +362,7 @@ function AllHouseHunting({
                       type: "OPEN_CHAT",
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))
@@ -410,10 +390,8 @@ function AllHouseHunting({
                     (el) => el.id === doc.data().listingId
                   ) as DocumentData
                 }
-              ></ListingItem>
+              />
               <InfoWrapper>
-                {/* <div> */}
-                {/* <StyledBtnDiv>去預約</StyledBtnDiv> */}
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
@@ -439,8 +417,7 @@ function AllHouseHunting({
                       type: "OPEN_CHAT",
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))
@@ -467,7 +444,6 @@ function AllHouseHunting({
                 }
               ></ListingItem>
               <InfoWrapper>
-                {/* <div> */}
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
@@ -493,8 +469,7 @@ function AllHouseHunting({
                       type: "OPEN_CHAT",
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))

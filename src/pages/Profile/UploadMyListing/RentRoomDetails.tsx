@@ -1,23 +1,18 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../../../utils/firebase";
-import UploadMyListing from "./UploadMyListing";
-import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+
 import { RootState } from "../../../redux/rootReducer";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { BtnDiv, BtnLink } from "../../../components/Button";
-import bin from "../../../assets/bin.png";
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import { BtnDiv } from "../../../components/Button";
+import bin from "../../../assets/bin.png";
+import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -36,33 +31,17 @@ const InputArea = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
 `;
-const RoomCards = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-`;
-const RoomCard = styled.div`
-  display: inline;
-  padding: 10px;
-`;
+
 const Table = styled.table`
   width: 100%;
   font-size: 16px;
 `;
-const Th = styled.th`
-  padding: 4px;
-`;
-const Tbody = styled.tbody``;
+
 const Td = styled.td`
   text-align: center;
   padding: 8px 4px;
 `;
-// const Cross = styled(Td)`
-//   cursor: pointer;
-//   &:hover {
-//     transform: scale(1.2);
-//   }
-// `;
+
 const Cross = styled.div`
   background-image: url(${bin});
   background-size: 20px 20px;
@@ -88,20 +67,12 @@ function RentRoomDetails({
   setClickTab: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const dispatch = useDispatch();
-  // interface roomDetailsType {
-  //   rent: string;
-  //   sq: string;
-  //   form: string;
-  //   peopleAmount: string;
-  // }
+
   const roomInfo = useSelector((state: RootState) => state.UploadRoomsReducer);
   const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
-  const rentRef = useRef<HTMLInputElement>(null);
-  const sqRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLInputElement>(null);
-  const peopleAmountRef = useRef<HTMLInputElement>(null);
 
   const roomRef = useRef<HTMLInputElement[]>([]);
+
   function addRooms() {
     let room = {
       rent: Number(roomRef.current[0].value) as number,
@@ -123,7 +94,6 @@ function RentRoomDetails({
   }
   return (
     <Wrapper>
-      {/* <SubTitle>房間規格</SubTitle> */}
       <InputArea>
         {rentRoomDetailsFormGroups.map((r, index) => (
           <FormGroup style={{ width: "25%", paddingRight: "12px" }} key={r.key}>
@@ -144,7 +114,7 @@ function RentRoomDetails({
       {roomState.length !== 0 && (
         <Table style={{ border: "solid 1px #ece2d5" }}>
           <Tr style={{ borderBottom: " solid 1px #ece2d5 " }}>
-            <Td style={{ borderBottom: " solid 1px #ece2d5 " }}></Td>
+            <Td style={{ borderBottom: " solid 1px #ece2d5 " }} />
             <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>價錢</Td>
             <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>坪數</Td>
             <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>規格</Td>
@@ -160,7 +130,7 @@ function RentRoomDetails({
               <Td>{r.form}</Td>
               <Td>{r.peopleAmount}人</Td>
               <Td>
-                <Cross onClick={() => deleteRoom(index)}></Cross>
+                <Cross onClick={() => deleteRoom(index)} />
               </Td>
             </Tr>
           ))}

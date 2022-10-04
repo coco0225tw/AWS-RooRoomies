@@ -1,37 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { DocumentData } from "firebase/firestore";
+
 import { RootState } from "../../../redux/rootReducer";
 import { firebase } from "../../../utils/firebase";
-import likedIcon from "../../../assets/heart.png";
-import unLikedIcon from "../../../assets/unHeart.png";
-import Hr from "../../../components/Hr";
-import { BtnDiv } from "../../../components/Button";
-import { Title } from "../../../components/ProfileTitle";
-import ListingItem from "../../../components/ListingItem";
+
+import { PopupComponent } from "../../../components/Popup";
 import { Loading } from "../../../components/Loading";
+import { Title } from "../../../components/ProfileTitle";
 import NoListing from "../../../components/NoData";
-import {
-  query,
-  collection,
-  limit,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import { PopupComponent, PopupImage } from "../../../components/Popup";
-import { Link } from "react-router-dom";
-import {
-  FormLegend,
-  FormGroup,
-  FormLabel,
-  FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
-  FormControl,
-} from "../../../components/InputArea";
-import { async } from "@firebase/util";
+import ListingItem from "../../../components/ListingItem";
+import Hr from "../../../components/Hr";
+import likedIcon from "../../../assets/heart.png";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,18 +55,16 @@ function FollowedList({
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {
-  async function getListing(listingId: string) {
-    let data = firebase.getListing(listingId);
-    return data;
-  }
   const dispatch = useDispatch();
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
   );
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
   const [isShown, setIsShown] = useState<boolean>(false);
   const [unLikeId, setUnLikeId] = useState<string>("");
+
   function handleLiked(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     listingId: string
@@ -151,8 +132,8 @@ function FollowedList({
       ) : (
         allListingData.map((f, index) => (
           <ListingWrapper to={`/listing/${f.id}`} key={`favoriteLists${index}`}>
-            <ListingItem listingDocData={f}></ListingItem>
-            <FavoriteIcon onClick={(e) => handleLiked(e, f.id)}></FavoriteIcon>
+            <ListingItem listingDocData={f} />
+            <FavoriteIcon onClick={(e) => handleLiked(e, f.id)} />
           </ListingWrapper>
         ))
       )}

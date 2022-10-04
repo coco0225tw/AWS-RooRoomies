@@ -1,29 +1,14 @@
-import React, { useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/rootReducer";
-import { firebase, timestamp, db } from "../../../utils/firebase";
-import {
-  query,
-  getFirestore,
-  getDocs,
-  collection,
-  doc,
-  updateDoc,
-  getDoc,
-  setDoc,
-  orderBy,
-  limit,
-  startAfter,
-  DocumentData,
-  serverTimestamp,
-  addDoc,
-  onSnapshot,
-  QueryDocumentSnapshot,
-  where,
-  arrayUnion,
-  arrayRemove,
-} from "firebase/firestore";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/rootReducer";
+import { collection, doc } from "firebase/firestore";
+
+import { firebase, timestamp, db } from "../../../utils/firebase";
+import { Title } from "../../../components/ProfileTitle";
+import { BtnDiv } from "../../../components/Button";
+import NoListing from "../../../components/NoData";
+import Hr from "../../../components/Hr";
 import UploadMainImageAndImages from "./UploadMainImageAndImages";
 import SetBookingTimes from "./SetBookingTimes";
 import ListingAddr from "./ListingAddr";
@@ -31,14 +16,10 @@ import ListingTitle from "./ListingTitle";
 import RoommatesCondition from "./RoommatesCondition";
 import Facility from "./Facility";
 import RentRoomDetails from "./RentRoomDetails";
+
 import roomDetailsType from "../../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import addrType from "../../../redux/UploadAddr/UploadAddrType";
 import titleType from "../../../redux/UploadTitle/UploadTitleType";
-import { Title } from "../../../components/ProfileTitle";
-import { BtnDiv, BtnLink } from "../../../components/Button";
-import { Loading } from "../../../components/Loading";
-import NoListing from "../../../components/NoData";
-import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -94,9 +75,6 @@ function UploadMyListing({
   const getRoommatesCondition = useSelector(
     (state: RootState) => state.UploadRoommatesConditionReducer
   );
-  const getFacility = useSelector(
-    (state: RootState) => state.UploadFacilityReducer
-  );
   const getTitle = useSelector(
     (state: RootState) => state.UploadTitleReducer
   ) as titleType;
@@ -108,6 +86,8 @@ function UploadMyListing({
     (state: RootState) => state.UploadTimesReducer
   );
   const [edit, setEdit] = useState<boolean>(false);
+
+  const listingCollection = collection(db, "listings");
   function setDoc(facilityOptions: any) {
     const findPeopleAmount = (getRooms as roomDetailsType).reduce(
       (sum, people) => sum + people.peopleAmount,
@@ -131,12 +111,11 @@ function UploadMyListing({
       rentRoomDetails: getRooms,
       facility: facilityOptions,
       roommatesConditions: getRoommatesCondition,
-      addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`, //補上
-      latLng: getAddr.latLng, //預設北醫
+      addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`,
+      latLng: getAddr.latLng,
       matchGroup: [],
     };
-    const listingCollection = collection(db, "listings");
-    const userCollection = collection(db, "users");
+
     const newListingRef = doc(listingCollection);
     firebase.setNewListingDocField(
       newListingRef,
@@ -175,7 +154,6 @@ function UploadMyListing({
         </Span>
       </Title>
       <Hr />
-      {/* {loading ?  <Loading/> && } */}
       {edit && (
         <Tabs>
           {TabSelect.map((el, index) => (
@@ -213,7 +191,6 @@ function UploadMyListing({
       {clickTab === "設施" && edit && (
         <Facility setClickTab={setClickTab} setDoc={setDoc} />
       )}
-      {/* <SubmitBtn onClick={() => setDoc()}>上傳</SubmitBtn> */}
     </Wrapper>
   );
 }

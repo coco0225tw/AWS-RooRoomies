@@ -1,21 +1,9 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import { RootState } from "../../../redux/rootReducer";
-import { firebase } from "../../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
-import titleType from "../../../redux/UploadBookingTimes/UploadBookingTimesType";
-import { SubTitle } from "../../../components/ProfileTitle";
-import {
-  FormLegend,
-  FormGroup,
-  FormLabel,
-  FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
-  FormControl,
-} from "../../../components/InputArea";
-import { BtnDiv, BtnLink } from "../../../components/Button";
+
+import { RootState } from "../../../redux/rootReducer";
+import { BtnDiv } from "../../../components/Button";
 import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
   display: flex;
@@ -24,7 +12,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // background-color: lightgrey;
 `;
 
 const UploadMainImage = styled.input.attrs({
@@ -92,13 +79,9 @@ function UploadMainImageAndImages({
   const [imagesUrl, setImagesUrl] = useState<string[]>(getOtherImages);
   const [imagesBlob, setImagesBlob] = useState<Blob[]>();
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
-  const [images, setImages] = useState<[string, string[]]>();
   const mainImgRef = useRef<HTMLInputElement>(null);
   const otherImgRef = useRef<HTMLInputElement>(null);
-  // interface mainImageAndImagesType {
-  //   mainImage: string;
-  //   images: string[];
-  // }
+
   function previewMainImage(e: React.ChangeEvent<HTMLInputElement>) {
     let target = e.target as HTMLInputElement;
     let files = target.files;
@@ -136,12 +119,11 @@ function UploadMainImageAndImages({
   }
   return (
     <Wrapper>
-      {/* <SubTitle>上傳圖片</SubTitle> */}
       <UploadImgBtn
         onClick={() => {
           mainImgRef.current!.click();
         }}
-      ></UploadImgBtn>
+      />
       <UploadMainImage
         hidden
         ref={mainImgRef}
@@ -152,7 +134,7 @@ function UploadMainImageAndImages({
         onClick={() => {
           otherImgRef.current!.click();
         }}
-      ></UploadImgBtn>
+      />
       <UploadImages
         hidden
         ref={otherImgRef}

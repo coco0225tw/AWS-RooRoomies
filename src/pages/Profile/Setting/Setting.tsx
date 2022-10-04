@@ -2,21 +2,17 @@ import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../redux/rootReducer";
-import Hr from "../../../components/Hr";
+import {
+  FormGroup,
+  FormLabel,
+  FormControl,
+} from "../../../components/InputArea";
 import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import { firebase } from "../../../utils/firebase";
 import { Loading } from "../../../components/Loading";
-import {
-  FormLegend,
-  FormGroup,
-  FormLabel,
-  FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
-  FormControl,
-} from "../../../components/InputArea";
+import Hr from "../../../components/Hr";
+
 import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
   display: flex;
@@ -30,12 +26,7 @@ const Wrapper = styled.div`
   margin-top: 20px;
 `;
 
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
 const SubmitBtn = styled(BtnDiv)`
-  // border: solid 1px #4f5152;
   align-self: flex-end;
   margin-top: 20px;
 `;
@@ -56,7 +47,6 @@ const UploadImgBtn = styled.div`
   bottom: 0;
   transform: translate(20%, 20%);
   border: none;
-  // font-size: 20px;
   background: #c77155;
   color: whitesmoke;
   width: 60px;
@@ -81,14 +71,17 @@ function Setting({
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {
-  const [mainImgUrl, setMainImgUrl] = useState<string>("");
+  const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+
+  const [mainImgUrl, setMainImgUrl] = useState<string>("");
   const [edit, setEdit] = useState<boolean>(false);
+  const [mainImgBlob, setMainImgBlob] = useState<Blob>();
+
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const picRef = useRef<HTMLInputElement>(null);
-  const [mainImgBlob, setMainImgBlob] = useState<Blob>();
-  const dispatch = useDispatch();
+
   function previewMainImage(e: React.ChangeEvent<HTMLInputElement>) {
     let target = e.target as HTMLInputElement;
     let files = target.files;
@@ -148,7 +141,7 @@ function Setting({
                 onClick={() => {
                   picRef.current!.click();
                 }}
-              ></UploadImgBtn>
+              />
             </ProfilePic>
             <FormControl
               onChange={(e) => previewMainImage(e)}
@@ -156,7 +149,7 @@ function Setting({
               type="file"
               hidden
               disabled={!edit}
-            ></FormControl>
+            />
           </FormGroup>
           <FormGroup>
             <FormLabel>名字</FormLabel>
@@ -164,7 +157,7 @@ function Setting({
               ref={nameRef}
               defaultValue={userInfo!.name}
               disabled={!edit}
-            ></FormControl>
+            />
           </FormGroup>
           <FormGroup>
             <FormLabel>信箱</FormLabel>
@@ -172,7 +165,7 @@ function Setting({
               ref={emailRef}
               defaultValue={userInfo!.email}
               disabled={!edit}
-            ></FormControl>
+            />
           </FormGroup>
           {edit ? (
             <BtnWrapper>

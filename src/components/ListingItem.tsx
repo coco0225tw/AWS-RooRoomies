@@ -90,9 +90,6 @@ const Rent = styled.div`
   font-size: 28px;
   color: #c77155;
   align-self: flex-end;
-  //   bottom: 0;
-  //   flex-grow: 1;
-  //   vertical-align: text-bottom;
 `;
 
 const Addr = styled(Detail)``;
@@ -219,7 +216,6 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}

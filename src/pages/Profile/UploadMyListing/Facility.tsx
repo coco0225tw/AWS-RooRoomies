@@ -1,12 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import facilityType from "../../../redux/UploadFacility/UploadFacilityType";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { RootState } from "../../../redux/rootReducer";
-import { BtnDiv, BtnLink } from "../../../components/Button";
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
@@ -15,8 +10,11 @@ import {
   FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import { RootState } from "../../../redux/rootReducer";
+import { BtnDiv } from "../../../components/Button";
 
 import Icons from "../../../assets/facility/Icon";
+import facilityType from "../../../redux/UploadFacility/UploadFacilityType";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,7 +22,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // background-color: lightgrey;
 `;
 
 const FormText = styled.div`
@@ -70,11 +67,9 @@ const CheckedFormCheckInput = styled(FormCheckInput)`
   display: none;
 
   &:checked + ${CheckedFormCheckLabel} {
-    // background: #c77155;
     color: #c77155;
   }
   &:checked + ${CheckedFormCheckLabel} span ${Icon} {
-    // background-color: #c77155;
     border: solid 3px #c77155;
   }
 `;
@@ -262,33 +257,20 @@ function Facility({
   setDoc: any;
 }) {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const facilityInfo = useSelector(
     (state: RootState) => state.UploadFacilityReducer
   );
-
-  const initialFacilityEmptyState =
-    // userInfo!.userListingId?.length !== 0
-    //   ?
-    facilityInfo;
-  // : {
-  //     deposit: "",
-  //     extraFee: [],
-  //     facility: [],
-  //     furniture: [],
-  //     parking: [],
-  //     rules: [],
-  //   };
+  const initialFacilityEmptyState = facilityInfo;
   const [facilityState, setFacilityState] = useState<facilityType>(
     initialFacilityEmptyState
   );
+
   async function submit() {
     dispatch({ type: "UPLOAD_FACILITY", payload: { facilityState } });
   }
-  const [checked, setChecked] = useState<boolean>(false);
+
   return (
     <Wrapper>
-      {/* <SubTitle>設施</SubTitle> */}
       {facilityFormGroups.map(({ label, key, options }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>
@@ -299,7 +281,6 @@ function Facility({
                   key={option.value}
                   style={{
                     flexBasis: "25%",
-                    // marginRight: "12px",
                     justifyContent: "flex-start",
                     marginBottom: "12px",
                   }}
@@ -335,7 +316,6 @@ function Facility({
                       }}
                       type="checkbox"
                       name={option.label}
-                      // value={facilityState[key as keyof facilityType]}
                       defaultChecked
                     />
                   ) : (
@@ -399,7 +379,6 @@ function Facility({
       >
         送出
       </SubmitBtn>
-      {/* <SubmitBtn>下一頁</SubmitBtn> */}
     </Wrapper>
   );
 }

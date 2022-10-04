@@ -1,40 +1,24 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/rootReducer";
 import styled from "styled-components";
-import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+
+import { RootState } from "../../../redux/rootReducer";
 import { firebase } from "../../../utils/firebase";
 import Hr from "../../../components/Hr";
 import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import { Loading } from "../../../components/Loading";
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
   FormCheck,
   FormCheckLabel,
-  FormControl,
 } from "../../../components/InputArea";
-import {
-  getFirestore,
-  getDocs,
-  updateDoc,
-  doc,
-  addDoc,
-  collection,
-  Timestamp,
-  onSnapshot,
-  QueryDocumentSnapshot,
-  DocumentData,
-  orderBy,
-  query,
-  FieldValue,
-  serverTimestamp,
-  where,
-} from "firebase/firestore";
+import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -47,14 +31,6 @@ const Wrapper = styled.div`
   margin-top: 20px;
 `;
 
-const FormText = styled.div`
-  line-height: 19px;
-  font-size: 16px;
-  color: #8b572a;
-  margin-top: 10px;
-  width: 100%;
-  text-align: right;
-`;
 const roommatesConditionFormGroups = [
   {
     label: "性別",
@@ -91,11 +67,6 @@ const roommatesConditionFormGroups = [
         text: "不會",
         value: "false",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
   {
@@ -112,11 +83,6 @@ const roommatesConditionFormGroups = [
         text: "不好",
         value: "bad",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
   {
@@ -133,11 +99,6 @@ const roommatesConditionFormGroups = [
         text: "夜貓子",
         value: "nightCat",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
   {
@@ -154,11 +115,6 @@ const roommatesConditionFormGroups = [
         text: "不是",
         value: "false",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
   {
@@ -175,11 +131,6 @@ const roommatesConditionFormGroups = [
         text: "無",
         value: "false",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
   {
@@ -196,34 +147,18 @@ const roommatesConditionFormGroups = [
         text: "無",
         value: "false",
       },
-      //   {
-      //     label: 'unlimited',
-      //     text: '不限',
-      //     value: 'unlimited',
-      //   },
     ],
   },
-  // {
-  //   label: "職業類別",
-  //   key: "career",
-  // },
 ];
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
-
-  // display: flex;
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)<{ edit: boolean }>`
-  // display: none;
-
   &:checked + ${CheckedFormCheckLabel} {
-    // background: #c77155;
     color: ${(props) => (props.edit ? "#c77155" : "grey")};
-    // color: #c77155;
   }
 `;
 const SubmitBtn = styled(BtnDiv)`
-  // border: solid 1px #4f5152;
   align-self: flex-end;
   margin-top: 20px;
   display: inline-block;
@@ -241,11 +176,13 @@ function AboutMe({
   loading: boolean;
 }) {
   const dispatch = useDispatch();
+
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const userAsRoommate = useSelector(
     (state: RootState) => state.UserAsRoommateReducer
   );
-  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+
   const [edit, setEdit] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [houseHuntingData, setHouseHuntingData] = useState<boolean>(false);
@@ -276,7 +213,6 @@ function AboutMe({
     setSubmitting(false);
   }
   useEffect(() => {
-    //
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
@@ -374,7 +310,6 @@ function AboutMe({
                           id={key + option.value}
                           checked
                           disabled={!edit}
-                          // defaultChecked
                           onChange={(e) => {
                             if (e.target.checked)
                               setMeAsRoommatesState({
@@ -386,10 +321,7 @@ function AboutMe({
                           name={label}
                           value={option.value || ""}
                         />
-                        <CheckedFormCheckLabel
-                          // edit={!edit}
-                          htmlFor={key + option.value}
-                        >
+                        <CheckedFormCheckLabel htmlFor={key + option.value}>
                           {option.text}
                         </CheckedFormCheckLabel>
                       </React.Fragment>

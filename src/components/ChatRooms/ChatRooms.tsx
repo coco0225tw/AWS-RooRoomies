@@ -76,9 +76,7 @@ const Message = styled.div<{ auth: boolean }>`
 `;
 
 const UserInfo = styled.div``;
-const UserName = styled.div`
-  font-size: 4px;
-`;
+
 const UserPic = styled.div<{ pic: string }>`
   width: 40px;
   height: 40px;
@@ -304,13 +302,13 @@ function ChatRooms() {
                               {el.userMsg}
                             </UserMessage>
                             <UserInfo>
-                              <UserPic pic={el.userPic}></UserPic>
+                              <UserPic pic={el.userPic} />
                             </UserInfo>
                           </MessageWrapper>
                         ) : (
                           <MessageWrapper>
                             <UserInfo>
-                              <UserPic pic={el.userPic}></UserPic>
+                              <UserPic pic={el.userPic} />
                             </UserInfo>
                             <UserMessage style={{ marginLeft: "12px" }}>
                               {el.userMsg}

@@ -1,47 +1,39 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
-import Map from "./Map";
-import CalendarContainer from "../../components/Calendar";
-import { firebase, db } from "../../utils/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  query,
   collection,
-  limit,
-  QuerySnapshot,
   DocumentData,
   QueryDocumentSnapshot,
-  FieldValue,
   onSnapshot,
-  Timestamp,
 } from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
+import { firebase, db } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
+
+import Calendar from "react-calendar";
+import Map from "./Map";
+import CalendarContainer from "../../components/Calendar";
 import RoommatesCondition from "./RoommatesCondition";
 import Facility from "./Facility";
 import RoomDetails from "./RoomDetails";
 import Group from "./Group";
-import { Link, useNavigate } from "react-router-dom";
-import { groupType, userInfoType } from "../../redux/Group/GroupType";
-// import { groupType, userInfoType } from '../../redux/Group/GroupType';
-import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
-import bookingTimesType from "../../redux/UploadBookingTimes/UploadBookingTimesType";
-import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import facilityType from "../../redux/UploadFacility/UploadFacilityType";
 
 import likedIcon from "../../assets/heart.png";
 import unLikedIcon from "../../assets/unHeart.png";
-
 import addIcon from "../../assets/add.png";
 import unAddIcon from "../../assets/unAdd.png";
-
 import { BtnDiv } from "../../components/Button";
 import { PopupComponent, PopupImage } from "../../components/Popup";
-
 import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
+
+import { groupType } from "../../redux/Group/GroupType";
+import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+import facilityType from "../../redux/UploadFacility/UploadFacilityType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -79,13 +71,10 @@ const TitleWrapper = styled(SectionWrapper)`
   font-size: 20px;
   flex-direction: column;
   width: 60%;
-  // height: 100vh;
 `;
 
 const DividedCalendarSection = styled(SectionWrapper)`
   flex-direction: row;
-  // align-items: flex-start;
-  // background-color: grey;
   margin: 20px 0px 32px;
   justify-content: space-between;
   align-items: center;
@@ -96,15 +85,9 @@ const SelectTimeWrapper = styled(SectionWrapper)`
   border-bottom: solid 1px #c77155;
   padding: 10px 0px;
   color: #4f5152;
-  // border-radius: 4px;
-  // cursor: pointer;
   transition: 0.2s;
   justify-content: space-between;
   align-items: baseline;
-  // &:hover {
-  //   color: white;
-  //   background-color: #c77155;
-  // }
 `;
 
 const ImageWrap = styled.div`
@@ -134,8 +117,6 @@ const MainImage = styled.div<{ src: string }>`
 const Images = styled(MainImage)`
   height: auto;
   aspect-ratio: 1 / 1;
-  // width: 50%;
-  // height: auto;
 `;
 
 const InformationWrapper = styled(SectionWrapper)`
@@ -144,7 +125,6 @@ const InformationWrapper = styled(SectionWrapper)`
 `;
 const Title = styled.div`
   font-size: 40px;
-  //width: 100%;
 `;
 const AddrSection = styled(SectionWrapper)`
   justify-content: space-between;
@@ -152,15 +132,12 @@ const AddrSection = styled(SectionWrapper)`
 `;
 const StickyCalendarContainer = styled.div`
   display: flex;
-  // flex-grow: 1;
   flex-direction: column;
   align-items: start;
   position: sticky;
   top: 100px;
   align-self: flex-start;
   width: calc(350px + 40px + 20px);
-  // background-color: brown;
-  // background-color: black;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 20px;
   border-radius: 20px;
@@ -178,11 +155,6 @@ const SelectedDate = styled.div`
   color: #4f5152;
   width: 100%;
   margin-top: 32px;
-`;
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
 `;
 
 const Icon = styled.div`
@@ -210,13 +182,6 @@ const SubTitle = styled.div`
   width: 100%;
 `;
 
-// const Hr = styled.div`
-//   background-color: #4f5152;
-//   width: 100%;
-//   height: 1px;
-//   margin: 4px 0px 12px;
-// `;
-
 const SelectTime = styled.div`
   font-size: 16px;
   letter-spacing: 4px;
@@ -230,11 +195,9 @@ const CannotBookedBtn = styled(BtnDiv)`
     background-color: #f3f2ef;
   }
 `;
-const UserBookBtn = styled(BtnDiv)``;
 const IconArea = styled.div`
   display: flex;
   justify-content: flex-end;
-  // padding: 8px 8px 0px 0px;
   align-items: end;
   transition-duration: 0.2s;
   align-self: flex-end;
@@ -243,7 +206,6 @@ const IconArea = styled.div`
   padding-bottom: 12px;
 `;
 const Rent = styled.div`
-  // right: 0px;
   color: #c77155;
   font-size: 28px;
 `;
@@ -252,7 +214,6 @@ const TitleDivide = styled(SectionWrapper)`
   width: auto;
   justify-content: space-between;
   flex-direction: column;
-  // flex-wrap: wrap;
 `;
 const TitleInfoWrapper = styled(SectionWrapper)`
   align-items: center;
@@ -274,21 +235,48 @@ const Span = styled.span`
 `;
 function Listing() {
   const navigate = useNavigate();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const { id } = useParams<string>();
   const dispatch = useDispatch();
+  const { id } = useParams<string>();
+
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const compareLists = useSelector(
     (state: RootState) => state.GetCompareListsReducer
   );
   const getGroup = useSelector(
     (state: RootState) => state.GroupReducer
   ) as Array<groupType>;
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
   );
-  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+
   const [isShown, setIsShown] = useState<boolean>(false);
+  const [hintTextLoading, setHintTextLoading] = useState<boolean>(false);
+  const [listingInfo, setListingInfo] = useState<ListingType>();
+  const [bookingTimesInfo, setBookingTimesInfo] = useState<
+    QueryDocumentSnapshot<DocumentData>[]
+  >([]);
+  const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [popImg, setPopImg] = useState<boolean>(false);
+  const [clickOnImg, setClickOnImg] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
+  const [bookTimeInfo, setBookTimeInfo] = useState<{
+    uid: string;
+    docId: string;
+    listingId: string;
+    selectedDateTime: any;
+  }>();
+  const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
+    useState<boolean>(false);
+  const [match, setMatch] = useState<boolean>(false);
+  const [isInGroup, setIsInGroup] = useState<boolean>(false);
+  const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
+  const [canBook, setCanBook] = useState<boolean>(false);
+  type tileDisabledType = { date: Date };
+
   function handleLiked(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     isLiked: boolean
@@ -392,7 +380,6 @@ function Listing() {
     rentRoomDetails: roomDetailsType;
     peopleAmount: number;
     matchGroup: Array<groupType>;
-    // title: string;
     startRent: number;
     endRent: number;
     totalSq: number;
@@ -400,34 +387,7 @@ function Listing() {
     moveInDate: string;
     latLng: { lat: number; lng: number };
   };
-  const [hintTextLoading, setHintTextLoading] = useState<boolean>(false);
-  const [listingInfo, setListingInfo] = useState<ListingType>();
-  const [bookingTimesInfo, setBookingTimesInfo] = useState<
-    QueryDocumentSnapshot<DocumentData>[]
-  >([]);
-  const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  // const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
-  // const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
-  const [popImg, setPopImg] = useState<boolean>(false);
-  const [clickOnImg, setClickOnImg] = useState<string>("");
-  const [submitting, setSubmitting] = useState<boolean>(false);
-  const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
-  const [bookTimeInfo, setBookTimeInfo] = useState<{
-    uid: string;
-    docId: string;
-    listingId: string;
-    selectedDateTime: any;
-  }>();
-  //條件
-  const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
-    useState<boolean>(false);
-  const [match, setMatch] = useState<boolean>(false);
-  const [isInGroup, setIsInGroup] = useState<boolean>(false);
-  const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
-  const [canBook, setCanBook] = useState<boolean>(false);
-  //
-  type tileDisabledType = { date: Date };
+
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
       return !ableBookingTimes.some(
@@ -447,13 +407,7 @@ function Listing() {
     setPopImg(true);
     setClickOnImg(url);
   }
-  async function bookedTime(
-    bookTimeInfo
-    // uid: string,
-    // docId: string,
-    // listingId: string,
-    // selectedDateTime: any
-  ) {
+  async function bookedTime(bookTimeInfo) {
     setHintTextLoading(true);
     let chatRoomId!: string;
     let groupId!: number;
@@ -538,24 +492,13 @@ function Listing() {
       snapshot.forEach((doc) => {
         listingTimesArr.push(doc);
       });
-      // setBookingTimesInfo(listingTimesArr);
     });
-    // async function getBookingTimes() {
     function getBookingTimes() {
       const getAllMessages = onSnapshot(subColRef, (snapshot) => {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
         snapshot.forEach((doc) => {
           listingTimesArr.push(doc);
         });
-        // setBookingTimesInfo(listingTimesArr);
-
-        //  });
-        // await firebase.getBookingTimesSubColForListing(id!).then((times) => {
-        //   let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        //   times.forEach((doc) => {
-        //     listingTimesArr.push(doc);
-        //   });
-        //
         setBookingTimesInfo(listingTimesArr);
 
         let enableDate = [];
@@ -583,8 +526,6 @@ function Listing() {
       });
     }
     async function promise() {
-      // await Promise.all([getBookingTimes(), getListing()]);
-      // await check(userInfo.uid, id!);
       getListing();
     }
     getBookingTimes();
@@ -611,15 +552,6 @@ function Listing() {
       {popImg && (
         <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />
       )}
-      {/* {alreadyBookedPopup && (
-        <PopupComponent
-          msg={`一團只能預約一個時間哦!!`}
-          notDefaultBtn={`確認`}
-          defaultBtn={`回物件管理頁面取消`}
-          clickClose={() => setAlreadyBookedPopup(false)}
-          clickFunction={() => navigate("/profile")}
-        />
-      )} */}
       {bookedTimePopup && (
         <PopupComponent
           msg={`確認預約?`}
@@ -631,7 +563,6 @@ function Listing() {
       )}
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
@@ -639,7 +570,7 @@ function Listing() {
           clickFunction={() => navigate("/signin")}
         />
       )}
-      {/* <div>房源id:{id}</div> */}
+
       <ImagesWrapper>
         <ImageWrap>
           <MainImage
@@ -657,7 +588,6 @@ function Listing() {
         </OtherImagesWrapper>
       </ImagesWrapper>
       <DividedCalendarSection>
-        {/* <InformationWrapper> */}
         <TitleWrapper>
           <Title>{listingInfo?.title}</Title>
           <AddrSection>
@@ -685,19 +615,15 @@ function Listing() {
 
           <RoommatesCondition
             roommatesConditions={listingInfo?.roommatesConditions}
-            match={match}
             setMatch={setMatch}
-            addUserAsRoommatesCondition={addUserAsRoommatesCondition}
             setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
           ></RoommatesCondition>
           <Group
             match={match}
-            setMatch={setMatch}
             peopleAmount={listingInfo?.peopleAmount!}
             listingId={id!}
             listingTitle={listingInfo?.title as string}
             addUserAsRoommatesCondition={addUserAsRoommatesCondition}
-            setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
             notAddUserAsRoommatesConditionAlert={
               notAddUserAsRoommatesConditionAlert
             }
@@ -728,7 +654,6 @@ function Listing() {
             </span>
           </SubTitle>
 
-          {/* <Hr /> */}
           <CalendarContainer>
             <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
           </CalendarContainer>
@@ -845,11 +770,7 @@ function Listing() {
                 ))}
           </Times>
         </StickyCalendarContainer>
-        {/* </InformationWrapper> */}
       </DividedCalendarSection>
-      {/* <Hr style={{ margin: '40px 0px' }} /> */}
-      {/* <SubmitBtn onClick={() => match()}>比對</SubmitBtn> */}
-      {/* <SubTitle style={{ marginBottom: '32px' }}>地點</SubTitle> */}
       <Map latLng={listingInfo?.latLng!}></Map>
     </Wrapper>
   );

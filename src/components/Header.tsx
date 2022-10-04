@@ -22,12 +22,6 @@ const Wrapper = styled.div`
   background-color: #f3f2ef;
   z-index: 4;
   top: 0;
-  // margin-bottom: 80px;
-  // @media screen and (max-width: 960px) {
-  //   background-color: white;
-  // }
-  @media screen and (max-width: 960px) {
-  }
 `;
 
 const Title = styled.div`
@@ -46,12 +40,7 @@ const LogoWrapper = styled(Link)`
   display: flex;
   align-items: center;
 `;
-const LogoImg = styled.div`
-  width: 40px;
-  height: 40px;
-  background-image: url(${Logo});
-  background-size: 40px 40px;
-`;
+
 const LogoText = styled.div`
   font-size: 32px;
   letter-spacing: 8px;
@@ -140,13 +129,11 @@ function Header() {
       )}
 
       <LogoWrapper to={"./"}>
-        {/* <LogoImg /> */}
         <LogoText>rooroomies</LogoText>
       </LogoWrapper>
       <Search />
       {authChange ? (
         <SectionWrapper>
-          {/* <Notification></Notification> */}
           <Profile
             to={"/profile"}
             img={userInfo.image}

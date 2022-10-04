@@ -1,22 +1,21 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { useForm, Controller } from "react-hook-form";
-import titleType from "../../../redux/UploadTitle/UploadTitleType";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { RootState } from "../../../redux/rootReducer";
-import { BtnDiv, BtnLink, InputBtn } from "../../../components/Button";
-import arrow from "../../../assets/arrow.png";
+import { useForm } from "react-hook-form";
+
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
-  FormCheck,
   FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import { RootState } from "../../../redux/rootReducer";
+import { BtnDiv } from "../../../components/Button";
+import arrow from "../../../assets/arrow.png";
+import titleType from "../../../redux/UploadTitle/UploadTitleType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,81 +23,24 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // background-color: lightgrey;
 `;
 
 const SubmitBtn = styled(BtnDiv)`
   margin-top: 20px;
   align-self: flex-end;
 `;
-const TextArea = styled.textarea`
-  height: 20vh;
-  width: 100%;
-  letter-spacing: 1.6px;
-  font-size: 20px;
-  border-radius: 8px;
-  border: solid 1px #979797;
-  padding: 8px;
-  margin-top: 12px;
-`;
-const AlertText = styled.div`
-  color: #c77155;
-  position: absolute;
-  right: 0;
-  top: 100%;
-`;
-const StyledFormControl = styled(FormControl)`
-  // &:focus {
-  //   outline: #c77155;
-  // }
-`;
+
 const StyledFormInputWrapper = styled(FormInputWrapper)`
   margin-left: 40px;
   margin-top: 0px;
 `;
-const DropDownMenuWrapper = styled(StyledFormInputWrapper)`
-  margin-left: 0px;
-  position: absolute;
-  background-color: #fff;
-  z-index: 1;
-  top: 48px;
-  box-shadow: 0px 0px 3px #bbbbbb;
-  // align-items: flex-start;
-  width: 60%;
-  flex-direction: column;
-  padding: 8px inherit;
-`;
+
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
 `;
-const CheckedFormCheckInput = styled(FormCheckInput)`
-  display: none;
-  &:checked + ${CheckedFormCheckLabel} {
-    color: #c77155;
-  }
-`;
+
 const StyledFormLabel = styled(FormLabel)`
   flex-shrink: 0;
-`;
-const DropDown = styled(StyledFormLabel)`
-  cursor: pointer;
-  // color: #c77155;
-  border-color: #c77155;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-`;
-const DropDownIcon = styled.div<{ openDropDown: boolean }>`
-  width: 20px;
-  height: 20px;
-  background-size: 20px 20px;
-  background-image: url(${arrow});
-  background-position: center;
-  transform: ${(props) =>
-    props.openDropDown ? "rotate(180deg)" : "rotate(0deg)"};
-  transition-duration: 0.2s;
-  margin-left: 20px;
-  border: solid 1px #fff7f4;
 `;
 
 function ListingTitle({
@@ -122,17 +64,7 @@ function ListingTitle({
     submit(data);
     setClickTab("地址");
   };
-  const initialTitleState =
-    // userInfo!.userListingId?.length !== 0
-    //   ?
-    titleInfo;
-
-  // : {
-  //     title: "",
-  //     totalSq: "",
-  //     form: "",
-  //     environmentDescription: "",
-  //   };
+  const initialTitleState = titleInfo;
 
   const titleFormGroups = [
     { label: "名稱", key: "title" },
@@ -151,10 +83,6 @@ function ListingTitle({
         message: "※必填欄位",
       },
       pattern: null,
-      // maxLength: {
-      //   value: 5,
-      //   message: "※請輸入至少五個字",
-      // },
     },
     {
       label: "總坪數",
@@ -167,7 +95,6 @@ function ListingTitle({
         value: /^([1-9]([0-9]*))$/,
         message: "※請輸入正確的坪數",
       },
-      // maxLength: null,
     },
     {
       label: "規格",
@@ -176,7 +103,6 @@ function ListingTitle({
         value: true,
         message: "※必填欄位",
       },
-      // maxLength: null,
       pattern: null,
       options: [
         { label: "公寓", key: "apartment" },
@@ -186,7 +112,6 @@ function ListingTitle({
     {
       label: "描述",
       key: "environmentDescription",
-      // maxLength: null,
       required: null,
       pattern: null,
     },
@@ -197,7 +122,6 @@ function ListingTitle({
         value: true,
         message: "※必填欄位",
       },
-      // maxLength: null,
       pattern: {
         value: /^09[0-9]{8}$/,
         message: "※請輸入正確的手機號碼",
@@ -206,7 +130,6 @@ function ListingTitle({
     {
       label: "入住時間 ",
       key: "moveInDate",
-      // maxLength: null,
       required: {
         value: true,
         message: "※必填欄位",
@@ -219,7 +142,6 @@ function ListingTitle({
     dispatch({ type: "UPLOAD_TITLE", payload: { titleState } });
   }
   useEffect(() => {
-    // const object = localStorage.getItem("object");
     for (const [key, value] of Object.entries(titleInfo)) {
       setValue(key, value, {
         shouldValidate: true,

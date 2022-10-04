@@ -1,24 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { firebase } from "../../utils/firebase";
-import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import facilityType from "../../redux/UploadFacility/UploadFacilityType";
+
 import Icons from "../../assets/facility/Icon";
-import { Title } from "../../components/ProfileTitle";
 import Hr from "../../components/Hr";
+import facilityType from "../../redux/UploadFacility/UploadFacilityType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  // height: 100%;
   margin: auto;
-`;
-
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
 `;
 
 const FacilityArea = styled.div`
@@ -33,15 +25,9 @@ const FacilityIcons = styled.div`
   display: flex;
   width: 70%;
   flex-wrap: wrap;
-  // margin-top: 32px;
 `;
 const Label = styled.div`
-  // font-size: 16px;
-  // letter-spacing: 32px;
   font-size: 16px;
-  // letter-spacing: 32px;
-  // transform: translateY(8px);
-  // top: 8px;
   padding: 12px 0 4px;
   border-bottom: solid 0.5px #c77155;
   flex-shrink: 0;
@@ -49,7 +35,6 @@ const Label = styled.div`
 
 const FacilityText = styled.div`
   font-size: 16px;
-  // padding-right: 20px;
   text-align: center;
   padding: 8px;
 `;
@@ -57,10 +42,6 @@ const FacilityContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  // margin-right: 32px;
-  // flex-grow: 0;
-  // flex-shrink: 0;
-  // flex-basis: auto;
   flex-basis: calc(100% / 3);
   margin-bottom: 12px;
 `;
@@ -72,13 +53,10 @@ const FacilityIcon = styled.div<{ img: string }>`
   background-position: center center;
 `;
 const Facilities = styled.div`
-  // flex: 1;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  // justify-content: space-between;
   width: 100%;
-  // align-items: center;
 `;
 const SubTitle = styled.div`
   font-size: 28px;
@@ -87,20 +65,9 @@ const SubTitle = styled.div`
   color: #4f5152;
   width: 100%;
 `;
-// const RoommatesCond
 function Facility(facility: any) {
-  const [facilities, setFacilities] = useState<facilityType>();
   const [keys, setKeys] = useState<string[]>([]);
 
-  useEffect(() => {
-    function findObjectKeys() {
-      let keys = Object.keys(facility.facility);
-      setKeys(keys);
-    }
-    if (facility?.facility) {
-      findObjectKeys();
-    }
-  }, [facility]);
   const facilityFormGroups = [
     { label: "押金", key: "deposit", value: Icons.deposit },
     {
@@ -276,7 +243,15 @@ function Facility(facility: any) {
       ],
     },
   ];
-
+  useEffect(() => {
+    function findObjectKeys() {
+      let keys = Object.keys(facility.facility);
+      setKeys(keys);
+    }
+    if (facility?.facility) {
+      findObjectKeys();
+    }
+  }, [facility]);
   return (
     <Wrapper>
       <Hr style={{ margin: "40px 0px" }} />
@@ -302,12 +277,12 @@ function Facility(facility: any) {
                         </FacilityContainer>
                       ))
                   : ""}
-                {typeof facility.facility[el.key] == "string" ? (
+                {typeof facility.facility[el.key] == "string" && (
                   <FacilityContainer>
                     <FacilityIcon img={Icons.deposit} />
                     <FacilityText>{facility.facility[el.key]}個月</FacilityText>
                   </FacilityContainer>
-                ) : null}
+                )}
               </FacilityIcons>
             </FacilityArea>
           ))}

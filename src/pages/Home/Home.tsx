@@ -12,11 +12,6 @@ import NoListing from "../../components/NoData";
 
 import { Loading } from "../../components/Loading";
 
-import Logo from "../../assets/noHouse.png";
-interface Props {
-  key: string;
-}
-
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -59,10 +54,6 @@ const ScrollComponent = styled.div`
   bottom: 32px;
 `;
 function Home() {
-  interface Props {
-    data: DocumentData;
-    key: string;
-  }
   const listingDocData = useSelector(
     (state: RootState) => state.GetListingInHomePageReducer
   );
@@ -76,13 +67,14 @@ function Home() {
   const [loadFirstPage, setLoadFirstPage] = useState<boolean>(false);
   const [loadNextPage, setLoadNextPage] = useState<boolean>(false);
   const [noData, setNoData] = useState<boolean>(false);
-
+  interface Props {
+    data: DocumentData;
+    key: string;
+  }
   return (
     <Wrapper>
       <Search
-        loading={loading}
         setLoading={setLoading}
-        loadNextPage={loadNextPage}
         loadFirstPage={loadFirstPage}
         setLoadFirstPage={setLoadFirstPage}
         scrollRef={scrollRef}
@@ -100,7 +92,7 @@ function Home() {
               target="_blank"
               to={`/listing/${listingDocData.id}`}
             >
-              <Listing listingDocData={listingDocData}></Listing>
+              <Listing listingDocData={listingDocData} />
             </ListingLink>
           ))}
       </ListingWrapper>

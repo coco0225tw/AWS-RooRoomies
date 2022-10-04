@@ -1,27 +1,18 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import addressType from "../../../redux/UploadAddr/UploadAddrType";
-import { SubTitle } from "../../../components/ProfileTitle";
-import GoogleMapKey from "../../../key";
+
 import {
-  GoogleMap,
-  useJsApiLoader,
-  useLoadScript,
-  Marker,
-} from "@react-google-maps/api";
-import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
 import { RootState } from "../../../redux/rootReducer";
 import { BtnDiv, BtnLink } from "../../../components/Button";
+import GoogleMapKey from "../../../key";
+import addressType from "../../../redux/UploadAddr/UploadAddrType";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -46,17 +37,10 @@ function ListingAddr({
 }: {
   setClickTab: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
   const dispatch = useDispatch();
+  const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const initialAddrState = getAddr;
-  // {
-  //   countyname: "",
-  //   townname: "",
-  //   completeAddr: "",
-  //   floor: "",
-  //   latLng: { lat: null, lng: null },
-  // };
 
   const [addrState, setAddrState] = useState<addressType>(initialAddrState);
 
@@ -82,7 +66,6 @@ function ListingAddr({
   }
   return (
     <Wrapper>
-      {/* <SubTitle>輸入地址</SubTitle> */}
       {addressFormGroups.map(({ label, key }) => (
         <FormGroup key={key}>
           <FormLabel>{label}</FormLabel>

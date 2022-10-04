@@ -1,45 +1,33 @@
-import React, { useEffect, useState, useContext, useRef } from "react";
-// import ProfileLogin from "./ProfileLogin";
+import React, { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { RootState } from "../../redux/rootReducer";
 
 import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
-import { useSelector, useDispatch } from "react-redux";
-import loginPage from "../../assets/loginPage.png";
-import { Title, SubTitle } from "../../components/ProfileTitle";
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
-  FormCheckInput,
-  FormCheck,
-  FormCheckLabel,
   FormControl,
 } from "../../components/InputArea";
 import { BtnDiv } from "../../components/Button";
+import loginPage from "../../assets/loginPage.png";
 import userDefaultPic from "../../assets/user2.png";
+
 interface IsActiveBtnProps {
   $isActive: boolean;
 }
 
-const showInfoInputAni = keyframes`
- 0% { height: 0; opacity: 0 ;}
- 100% { height: 100%; opacity: 1; }
-`;
 const Wrapper = styled.div`
-  // padding: 130px 0px;
-  // padding: 80px 40px;
   flex-grow: 1;
   background-image: url(${loginPage});
   width: 100%;
   height: calc(100vh - 80px);
   background-size: cover;
   background-position: right;
-  ${"" /* border: solid 5px brown; */};
-  // transform: scale(-1); // width: 960px;
   @media screen and (max-width: 1279px) {
     width: 100vw;
   }
@@ -47,7 +35,6 @@ const Wrapper = styled.div`
 const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  // width: 30%;
   padding: 0px 40px 28px;
   align-items: center;
   margin-top: 20px;
@@ -59,38 +46,17 @@ const Form = styled.form.attrs({})`
   display: flex;
   flex-direction: column;
   justify-content: start;
-  // border: solid 1px #82542b;
   border-radius: 20px;
   align-items: center;
   width: 30vw;
   left: 50%;
   top: 20%;
   transition-duration: 0.2s;
-  // transform: translateY(-80%);
   background-color: rgba(255, 255, 255, 0.5);
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-  // padding: 40px;
 `;
-// const FormLabel = styled.label`
-//   line-height: 19px;
-//   font-size: 18px;
-//   color: #3f3a3a;
-//   display: block;
 
-//   @media screen and (max-width: 1279px) {
-//     margin-bottom: 4px;
-//     align-self: start;
-//     ${'' /* font-size: 14px; */}
-//   }
-// `;
-const FormInput = styled.input.attrs((props) => ({
-  // type: props.id.includes("Picture")
-  //   ? "file"
-  //   : props.id.includes("Password")
-  //   ? "password"
-  //   : "text",
-  // ${props.id.includes("Password") && 'autocomplete: off'}
-}))`
+const FormInput = styled.input`
   margin-left: 20px;
   height: 40px;
   border-radius: 6px;
@@ -100,7 +66,6 @@ const FormInput = styled.input.attrs((props) => ({
   @media screen and (max-width: 1279px) {
     margin-left: 0px;
     width: 100%;
-    ${"" /* height: 26px; */}
   }
 `;
 
@@ -148,30 +113,19 @@ const registerFormGroup = [
   { label: "使用者名稱", key: "regName" },
   { label: "信箱", key: "regEmail" },
   { label: "密碼", key: "regPassword" },
-  // { label: '上傳使用者照片', key: 'regPicture' },
 ];
 const signInFormGroup = [
   { label: "信箱", key: "signInEmail" },
   { label: "密碼", key: "signInPassword" },
 ];
-const FormGroups = [signInFormGroup, registerFormGroup];
-
-const submitBtnGroups = ["登入", "註冊", "登出"];
 
 function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [user, setUser] = useState<User>();
-  useEffect(() => {
-    if (authChange) {
-      onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser as User);
-      });
-      navigate("/profile");
-    }
-  }, [authChange]);
+
   interface User {
     email: string;
   }
@@ -210,7 +164,6 @@ function SignIn() {
         regInfoRef.current[1].value,
         regInfoRef.current[0].value,
         userDefaultPic
-        // regInfoRef.current[3].files![0]
       )
       .then(() => {
         navigate("/");
@@ -253,25 +206,14 @@ function SignIn() {
       });
   };
 
-  const handleLogout = async function () {
-    await firebase.signOutUser();
-  };
-
-  async function getProfile() {
-    let jwtToken = window.localStorage.getItem("Authorization"); //之後要打開
-  }
-
-  const validationForInput = {
-    validRegEmail:
-      /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
-    validRegName: /\s*[\u4e00-\u9FFFa-zA-Z]+\s*/,
-    validRegPassword: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
-    validRegConfirm_Password: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
-    validUserEmail:
-      /(^\S[a-zA-Z0-9_.+-]+)\S@\S(\S[\Da-zA-Z])+\.(\S[\Da-zA-Z])+\S$/,
-    validUserPassword: /(\S[a-zA-Z0-9_.+-]*)(\d\-*)*$/,
-  };
-
+  useEffect(() => {
+    if (authChange) {
+      onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser as User);
+      });
+      navigate("/profile");
+    }
+  }, [authChange]);
   return (
     <Wrapper>
       <Form>
@@ -289,9 +231,8 @@ function SignIn() {
           ))}
         </SwitchBtns>
         <FormWrapper>
-          {/* <Title>登入</Title> */}
           {activeOptionIndex === 0 && (
-            <>
+            <React.Fragment>
               {signInFormGroup.map(({ label, key }, index) => (
                 <FormGroup
                   style={{ marginTop: "0px", marginBottom: "20px" }}
@@ -302,16 +243,16 @@ function SignIn() {
                     <FormControlFullWidth
                       type={key.includes("Password") ? "password" : "input"}
                       ref={(el) => ((signInInfoRef.current[index] as any) = el)}
-                    ></FormControlFullWidth>
+                    />
                   </FormInputWrapper>
                 </FormGroup>
               ))}
               <BtnDiv onClick={() => signInSubmit()}>登入</BtnDiv>
-            </>
+            </React.Fragment>
           )}
 
           {activeOptionIndex === 1 && (
-            <>
+            <React.Fragment>
               {registerFormGroup.map(({ label, key }, index) => (
                 <FormGroup
                   style={{ marginTop: "0px", marginBottom: "20px" }}
@@ -328,12 +269,12 @@ function SignIn() {
                           : "input"
                       }
                       ref={(el) => ((regInfoRef.current[index] as any) = el)}
-                    ></FormControlFullWidth>
+                    />
                   </FormInputWrapper>
                 </FormGroup>
               ))}
               <BtnDiv onClick={() => regSubmit()}>註冊</BtnDiv>
-            </>
+            </React.Fragment>
           )}
         </FormWrapper>
       </Form>
