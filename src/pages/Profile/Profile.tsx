@@ -44,7 +44,7 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
     props.isShowTab ? null : "transform: translateX(calc(-100% + 10px))"};
   ${(props) => (props.isShowTab ? null : "display: none")};
   transition-duration: 0.2s;
-  z-index: 2;
+  // z-index: 2;
   @media screen and (max-width: 960px) {
     width: 40%;
   }
@@ -79,10 +79,8 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
 `;
 
 const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
-  position: ${(props) => (props.isShowTab ? "static" : "absolute")};
+  // position: ${(props) => (props.isShowTab ? "static" : "absolute")};
   left: 0px;
-  // transform: translateX(${(props) => (props.windowState ? "180%" : "200%")});
-  // display: block !important;
   background-color: #f3f2ef;
   height: 50px;
   cursor: pointer;
@@ -90,8 +88,8 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   font-size: 20px;
   line-height: 50px;
   transition-duration: 0.2s;
-  border: solid 1px #4f5152;
-  z-index: 3;
+  // border: solid 1px #4f5152;
+  // z-index: 1;
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;
@@ -126,7 +124,6 @@ function Profile() {
     <Wrapper>
       {!authChange && isShown ? (
         <PopupComponent
-          // style={{ zIndex: '1' }}
           msg={`請先進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}

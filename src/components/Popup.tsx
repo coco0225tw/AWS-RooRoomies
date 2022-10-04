@@ -40,13 +40,13 @@ const DefaultBtn = styled(BtnDiv)`
   background-color: #ece2d5;
   &:hover {
     background-color: #fff7f4;
-    border: solid 1px #ece2d5;
+    // border: solid 1px #ece2d5;
   }
 `;
 
 const NotDefaultBtn = styled(BtnDiv)`
   &:hover {
-    border: solid 1px #ece2d5;
+    // border: solid 1px #ece2d5;
     background-color: #fff7f4;
   }
 `;

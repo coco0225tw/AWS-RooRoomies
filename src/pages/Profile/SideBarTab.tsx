@@ -80,8 +80,8 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   font-size: 20px;
   line-height: 50px;
   transition-duration: 0.2s;
-  border: solid 1px #4f5152;
-  z-index: 3;
+  // border: solid 1px #4f5152;
+  // z-index: 3;
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;

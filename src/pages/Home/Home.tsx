@@ -160,7 +160,7 @@ function Home() {
             </ListingLink>
           ))}
       </ListingWrapper>
-      {loading && <Loading />}
+      {loading && <Loading style={null} />}
       {listingDocData && <ScrollComponent ref={scrollRef} />}
     </Wrapper>
   );

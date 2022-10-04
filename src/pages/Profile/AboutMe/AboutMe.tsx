@@ -18,6 +18,23 @@ import {
   FormCheckLabel,
   FormControl,
 } from "../../../components/InputArea";
+import {
+  getFirestore,
+  getDocs,
+  updateDoc,
+  doc,
+  addDoc,
+  collection,
+  Timestamp,
+  onSnapshot,
+  QueryDocumentSnapshot,
+  DocumentData,
+  orderBy,
+  query,
+  FieldValue,
+  serverTimestamp,
+  where,
+} from "firebase/firestore";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -206,7 +223,7 @@ const CheckedFormCheckInput = styled(FormCheckInput)<{ edit: boolean }>`
   }
 `;
 const SubmitBtn = styled(BtnDiv)`
-  border: solid 1px #4f5152;
+  // border: solid 1px #4f5152;
   align-self: flex-end;
   margin-top: 20px;
   display: inline-block;
@@ -228,8 +245,10 @@ function AboutMe({
   const userAsRoommate = useSelector(
     (state: RootState) => state.UserAsRoommateReducer
   );
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [edit, setEdit] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [houseHuntingData, setHouseHuntingData] = useState<boolean>(false);
   const initialRoommatesState = userAsRoommate;
   const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(
     initialRoommatesState
@@ -257,8 +276,33 @@ function AboutMe({
     setSubmitting(false);
   }
   useEffect(() => {
-    if (userAsRoommate) setMeAsRoommatesState(userAsRoommate);
-  }, [userAsRoommate]);
+    //
+    async function getAllHouseHuntingData() {
+      console.log(userInfo);
+      firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
+        console.log(userInfo);
+        let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        console.log(listing.size);
+        if (listing.size === 0) {
+          console.log(false);
+          setHouseHuntingData(false);
+        } else {
+          console.log(true);
+          setHouseHuntingData(true);
+        }
+      });
+    }
+
+    if (authChange) getAllHouseHuntingData();
+    if (authChange && userAsRoommate) {
+      setLoading(true);
+
+      setMeAsRoommatesState(userAsRoommate);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  }, [authChange, userAsRoommate]);
   return (
     <Wrapper>
       <Title
@@ -292,13 +336,33 @@ function AboutMe({
               </SubmitBtn>
             </React.Fragment>
           ) : (
-            <SubmitBtn onClick={() => setEdit(true)}>編輯</SubmitBtn>
+            <SubmitBtn
+              onClick={() => {
+                if (!houseHuntingData) {
+                  setEdit(true);
+                } else {
+                  dispatch({
+                    type: "OPEN_ERROR_ALERT",
+                    payload: {
+                      alertMessage: "已有湊團房源，無法更改",
+                    },
+                  });
+                  setTimeout(() => {
+                    dispatch({
+                      type: "CLOSE_ALERT",
+                    });
+                  }, 3000);
+                }
+              }}
+            >
+              編輯
+            </SubmitBtn>
           )}
         </Span>
       </Title>
       <Hr />
       {loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : (
         <React.Fragment>
           {roommatesConditionFormGroups.map(({ label, key, options }) => (

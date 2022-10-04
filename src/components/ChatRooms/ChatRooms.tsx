@@ -277,9 +277,9 @@ function ChatRooms() {
 
   if (authChange) {
     return (
-      <Wrapper isShown={getChatRoom.isOpen}>
+      <Wrapper isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}>
         <ChatIcon
-          isShown={getChatRoom.isOpen}
+          isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => {
             dispatch({ type: "OPEN_CHAT" });
             if (houseHuntingData.length !== 0) {
@@ -305,14 +305,14 @@ function ChatRooms() {
           }}
         ></ChatIcon>
         <Close
-          isShown={getChatRoom.isOpen}
+          isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => dispatch({ type: "CLOSE_CHAT" })}
         >
           &#215;
         </Close>
         {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
           <PopupComponent
-            msg={`你沒有預湊團哦`}
+            msg={`你目前沒有預約和湊團哦`}
             notDefaultBtn={`取消`}
             defaultBtn={`去逛逛`}
             clickClose={() => dispatch({ type: "CLOSE_CHAT" })}

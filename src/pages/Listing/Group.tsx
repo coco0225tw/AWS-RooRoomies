@@ -111,13 +111,15 @@ const Span = styled.span`
   font-size: 16px;
   letter-spacing: 1.2px;
   color: grey;
+  position: relative;
 `;
+// const HintTextLoading = styled(Loading)`
+//   background-color: black;
+// `;
 const Text = styled.div`
   color: grey;
 `;
-const HintTextLoading = styled(Loading)`
-  transform: scale(0.1);
-`;
+
 function Group({
   match,
   setMatch,
@@ -359,8 +361,28 @@ function Group({
       <SubTitle style={{ marginBottom: "32px" }}>
         湊團看房{" "}
         {hintTextLoading ? (
-          <HintTextLoading />
-        ) : authChange && !addUserAsRoommatesCondition ? (
+          // <span>
+          <Span
+            style={{
+              // width: "100px",
+              // height: "100px",
+              position: "relative",
+            }}
+          >
+            <Loading
+              style={{
+                left: "0",
+                top: "0",
+                transform: "scale(0.1) translate(-400%,-350%)",
+                position: "absolute",
+                width: "auto",
+                height: "auto",
+                zIndex: "1",
+              }}
+            />
+          </Span>
+        ) : // </span>
+        authChange && !addUserAsRoommatesCondition ? (
           <Span>
             尚未填寫條件,到
             <SpanLink

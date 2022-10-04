@@ -139,7 +139,7 @@ function Setting({
       <Title>設定</Title>
       <Hr />
       {loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : (
         <React.Fragment>
           <FormGroup>

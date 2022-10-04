@@ -146,7 +146,7 @@ function FollowedList({
       <Title>喜歡列表</Title>
       <Hr />
       {loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : favoriteLists.length === 0 ? (
         <NoListing msg="尚未加入任何房源" />
       ) : (

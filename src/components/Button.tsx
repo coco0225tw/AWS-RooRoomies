@@ -10,6 +10,7 @@ const BtnLink = styled(Link)`
   cursor: pointer;
   display: block;
   border-bottom: solid 1px #4f5152;
+
   &:hover {
     background-color: #ece2d5;
   }
@@ -22,7 +23,9 @@ const BtnDiv = styled.div`
   padding: 4px 12px;
   transition-duration: 0.2s;
   cursor: pointer;
-  border: solid 1px #4f5152;
+  // border: solid 1px #4f5152;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
   &:hover {
     background-color: #ece2d5;
   }
@@ -38,6 +41,7 @@ const InputBtn = styled.input.attrs({
   cursor: pointer;
   border: solid 1px #4f5152;
   background-color: #fff;
+
   &:hover {
     background-color: #ece2d5;
   }

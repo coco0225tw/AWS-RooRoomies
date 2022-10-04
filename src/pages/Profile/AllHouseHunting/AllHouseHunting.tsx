@@ -90,6 +90,7 @@ const Tabs = styled.div`
 const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   border: none;
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
+  box-shadow: none;
 `;
 const TabSelect = ["已預約", "尚未預約", "等待湊團"];
 
@@ -258,7 +259,6 @@ function AllHouseHunting({
           console.log(doc);
         });
         setHouseHuntingData(houseHuntingDocArr);
-        // getAllListing(houseHuntingDocArr);
       });
       setLoading(true);
       setTimeout(() => {
@@ -336,11 +336,9 @@ function AllHouseHunting({
         ))}
       </Tabs>
       {getSubTab === "已預約" && loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : houseHuntingData.filter((doc) => doc.data().isBooked !== false)
-          .length === 0 &&
-        allListingData.length !== 0 &&
-        getSubTab === "已預約" ? (
+          .length === 0 && getSubTab === "已預約" ? (
         <NoListing msg="沒有預約的房源" />
       ) : (
         getSubTab === "已預約" &&
@@ -400,12 +398,10 @@ function AllHouseHunting({
           ))
       )}
       {getSubTab === "尚未預約" && loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : houseHuntingData.filter(
           (doc) => doc.data().isFull === true && doc.data().isBooked === false
-        ).length === 0 &&
-        allListingData.length !== 0 &&
-        getSubTab === "尚未預約" ? (
+        ).length === 0 && getSubTab === "尚未預約" ? (
         <NoListing msg="沒有尚未預約的房源" />
       ) : (
         getSubTab === "尚未預約" &&
@@ -460,11 +456,9 @@ function AllHouseHunting({
           ))
       )}
       {getSubTab === "等待湊團" && loading ? (
-        <Loading />
+        <Loading style={null} />
       ) : houseHuntingData.filter((doc) => doc.data().isFull === false)
-          .length === 0 &&
-        allListingData.length !== 0 &&
-        getSubTab === "等待湊團" ? (
+          .length === 0 && getSubTab === "等待湊團" ? (
         <NoListing msg="沒有等待湊房的房源" />
       ) : (
         getSubTab === "等待湊團" &&
