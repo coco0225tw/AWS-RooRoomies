@@ -12,7 +12,7 @@ const titleEmptyState = {
   totalSq: "",
   form: "",
   environmentDescription: "",
-  number: null,
+  phone: null,
   moveInDate: null,
 };
 export default function UploadTitle(state = titleEmptyState, action: Action) {
@@ -20,7 +20,6 @@ export default function UploadTitle(state = titleEmptyState, action: Action) {
     case "UPLOAD_TITLE":
       return action.payload.titleState;
     case "GET_LISTING_TITLE_FROM_FIREBASE":
-      console.log(action.payload);
       return action.payload.listingTitle;
     case "RETURN_INITIAL_TITLE":
       return titleEmptyState;

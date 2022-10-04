@@ -69,7 +69,7 @@ function CompareList({
     async function removeFromCompareLists() {
       await firebase.removeFromCompareLists(userInfo.uid, listingId);
     }
-    console.log("clicked");
+
     removeFromCompareLists();
     dispatch({ type: "REMOVE_FROM_COMPARELISTS", payload: { id: listingId } });
   }
@@ -143,7 +143,6 @@ function CompareList({
             let state = { items };
 
             if (source.droppableId === "compareLists") {
-              console.log(items);
               dispatch({
                 type: "REODER_AND_MOVE_COMPARELISTS",
                 payload: { compareLists: items },

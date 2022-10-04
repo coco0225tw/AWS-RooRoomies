@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
+import { firebase } from "../utils/firebase";
 import { RootState } from "../redux/rootReducer";
-import { BtnLink, BtnDiv } from "./Button";
+import { BtnLink } from "./Button";
 import { PopupComponent } from "./Popup";
 const Wrapper = styled.div`
   display: flex;
@@ -78,17 +78,29 @@ function Footer() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   function clickSingOut() {
-    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {
     setIsShown(false);
   }
   async function logOut() {
-    await firebase.signOutUser();
-    setIsShown(false);
-    navigate("/signin");
+    firebase.signOutUser().then(() => {
+      setIsShown(false);
+      navigate("/signin");
+      dispatch({
+        type: "OPEN_NOTIFY_ALERT",
+        payload: {
+          alertMessage: "已登出",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+    });
   }
   return (
     <Wrapper>

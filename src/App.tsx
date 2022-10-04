@@ -26,6 +26,7 @@ import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import ChatRooms from "./components/ChatRooms/ChatRooms";
+import Alert from "./components/Alert";
 import userType from "./redux/GetAuth/GetAuthType";
 import { Loading } from "./components/Loading";
 import { groupType, userInfoType } from "./redux/Group/GroupType";
@@ -63,6 +64,8 @@ const GlobalStyle = createGlobalStyle`
     // border: solid 1px black;
     // color: #4f5152;
     position: relative;
+    // transition-duration: 1s;
+    letter-spacing: 0.4px;
   }
 
   body {
@@ -115,8 +118,8 @@ function User() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+
   useEffect(() => {
-    console.log(process.env.REACT_APP_GOOGLE_MAP_API_KEY);
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
@@ -141,6 +144,9 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_MEASROOMMATE" });
         dispatch({ type: "RETURN_INITIAL_IMAGE" });
         dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
+        dispatch({ type: "RETURN_INITIAL_ALERT" });
+        dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
+        dispatch({ type: "INITIAL_CHATROOM_STATE" });
       }
       async function getUser() {
         let data = await firebase.getUserDocFromFirebase(
@@ -175,13 +181,17 @@ function User() {
           payload: { favoriteLists },
         });
         dispatch({ type: "GETUSER_FROMFIREBASE", payload: { user } });
-        dispatch({
-          type: "UPLOAD_MEASROOMMATE",
-          payload: { meAsRoommatesState },
-        });
+        if (data?.data().userAsRoommatesConditions) {
+          dispatch({
+            type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
+            payload: {
+              meAsRoommatesState: data?.data().userAsRoommatesConditions,
+            },
+          });
+        }
+
         dispatch({ type: "AUTH_CHANGE" });
         if (data?.data().userListingId.length !== 0) {
-          console.log(data?.data().userListingId);
           async function getListing() {
             type ListingType = {
               mainImage: string;
@@ -199,6 +209,7 @@ function User() {
               listingTitle: string;
               totalSq: number;
             };
+
             const listingData = await firebase.getListing(
               data?.data().userListingId
             );
@@ -207,7 +218,7 @@ function User() {
               totalSq: listingData?.totalSq,
               form: listingData?.form,
             };
-            console.log(listingData?.roommatesConditions);
+
             dispatch({
               type: "GET_LISTING_TITLE_FROM_FIREBASE",
               payload: { listingTitle },
@@ -232,7 +243,7 @@ function User() {
           //     let enableDate = [];
           //     if (listingTimesArr?.length !== 0) {
           //       enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds); //console.log
+          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds);
           //         if (findIndex === -1) {
           //           acc.push(curr);
           //         } else {
@@ -272,13 +283,23 @@ const style = {
   },
 } as const;
 
+function AlertInfo() {
+  const alertInfo = useSelector((state: RootState) => state.AlertReducer);
+  return (
+    <Alert
+      alertType={alertInfo.alertType}
+      alertMessage={alertInfo.alertMessage}
+      isAlert={alertInfo.isAlert}
+    />
+  );
+}
 function App() {
   return (
     <Provider store={store}>
       {/* <Reset /> */}
       <GlobalStyle />
       <ChatRooms />
-      {/* <Loading /> */}
+      <AlertInfo />
       <Header />
       <User />
       <Outlet />

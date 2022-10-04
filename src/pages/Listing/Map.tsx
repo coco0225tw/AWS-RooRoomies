@@ -177,9 +177,9 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
     //   await fetch(
     //     `https://us-central1-rooroomies.cloudfunctions.net/googleMap?lat=${LatLng.lat}&lng=${LatLng.lng}&keyword=${keyword}`
     //   ).then((res) => {
-    //     console.log(res);
+    //
     //     res.json().then((data) => {
-    //       console.log(data.results);
+    //
     //       let allRestaurants: [] = [];
     //       let allLatLng = data.results.map((p: any, index: number) => {
     //         return p.geometry.location;

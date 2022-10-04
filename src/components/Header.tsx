@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+
 import { RootState } from "../redux/rootReducer";
-import Logo from "../assets/logo.png";
+import { firebase } from "../utils/firebase";
 import { BtnLink, BtnDiv } from "./Button";
 import { PopupComponent } from "./Popup";
+
+import Logo from "../assets/logo.png";
 import search from "../assets/search.svg";
-import { firebase, auth, onAuthStateChanged } from "../utils/firebase";
-import user2 from "../assets/user2.png";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -101,18 +102,30 @@ function Header() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   function clickSingOut() {
-    console.log("signout");
     setIsShown(true);
   }
   function clickClose() {
     setIsShown(false);
   }
   async function logOut() {
-    await firebase.signOutUser();
-    setIsShown(false);
-    navigate("/signin");
+    firebase.signOutUser().then(() => {
+      dispatch({
+        type: "OPEN_NOTIFY_ALERT",
+        payload: {
+          alertMessage: "已登出",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+      setIsShown(false);
+      navigate("/signin");
+    });
   }
   return (
     <Wrapper>
@@ -134,8 +147,17 @@ function Header() {
       {authChange ? (
         <SectionWrapper>
           {/* <Notification></Notification> */}
-          <Profile to={"/profile"} img={userInfo.image}></Profile>
-          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>{" "}
+          <Profile
+            to={"/profile"}
+            img={userInfo.image}
+            onClick={() => {
+              dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "aboutMe" },
+              });
+            }}
+          ></Profile>
+          <BtnDiv onClick={clickSingOut}>登出</BtnDiv>
         </SectionWrapper>
       ) : (
         <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>

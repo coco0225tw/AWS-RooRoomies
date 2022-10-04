@@ -31,17 +31,27 @@ const Wrapper = styled.div`
   // margin: auto;
   padding: 10px;
   margin-bottom: 32px;
+  flex-grow: 1;
+  transition-duration: 0.2s;
+  border-radius: 12px;
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transform: translate(-1%, -1%);
+  }
 `;
 
 const Icon = styled.div`
   aspect-ratio: 1 / 1;
-  height: auto;
-  width: 24px;
-  background-size: 100% 100%;
+  height: 32px;
+  width: 32px;
+  background-size: 24px 24px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 8px;
   // flex-grow: 1;
-  &:hover {
-    width: 32px;
-  }
+  // &:hover {
+  //   width: 32px;
+  // }
 `;
 
 const IconArea = styled.div`
@@ -54,7 +64,9 @@ const IconArea = styled.div`
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) =>
     props.isLiked ? likedIcon : unLikedIcon});
-  right: 8px;
+  // right: 8px;
+  background-color: #fefefe;
+  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
@@ -88,13 +100,15 @@ const MainImage = styled.div<ImgProps>`
   justify-content: space-between;
 `;
 
-const Title = styled.div`
+const Title = styled.p`
   font-size: 20px;
   color: #4f5152;
   letter-spacing: 2px;
   font-weight: 600;
-  // margin: 0px 0px 8px 8px;
-  // align-self: flex-end;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
 `;
 
 const Time = styled.div``;
@@ -120,21 +134,37 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   function handleLiked(
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     isLiked: boolean
   ) {
     e.stopPropagation();
     e.preventDefault();
-    if (authChange) {
+
+    if (authChange && !submitting) {
+      setSubmitting(true);
       if (!isLiked) {
         async function addToFavoriteLists() {
           await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
         }
-        addToFavoriteLists();
-        dispatch({
-          type: "ADD_TO_FAVORITELISTS",
-          payload: { id: listingDocData.id },
+        addToFavoriteLists().then(() => {
+          dispatch({
+            type: "ADD_TO_FAVORITELISTS",
+            payload: { id: listingDocData.id },
+          });
+          dispatch({
+            type: "OPEN_NOTIFY_ALERT",
+            payload: {
+              alertMessage: "加入喜歡列表",
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+            setSubmitting(false);
+          }, 3000);
         });
       } else {
         async function removeFromFavoriteLists() {
@@ -143,15 +173,27 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             listingDocData.id
           );
         }
-        removeFromFavoriteLists();
-        dispatch({
-          type: "REMOVE_FROM_FAVORITELISTS",
-          payload: { id: listingDocData.id },
+        removeFromFavoriteLists().then(() => {
+          dispatch({
+            type: "REMOVE_FROM_FAVORITELISTS",
+            payload: { id: listingDocData.id },
+          });
+          dispatch({
+            type: "OPEN_NOTIFY_ALERT",
+            payload: {
+              alertMessage: "從喜歡列表刪除",
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+            setSubmitting(false);
+          }, 3000);
         });
       }
-    } else {
+    } else if (!authChange) {
       setIsShown(true);
-      console.log("popup");
     }
   }
 
@@ -173,7 +215,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         });
       } else {
         async function removeFromCompareLists() {
-          console.log("removefromcom");
           await firebase.removeFromCompareLists(
             userInfo.uid,
             listingDocData.id
@@ -188,7 +229,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleDnd(
@@ -198,7 +238,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
-      console.log("removefromDnd");
       async function removeFromDndLists() {
         await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
       }
@@ -216,7 +255,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   function clickFunction() {
     navigate("/signin");
   }
-  // console.log(new Date(listingDocData.data().moveInDate));
+
   return (
     <Wrapper>
       {isShown && (
@@ -233,9 +272,11 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         <MainImage img={listingDocData.data().mainImage}>
           <IconArea>
             <FavoriteIcon
-              onClick={(e) =>
-                handleLiked(e!, favoriteLists.includes(listingDocData.id))
-              }
+              onClick={(e) => {
+                // if (!submitting) {
+                handleLiked(e!, favoriteLists.includes(listingDocData.id));
+                // }
+              }}
               isLiked={favoriteLists.includes(listingDocData.id)}
             ></FavoriteIcon>
             {/* <CompareIcon
@@ -247,6 +288,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           </IconArea>
         </MainImage>
         <Title>{listingDocData.data().title}</Title>
+        {/* <div>{listingDocData.id}</div> */}
         <Addr>
           {listingDocData.data().countyName}
           {listingDocData.data().townName}

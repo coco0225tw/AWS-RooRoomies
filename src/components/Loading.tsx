@@ -1,35 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import styled, { keyframes } from "styled-components";
-import { Link } from "react-router-dom";
-import { BtnLink, BtnDiv } from "./Button";
 
-const Wrapper = styled.div`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  // background-color: rgba(0, 0, 0, 0.5);
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-  overflow: hidden;
-  z-index: 999;
-  justify-content: center;
-`;
-
-const Popup = styled.div`
-  width: 30%;
-  background-color: white;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-`;
 const LoaderWrapper = styled.div`
   display: flex;
   width: 100%;
   height 100%;
   justify-content: center;
   align-items: center;
+  
 `;
 const preloader = keyframes`
   100% { transform: scale(1.6);
@@ -39,7 +17,6 @@ const LoaderComponent = styled.span`
   width: 20px;
   height: 20px;
   background-color: #c77155;
-  // border: 1px solid #c77155;
   margin: 40px;
   &:nth-child(1) {
     animation: ${preloader} 0.6s ease-in-out alternate infinite;
@@ -52,17 +29,13 @@ const LoaderComponent = styled.span`
   }
 `;
 
-function Loading() {
+function Loading({ style }: { style: any }) {
   return (
-    <Wrapper>
-      <LoaderWrapper>
-        <LoaderComponent />
-        <LoaderComponent />
-        <LoaderComponent />
-      </LoaderWrapper>
-    </Wrapper>
-    //   )}
-    // </div>
+    <LoaderWrapper style={style}>
+      <LoaderComponent />
+      <LoaderComponent />
+      <LoaderComponent />
+    </LoaderWrapper>
   );
 }
 export { Loading };

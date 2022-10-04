@@ -133,7 +133,6 @@ function UploadMainImageAndImages({
       type: "PREVIEW_OTHERIMAGES",
       payload: { otherImages: imagesUrl },
     });
-    console.log("送出圖片");
   }
   return (
     <Wrapper>

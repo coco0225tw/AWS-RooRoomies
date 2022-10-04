@@ -1,20 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import {
-  query,
-  collection,
-  limit,
-  QuerySnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
-import { firebase } from "../../utils/firebase";
+import { DocumentData } from "firebase/firestore";
+
+import { RootState } from "../../redux/rootReducer";
+
 import Listing from "./Listing";
 import Search from "./Search";
-import { RootState } from "../../redux/rootReducer";
-import { useSelector, useDispatch } from "react-redux";
+import NoListing from "../../components/NoData";
+
 import { Loading } from "../../components/Loading";
+
+import Logo from "../../assets/noHouse.png";
 interface Props {
   key: string;
 }
@@ -27,21 +25,8 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
   width: 100%;
   height: 100%;
-  // margin: auto;
   position: relative;
-  margin: 80px auto 160px;
-  padding-bottom: 20px;
-`;
-
-const HomePageTitle = styled.div`
-  width: 100%;
-  font-size: 30px;
-  text-align: center;
-`;
-
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
+  margin: 80px auto 0px;
 `;
 
 const ListingWrapper = styled.div`
@@ -50,8 +35,7 @@ const ListingWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   margin: 32px auto;
-  justify-content: flex-start;
-  // background-color: grey;
+  column-gap: 1.25%;
 `;
 
 const Btn = styled.div`
@@ -63,20 +47,18 @@ const Btn = styled.div`
     transition: 0.2s;
   }
 `;
-const PageArea = styled.div`
-  display: flex;
-`;
+
 const ListingLink = styled(Link)`
-  width: 25%;
+  width: 24%;
   height: 100%;
 `;
-const NextPageBtn = styled(Btn)``;
-const PrevPageBtn = styled(Btn)``;
-const Page = styled.div`
-  padding: 10px;
+
+const ScrollComponent = styled.div`
+  position: absolute;
+  width: 10vw;
+  bottom: 32px;
 `;
 function Home() {
-  const dispatch = useDispatch();
   interface Props {
     data: DocumentData;
     key: string;
@@ -88,22 +70,30 @@ function Home() {
     (state: RootState) => state.GetLastDocReducer
   );
 
-  // console.log(listingDocData);
-  useEffect(() => {}, []);
   const arr = [];
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [loadFirstPage, setLoadFirstPage] = useState<boolean>(false);
+  const [loadNextPage, setLoadNextPage] = useState<boolean>(false);
+  const [noData, setNoData] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
-  }, []);
   return (
     <Wrapper>
-      <Search loading={loading} setLoading={setLoading}></Search>
+      <Search
+        loading={loading}
+        setLoading={setLoading}
+        loadNextPage={loadNextPage}
+        loadFirstPage={loadFirstPage}
+        setLoadFirstPage={setLoadFirstPage}
+        scrollRef={scrollRef}
+        noData={noData}
+        setNoData={setNoData}
+      ></Search>
       <ListingWrapper>
-        {listingDocData &&
+        {listingDocData.length === 0 && !loading && (
+          <NoListing msg="沒有符合的物件" />
+        )}
+        {listingDocData.length !== 0 &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
             <ListingLink
               key={`listing_${index}`}
@@ -114,8 +104,8 @@ function Home() {
             </ListingLink>
           ))}
       </ListingWrapper>
-      {loading && <Loading />}
-      <PageArea></PageArea>
+      {loading && <Loading style={null} />}
+      {listingDocData && <ScrollComponent ref={scrollRef} />}
     </Wrapper>
   );
 }

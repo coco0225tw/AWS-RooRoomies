@@ -1,36 +1,31 @@
 import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/rootReducer";
-import { firebase, db, timestamp } from "../../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import {
-  getFirestore,
-  getDocs,
-  updateDoc,
   doc,
-  addDoc,
   collection,
-  Timestamp,
   onSnapshot,
   QueryDocumentSnapshot,
   DocumentData,
-  orderBy,
   query,
-  FieldValue,
-  serverTimestamp,
+  where,
 } from "firebase/firestore";
+
+import { RootState } from "../../redux/rootReducer";
+import { firebase, db } from "../../utils/firebase";
+import { PopupComponent } from "../../components/Popup";
 import chat from "../../assets/chat.png";
+
 const Wrapper = styled.div<{ isShown: boolean }>`
   bottom: ${(props) => (props.isShown ? "0px" : "50px")};
   right: ${(props) => (props.isShown ? "120px" : "50px")};
   position: fixed;
   display: flex;
-  //   flex-direction: row;
-  //   justify-content: center;
-  //   align-items: flex-start;
   z-index: 1;
   background-color: white;
-  // width: 44;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  width: ${(props) => (props.isShown ? "20vw" : "auto")};
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   height: ${(props) => (props.isShown ? "500px" : "auto")};
   box-shadow: ${(props) =>
     props.isShown ? "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" : ""};
@@ -55,25 +50,13 @@ const SectionWrapper = styled.div`
   flex-grow: 1;
   height: 80%;
   flex-direction: column;
-  overflow: scroll;
-  overflow-x: hidden;
-`;
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
-const MessagesArea = styled.div`
-  flex-grow: 1;
-  // overflow: scroll;
-  // overflow-x: hidden;
-  // display: flex;
-  // flex-direction: column;
 `;
 
 const MsgWrapper = styled.div`
   // overflow: scroll;
   // overflow-x: hidden;
-  display: flex;
+  display: inline-flex;
+  flex-wrap: nowrap;
   flex-direction: column;
   flex-grow: 1;
   padding: 0px 12px;
@@ -82,11 +65,12 @@ const MsgWrapper = styled.div`
 `;
 const InputArea = styled.div`
   display: flex;
-  padding: 4px 20px;
-  background-color: #ece2d5;
+  // padding: 4px 20px;
+  background-color: #c77155;
+  height: 48px;
 `;
 const Message = styled.div<{ auth: boolean }>`
-  display: flex;
+  // display: flex;
   width: 80%;
   align-self: ${(props) => (props.auth ? "flex-end" : "flex-start")};
 `;
@@ -104,58 +88,52 @@ const UserPic = styled.div<{ pic: string }>`
   background-position: center center;
 `;
 const UserMessage = styled.div`
-  flex-grow: 1;
+  word-break: break-all;
   padding: 0 12px;
   border-radius: 8px;
 `;
-const SendTime = styled.div``;
+
 const InputMessageBox = styled.input`
   border: none;
-  align-self: flex-end;
-  padding: 4px;
-  border-radius: 4px;
-  width: 100%;
-  // background-color: inherit;
-`;
-
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  align-self: flex-end;
-  &:hover {
-    background-color: #222;
-  }
+  outline: none;
+  padding: 12px;
+  font-size: 20px;
+  border-radius: 20px;
+  width: 96%;
+  height: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const HeaderBar = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
 `;
 const Tabs = styled.div`
-  // flex-grow: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  overflow-x: scroll;
-  // overflow-y: hidden;
+  width: 100%;
+`;
+const TabsWrapper = styled.div`
+  display: -webkit-box;
 `;
 const Tab = styled.div<{ isChoose: boolean }>`
-  // width: 20%;
+  width: 100%;
+  // display: inline-block;
   font-size: 20px;
   letter-spacing: 4px;
   height: 100%;
   padding: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   border-bottom: ${(props) => (props.isChoose ? "solid 2px #c77155" : "")};
-  // background-color: ${(props) => (props.isChoose ? "#c77155" : "#ffffff")};
   color: ${(props) => (props.isChoose ? "#c77155" : "#4f5152")};
   cursor: pointer;
   &:hover {
     background-color: ${(props) => (props.isChoose ? "#c77155" : "#ffffff")};
     color: ${(props) => (props.isChoose ? "#ffffff" : "#4f5152")};
-    // border: ${(props) => (props.isChoose ? "#ffffff" : "1px solid #c77155")};
     border-bottom: ${(props) => (props.isChoose ? "" : "solid 2px #4f5152")};
   }
 `;
@@ -187,7 +165,10 @@ const Close = styled.div<{ isShown: boolean }>`
   }
   display: ${(props) => (props.isShown ? "block" : "none")};
 `;
+
 function ChatRooms() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
@@ -196,6 +177,7 @@ function ChatRooms() {
   const [allMessages, setAllMessages] = useState<DocumentData[]>();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
   interface Msg {
     userMsg: string;
     sendTime: number;
@@ -213,73 +195,94 @@ function ChatRooms() {
       userId: userInfo.uid,
       userPic: userInfo.image,
     };
-    await firebase.sendMessage(chooseRoomId!, allMessages, msg);
+    await firebase.sendMessage(getChatRoom.chatRoomId!, allMessages, msg);
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
     const chatRoomQuery = doc(db, "chatRooms", chooseRoomId);
-    // console.log('choose');
+
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
-      // console.log(snapshot);
       setAllMessages(snapshot.data()!.msg);
     });
   }
   useEffect(() => {
-    async function getAllHouseHuntingData() {
-      await firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
+    const houseHuntingRef = collection(db, "chatRooms");
+    const userChatRef = query(
+      houseHuntingRef,
+      where("userId", "array-contains", userInfo.uid)
+    );
+
+    if (authChange) {
+      let onSnapShotData = onSnapshot(userChatRef, (querySnapshot) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        // console.log(listing);
-        listing.forEach((doc) => {
+        querySnapshot.forEach((doc) => {
           houseHuntingDocArr.push(doc);
         });
+
         setHouseHuntingData(houseHuntingDocArr);
       });
     }
-    getAllHouseHuntingData();
-    // console.log(authChange);
-    // console.log(isShown);
-    // console.log(houseHuntingData.length);
-    // console.log(houseHuntingData);
-  }, [authChange]);
+  }, [userInfo]);
 
   if (authChange) {
     return (
-      <Wrapper isShown={isShown}>
+      <Wrapper isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}>
         <ChatIcon
-          isShown={isShown}
+          isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => {
-            setIsShown(true);
-            // console.log(houseHuntingData);
+            dispatch({ type: "OPEN_CHAT" });
             if (houseHuntingData.length !== 0) {
-              setChooseRoomId(houseHuntingData[0]?.id);
-              setAllMessages(houseHuntingData[0]?.data().msg);
+              onSnapshotMessages(houseHuntingData[0]?.id);
+              dispatch({
+                type: "CHECK_CHATROOM",
+                payload: { chatRoom: true },
+              });
+              dispatch({
+                type: "OPEN_CHATROOM",
+                payload: {
+                  chatRoomId: houseHuntingData[0]?.id,
+                },
+              });
+            } else {
+              dispatch({
+                type: "CHECK_CHATROOM",
+                payload: { chatRoom: false },
+              });
             }
           }}
         ></ChatIcon>
-        <Close isShown={isShown} onClick={() => setIsShown(false)}>
+        <Close
+          isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
+          onClick={() => dispatch({ type: "CLOSE_CHAT" })}
+        >
           &#215;
         </Close>
-        {isShown ? (
-          houseHuntingData.length === 0 ? (
-            <div>popup</div>
-          ) : (
+        {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
+          <PopupComponent
+            msg={`你目前/n沒有預約和湊團哦`}
+            notDefaultBtn={`取消`}
+            defaultBtn={`去逛逛`}
+            clickClose={() => dispatch({ type: "CLOSE_CHAT" })}
+            clickFunction={() => {
+              dispatch({ type: "CLOSE_CHAT" });
+              navigate("/");
+            }}
+          />
+        ) : (
+          houseHuntingData.length !== 0 &&
+          getChatRoom.isOpen && (
             <HeaderBar>
               <Tabs>
-                {houseHuntingData.map((h, index) => (
-                  <Tab
-                    isChoose={h.id === chooseRoomId}
-                    onClick={() => {
-                      onSnapshotMessages(h.id);
-                      setChooseRoomId(h.id);
-                    }}
-                    key={`house${index}`}
-                  >
-                    {h.data().listingTitle}
+                <TabsWrapper>
+                  <Tab isChoose={true}>
+                    {getChatRoom.chatRoomId &&
+                      houseHuntingData
+                        .find((h) => h && h.id === getChatRoom.chatRoomId)
+                        .data().listingTitle}
                   </Tab>
-                ))}
+                </TabsWrapper>
               </Tabs>
               <SectionWrapper>
-                {/* <MessagesArea> */}
                 <MsgWrapper>
                   {allMessages &&
                     allMessages.map((el, index) => (
@@ -288,7 +291,9 @@ function ChatRooms() {
                         key={`message${index}`}
                       >
                         {el.userId === userInfo.uid ? (
-                          <MessageWrapper>
+                          <MessageWrapper
+                            style={{ justifyContent: "flex-end" }}
+                          >
                             <UserMessage
                               style={{
                                 marginRight: "12px",
@@ -300,14 +305,12 @@ function ChatRooms() {
                             </UserMessage>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
                           </MessageWrapper>
                         ) : (
                           <MessageWrapper>
                             <UserInfo>
                               <UserPic pic={el.userPic}></UserPic>
-                              {/* <UserName>{el.userName}</UserName> */}
                             </UserInfo>
                             <UserMessage style={{ marginLeft: "12px" }}>
                               {el.userMsg}
@@ -317,26 +320,28 @@ function ChatRooms() {
                       </Message>
                     ))}
                 </MsgWrapper>
-                {/* </MessagesArea> */}
               </SectionWrapper>
               <InputArea>
                 <InputMessageBox
                   placeholder={"..."}
                   ref={msgInputRef}
-                  onKeyDown={(event) => {
+                  onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                     event.stopPropagation();
-                    event.preventDefault();
                     if (event.key === "Enter") {
-                      senMsg();
-                      msgInputRef.current!.value = "";
+                      if (msgInputRef.current.value.trim() === "") {
+                        msgInputRef.current!.value = "";
+                        return;
+                      } else {
+                        senMsg();
+                        msgInputRef.current!.value = "";
+                      }
                     }
                   }}
                 ></InputMessageBox>
-                {/* <SubmitBtn onClick={senMsg}>送出</SubmitBtn> */}
               </InputArea>
             </HeaderBar>
           )
-        ) : null}
+        )}
       </Wrapper>
     );
   } else {

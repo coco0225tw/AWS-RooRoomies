@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { firebase } from "../../utils/firebase";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,6 +11,8 @@ import AllHouseHunting from "./AllHouseHunting/AllHouseHunting";
 import AboutMe from "./AboutMe/AboutMe";
 import SideBarTab from "./SideBarTab";
 import { BtnDiv } from "../../components/Button";
+import { PopupComponent, PopupImage } from "../../components/Popup";
+import { useNavigate } from "react-router-dom";
 const Wrapper = styled.div`
   display: flex;
   // display:
@@ -42,7 +44,7 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
     props.isShowTab ? null : "transform: translateX(calc(-100% + 10px))"};
   ${(props) => (props.isShowTab ? null : "display: none")};
   transition-duration: 0.2s;
-  z-index: 2;
+  // z-index: 2;
   @media screen and (max-width: 960px) {
     width: 40%;
   }
@@ -77,10 +79,8 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
 `;
 
 const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
-  position: ${(props) => (props.isShowTab ? "static" : "absolute")};
+  // position: ${(props) => (props.isShowTab ? "static" : "absolute")};
   left: 0px;
-  // transform: translateX(${(props) => (props.windowState ? "180%" : "200%")});
-  // display: block !important;
   background-color: #f3f2ef;
   height: 50px;
   cursor: pointer;
@@ -88,8 +88,8 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   font-size: 20px;
   line-height: 50px;
   transition-duration: 0.2s;
-  border: solid 1px #4f5152;
-  z-index: 3;
+  // border: solid 1px #4f5152;
+  // z-index: 1;
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;
@@ -103,53 +103,75 @@ function Profile() {
   const [windowState, setWindowState] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [showTab, setShowTab] = useState<boolean>(true);
-  // if (window.innerWidth < 425) {
-  //   setWindowState(true);
-  // }
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
-  const tab = getTab.tab;
-  // console.log(getTab);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
+  const [isShown, setIsShown] = useState<boolean>(false);
+  const navigate = useNavigate();
+  function clickClose() {
+    setIsShown(false);
+    navigate("/");
+  }
+  function clickFunction() {
+    navigate("/signin");
+  }
+  useEffect(() => {
+    if (!authChange) {
+      navigate("/signin");
+    }
+  }, [authChange]);
   return (
     <Wrapper>
-      <SideBarWrapper isShowTab={showTab}>
-        <SideBarTab
-          showTab={showTab}
-          setShowTab={setShowTab}
-          setLoading={setLoading}
-          loading={loading}
+      {!authChange && isShown ? (
+        <PopupComponent
+          msg={`請先進行登入註冊`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`登入`}
+          clickClose={clickClose}
+          clickFunction={clickFunction}
         />
-      </SideBarWrapper>
-      <Arrow
-        windowState={windowState}
-        isShowTab={showTab}
-        onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
-      >
-        {showTab ? (
-          <ArrowWrap>&#171;</ArrowWrap>
-        ) : (
-          <ArrowWrap>&#187;</ArrowWrap>
-        )}
-      </Arrow>
-      <SectionWrapper isShowTab={showTab}>
-        {getTab.tab === "aboutMe" && (
-          <AboutMe setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "allHouseHunting" && (
-          <AllHouseHunting setLoading={setLoading} loading={loading} />
-        )}
-        {/* {getTab.tab === "compareList" && (
+      ) : (
+        <React.Fragment>
+          <SideBarWrapper isShowTab={showTab}>
+            <SideBarTab
+              showTab={showTab}
+              setShowTab={setShowTab}
+              setLoading={setLoading}
+              loading={loading}
+            />
+          </SideBarWrapper>
+          <Arrow
+            windowState={windowState}
+            isShowTab={showTab}
+            onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
+          >
+            {showTab ? (
+              <ArrowWrap>&#171;</ArrowWrap>
+            ) : (
+              <ArrowWrap>&#187;</ArrowWrap>
+            )}
+          </Arrow>
+          <SectionWrapper isShowTab={showTab}>
+            {getTab === "aboutMe" && (
+              <AboutMe setLoading={setLoading} loading={loading} />
+            )}
+            {getTab === "allHouseHunting" && (
+              <AllHouseHunting setLoading={setLoading} loading={loading} />
+            )}
+            {/* {getTab=== "compareList" && (
           <CompareList setLoading={setLoading} loading={loading} />
         )} */}
-        {getTab.tab === "followedList" && (
-          <FollowedList setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "uploadMyListing" && (
-          <UploadMyListing setLoading={setLoading} loading={loading} />
-        )}
-        {getTab.tab === "setting" && (
-          <Setting setLoading={setLoading} loading={loading} />
-        )}
-      </SectionWrapper>
+            {getTab === "followedList" && (
+              <FollowedList setLoading={setLoading} loading={loading} />
+            )}
+            {getTab === "uploadMyListing" && (
+              <UploadMyListing setLoading={setLoading} loading={loading} />
+            )}
+            {getTab === "setting" && (
+              <Setting setLoading={setLoading} loading={loading} />
+            )}
+          </SectionWrapper>
+        </React.Fragment>
+      )}
     </Wrapper>
   );
 }

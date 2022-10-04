@@ -92,7 +92,7 @@ function SetBookingTimes({
   const timesInfo = useSelector(
     (state: RootState) => state.UploadTimesReducer
   ) as any;
-  console.log(timesInfo);
+
   const [selectedDays, setSelectedDays] = useState<Date[]>(
     timesInfo
       .map((d: any, index: number) => d.date)
@@ -126,13 +126,12 @@ function SetBookingTimes({
   }
 
   function clickTime(date: Date, index: number) {
-    // console.log();
     const time = {
       date: date,
       startTime: selectedTimeRef.current[index]?.value,
       isBooked: false,
     };
-    console.log(time);
+
     setSelectedTimes([
       ...(selectedTimes as {
         date: Date;
@@ -144,8 +143,6 @@ function SetBookingTimes({
   }
 
   function deleteTime(date: Date, time: string) {
-    console.log(typeof date);
-    console.log(typeof time);
     // setSelectedTimes(
     //   selectedTimes.filter(
     //     (d, index) => time !== d.startTime && d.date !== date
@@ -158,7 +155,6 @@ function SetBookingTimes({
   }
   function submit(selectedTimes: bookingTimesType) {
     dispatch({ type: "UPLOAD_TIMES", payload: { selectedTimes } });
-    console.log("送出時間");
   }
   return (
     <Wrapper>
@@ -190,7 +186,6 @@ function SetBookingTimes({
                   style={{ marginTop: "0px" }}
                   onClick={() => {
                     clickTime(s, index);
-                    console.log(selectedDays);
                   }}
                 >
                   加入時間
@@ -218,8 +213,6 @@ function SetBookingTimes({
       </SectionDivider>
       <SubmitBtn
         onClick={() => {
-          console.log(selectedTimes);
-
           submit(selectedTimes);
           setClickTab("設定室友條件");
         }}

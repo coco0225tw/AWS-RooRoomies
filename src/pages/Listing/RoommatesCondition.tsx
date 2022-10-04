@@ -220,10 +220,14 @@ function RoommatesCondition({
   roommatesConditions,
   match,
   setMatch,
+  addUserAsRoommatesCondition,
+  setAddUserAsRoommatesCondition,
 }: {
   roommatesConditions: any;
   match: boolean;
   setMatch: React.Dispatch<React.SetStateAction<boolean>>;
+  addUserAsRoommatesCondition: boolean;
+  setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [keys, setKeys] = useState<string[]>([]);
   const userAsRoommate = useSelector(
@@ -236,7 +240,6 @@ function RoommatesCondition({
       let newObj = { ...object };
       for (let key of keys) {
         if (newObj[key] === "true") {
-          console.log(key);
           newObj[key] = "unlimited";
           // const newObj = { ...object, [key]: 'unlimited' };
         } else {
@@ -256,7 +259,7 @@ function RoommatesCondition({
 
     function shallowEqual(object1: any, object2: any) {
       const keys1 = Object.keys(object1);
-      const keys2 = Object.keys(object2);
+
       for (let key of keys1) {
         if (object1[key] !== object2[key]) {
           // window.alert(`${key}: ${object1[key]} ${object2[key]} 不符`);
@@ -271,21 +274,48 @@ function RoommatesCondition({
 
     shallowEqual(
       getNonUnlimitedKey(getTrueKey(roommatesConditions), "unlimited"),
-      userAsRoommate.userAsRoommatesConditions
+      userAsRoommate
     ); // => true
   }
+
   useEffect(() => {
-    function findObjectKeys() {
-      console.log(roommatesConditions);
+    // function findObjectKeys() {
+    //   if (userAsRoommate.userAsRoommatesConditions) {
+    //     setAddUserAsRoommatesCondition(true);
+    //     let keys = Object.keys(roommatesConditions);
+    //     setKeys(keys);
+    //     checkMatch();
+    //   } else {
+    //
+    //     setAddUserAsRoommatesCondition(false);
+    //   }
+    // }
+    function checkIfUserConditionIsEmpty(userAsRoommate: any) {
+      for (const key in userAsRoommate) {
+        if (userAsRoommate[key] === "") {
+          return false;
+        }
+        return true;
+      }
+    }
+    if (roommatesConditions) {
       let keys = Object.keys(roommatesConditions);
-      console.log(keys);
-      setKeys(keys);
-      // console.log()
+      if (checkIfUserConditionIsEmpty(userAsRoommate)) {
+        setAddUserAsRoommatesCondition(true);
+
+        setKeys(keys);
+        checkMatch();
+      } else {
+        setAddUserAsRoommatesCondition(false);
+      }
     }
-    if (roommatesConditions?.roommatesConditions) {
-      findObjectKeys();
-    }
-  }, [roommatesConditions]);
+
+    // if (roommatesConditions && userAsRoommate) {
+
+    // } else if (roommatesConditions && !userAsRoommate) {
+
+    // }
+  }, [roommatesConditions, userAsRoommate]);
   return (
     <Wrapper>
       <Hr style={{ margin: "40px 0px" }} />
@@ -311,7 +341,7 @@ function RoommatesCondition({
             </ConditionArea>
           ))}
       </Conditions>
-      <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn>
+      {/* <SubmitBtn onClick={() => checkMatch()}>比對</SubmitBtn> */}
     </Wrapper>
   );
 }

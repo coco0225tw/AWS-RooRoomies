@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { BtnLink, BtnDiv } from "./Button";
+import { BtnDiv } from "./Button";
 
 const Wrapper = styled.div`
   display: flex;
@@ -40,13 +39,11 @@ const DefaultBtn = styled(BtnDiv)`
   background-color: #ece2d5;
   &:hover {
     background-color: #fff7f4;
-    border: solid 1px #ece2d5;
   }
 `;
 
 const NotDefaultBtn = styled(BtnDiv)`
   &:hover {
-    border: solid 1px #ece2d5;
     background-color: #fff7f4;
   }
 `;
@@ -62,7 +59,7 @@ const Close = styled.div`
   right: 12px;
   top: 12px;
   text-align: center;
-  // border: solid 1px #ffffff;
+  z-index: 1;
   &:hover {
     border: solid 1px #ece2d5;
     background-color: #fff7f4;
@@ -75,9 +72,7 @@ const PopImg = styled(Popup)<{ img: string }>`
 
   background-position: center center;
   background-image: url(${(props) => props.img});
-  // margin: auto;
   display: flex;
-  // flex-direction: column;
   padding: 0px;
 `;
 function PopupComponent({

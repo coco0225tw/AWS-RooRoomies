@@ -19,6 +19,7 @@ import {
   where,
   arrayUnion,
   arrayRemove,
+  deleteDoc,
 } from "firebase/firestore";
 import {
   getStorage,
@@ -79,7 +80,6 @@ const firebase = {
       newListingRef.id
     );
     const imagesUrl = await this.uploadImages(imagesBlob, newListingRef.id);
-    console.log(newListingRef.id);
 
     await setDoc(newListingRef, {
       ...fieldData,
@@ -87,9 +87,8 @@ const firebase = {
       images: imagesUrl,
     });
     let bookingTimePromises: Promise<void>[] = [];
-    console.log(bookingTimes);
+
     bookingTimes.map((bookingTime: any, index: number) => {
-      console.log(newListingRef.id);
       bookingTimePromises.push(
         setDoc(
           doc(
@@ -98,7 +97,6 @@ const firebase = {
           { ...bookingTime }
         )
       );
-      console.log(bookingTimePromises);
     });
     await this.updateUserListingId(uid, newListingRef.id);
     await Promise.all(bookingTimePromises);
@@ -167,7 +165,7 @@ const firebase = {
   },
   async getListing(listingId: string) {
     const listingRef = doc(db, "listings", listingId);
-    console.log(listingId);
+
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap.data();
@@ -177,7 +175,7 @@ const firebase = {
   },
   async getFavoriteListing(listingId: string) {
     const listingRef = doc(db, "listings", listingId);
-    console.log(listingId);
+
     const docSnap = await getDoc(listingRef);
     if (docSnap.exists()) {
       return docSnap;
@@ -225,9 +223,7 @@ const firebase = {
         password
       );
       return newUser;
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    } catch (error: any) {}
   },
   async signOutUser() {
     await signOut(auth);
@@ -235,11 +231,7 @@ const firebase = {
   async signInUser(email: string, password: string) {
     try {
       const user = await signInWithEmailAndPassword(auth, email, password);
-
-      console.log(user);
-    } catch (error: any) {
-      console.log(error.message);
-    }
+    } catch (error: any) {}
   },
   async getBookingTimesSubColForListing(listingId: string) {
     const subColRef = collection(db, "listings", listingId, "bookingTimes");
@@ -303,7 +295,6 @@ const firebase = {
     const userRef = doc(db, "users", uid);
     const docSnap = await getDoc(userRef);
     if (docSnap.exists()) {
-      // console.log(docSnap.data());
       return docSnap;
     } else {
       // window.alert("No such document!");
@@ -311,7 +302,7 @@ const firebase = {
   },
   async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {
     const chatRoomRef = doc(db, "chatRooms", chatRoomId);
-    console.log(chatRoomId);
+
     await updateDoc(chatRoomRef, {
       msg: [...oldMsg, newMsg],
     });
@@ -325,7 +316,28 @@ const firebase = {
       { merge: true }
     );
   },
-  async addUserToGroup(listingId: string, updateGroup: any) {
+  async addUserToGroupAndCreateChatRoom(
+    //空的組加入
+    listingId: string,
+    updateGroup: any,
+    chatRoomId: string,
+    index: number
+  ) {
+    let newGroup = [...updateGroup];
+    newGroup[index].chatRoomId = chatRoomId;
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: newGroup,
+      },
+      { merge: true }
+    );
+  },
+  async updateAddUserToGroup(
+    //既有的組加入(match)
+    listingId: string,
+    updateGroup: any
+  ) {
     await setDoc(
       doc(db, "listings", listingId),
       {
@@ -334,7 +346,24 @@ const firebase = {
       { merge: true }
     );
   },
+  async updateChatRoom(
+    //既有的組加入(chatRoom)
+    chatId: string,
+    isFull: boolean,
+    userId: any
+  ) {
+    await setDoc(
+      doc(db, "chatRooms", chatId),
+      {
+        userId: [...userId],
+        isFull: isFull,
+      },
+      { merge: true }
+    );
+  },
+
   async createChatRoom(
+    //開新的聊天室
     userId: string | null[],
     listingId: string,
     listingTitle: string,
@@ -351,37 +380,14 @@ const firebase = {
       msg: [],
       isFull: false,
     });
-    // await this.updateChatRoomIdInListing(
-    //   listingId,
-    //   updateGroup,
-    //   index,
-    //   newChatRoomRef.id
-    // );
-  },
-  async updateChatRoom(
-    chatId: string,
-    isFull: boolean,
-    userId: string | null[]
-  ) {
-    await setDoc(
-      doc(db, "chatRooms", chatId),
-      {
-        userId: [...userId],
-        isFull: isFull,
-      },
-      { merge: true }
+    await this.addUserToGroupAndCreateChatRoom(
+      listingId,
+      updateGroup,
+      newChatRoomRef.id,
+      index
     );
   },
-  // async findChatId(listingId: string, uids: string[]) {
-  //   const chatIdRef = collection(db, "chatRooms");
-  //   const userChatRef = query(
-  //     chatIdRef,
-  //     where("userId", "in", uids),
-  //     where("listingId", "==", listingId)
-  //   );
-  //   const querySnapshot = await getDocs(userChatRef);
-  //   return querySnapshot;
-  // },
+
   async findChatId(listingId: string) {
     const chatIdRef = collection(db, "chatRooms");
     const userChatRef = query(
@@ -398,6 +404,19 @@ const firebase = {
       {
         bookedTime: bookedTime,
         isBooked: true,
+      },
+      { merge: true }
+    );
+  },
+  async bookedTimeInMatch(
+    //既有的組加入(match)
+    listingId: string,
+    updateGroup: any
+  ) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
       },
       { merge: true }
     );
@@ -424,7 +443,7 @@ const firebase = {
       where("userId", "array-contains", uid),
       where("listingId", "==", listingId)
     );
-    console.log("check");
+
     const querySnapshot = await getDocs(userChatRef);
     return querySnapshot;
   },
@@ -434,10 +453,8 @@ const firebase = {
     index: number,
     chatRoomId: string
   ) {
-    console.log(updateGroup);
-    console.log(listingId);
     updateGroup[index].chatRoomId = chatRoomId;
-    console.log(updateGroup[index]);
+
     await setDoc(
       doc(db, "listings", listingId),
       {
@@ -488,6 +505,69 @@ const firebase = {
     await updateDoc(doc(db, "users", uid), {
       dndLists: arrayRemove(listingId),
     });
+  },
+
+  // cancelBookTime
+
+  async cancelBookedTimeInChatRoom(chatRoomId: string) {
+    await setDoc(
+      doc(db, "chatRooms", chatRoomId),
+      {
+        bookedTime: {},
+        isBooked: false,
+      },
+      { merge: true }
+    );
+  },
+  async cancelBookedTimeInMatch(listingId: string, updateGroup: any) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
+      },
+      { merge: true }
+    );
+  },
+  async cancelBookedTime(listingId: string, date: Date, time: string) {
+    const bookedRef = collection(db, "listings", listingId, "bookingTimes");
+    const bookedTimeRef = query(
+      bookedRef,
+      where("date", "==", date),
+      where("startTime", "==", time)
+    );
+    const querySnapshot = await getDocs(bookedTimeRef);
+    let bookTimeId: string | null;
+    querySnapshot.forEach((listing) => (bookTimeId = listing.id));
+
+    await updateDoc(
+      doc(db, "listings", listingId, "bookingTimes", bookTimeId),
+      {
+        isBooked: false,
+      }
+    );
+  },
+  //退團
+  async removeUserFromGroupInMatch(listingId: string, updateGroup: any) {
+    await setDoc(
+      doc(db, "listings", listingId),
+      {
+        matchGroup: updateGroup,
+      },
+      { merge: true }
+    );
+  },
+  async removeUserInChatRoom(chatId: string, userId: any) {
+    await setDoc(
+      doc(db, "chatRooms", chatId),
+      {
+        userId: [...userId],
+        isFull: false,
+      },
+      { merge: true }
+    );
+  },
+  async removeChatRoom(chatRoomId: string) {
+    await deleteDoc(doc(db, "chatRooms", chatRoomId));
   },
 };
 

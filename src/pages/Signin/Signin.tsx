@@ -3,8 +3,10 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
+import { RootState } from "../../redux/rootReducer";
 
 import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
+import { useSelector, useDispatch } from "react-redux";
 import loginPage from "../../assets/loginPage.png";
 import { Title, SubTitle } from "../../components/ProfileTitle";
 import {
@@ -33,7 +35,7 @@ const Wrapper = styled.div`
   flex-grow: 1;
   background-image: url(${loginPage});
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 80px);
   background-size: cover;
   background-position: right;
   ${"" /* border: solid 5px brown; */};
@@ -158,13 +160,18 @@ const submitBtnGroups = ["登入", "註冊", "登出"];
 
 function SignIn() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
+  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [user, setUser] = useState<User>();
   useEffect(() => {
-    onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser as User);
-    });
-  }, []);
+    if (authChange) {
+      onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser as User);
+      });
+      navigate("/profile");
+    }
+  }, [authChange]);
   interface User {
     email: string;
   }
@@ -197,32 +204,57 @@ function SignIn() {
       regInfoRef.current[1].value,
       regInfoRef.current[2].value
     );
-    await firebase.setNewUserDocField(
-      newUser?.user.uid as string,
-      regInfoRef.current[1].value,
-      regInfoRef.current[0].value,
-      userDefaultPic
-      // regInfoRef.current[3].files![0]
-    );
-    navigate("/");
+    firebase
+      .setNewUserDocField(
+        newUser?.user.uid as string,
+        regInfoRef.current[1].value,
+        regInfoRef.current[0].value,
+        userDefaultPic
+        // regInfoRef.current[3].files![0]
+      )
+      .then(() => {
+        navigate("/");
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "註冊成功",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
+      });
   };
   const signInSubmit = async function () {
     setSignInInfo({
       signInEmail: signInInfoRef.current[0].value,
       signInPassword: signInInfoRef.current[1].value,
     });
-    let newUser = await firebase.signInUser(
-      signInInfoRef.current[0]!.value,
-      signInInfoRef.current[1]!.value
-    );
-    console.log(newUser);
-    // console.log('登入');
-    // navigate('/');
+    firebase
+      .signInUser(
+        signInInfoRef.current[0]!.value,
+        signInInfoRef.current[1]!.value
+      )
+      .then(() => {
+        navigate("/");
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "登入成功",
+          },
+        });
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+        }, 3000);
+      });
   };
 
   const handleLogout = async function () {
     await firebase.signOutUser();
-    // console.log('登出');
   };
 
   async function getProfile() {

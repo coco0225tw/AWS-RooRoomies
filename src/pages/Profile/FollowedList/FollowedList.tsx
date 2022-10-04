@@ -10,7 +10,7 @@ import { BtnDiv } from "../../../components/Button";
 import { Title } from "../../../components/ProfileTitle";
 import ListingItem from "../../../components/ListingItem";
 import { Loading } from "../../../components/Loading";
-
+import NoListing from "../../../components/NoData";
 import {
   query,
   collection,
@@ -94,10 +94,25 @@ function FollowedList({
     setUnLikeId(listingId);
   }
   async function removeFromFavoriteLists() {
-    await firebase.removeFromFavoriteLists(userInfo.uid, unLikeId);
-    dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: unLikeId } });
-    setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
-    setIsShown(false);
+    firebase.removeFromFavoriteLists(userInfo.uid, unLikeId).then(() => {
+      dispatch({
+        type: "REMOVE_FROM_FAVORITELISTS",
+        payload: { id: unLikeId },
+      });
+      dispatch({
+        type: "OPEN_NOTIFY_ALERT",
+        payload: {
+          alertMessage: "從喜歡列表刪除",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+      setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));
+      setIsShown(false);
+    });
   }
 
   useEffect(() => {
@@ -113,7 +128,6 @@ function FollowedList({
       });
 
       setAllListingData(listingDocArr.reverse());
-      console.log(listingDocArr);
     }
     getAllListing();
   }, []);
@@ -131,9 +145,10 @@ function FollowedList({
       <Title>喜歡列表</Title>
       <Hr />
       {loading ? (
-        <Loading />
+        <Loading style={null} />
+      ) : favoriteLists.length === 0 ? (
+        <NoListing msg="尚未加入任何房源" />
       ) : (
-        favoriteLists &&
         allListingData.map((f, index) => (
           <ListingWrapper to={`/listing/${f.id}`} key={`favoriteLists${index}`}>
             <ListingItem listingDocData={f}></ListingItem>

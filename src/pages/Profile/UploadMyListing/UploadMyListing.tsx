@@ -37,7 +37,7 @@ import titleType from "../../../redux/UploadTitle/UploadTitleType";
 import { Title } from "../../../components/ProfileTitle";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import { Loading } from "../../../components/Loading";
-
+import NoListing from "../../../components/NoData";
 import Hr from "../../../components/Hr";
 const Wrapper = styled.div`
   display: flex;
@@ -52,10 +52,11 @@ const Wrapper = styled.div`
 `;
 
 const SubmitBtn = styled(BtnDiv)`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  padding: 10px;
+  align-self: flex-end;
+  margin-top: 20px;
+  display: inline-block;
+  margin-left: 12px;
+  transform: translateY(-4px);
 `;
 const Tabs = styled.div`
   display: flex;
@@ -66,7 +67,9 @@ const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   border: none;
   border-bottom: ${(props) => (props.isClick ? "solid 3px #c77155 " : "none")};
 `;
-
+const Span = styled.span`
+  align-self: flex-end;
+`;
 const TabSelect = [
   "基本資訊",
   "地址",
@@ -104,6 +107,7 @@ function UploadMyListing({
   const getBookingTimes = useSelector(
     (state: RootState) => state.UploadTimesReducer
   );
+  const [edit, setEdit] = useState<boolean>(false);
   function setDoc(facilityOptions: any) {
     const findPeopleAmount = (getRooms as roomDetailsType).reduce(
       (sum, people) => sum + people.peopleAmount,
@@ -145,36 +149,68 @@ function UploadMyListing({
   }
   return (
     <Wrapper>
-      <Title>管理物件</Title>
+      <Title
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        管理物件
+        <Span>
+          {userInfo!.userListingId?.length === 0 && !edit ? (
+            <React.Fragment>
+              <SubmitBtn
+                onClick={() => {
+                  setEdit(true);
+                  setClickTab("基本資訊");
+                }}
+              >
+                我要上架
+              </SubmitBtn>
+            </React.Fragment>
+          ) : (
+            <SubmitBtn onClick={() => setEdit(false)}>取消</SubmitBtn>
+          )}
+        </Span>
+      </Title>
       <Hr />
       {/* {loading ?  <Loading/> && } */}
-      {userInfo!.userListingId?.length !== 0 && <div>你有一個上傳物件</div>}
-      <Tabs>
-        {TabSelect.map((el, index) => (
-          <Tab
-            key={`subTab${index}`}
-            isClick={el === clickTab}
-            onClick={() => {
-              setClickTab(el);
-            }}
-          >
-            {el}
-          </Tab>
-        ))}
-      </Tabs>
-      {clickTab === "基本資訊" && <ListingTitle setClickTab={setClickTab} />}
-      {clickTab === "地址" && <ListingAddr setClickTab={setClickTab} />}
-      {clickTab === "上傳圖片" && (
+      {edit && (
+        <Tabs>
+          {TabSelect.map((el, index) => (
+            <Tab
+              key={`subTab${index}`}
+              isClick={el === clickTab}
+              onClick={() => {
+                setClickTab(el);
+              }}
+            >
+              {el}
+            </Tab>
+          ))}
+        </Tabs>
+      )}
+      {userInfo!.userListingId?.length === 0 && !edit && (
+        <NoListing msg="你沒有上架房源" />
+      )}
+      {clickTab === "基本資訊" && edit && (
+        <ListingTitle setClickTab={setClickTab} />
+      )}
+      {clickTab === "地址" && edit && <ListingAddr setClickTab={setClickTab} />}
+      {clickTab === "上傳圖片" && edit && (
         <UploadMainImageAndImages setClickTab={setClickTab} />
       )}
-      {clickTab === "房間規格" && <RentRoomDetails setClickTab={setClickTab} />}
-      {clickTab === "設定看房時間" && (
+      {clickTab === "房間規格" && edit && (
+        <RentRoomDetails setClickTab={setClickTab} />
+      )}
+      {clickTab === "設定看房時間" && edit && (
         <SetBookingTimes setClickTab={setClickTab} />
       )}
-      {clickTab === "設定室友條件" && (
+      {clickTab === "設定室友條件" && edit && (
         <RoommatesCondition setClickTab={setClickTab} />
       )}
-      {clickTab === "設施" && (
+      {clickTab === "設施" && edit && (
         <Facility setClickTab={setClickTab} setDoc={setDoc} />
       )}
       {/* <SubmitBtn onClick={() => setDoc()}>上傳</SubmitBtn> */}

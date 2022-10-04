@@ -5,7 +5,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Map from "./Map";
 import CalendarContainer from "../../components/Calendar";
-import { firebase } from "../../utils/firebase";
+import { firebase, db } from "../../utils/firebase";
 import {
   query,
   collection,
@@ -14,6 +14,7 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
   FieldValue,
+  onSnapshot,
   Timestamp,
 } from "firebase/firestore";
 import { useSelector, useDispatch } from "react-redux";
@@ -38,7 +39,9 @@ import unAddIcon from "../../assets/unAdd.png";
 
 import { BtnDiv } from "../../components/Button";
 import { PopupComponent, PopupImage } from "../../components/Popup";
+
 import Hr from "../../components/Hr";
+import SpanLink from "../../components/SpanLink";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -70,6 +73,7 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   width: 49%;
   justify-content: space-between;
   align-items: flex-start;
+  row-gap: 3%;
 `;
 const TitleWrapper = styled(SectionWrapper)`
   font-size: 20px;
@@ -111,6 +115,9 @@ const ImageWrap = styled.div`
   &:hover {
     filter: brightness(70%);
   }
+`;
+const OtherImageWrap = styled(ImageWrap)`
+  height: auto;
 `;
 const MainImage = styled.div<{ src: string }>`
   width: 100%;
@@ -185,9 +192,6 @@ const Icon = styled.div`
   background-size: 100% 100%;
   cursor: pointer;
   // flex-grow: 1;
-  &:hover {
-    width: 48px;
-  }
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) =>
@@ -198,7 +202,6 @@ const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
   background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
   margin-left: 12px;
 `;
-const IsBookedTimes = styled.div``;
 const SubTitle = styled.div`
   font-size: 28px;
   letter-spacing: 12px
@@ -264,6 +267,11 @@ const TitleIconWrapper = styled.div`
   display: flex;
   margin-top: 20px;
 `;
+const Span = styled.span`
+  font-size: 16px;
+  letter-spacing: 1.2px;
+  color: grey;
+`;
 function Listing() {
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -272,6 +280,9 @@ function Listing() {
   const compareLists = useSelector(
     (state: RootState) => state.GetCompareListsReducer
   );
+  const getGroup = useSelector(
+    (state: RootState) => state.GroupReducer
+  ) as Array<groupType>;
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
@@ -284,23 +295,49 @@ function Listing() {
   ) {
     e.stopPropagation();
     e.preventDefault();
-    if (authChange) {
+    if (authChange && !submitting) {
+      setSubmitting(true);
       if (!isLiked) {
         async function addToFavoriteLists() {
           await firebase.addToFavoriteLists(userInfo.uid, id!);
         }
-        addToFavoriteLists();
-        dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
+        addToFavoriteLists().then(() => {
+          dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: "OPEN_NOTIFY_ALERT",
+            payload: {
+              alertMessage: "加入喜歡列表",
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+          }, 3000);
+          setSubmitting(false);
+        });
       } else {
         async function removeFromFavoriteLists() {
           await firebase.removeFromFavoriteLists(userInfo.uid, id!);
         }
-        removeFromFavoriteLists();
-        dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
+        removeFromFavoriteLists().then(() => {
+          dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: "OPEN_NOTIFY_ALERT",
+            payload: {
+              alertMessage: "從喜歡列表刪除",
+            },
+          });
+          setTimeout(() => {
+            dispatch({
+              type: "CLOSE_ALERT",
+            });
+            setSubmitting(false);
+          }, 3000);
+        });
       }
-    } else {
+    } else if (!authChange) {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleCompare(
@@ -326,7 +363,6 @@ function Listing() {
       }
     } else {
       setIsShown(true);
-      console.log("popup");
     }
   }
   function handleDnd(
@@ -364,18 +400,33 @@ function Listing() {
     moveInDate: string;
     latLng: { lat: number; lng: number };
   };
-
+  const [hintTextLoading, setHintTextLoading] = useState<boolean>(false);
   const [listingInfo, setListingInfo] = useState<ListingType>();
   const [bookingTimesInfo, setBookingTimesInfo] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
   const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
-  const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
+  // const [alreadyBookedPopup, setAlreadyBookedPopup] = useState<boolean>(false);
+  // const [checkIfUserCanBook, setCheckIfUserCanBook] = useState<boolean>(false);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>("");
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
+  const [bookTimeInfo, setBookTimeInfo] = useState<{
+    uid: string;
+    docId: string;
+    listingId: string;
+    selectedDateTime: any;
+  }>();
+  //條件
+  const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] =
+    useState<boolean>(false);
   const [match, setMatch] = useState<boolean>(false);
+  const [isInGroup, setIsInGroup] = useState<boolean>(false);
+  const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
+  const [canBook, setCanBook] = useState<boolean>(false);
+  //
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -397,62 +448,114 @@ function Listing() {
     setClickOnImg(url);
   }
   async function bookedTime(
-    uid: string,
-    docId: string,
-    listingId: string,
-    selectedDateTime: any
+    bookTimeInfo
+    // uid: string,
+    // docId: string,
+    // listingId: string,
+    // selectedDateTime: any
   ) {
+    setHintTextLoading(true);
     let chatRoomId!: string;
-    let userId!: [];
-
-    await firebase.findChatId(listingId).then((listing) => {
-      listing.forEach((doc) => (chatRoomId = doc.id));
-    });
-    if (checkIfUserCanBook) {
-      const bookedRecord = {
-        chatRoomId,
-        ...selectedDateTime,
-        userId,
-      };
-      async function updateAllBookedTime() {
-        await Promise.all([
-          firebase.bookedTime(listingId, docId),
-          firebase.bookedTimeInChatRoom(chatRoomId as string, selectedDateTime),
-          // firebase.createBookedTimeInfo(listingId, bookedRecord),
-        ]);
-      }
-      updateAllBookedTime();
-    } else {
-      setAlreadyBookedPopup(true);
-    }
-  }
-  async function check(uid: string, listingId: string) {
-    await firebase.checkIfUserCanBook(uid, listingId).then((listing) => {
-      let chatRoomId!: string;
-      let userId!: [];
-      let isBooked: boolean;
-      listing.forEach((doc) => {
-        isBooked = doc.data().isBooked;
-        chatRoomId = doc.id;
-        userId = doc.data().userId;
+    let groupId!: number;
+    chatRoomId = getGroup.find((g) =>
+      g.users.some((u) => u && u.userId === userInfo.uid)
+    ).chatRoomId;
+    groupId = getGroup.findIndex((g) =>
+      g.users.some((u) => u && u.userId === userInfo.uid)
+    );
+    let newGroup = [...getGroup];
+    newGroup[groupId].isBooked = true;
+    async function updateAllBookedTime() {
+      Promise.all([
+        firebase.bookedTime(bookTimeInfo.listingId, bookTimeInfo.docId),
+        firebase.bookedTimeInChatRoom(
+          chatRoomId as string,
+          bookTimeInfo.selectedDateTime
+        ),
+        firebase.bookedTimeInMatch(bookTimeInfo.listingId, newGroup),
+      ]).then(() => {
+        dispatch({
+          type: "OPEN_SUCCESS_ALERT",
+          payload: {
+            alertMessage: "預約成功",
+          },
+        });
+        setBookedTimePopup(false);
+        setTimeout(() => {
+          dispatch({
+            type: "CLOSE_ALERT",
+          });
+          setCanBook(false);
+          setHintTextLoading(false);
+        }, 3000);
       });
-      console.log(isBooked!);
-      console.log(!isBooked!);
-      setCheckIfUserCanBook(!isBooked!);
+    }
+    updateAllBookedTime();
+  }
+  function notAddUserAsRoommatesConditionAlert() {
+    dispatch({
+      type: "OPEN_NOTIFY_ALERT",
+      payload: {
+        alertMessage: (
+          <Span
+            style={{
+              fontSize: "inherit",
+              letterSpacing: "inherit",
+              color: "inherit",
+            }}
+          >
+            尚未填寫條件,到
+            <SpanLink
+              path={"/profile"}
+              msg={"個人頁面"}
+              otherFn={dispatch({
+                type: "SELECT_TYPE",
+                payload: { tab: "aboutMe" },
+              })}
+            />
+            更新
+          </Span>
+        ),
+      },
     });
+    setTimeout(() => {
+      dispatch({
+        type: "CLOSE_ALERT",
+      });
+    }, 3000);
   }
   useEffect(() => {
     async function getListing() {
-      const data = (await firebase.getListing(id!)) as ListingType;
-      setListingInfo(data);
-      // console.log(data.moveInDate.toDateString());
+      const data = (await firebase.getListing(id!)) as ListingType | boolean;
+      if (data) {
+        setListingInfo(data as ListingType);
+      } else {
+      }
     }
-    async function getBookingTimes() {
-      await firebase.getBookingTimesSubColForListing(id!).then((times) => {
+    const subColRef = collection(db, "listings", id!, "bookingTimes");
+    const getAllMessages = onSnapshot(subColRef, (snapshot) => {
+      let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+      snapshot.forEach((doc) => {
+        listingTimesArr.push(doc);
+      });
+      // setBookingTimesInfo(listingTimesArr);
+    });
+    // async function getBookingTimes() {
+    function getBookingTimes() {
+      const getAllMessages = onSnapshot(subColRef, (snapshot) => {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        times.forEach((doc) => {
+        snapshot.forEach((doc) => {
           listingTimesArr.push(doc);
         });
+        // setBookingTimesInfo(listingTimesArr);
+
+        //  });
+        // await firebase.getBookingTimesSubColForListing(id!).then((times) => {
+        //   let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        //   times.forEach((doc) => {
+        //     listingTimesArr.push(doc);
+        //   });
+        //
         setBookingTimesInfo(listingTimesArr);
 
         let enableDate = [];
@@ -461,7 +564,7 @@ function Listing() {
             let findIndex = acc.findIndex(
               (item: any) =>
                 item?.data().date.seconds === curr.data().date.seconds
-            ); //console.log
+            );
             if (findIndex === -1) {
               acc.push(curr);
             } else {
@@ -480,9 +583,11 @@ function Listing() {
       });
     }
     async function promise() {
-      await Promise.all([getBookingTimes(), getListing()]);
-      await check(userInfo.uid, id!);
+      // await Promise.all([getBookingTimes(), getListing()]);
+      // await check(userInfo.uid, id!);
+      getListing();
     }
+    getBookingTimes();
 
     promise();
   }, [id]);
@@ -506,13 +611,22 @@ function Listing() {
       {popImg && (
         <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />
       )}
-      {alreadyBookedPopup && (
+      {/* {alreadyBookedPopup && (
         <PopupComponent
           msg={`一團只能預約一個時間哦!!`}
           notDefaultBtn={`確認`}
           defaultBtn={`回物件管理頁面取消`}
           clickClose={() => setAlreadyBookedPopup(false)}
           clickFunction={() => navigate("/profile")}
+        />
+      )} */}
+      {bookedTimePopup && (
+        <PopupComponent
+          msg={`確認預約?`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`確認`}
+          clickClose={() => setBookedTimePopup(false)}
+          clickFunction={() => bookedTime(bookTimeInfo)}
         />
       )}
       {isShown && (
@@ -536,12 +650,9 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              <ImageWrap
-                style={{ height: "auto", marginBottom: "2%" }}
-                key={`images_${index}`}
-              >
+              <OtherImageWrap key={`images_${index}`}>
                 <Images src={src} onClick={() => clickOnImage(src)} />
-              </ImageWrap>
+              </OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
@@ -576,6 +687,8 @@ function Listing() {
             roommatesConditions={listingInfo?.roommatesConditions}
             match={match}
             setMatch={setMatch}
+            addUserAsRoommatesCondition={addUserAsRoommatesCondition}
+            setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
           ></RoommatesCondition>
           <Group
             match={match}
@@ -583,6 +696,19 @@ function Listing() {
             peopleAmount={listingInfo?.peopleAmount!}
             listingId={id!}
             listingTitle={listingInfo?.title as string}
+            addUserAsRoommatesCondition={addUserAsRoommatesCondition}
+            setAddUserAsRoommatesCondition={setAddUserAsRoommatesCondition}
+            notAddUserAsRoommatesConditionAlert={
+              notAddUserAsRoommatesConditionAlert
+            }
+            isInGroup={isInGroup}
+            setIsInGroup={setIsInGroup}
+            isInFullGroup={isInFullGroup}
+            setIsInFullGroup={setIsInFullGroup}
+            canBook={canBook}
+            setCanBook={setCanBook}
+            hintTextLoading={hintTextLoading}
+            setHintTextLoading={setHintTextLoading}
           ></Group>
           <Facility facility={listingInfo?.facility}></Facility>
           <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
@@ -627,12 +753,78 @@ function Listing() {
                   <SelectTimeWrapper key={`selectedTimes_${index}`}>
                     <SelectTime>{el.data().startTime}</SelectTime>
                     <CanBookedBtn
-                      onClick={() =>
-                        bookedTime(userInfo.uid, el.id, id!, {
-                          date: el.data().date,
-                          startTime: el.data().startTime,
-                        })
-                      }
+                      onClick={() => {
+                        if (!canBook) {
+                          if (!authChange) setIsShown(true);
+                          if (!addUserAsRoommatesCondition)
+                            notAddUserAsRoommatesConditionAlert();
+                          if (!match) {
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "條件不符，不能湊團預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          if (!isInGroup) {
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "請先加入團再預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          if (!isInFullGroup) {
+                            dispatch({
+                              type: "OPEN_ERROR_ALERT",
+                              payload: {
+                                alertMessage: "尚未湊滿團，無法預約",
+                              },
+                            });
+                            setTimeout(() => {
+                              dispatch({
+                                type: "CLOSE_ALERT",
+                              });
+                            }, 3000);
+                            return;
+                          }
+                          dispatch({
+                            type: "OPEN_ERROR_ALERT",
+                            payload: {
+                              alertMessage: "已經預約過",
+                            },
+                          });
+                          setTimeout(() => {
+                            dispatch({
+                              type: "CLOSE_ALERT",
+                            });
+                          }, 3000);
+                          return;
+                        } else {
+                          setBookedTimePopup(true);
+                          setBookTimeInfo({
+                            uid: userInfo.uid,
+                            docId: el.id,
+                            listingId: id!,
+                            selectedDateTime: {
+                              date: el.data().date,
+                              startTime: el.data().startTime,
+                            },
+                          });
+                        }
+                      }}
                     >
                       預約
                     </CanBookedBtn>
