@@ -29,6 +29,7 @@ import { previewOtherImagesAction } from "./redux/PreviewOtherImages/PreviewOthe
 import { selectTabAction } from "./redux/SelectTab/SelectTabAction";
 import { subTabAction } from "./redux/SubTab/SubTabAction";
 import { uploadAddrAction } from "./redux/UploadAddr/UploadAddrAction";
+import { uploadBookingTimesAction } from "./redux/UploadBookingTimes/UploadBookingTimesAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -126,7 +127,9 @@ function User() {
         //listingdocumentforhomepage
         dispatch({ type: selectTabAction.RETURN_INITIAL_TAB });
         dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
-        dispatch({ type: "RETURN_INITIAL_BOOKINGTIMES" });
+        dispatch({
+          type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+        });
         dispatch({ type: "RETURN_INITIAL_FACILITY" });
         dispatch({ type: "RETURN_INITIAL_LISTING_IMAGES" });
         dispatch({ type: "RETURN_INITIAL_ROOMMATES_CONDITION" });

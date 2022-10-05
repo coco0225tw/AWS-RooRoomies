@@ -1,7 +1,7 @@
 import addressType from "./UploadAddrType";
 import { uploadAddrAction, uploadAddrActionType } from "./UploadAddrAction";
 
-const addrEmptyInitialState = {
+const addrEmptyInitialState: addressType = {
   countyname: "",
   townname: "",
   completeAddr: "",

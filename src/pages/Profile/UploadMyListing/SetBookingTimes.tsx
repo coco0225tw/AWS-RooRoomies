@@ -8,6 +8,7 @@ import { BtnDiv } from "../../../components/Button";
 import { RootState } from "../../../redux/rootReducer";
 import bin from "../../../assets/bin.png";
 import bookingTimesType from "../../../redux/UploadBookingTimes/UploadBookingTimesType";
+import { uploadBookingTimesAction } from "../../../redux/UploadBookingTimes/UploadBookingTimesAction";
 
 const Wrapper = styled.div`
   display: flex;
@@ -139,7 +140,10 @@ function SetBookingTimes({
     setSelectedTimes(selectedTimes.filter((i) => i.date !== date));
   }
   function submit(selectedTimes: bookingTimesType) {
-    dispatch({ type: "UPLOAD_TIMES", payload: { selectedTimes } });
+    dispatch({
+      type: uploadBookingTimesAction.UPLOAD_TIMES,
+      payload: { selectedTimes },
+    });
   }
   return (
     <Wrapper>
