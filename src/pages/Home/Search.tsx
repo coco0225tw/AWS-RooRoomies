@@ -5,6 +5,7 @@ import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 import { RootState } from "../../redux/rootReducer";
 import { lastDocAction } from "../../redux/LastDoc/LastDocAction";
+import { listingForHomePageAction } from "../../redux/ListingDocumentForHomePage/ListingDocumentForHomePageAction";
 import { firebase } from "../../utils/firebase";
 
 import countyItem from "../../utils/county";
@@ -246,13 +247,13 @@ function Search({
       .getAllListings(county, town, startRent, endRent)
       .then((listing) => {
         dispatch({
-          type: "GET_LISTINGDOC_FROM_FIREBASE",
+          type: listingForHomePageAction.GET_LISTING_DOCS_FROM_FIREBASE,
           payload: { listingDocData: [] },
         });
 
         if (listing.empty) {
           dispatch({
-            type: "GET_LISTINGDOC_FROM_FIREBASE",
+            type: listingForHomePageAction.GET_LISTING_DOCS_FROM_FIREBASE,
             payload: { listingDocData: [] },
           });
           setNoData(true);
@@ -271,7 +272,7 @@ function Search({
             listingDocArr.push(doc);
           });
           dispatch({
-            type: "GET_LISTINGDOC_FROM_FIREBASE",
+            type: listingForHomePageAction.GET_LISTING_DOCS_FROM_FIREBASE,
             payload: { listingDocData: listingDocArr },
           });
         }
@@ -331,7 +332,7 @@ function Search({
             listingDocArr.push(doc);
           });
           dispatch({
-            type: "GET_NEXTPAGE_LISTINGDOC_FROM_FIREBASE",
+            type: listingForHomePageAction.GET_NEXT_PAGE_LISTING_DOCS_FROM_FIREBASE,
             payload: { listingDocData: listingDocArr },
           });
           setTimeout(() => {
