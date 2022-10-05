@@ -12,6 +12,7 @@ import { RootState } from "../../../redux/rootReducer";
 import { BtnDiv, BtnLink } from "../../../components/Button";
 import GoogleMapKey from "../../../key";
 import addressType from "../../../redux/UploadAddr/UploadAddrType";
+import { uploadAddrAction } from "../../../redux/UploadAddr/UploadAddrAction";
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,7 +52,7 @@ function ListingAddr({
       await fetch(getGeocodeUrl).then((res) => {
         res.json().then((data) => {
           dispatch({
-            type: "UPLOAD_ADDR",
+            type: uploadAddrAction.UPLOAD_ADDR,
             payload: {
               addrState: {
                 ...addrState,

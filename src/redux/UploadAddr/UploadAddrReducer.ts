@@ -1,7 +1,6 @@
 import addressType from "./UploadAddrType";
-type Action =
-  | { type: "UPLOAD_ADDR"; payload: { addrState: addressType } }
-  | { type: "RETURN_INITIAL_ADDR" };
+import { uploadAddrAction, uploadAddrActionType } from "./UploadAddrAction";
+
 const addrEmptyInitialState = {
   countyname: "",
   townname: "",
@@ -12,12 +11,12 @@ const addrEmptyInitialState = {
 
 export default function UploadAddr(
   state = addrEmptyInitialState,
-  action: Action
+  action: uploadAddrActionType
 ) {
   switch (action.type) {
-    case "UPLOAD_ADDR":
+    case uploadAddrAction.UPLOAD_ADDR:
       return action.payload.addrState;
-    case "RETURN_INITIAL_ADDR":
+    case uploadAddrAction.RETURN_INITIAL_ADDR:
       return addrEmptyInitialState;
     default:
       return state;
