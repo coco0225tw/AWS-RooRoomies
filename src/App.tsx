@@ -22,6 +22,7 @@ import facilityType from "./redux/UploadFacility/UploadFacilityType";
 import { alertActionType } from "./redux/Alert/AlertAction";
 import { chatRoomAction } from "./redux/ChatRoom/ChatRoomAction";
 import { getAuthAction } from "./redux/GetAuth/GetAuthAction";
+import { getFavoriteAction } from "./redux/GetFavoriteListing/GetFavoriteListingAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -113,7 +114,7 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_AUTH" });
         dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
         dispatch({ type: "RETURN_INITIAL_DNDLISTS" });
-        dispatch({ type: "RETURN_INITIAL_FAVORITELISTS" });
+        dispatch({ type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS });
         //group
         //lastdoc
         //listingdocumentforhomepage
@@ -153,7 +154,7 @@ function User() {
         });
         dispatch({ type: "GET_DNDLISTS_FROM_FIREBASE", payload: { dndLists } });
         dispatch({
-          type: "GET_FAVORITELISTS_FROM_FIREBASE",
+          type: getFavoriteAction.GET_FAVORITE_LISTS_FROM_FIREBASE,
           payload: { favoriteLists },
         });
         dispatch({

@@ -10,6 +10,7 @@ import unLikedIcon from "../../assets/unHeart.png";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
+import { getFavoriteAction } from "../../redux/GetFavoriteListing/GetFavoriteListingAction";
 
 import { PopupComponent } from "../../components/Popup";
 interface ImgProps {
@@ -133,7 +134,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         }
         addToFavoriteLists().then(() => {
           dispatch({
-            type: "ADD_TO_FAVORITELISTS",
+            type: getFavoriteAction.ADD_TO_FAVORITE_LISTS,
             payload: { id: listingDocData.id },
           });
           dispatch({
@@ -158,7 +159,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         }
         removeFromFavoriteLists().then(() => {
           dispatch({
-            type: "REMOVE_FROM_FAVORITELISTS",
+            type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
             payload: { id: listingDocData.id },
           });
           dispatch({

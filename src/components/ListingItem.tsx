@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import { RootState } from "../redux/rootReducer";
 import { firebase } from "../utils/firebase";
+import { getFavoriteAction } from "../redux/GetFavoriteListing/GetFavoriteListingAction";
 
 import { PopupComponent } from "./Popup";
 
@@ -131,7 +132,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         }
         addToFavoriteLists();
         dispatch({
-          type: "ADD_TO_FAVORITELISTS",
+          type: getFavoriteAction.ADD_TO_FAVORITE_LISTS,
           payload: { id: listingDocData.id },
         });
       } else {
@@ -143,7 +144,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         }
         removeFromFavoriteLists();
         dispatch({
-          type: "REMOVE_FROM_FAVORITELISTS",
+          type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
           payload: { id: listingDocData.id },
         });
       }

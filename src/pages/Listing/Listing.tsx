@@ -12,6 +12,7 @@ import {
 import { firebase, db } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
+import { getFavoriteAction } from "../../redux/GetFavoriteListing/GetFavoriteListingAction";
 
 import Calendar from "react-calendar";
 import Map from "./Map";
@@ -291,7 +292,10 @@ function Listing() {
           await firebase.addToFavoriteLists(userInfo.uid, id!);
         }
         addToFavoriteLists().then(() => {
-          dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: getFavoriteAction.ADD_TO_FAVORITE_LISTS,
+            payload: { id: id! },
+          });
           dispatch({
             type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
@@ -310,7 +314,10 @@ function Listing() {
           await firebase.removeFromFavoriteLists(userInfo.uid, id!);
         }
         removeFromFavoriteLists().then(() => {
-          dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
+          dispatch({
+            type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
+            payload: { id: id! },
+          });
           dispatch({
             type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {

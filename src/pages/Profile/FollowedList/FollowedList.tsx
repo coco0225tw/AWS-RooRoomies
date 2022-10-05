@@ -7,6 +7,7 @@ import { DocumentData } from "firebase/firestore";
 import { RootState } from "../../../redux/rootReducer";
 import { firebase } from "../../../utils/firebase";
 import { alertActionType } from "../../../redux/Alert/AlertAction";
+import { getFavoriteAction } from "../../../redux/GetFavoriteListing/GetFavoriteListingAction";
 
 import { PopupComponent } from "../../../components/Popup";
 import { Loading } from "../../../components/Loading";
@@ -78,7 +79,7 @@ function FollowedList({
   async function removeFromFavoriteLists() {
     firebase.removeFromFavoriteLists(userInfo.uid, unLikeId).then(() => {
       dispatch({
-        type: "REMOVE_FROM_FAVORITELISTS",
+        type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
         payload: { id: unLikeId },
       });
       dispatch({
