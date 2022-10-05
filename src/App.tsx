@@ -21,6 +21,7 @@ import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoomm
 import facilityType from "./redux/UploadFacility/UploadFacilityType";
 import { alertActionType } from "./redux/Alert/AlertAction";
 import { chatRoomAction } from "./redux/ChatRoom/ChatRoomAction";
+import { getAuthAction } from "./redux/GetAuth/GetAuthAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -108,7 +109,7 @@ function User() {
       if (currentUser) {
         getUser();
       } else {
-        dispatch({ type: "RETURN_INITIAL_GETUSER" });
+        dispatch({ type: getAuthAction.RETURN_INITIAL_GET_USER });
         dispatch({ type: "RETURN_INITIAL_AUTH" });
         dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
         dispatch({ type: "RETURN_INITIAL_DNDLISTS" });
@@ -155,7 +156,10 @@ function User() {
           type: "GET_FAVORITELISTS_FROM_FIREBASE",
           payload: { favoriteLists },
         });
-        dispatch({ type: "GETUSER_FROMFIREBASE", payload: { user } });
+        dispatch({
+          type: getAuthAction.GET_USER_FROM_FIREBASE,
+          payload: { user },
+        });
         if (data?.data().userAsRoommatesConditions) {
           dispatch({
             type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
