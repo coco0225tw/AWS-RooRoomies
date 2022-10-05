@@ -14,7 +14,7 @@ import Footer from "./components/Footer";
 import ChatRooms from "./components/ChatRooms/ChatRooms";
 import Alert from "./components/Alert";
 
-import { groupType } from "./redux/Group/GroupType";
+import { groupsType } from "./redux/Group/GroupType";
 import userType from "./redux/GetAuth/GetAuthType";
 import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
@@ -185,7 +185,7 @@ function User() {
               facility: facilityType;
               rentRoomDetails: roomDetailsType;
               peopleAmount: number;
-              matchGroup: Array<groupType>;
+              matchGroup: groupsType;
               listingTitle: string;
               totalSq: number;
             };

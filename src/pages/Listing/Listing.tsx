@@ -31,7 +31,7 @@ import { PopupComponent, PopupImage } from "../../components/Popup";
 import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
 
-import { groupType } from "../../redux/Group/GroupType";
+import { groupsType } from "../../redux/Group/GroupType";
 import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
 import facilityType from "../../redux/UploadFacility/UploadFacilityType";
@@ -248,7 +248,7 @@ function Listing() {
   );
   const getGroup = useSelector(
     (state: RootState) => state.GroupReducer
-  ) as Array<groupType>;
+  ) as groupsType;
   const favoriteLists = useSelector(
     (state: RootState) => state.GetFavoriteListsReducer
   );
@@ -387,7 +387,7 @@ function Listing() {
     facility: facilityType;
     rentRoomDetails: roomDetailsType;
     peopleAmount: number;
-    matchGroup: Array<groupType>;
+    matchGroup: groupsType;
     startRent: number;
     endRent: number;
     totalSq: number;

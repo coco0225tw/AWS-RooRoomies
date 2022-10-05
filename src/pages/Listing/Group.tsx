@@ -8,7 +8,9 @@ import { firebase, db } from "../../utils/firebase";
 
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
-import { groupType } from "../../redux/Group/GroupType";
+import { groupAction } from "../../redux/Group/GroupAction";
+
+import { groupsType } from "../../redux/Group/GroupType";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
 import SpanLink from "../../components/SpanLink";
@@ -112,7 +114,7 @@ function Group({
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getGroup = useSelector(
     (state: RootState) => state.GroupReducer
-  ) as Array<groupType>;
+  ) as groupsType;
 
   const [isShown, setIsShown] = useState<boolean>(false);
   const [createNewGroup, setCreateNewGroup] = useState<boolean>(false);
@@ -128,7 +130,7 @@ function Group({
     isBooked: false,
   };
   function addGroup() {
-    dispatch({ type: "ADD_GROUP", payload: { newGroup } });
+    dispatch({ type: groupAction.ADD_GROUP, payload: { newGroup } });
   }
   async function createNewChatRoom(
     uid: string,
@@ -142,7 +144,7 @@ function Group({
     nullUsersArray.splice(0, 1, uid);
 
     dispatch({
-      type: "ADD_USER_TO_GROUP",
+      type: groupAction.ADD_USER_TO_GROUP,
       payload: { groupId, userIndex: 0, userInfo },
     });
 
@@ -177,7 +179,7 @@ function Group({
 
     setHintTextLoading(true);
     dispatch({
-      type: "ADD_USER_TO_GROUP",
+      type: groupAction.ADD_USER_TO_GROUP,
       payload: { groupId, userIndex: userIndex, userInfo },
     });
     let newGroup = [...getGroup];
@@ -227,7 +229,10 @@ function Group({
       const groupQuery = doc(db, "listings", listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
         const groups = [...snapshot.data()!.matchGroup];
-        dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
+        dispatch({
+          type: groupAction.ADD_GROUP_FROM_FIREBASE,
+          payload: { groups },
+        });
         let inGroup = groups.some((g) =>
           g.users
             .filter((u) => u !== null)
@@ -484,7 +489,7 @@ function Group({
             onClick={() => {
               setCreateNewGroup(false);
               dispatch({
-                type: "REMOVE_GROUP",
+                type: groupAction.REMOVE_GROUP,
               });
             }}
           >
