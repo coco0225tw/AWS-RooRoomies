@@ -13,6 +13,7 @@ import { firebase, db } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
 import { getFavoriteAction } from "../../redux/GetFavoriteListing/GetFavoriteListingAction";
+import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
 
 import Calendar from "react-calendar";
 import Map from "./Map";
@@ -471,7 +472,7 @@ function Listing() {
               path={"/profile"}
               msg={"個人頁面"}
               otherFn={dispatch({
-                type: "SELECT_TYPE",
+                type: selectTabAction.SELECT_TYPE,
                 payload: { tab: "aboutMe" },
               })}
             />

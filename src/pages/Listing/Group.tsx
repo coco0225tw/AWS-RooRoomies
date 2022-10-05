@@ -9,7 +9,7 @@ import { firebase, db } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
 import { groupAction } from "../../redux/Group/GroupAction";
-
+import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
 import { groupsType } from "../../redux/Group/GroupType";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
@@ -326,7 +326,7 @@ function Group({
               msg={"個人頁面"}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
+                  type: selectTabAction.SELECT_TYPE,
                   payload: { tab: "aboutMe" },
                 });
               }}
@@ -345,7 +345,7 @@ function Group({
               msg={"個人頁面"}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
+                  type: selectTabAction.SELECT_TYPE,
                   payload: { tab: "allHouseHunting" },
                 });
 
@@ -372,7 +372,7 @@ function Group({
               msg={"個人頁面"}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
+                  type: selectTabAction.SELECT_TYPE,
                   payload: { tab: "allHouseHunting" },
                 });
 

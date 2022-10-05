@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 
+import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
 import user from "../../assets/user.png";
 import usero from "../../assets/usero.png";
 import house from "../../assets/houseo.png";
@@ -113,7 +114,10 @@ function SideBarTab({
     { key: "setting", img: settingo, label: "設定", value: setting },
   ];
   function clickTab(tabString: string) {
-    dispatch({ type: "SELECT_TYPE", payload: { tab: tabString } });
+    dispatch({
+      type: selectTabAction.SELECT_TYPE,
+      payload: { tab: tabString },
+    });
     setLoading(true);
     setTimeout(() => {
       setLoading(false);

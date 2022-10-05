@@ -26,6 +26,7 @@ import { getFavoriteAction } from "./redux/GetFavoriteListing/GetFavoriteListing
 import { onAuthChangeAction } from "./redux/OnAuthChange/OnAuthChangeAction";
 import { previewMainImageAction } from "./redux/PreviewMainImage/PreviewMainImageAction";
 import { previewOtherImagesAction } from "./redux/PreviewOtherImages/PreviewOtherImagesAction";
+import { selectTabAction } from "./redux/SelectTab/SelectTabAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -121,7 +122,7 @@ function User() {
         //group
         //lastdoc
         //listingdocumentforhomepage
-        dispatch({ type: "RETURN_INITIAL_TAB" });
+        dispatch({ type: selectTabAction.RETURN_INITIAL_TAB });
         dispatch({ type: "RETURN_INITIAL_ADDR" });
         dispatch({ type: "RETURN_INITIAL_BOOKINGTIMES" });
         dispatch({ type: "RETURN_INITIAL_FACILITY" });

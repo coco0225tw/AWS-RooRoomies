@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { RootState } from "../redux/rootReducer";
 import { alertActionType } from "../redux/Alert/AlertAction";
+import { selectTabAction } from "../redux/SelectTab/SelectTabAction";
 import { firebase } from "../utils/firebase";
 import { BtnLink, BtnDiv } from "./Button";
 import { PopupComponent } from "./Popup";
@@ -140,7 +141,7 @@ function Header() {
             img={userInfo.image}
             onClick={() => {
               dispatch({
-                type: "SELECT_TYPE",
+                type: selectTabAction.SELECT_TYPE,
                 payload: { tab: "aboutMe" },
               });
             }}
