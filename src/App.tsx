@@ -23,6 +23,7 @@ import { alertActionType } from "./redux/Alert/AlertAction";
 import { chatRoomAction } from "./redux/ChatRoom/ChatRoomAction";
 import { getAuthAction } from "./redux/GetAuth/GetAuthAction";
 import { getFavoriteAction } from "./redux/GetFavoriteListing/GetFavoriteListingAction";
+import { onAuthChangeAction } from "./redux/OnAuthChange/OnAuthChangeAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -111,7 +112,7 @@ function User() {
         getUser();
       } else {
         dispatch({ type: getAuthAction.RETURN_INITIAL_GET_USER });
-        dispatch({ type: "RETURN_INITIAL_AUTH" });
+        dispatch({ type: onAuthChangeAction.RETURN_INITIAL_AUTH });
         dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
         dispatch({ type: "RETURN_INITIAL_DNDLISTS" });
         dispatch({ type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS });
@@ -170,7 +171,7 @@ function User() {
           });
         }
 
-        dispatch({ type: "AUTH_CHANGE" });
+        dispatch({ type: onAuthChangeAction.AUTH_TRUE });
         if (data?.data().userListingId.length !== 0) {
           async function getListing() {
             type ListingType = {
