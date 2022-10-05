@@ -16,6 +16,7 @@ import { firebase, db } from "../../../utils/firebase";
 import { RootState } from "../../../redux/rootReducer";
 import { alertActionType } from "../../../redux/Alert/AlertAction";
 import { chatRoomAction } from "../../../redux/ChatRoom/ChatRoomAction";
+import { subTabAction } from "../../../redux/SubTab/SubTabAction";
 
 import ListingItem from "../../../components/ListingItem";
 import Hr from "../../../components/Hr";
@@ -318,7 +319,10 @@ function AllHouseHunting({
             key={`tab${el}`}
             isClick={el === getSubTab}
             onClick={() => {
-              dispatch({ type: "SELECT_SUB_TAB", payload: { subTab: el } });
+              dispatch({
+                type: subTabAction.SELECT_SUB_TAB,
+                payload: { subTab: el },
+              });
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);

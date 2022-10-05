@@ -10,6 +10,8 @@ import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
 import { groupAction } from "../../redux/Group/GroupAction";
 import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
+import { subTabAction } from "../../redux/SubTab/SubTabAction";
+
 import { groupsType } from "../../redux/Group/GroupType";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
@@ -350,7 +352,7 @@ function Group({
                 });
 
                 dispatch({
-                  type: "SELECT_SUB_TAB",
+                  type: subTabAction.SELECT_SUB_TAB,
                   payload: {
                     subTab: isInFullGroup ? "尚未預約" : "等待湊團",
                   },
@@ -377,7 +379,7 @@ function Group({
                 });
 
                 dispatch({
-                  type: "SELECT_SUB_TAB",
+                  type: subTabAction.SELECT_SUB_TAB,
                   payload: {
                     subTab: "已預約",
                   },

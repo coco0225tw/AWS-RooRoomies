@@ -27,6 +27,7 @@ import { onAuthChangeAction } from "./redux/OnAuthChange/OnAuthChangeAction";
 import { previewMainImageAction } from "./redux/PreviewMainImage/PreviewMainImageAction";
 import { previewOtherImagesAction } from "./redux/PreviewOtherImages/PreviewOtherImagesAction";
 import { selectTabAction } from "./redux/SelectTab/SelectTabAction";
+import { subTabAction } from "./redux/SubTab/SubTabAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -136,7 +137,7 @@ function User() {
           type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
         });
         dispatch({ type: alertActionType.RETURN_INITIAL_ALERT });
-        dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
+        dispatch({ type: subTabAction.RETURN_INITIAL_SUB_TAB });
         dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
       }
       async function getUser() {
