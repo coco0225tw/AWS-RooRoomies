@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { RootState } from "../../../redux/rootReducer";
 import { previewMainImageAction } from "../../../redux/PreviewMainImage/PreviewMainImageAction";
+import { previewOtherImagesAction } from "../../../redux/PreviewOtherImages/PreviewOtherImagesAction";
 import { BtnDiv } from "../../../components/Button";
 import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
@@ -117,7 +118,7 @@ function UploadMainImageAndImages({
       payload: { mainImage: mainImgUrl },
     });
     dispatch({
-      type: "PREVIEW_OTHERIMAGES",
+      type: previewOtherImagesAction.PREVIEW_OTHER_IMAGES,
       payload: { otherImages: imagesUrl },
     });
   }
