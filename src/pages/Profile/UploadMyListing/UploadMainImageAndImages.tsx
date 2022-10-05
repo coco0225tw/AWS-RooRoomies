@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 
 import { RootState } from "../../../redux/rootReducer";
+import { previewMainImageAction } from "../../../redux/PreviewMainImage/PreviewMainImageAction";
 import { BtnDiv } from "../../../components/Button";
 import upload from "../../../assets/upload.png";
 const Wrapper = styled.div`
@@ -111,7 +112,10 @@ function UploadMainImageAndImages({
   async function uploadAllImages() {
     let images = { mainImage: mainImgBlob, images: imagesBlob };
     dispatch({ type: "UPLOAD_IMAGES", payload: { images } });
-    dispatch({ type: "PREVIEW_MAINIMAGE", payload: { mainImage: mainImgUrl } });
+    dispatch({
+      type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
+      payload: { mainImage: mainImgUrl },
+    });
     dispatch({
       type: "PREVIEW_OTHERIMAGES",
       payload: { otherImages: imagesUrl },
