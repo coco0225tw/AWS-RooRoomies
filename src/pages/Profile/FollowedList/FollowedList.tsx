@@ -6,6 +6,7 @@ import { DocumentData } from "firebase/firestore";
 
 import { RootState } from "../../../redux/rootReducer";
 import { firebase } from "../../../utils/firebase";
+import { alertActionType } from "../../../redux/Alert/AlertAction";
 
 import { PopupComponent } from "../../../components/Popup";
 import { Loading } from "../../../components/Loading";
@@ -81,14 +82,14 @@ function FollowedList({
         payload: { id: unLikeId },
       });
       dispatch({
-        type: "OPEN_NOTIFY_ALERT",
+        type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
           alertMessage: "從喜歡列表刪除",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
       setAllListingData(allListingData.filter((el, i) => el.id !== unLikeId));

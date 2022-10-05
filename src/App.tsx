@@ -19,6 +19,7 @@ import userType from "./redux/GetAuth/GetAuthType";
 import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
 import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
 import facilityType from "./redux/UploadFacility/UploadFacilityType";
+import { alertActionType } from "./redux/Alert/AlertAction";
 
 import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
 import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
@@ -125,7 +126,7 @@ function User() {
         dispatch({ type: "RETURN_INITIAL_MEASROOMMATE" });
         dispatch({ type: "RETURN_INITIAL_IMAGE" });
         dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
-        dispatch({ type: "RETURN_INITIAL_ALERT" });
+        dispatch({ type: alertActionType.RETURN_INITIAL_ALERT });
         dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
         dispatch({ type: "INITIAL_CHATROOM_STATE" });
       }

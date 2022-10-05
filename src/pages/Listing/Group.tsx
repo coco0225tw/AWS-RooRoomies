@@ -7,6 +7,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { firebase, db } from "../../utils/firebase";
 
 import { RootState } from "../../redux/rootReducer";
+import { alertActionType } from "../../redux/Alert/AlertAction";
 import { groupType } from "../../redux/Group/GroupType";
 import { BtnDiv } from "../../components/Button";
 import Hr from "../../components/Hr";
@@ -157,14 +158,14 @@ function Group({
       .then(() => {
         setIsInGroup(true);
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "成功加入",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
 
@@ -196,7 +197,7 @@ function Group({
     ]).then(() => {
       setIsInFullGroup(userIndex + 1 === peopleAmount);
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: "成功加入",
         },
@@ -204,7 +205,7 @@ function Group({
       setTimeout(() => {
         setHintTextLoading(false);
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
       setIsInGroup(true);
@@ -429,26 +430,26 @@ function Group({
                       addUserToGroup(gIndex, index);
                     } else if (match && isInGroup) {
                       dispatch({
-                        type: "OPEN_ERROR_ALERT",
+                        type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
                           alertMessage: "不可以重新加入",
                         },
                       });
                       setTimeout(() => {
                         dispatch({
-                          type: "CLOSE_ALERT",
+                          type: alertActionType.CLOSE_ALERT,
                         });
                       }, 3000);
                     } else if (!match) {
                       dispatch({
-                        type: "OPEN_ERROR_ALERT",
+                        type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
                           alertMessage: "不符合室友條件，無法加入",
                         },
                       });
                       setTimeout(() => {
                         dispatch({
-                          type: "CLOSE_ALERT",
+                          type: alertActionType.CLOSE_ALERT,
                         });
                       }, 3000);
                     }

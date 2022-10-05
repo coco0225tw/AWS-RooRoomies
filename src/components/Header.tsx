@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import { RootState } from "../redux/rootReducer";
+import { alertActionType } from "../redux/Alert/AlertAction";
 import { firebase } from "../utils/firebase";
 import { BtnLink, BtnDiv } from "./Button";
 import { PopupComponent } from "./Popup";
@@ -102,14 +103,14 @@ function Header() {
   async function logOut() {
     firebase.signOutUser().then(() => {
       dispatch({
-        type: "OPEN_NOTIFY_ALERT",
+        type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
           alertMessage: "已登出",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
       setIsShown(false);

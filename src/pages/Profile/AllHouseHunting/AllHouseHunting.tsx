@@ -14,6 +14,7 @@ import {
 import { firebase, db } from "../../../utils/firebase";
 
 import { RootState } from "../../../redux/rootReducer";
+import { alertActionType } from "../../../redux/Alert/AlertAction";
 
 import ListingItem from "../../../components/ListingItem";
 import Hr from "../../../components/Hr";
@@ -127,14 +128,14 @@ function AllHouseHunting({
         ),
       ]).then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "成功退團",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -160,14 +161,14 @@ function AllHouseHunting({
         ),
       ]).then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "成功退團",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -200,14 +201,14 @@ function AllHouseHunting({
       updatedArr[index].data().bookedTime = {};
 
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: "已取消預約",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });

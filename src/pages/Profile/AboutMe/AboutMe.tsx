@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 
 import { RootState } from "../../../redux/rootReducer";
+import { alertActionType } from "../../../redux/Alert/AlertAction";
 import { firebase } from "../../../utils/firebase";
 import Hr from "../../../components/Hr";
 import { BtnDiv } from "../../../components/Button";
@@ -194,14 +195,14 @@ function AboutMe({
     setSubmitting(true);
     firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState).then(() => {
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: "更新成功",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });
@@ -274,14 +275,14 @@ function AboutMe({
                   setEdit(true);
                 } else {
                   dispatch({
-                    type: "OPEN_ERROR_ALERT",
+                    type: alertActionType.OPEN_ERROR_ALERT,
                     payload: {
                       alertMessage: "已有湊團房源，無法更改",
                     },
                   });
                   setTimeout(() => {
                     dispatch({
-                      type: "CLOSE_ALERT",
+                      type: alertActionType.CLOSE_ALERT,
                     });
                   }, 3000);
                 }

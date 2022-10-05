@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
+
+import { alertActionType } from "../../../redux/Alert/AlertAction";
 import { RootState } from "../../../redux/rootReducer";
 import {
   FormGroup,
@@ -95,27 +97,27 @@ function Setting({
       .updateUserInfo(userInfo.uid, nameRef.current!.value)
       .then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "更新使用者資料成功",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       })
       .catch(() => {
         dispatch({
-          type: "OPEN_ERROR_ALERT",
+          type: alertActionType.OPEN_ERROR_ALERT,
           payload: {
             alertMessage: "更新使用者資料失敗",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });

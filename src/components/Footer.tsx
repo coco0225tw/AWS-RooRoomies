@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { firebase } from "../utils/firebase";
 import { RootState } from "../redux/rootReducer";
+import { alertActionType } from "../redux/Alert/AlertAction";
 import { BtnLink } from "./Button";
 import { PopupComponent } from "./Popup";
 const Wrapper = styled.div`
@@ -90,14 +91,14 @@ function Footer() {
       setIsShown(false);
       navigate("/signin");
       dispatch({
-        type: "OPEN_NOTIFY_ALERT",
+        type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
           alertMessage: "已登出",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
 import { RootState } from "../../redux/rootReducer";
+import { alertActionType } from "../../redux/Alert/AlertAction";
 
 import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
 import {
@@ -138,14 +139,14 @@ function SignIn() {
       .then(() => {
         navigate("/");
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "註冊成功",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -159,14 +160,14 @@ function SignIn() {
       .then(() => {
         navigate("/");
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "登入成功",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -175,14 +176,14 @@ function SignIn() {
     firebase.signInUser(testAccount.account, testAccount.password).then(() => {
       navigate("/");
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: "登入成功",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });

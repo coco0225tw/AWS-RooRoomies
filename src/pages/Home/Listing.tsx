@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { firebase } from "../../utils/firebase";
 
 import addIcon from "../../assets/add.png";
@@ -8,7 +9,8 @@ import likedIcon from "../../assets/heart.png";
 import unLikedIcon from "../../assets/unHeart.png";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
-import { useNavigate } from "react-router-dom";
+import { alertActionType } from "../../redux/Alert/AlertAction";
+
 import { PopupComponent } from "../../components/Popup";
 interface ImgProps {
   img: string;
@@ -135,14 +137,14 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             payload: { id: listingDocData.id },
           });
           dispatch({
-            type: "OPEN_NOTIFY_ALERT",
+            type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
               alertMessage: "加入喜歡列表",
             },
           });
           setTimeout(() => {
             dispatch({
-              type: "CLOSE_ALERT",
+              type: alertActionType.CLOSE_ALERT,
             });
             setSubmitting(false);
           }, 3000);
@@ -160,14 +162,14 @@ function Listing({ listingDocData }: { listingDocData: any }) {
             payload: { id: listingDocData.id },
           });
           dispatch({
-            type: "OPEN_NOTIFY_ALERT",
+            type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
               alertMessage: "從喜歡列表刪除",
             },
           });
           setTimeout(() => {
             dispatch({
-              type: "CLOSE_ALERT",
+              type: alertActionType.CLOSE_ALERT,
             });
             setSubmitting(false);
           }, 3000);

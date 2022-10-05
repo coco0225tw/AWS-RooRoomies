@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { firebase, db } from "../../utils/firebase";
 import { RootState } from "../../redux/rootReducer";
+import { alertActionType } from "../../redux/Alert/AlertAction";
 
 import Calendar from "react-calendar";
 import Map from "./Map";
@@ -292,14 +293,14 @@ function Listing() {
         addToFavoriteLists().then(() => {
           dispatch({ type: "ADD_TO_FAVORITELISTS", payload: { id: id! } });
           dispatch({
-            type: "OPEN_NOTIFY_ALERT",
+            type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
               alertMessage: "加入喜歡列表",
             },
           });
           setTimeout(() => {
             dispatch({
-              type: "CLOSE_ALERT",
+              type: alertActionType.CLOSE_ALERT,
             });
           }, 3000);
           setSubmitting(false);
@@ -311,14 +312,14 @@ function Listing() {
         removeFromFavoriteLists().then(() => {
           dispatch({ type: "REMOVE_FROM_FAVORITELISTS", payload: { id: id! } });
           dispatch({
-            type: "OPEN_NOTIFY_ALERT",
+            type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
               alertMessage: "從喜歡列表刪除",
             },
           });
           setTimeout(() => {
             dispatch({
-              type: "CLOSE_ALERT",
+              type: alertActionType.CLOSE_ALERT,
             });
             setSubmitting(false);
           }, 3000);
@@ -429,7 +430,7 @@ function Listing() {
         firebase.bookedTimeInMatch(bookTimeInfo.listingId, newGroup),
       ]).then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "預約成功",
           },
@@ -437,7 +438,7 @@ function Listing() {
         setBookedTimePopup(false);
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
           setCanBook(false);
           setHintTextLoading(false);
@@ -448,7 +449,7 @@ function Listing() {
   }
   function notAddUserAsRoommatesConditionAlert() {
     dispatch({
-      type: "OPEN_NOTIFY_ALERT",
+      type: alertActionType.OPEN_NOTIFY_ALERT,
       payload: {
         alertMessage: (
           <Span
@@ -474,7 +475,7 @@ function Listing() {
     });
     setTimeout(() => {
       dispatch({
-        type: "CLOSE_ALERT",
+        type: alertActionType.CLOSE_ALERT,
       });
     }, 3000);
   }
@@ -685,55 +686,55 @@ function Listing() {
                             notAddUserAsRoommatesConditionAlert();
                           if (!match) {
                             dispatch({
-                              type: "OPEN_ERROR_ALERT",
+                              type: alertActionType.OPEN_ERROR_ALERT,
                               payload: {
                                 alertMessage: "條件不符，不能湊團預約",
                               },
                             });
                             setTimeout(() => {
                               dispatch({
-                                type: "CLOSE_ALERT",
+                                type: alertActionType.CLOSE_ALERT,
                               });
                             }, 3000);
                             return;
                           }
                           if (!isInGroup) {
                             dispatch({
-                              type: "OPEN_ERROR_ALERT",
+                              type: alertActionType.OPEN_ERROR_ALERT,
                               payload: {
                                 alertMessage: "請先加入團再預約",
                               },
                             });
                             setTimeout(() => {
                               dispatch({
-                                type: "CLOSE_ALERT",
+                                type: alertActionType.CLOSE_ALERT,
                               });
                             }, 3000);
                             return;
                           }
                           if (!isInFullGroup) {
                             dispatch({
-                              type: "OPEN_ERROR_ALERT",
+                              type: alertActionType.OPEN_ERROR_ALERT,
                               payload: {
                                 alertMessage: "尚未湊滿團，無法預約",
                               },
                             });
                             setTimeout(() => {
                               dispatch({
-                                type: "CLOSE_ALERT",
+                                type: alertActionType.CLOSE_ALERT,
                               });
                             }, 3000);
                             return;
                           }
                           dispatch({
-                            type: "OPEN_ERROR_ALERT",
+                            type: alertActionType.OPEN_ERROR_ALERT,
                             payload: {
                               alertMessage: "已經預約過",
                             },
                           });
                           setTimeout(() => {
                             dispatch({
-                              type: "CLOSE_ALERT",
+                              type: alertActionType.CLOSE_ALERT,
                             });
                           }, 3000);
                           return;
