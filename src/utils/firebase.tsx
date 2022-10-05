@@ -229,9 +229,7 @@ const firebase = {
     await signOut(auth);
   },
   async signInUser(email: string, password: string) {
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {}
+    await signInWithEmailAndPassword(auth, email, password);
   },
   async getBookingTimesSubColForListing(listingId: string) {
     const subColRef = collection(db, "listings", listingId, "bookingTimes");
@@ -261,13 +259,11 @@ const firebase = {
       userListingId: "",
     });
   },
-  async updateUserInfo(uid: string, name: string, email: string) {
-    // const url = await this.uploadUserImage(image, uid);
+  async updateUserInfo(uid: string, name: string) {
     await setDoc(
       doc(db, "users", uid),
       {
         name: name,
-        email: email,
       },
       { merge: true }
     );

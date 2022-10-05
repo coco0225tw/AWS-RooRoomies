@@ -5,16 +5,16 @@ interface chatRoomType {
   chatRoomId: null | string;
 }
 type Action =
+  | { type: "CHECK_CHATROOM"; payload: { chatRoom: boolean } }
   | { type: "OPEN_CHAT" }
   | { type: "CLOSE_CHAT" }
-  | { type: "OPEN_CHATROOM"; payload: { chatRoomId: string } }
-  | { type: "CHECK_CHATROOM"; payload: { chatRoom: boolean } }
   | { type: "OPEN_CHATROOM_STATE" }
   | { type: "CLOSE_CHATROOM_STATE" }
+  | { type: "OPEN_CHATROOM"; payload: { chatRoomId: string } }
   | { type: "INITIAL_CHATROOM_STATE" };
 const alertInitialState = {
-  isOpen: false,
   chatRoom: false,
+  isOpen: false,
   chatRoomOpenState: false,
   chatRoomId: null,
 };
@@ -47,7 +47,7 @@ export default function ChatRoom(state = alertInitialState, action: Action) {
       let newState = { ...state };
       return {
         ...newState,
-        chatRoomId: action.payload.chatRoom,
+        chatRoom: action.payload.chatRoom,
       };
     }
     case "OPEN_CHATROOM_STATE": {

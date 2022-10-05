@@ -21,15 +21,22 @@ const Popup = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px 20px 32px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 
 const Message = styled.div`
-  text-align: center;
-  font-size: 32px;
   letter-spacing: 8px;
+`;
+const MessageArea = styled.div`
+  text-align: center;
+  align-items: center;
+  font-size: 32px;
+  justify-content: center;
   height: 20vh;
   color: #4f5152;
+  display: flex;
 `;
 const BtnArea = styled.div`
   display: flex;
@@ -54,15 +61,17 @@ const Close = styled.div`
   text-align: center;
   border-radius: 50%;
   line-height: 40px;
+  transform: translate(100%, -100%);
   cursor: pointer;
   font-size: 20px;
-  right: 12px;
-  top: 12px;
+
   text-align: center;
   z-index: 1;
+  right: 0;
+  background-color: #fff7f4;
+  transition-duration: 0.2s;
   &:hover {
-    border: solid 1px #ece2d5;
-    background-color: #fff7f4;
+    transform: scale(1.1) translate(100%, -100%);
   }
 `;
 const PopImg = styled(Popup)<{ img: string }>`
@@ -91,16 +100,9 @@ function PopupComponent({
   return (
     <Wrapper>
       <Popup>
-        <Close
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            clickClose();
-          }}
-        >
-          &#215;
-        </Close>
-        <Message>{msg}</Message>
+        <MessageArea>
+          <Message>{msg}</Message>
+        </MessageArea>
         <BtnArea>
           <NotDefaultBtn
             onClick={(e) => {
@@ -137,7 +139,7 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
             clickClose();
           }}
         >
-          x
+          &#10006;
         </Close>
       </PopImg>
     </Wrapper>

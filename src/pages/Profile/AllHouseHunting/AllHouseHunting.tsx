@@ -91,6 +91,7 @@ function AllHouseHunting({
 
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getSubTab = useSelector((state: RootState) => state.SubTabReducer);
+  const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
@@ -270,6 +271,15 @@ function AllHouseHunting({
           clickFunction={() => {
             cancelBookTime(cancelBookTimeInfo);
             setCancelBookTimePopup(false);
+            if (cancelBookTimeInfo.chatRoomId === getChatRoom.chatRoomId) {
+              if (getChatRoom.isOpen) dispatch({ type: "CLOSE_CHAT" });
+              if (getChatRoom.chatRoomOpenState)
+                dispatch({ type: "CLOSE_CHATROOM_STATE" });
+              dispatch({
+                type: "OPEN_CHATROOM",
+                payload: { chatRoomId: null },
+              });
+            }
           }}
         />
       )}
@@ -284,6 +294,15 @@ function AllHouseHunting({
           clickFunction={() => {
             removeFromGroup(removeUserInfo);
             setRemoveFromGroupPopup(false);
+            if (removeUserInfo.chatRoomId === getChatRoom.chatRoomId) {
+              if (getChatRoom.isOpen) dispatch({ type: "CLOSE_CHAT" });
+              if (getChatRoom.chatRoomOpenState)
+                dispatch({ type: "CLOSE_CHATROOM_STATE" });
+              dispatch({
+                type: "OPEN_CHATROOM",
+                payload: { chatRoomId: null },
+              });
+            }
           }}
         />
       )}
@@ -296,14 +315,27 @@ function AllHouseHunting({
             isClick={el === getSubTab}
             onClick={() => {
               dispatch({ type: "SELECT_SUB_TAB", payload: { subTab: el } });
-
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);
               }, 1000);
             }}
           >
-            {el}
+            {`${el}(${
+              el === "已預約"
+                ? houseHuntingData.filter(
+                    (doc) => doc.data().isBooked !== false
+                  ).length
+                : el === "尚未預約"
+                ? houseHuntingData.filter(
+                    (doc) =>
+                      doc.data().isFull === true &&
+                      doc.data().isBooked === false
+                  ).length
+                : el === "等待湊團" &&
+                  houseHuntingData.filter((doc) => doc.data().isFull === false)
+                    .length
+            })`}
           </Tab>
         ))}
       </Tabs>
@@ -358,6 +390,8 @@ function AllHouseHunting({
                       type: "OPEN_CHATROOM",
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: "OPEN_CHATROOM_STATE" });
+
                     dispatch({
                       type: "OPEN_CHAT",
                     });
@@ -413,6 +447,7 @@ function AllHouseHunting({
                       type: "OPEN_CHATROOM",
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: "OPEN_CHATROOM_STATE" });
                     dispatch({
                       type: "OPEN_CHAT",
                     });
@@ -465,6 +500,7 @@ function AllHouseHunting({
                       type: "OPEN_CHATROOM",
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: "OPEN_CHATROOM_STATE" });
                     dispatch({
                       type: "OPEN_CHAT",
                     });

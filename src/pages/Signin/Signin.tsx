@@ -56,36 +56,8 @@ const Form = styled.form.attrs({})`
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 `;
 
-const FormInput = styled.input`
-  margin-left: 20px;
-  height: 40px;
-  border-radius: 6px;
-  text-indent: 6px;
-  width: 80%;
-  font-size: 18px;
-  @media screen and (max-width: 1279px) {
-    margin-left: 0px;
-    width: 100%;
-  }
-`;
-
 const FormControlFullWidth = styled(FormControl)`
   width: 100%;
-`;
-const SubmitBtn = styled.div`
-  border: solid 1px #82542b;
-  border-radius: 6px;
-  background-color: #ffffff;
-  padding: 8px 20px;
-  color: #82542b;
-  margin: 20px 0px 20px;
-  cursor: pointer;
-  transition-duration: 0.2s;
-  font-size: 20px;
-  &:hover {
-    background-color: #82542b;
-    color: #ffffff;
-  }
 `;
 
 const SwitchBtns = styled.div`
@@ -107,7 +79,23 @@ const SwitchBtn = styled(BtnDiv)<IsActiveBtnProps>`
     background-color: ${(props) => (props.$isActive ? "#fff7f4 " : "#ece2d5")};
   }
 `;
-
+const BtnArea = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+`;
+const Text = styled.div`
+  //
+  color: grey;
+  font-size: 16px;
+  letter-spacing: 1.2px;
+  align-self: flex-end;
+  border-bottom: solid 1px grey;
+  cursor: pointer;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-220%);
+`;
 const LoginOptionGroup = ["登入", "建立新帳號"];
 const registerFormGroup = [
   { label: "使用者名稱", key: "regName" },
@@ -124,36 +112,18 @@ function SignIn() {
   const dispatch = useDispatch();
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
-  const [user, setUser] = useState<User>();
 
   interface User {
     email: string;
   }
-  interface regInfoType {
-    regEmail: string;
-    regPassword: string;
-  }
-  interface signInInfoType {
-    signInEmail: string;
-    signInPassword: string;
-  }
-
-  const initialRegInfo = { regEmail: "", regPassword: "" };
-
-  const initialSignInInfo = { signInEmail: "", signInPassword: "" };
 
   const regInfoRef = useRef<HTMLInputElement[]>([]);
   const signInInfoRef = useRef<HTMLInputElement[]>([]);
-
-  const [regInfo, setRegInfo] = useState<regInfoType>(initialRegInfo);
-  const [signInInfo, setSignInInfo] =
-    useState<signInInfoType>(initialSignInInfo);
-
+  const testAccount = {
+    account: "guest@gmail.com",
+    password: "123456",
+  };
   const regSubmit = async function () {
-    setRegInfo({
-      regEmail: regInfoRef.current[1].value,
-      regPassword: regInfoRef.current[2].value,
-    });
     let newUser = await firebase.createNewUser(
       regInfoRef.current[1].value,
       regInfoRef.current[2].value
@@ -181,10 +151,6 @@ function SignIn() {
       });
   };
   const signInSubmit = async function () {
-    setSignInInfo({
-      signInEmail: signInInfoRef.current[0].value,
-      signInPassword: signInInfoRef.current[1].value,
-    });
     firebase
       .signInUser(
         signInInfoRef.current[0]!.value,
@@ -205,12 +171,26 @@ function SignIn() {
         }, 3000);
       });
   };
+  const signInWithTestAccount = async function () {
+    firebase.signInUser(testAccount.account, testAccount.password).then(() => {
+      navigate("/");
+      dispatch({
+        type: "OPEN_SUCCESS_ALERT",
+        payload: {
+          alertMessage: "登入成功",
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: "CLOSE_ALERT",
+        });
+      }, 3000);
+    });
+  };
 
   useEffect(() => {
     if (authChange) {
-      onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser as User);
-      });
+      onAuthStateChanged(auth, (currentUser) => {});
       navigate("/profile");
     }
   }, [authChange]);
@@ -247,6 +227,9 @@ function SignIn() {
                   </FormInputWrapper>
                 </FormGroup>
               ))}
+              <Text onClick={() => signInWithTestAccount()}>
+                用測試帳號登入
+              </Text>
               <BtnDiv onClick={() => signInSubmit()}>登入</BtnDiv>
             </React.Fragment>
           )}

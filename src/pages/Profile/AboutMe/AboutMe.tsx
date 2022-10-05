@@ -216,7 +216,7 @@ function AboutMe({
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
         let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-
+        setLoading(true);
         if (listing.size === 0) {
           setHouseHuntingData(false);
         } else {
@@ -226,15 +226,15 @@ function AboutMe({
     }
 
     if (authChange) getAllHouseHuntingData();
-    if (authChange && userAsRoommate) {
-      setLoading(true);
-
+  }, [authChange]);
+  useEffect(() => {
+    if (userAsRoommate) {
       setMeAsRoommatesState(userAsRoommate);
       setTimeout(() => {
         setLoading(false);
       }, 1000);
     }
-  }, [authChange, userAsRoommate]);
+  }, [userAsRoommate]);
   return (
     <Wrapper>
       <Title

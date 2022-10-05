@@ -65,12 +65,10 @@ const MsgWrapper = styled.div`
 `;
 const InputArea = styled.div`
   display: flex;
-  // padding: 4px 20px;
   background-color: #c77155;
   height: 48px;
 `;
 const Message = styled.div<{ auth: boolean }>`
-  // display: flex;
   width: 80%;
   align-self: ${(props) => (props.auth ? "flex-end" : "flex-start")};
 `;
@@ -82,7 +80,7 @@ const UserPic = styled.div<{ pic: string }>`
   height: 40px;
   border-radius: 50px;
   background-image: url(${(props) => props.pic});
-  background-size: cover;
+  background-size: cover;HeaderBarbor
   background-position: center center;
 `;
 const UserMessage = styled.div`
@@ -112,13 +110,16 @@ const HeaderBar = styled.div`
 `;
 const Tabs = styled.div`
   width: 100%;
+  display: flex;
+  border-radius: 8px 8px 0 0;
+  align-items: center;
+  background-color: #c77155;
 `;
-const TabsWrapper = styled.div`
-  display: -webkit-box;
+const OptionWrapper = styled.div`
+  display: flex;
+  justify-content: space-around;
 `;
 const Tab = styled.div<{ isChoose: boolean }>`
-  width: 100%;
-  // display: inline-block;
   font-size: 20px;
   letter-spacing: 4px;
   height: 100%;
@@ -126,12 +127,13 @@ const Tab = styled.div<{ isChoose: boolean }>`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex-grow: 1;
   border-bottom: ${(props) => (props.isChoose ? "solid 2px #c77155" : "")};
   color: ${(props) => (props.isChoose ? "#c77155" : "#4f5152")};
   cursor: pointer;
+  border-radius: 8px 0 0 0;
+  color: #ffffff;
   &:hover {
-    background-color: ${(props) => (props.isChoose ? "#c77155" : "#ffffff")};
-    color: ${(props) => (props.isChoose ? "#ffffff" : "#4f5152")};
     border-bottom: ${(props) => (props.isChoose ? "" : "solid 2px #4f5152")};
   }
 `;
@@ -143,39 +145,74 @@ const MessageWrapper = styled.div`
   margin-bottom: 12px;
 `;
 
-const Close = styled.div<{ isShown: boolean }>`
-  position: absolute;
+const OptionsBtn = styled.div`
   width: 32px;
   height: 32px;
   text-align: center;
+  vertical-align: center;
   border-radius: 50%;
-  line-height: 32px;
+  margin-right: 12px;
   cursor: pointer;
   font-size: 20px;
-  right: 0;
-  transform: translate(100%, -100%);
-  border: solid 1px #ece2d5;
-  color: #ece2d5;
+  flex-shrink: 0;
+  background-color: #ffffff;
+  color: #c77155;
+  transition-duration: 0.1s;
   &:hover {
-    color: #ffffff;
-    border: solid 1px #ece2d5;
-    background-color: #c77155;
+    transform: scale(1.1);
   }
+`;
+const Close = styled(OptionsBtn)<{ isShown: boolean }>`
   display: ${(props) => (props.isShown ? "block" : "none")};
 `;
+const InfoBtn = styled(OptionsBtn)``;
+const BackBtn = styled(OptionsBtn)`
+  margin-left: 12px;
+`;
+const ListingWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  flex-direction: column;
+  // padding: 0 12px;
+`;
+const Listing = styled.div<{ isClick: boolean }>`
+  width: 100%;
+  padding: 20px;
+  font-size: 20px;
+  letter-spacing: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: #fff7f4;
+  border-bottom: solid 1px #ffffff;
+`;
+const GreaterThan = styled(OptionsBtn)`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: none;
 
+  font-weight: bold;
+  &:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+`;
 function ChatRooms() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
-  const [isShown, setIsShown] = useState<boolean>(false);
-  const [chooseRoomId, setChooseRoomId] = useState<string>("");
-  const [allMessages, setAllMessages] = useState<DocumentData[]>();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
+  const [allMessages, setAllMessages] = useState<DocumentData[]>();
+  const msgInputRef = useRef<HTMLInputElement>(null);
   interface Msg {
     userMsg: string;
     sendTime: number;
@@ -183,7 +220,6 @@ function ChatRooms() {
     userId: string;
     userPic: string;
   }
-  const msgInputRef = useRef<HTMLInputElement>(null);
 
   async function senMsg() {
     const msg: Msg = {
@@ -197,12 +233,18 @@ function ChatRooms() {
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
+    console.log(chooseRoomId);
     const chatRoomQuery = doc(db, "chatRooms", chooseRoomId);
 
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
-      setAllMessages(snapshot.data()!.msg);
+      if (snapshot.data()) {
+        setAllMessages(snapshot.data()!.msg);
+      } else {
+        getAllMessages();
+      }
     });
   }
+
   useEffect(() => {
     const houseHuntingRef = collection(db, "chatRooms");
     const userChatRef = query(
@@ -221,6 +263,14 @@ function ChatRooms() {
       });
     }
   }, [userInfo]);
+  useEffect(() => {
+    setAllMessages([]);
+    console.log(getChatRoom.chatRoomId);
+    if (getChatRoom.chatRoomId) {
+      console.log(getChatRoom.chatRoomId);
+      onSnapshotMessages(getChatRoom.chatRoomId);
+    }
+  }, [getChatRoom.chatRoomId]);
 
   if (authChange) {
     return (
@@ -229,32 +279,18 @@ function ChatRooms() {
           isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => {
             dispatch({ type: "OPEN_CHAT" });
-            if (houseHuntingData.length !== 0) {
-              onSnapshotMessages(houseHuntingData[0]?.id);
+            if (
+              houseHuntingData.length !== 0 &&
+              !getChatRoom.chatRoomOpenState
+            ) {
               dispatch({
                 type: "CHECK_CHATROOM",
                 payload: { chatRoom: true },
               });
-              dispatch({
-                type: "OPEN_CHATROOM",
-                payload: {
-                  chatRoomId: houseHuntingData[0]?.id,
-                },
-              });
-            } else {
-              dispatch({
-                type: "CHECK_CHATROOM",
-                payload: { chatRoom: false },
-              });
             }
           }}
         ></ChatIcon>
-        <Close
-          isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
-          onClick={() => dispatch({ type: "CLOSE_CHAT" })}
-        >
-          &#215;
-        </Close>
+
         {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
           <PopupComponent
             msg={`你目前/n沒有預約和湊團哦`}
@@ -271,72 +307,128 @@ function ChatRooms() {
           getChatRoom.isOpen && (
             <HeaderBar>
               <Tabs>
-                <TabsWrapper>
-                  <Tab isChoose={true}>
-                    {getChatRoom.chatRoomId &&
-                      houseHuntingData
-                        .find((h) => h && h.id === getChatRoom.chatRoomId)
-                        .data().listingTitle}
-                  </Tab>
-                </TabsWrapper>
-              </Tabs>
-              <SectionWrapper>
-                <MsgWrapper>
-                  {allMessages &&
-                    allMessages.map((el, index) => (
-                      <Message
-                        auth={el.userId === userInfo.uid}
-                        key={`message${index}`}
-                      >
-                        {el.userId === userInfo.uid ? (
-                          <MessageWrapper
-                            style={{ justifyContent: "flex-end" }}
-                          >
-                            <UserMessage
-                              style={{
-                                marginRight: "12px",
-                                textAlign: "right",
-                                backgroundColor: "#fff7f4 ",
-                              }}
-                            >
-                              {el.userMsg}
-                            </UserMessage>
-                            <UserInfo>
-                              <UserPic pic={el.userPic} />
-                            </UserInfo>
-                          </MessageWrapper>
-                        ) : (
-                          <MessageWrapper>
-                            <UserInfo>
-                              <UserPic pic={el.userPic} />
-                            </UserInfo>
-                            <UserMessage style={{ marginLeft: "12px" }}>
-                              {el.userMsg}
-                            </UserMessage>
-                          </MessageWrapper>
-                        )}
-                      </Message>
-                    ))}
-                </MsgWrapper>
-              </SectionWrapper>
-              <InputArea>
-                <InputMessageBox
-                  placeholder={"..."}
-                  ref={msgInputRef}
-                  onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
-                    event.stopPropagation();
-                    if (event.key === "Enter") {
-                      if (msgInputRef.current.value.trim() === "") {
-                        msgInputRef.current!.value = "";
-                        return;
-                      } else {
-                        senMsg();
-                        msgInputRef.current!.value = "";
-                      }
+                {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && (
+                  <BackBtn
+                    onClick={() => {
+                      dispatch({ type: "CLOSE_CHATROOM_STATE" });
+                    }}
+                  >
+                    &larr;
+                  </BackBtn>
+                )}
+
+                <Tab isChoose={true}>
+                  {getChatRoom.chatRoomOpenState &&
+                    getChatRoom.chatRoomId &&
+                    houseHuntingData
+                      .find((h) => h && h.id === getChatRoom.chatRoomId)
+                      .data().listingTitle}
+                  {!getChatRoom.chatRoomOpenState && "你的聊天室"}
+                </Tab>
+                <OptionWrapper>
+                  {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && (
+                    <InfoBtn>&#8505;</InfoBtn>
+                  )}
+
+                  <Close
+                    isShown={
+                      getChatRoom.isOpen && houseHuntingData.length !== 0
                     }
-                  }}
-                ></InputMessageBox>
-              </InputArea>
+                    onClick={() => dispatch({ type: "CLOSE_CHAT" })}
+                  >
+                    &#10006;
+                  </Close>
+                </OptionWrapper>
+
+                {/* </TabsWrapper> */}
+              </Tabs>
+              {getChatRoom.chatRoomOpenState ? (
+                <React.Fragment>
+                  <SectionWrapper>
+                    <MsgWrapper>
+                      {allMessages &&
+                        allMessages.map((el, index) => (
+                          <Message
+                            auth={el.userId === userInfo.uid}
+                            key={`message${index}`}
+                          >
+                            {el.userId === userInfo.uid ? (
+                              <MessageWrapper
+                                style={{ justifyContent: "flex-end" }}
+                              >
+                                <UserMessage
+                                  style={{
+                                    marginRight: "12px",
+                                    textAlign: "right",
+                                    backgroundColor: "#fff7f4 ",
+                                  }}
+                                >
+                                  {el.userMsg}
+                                </UserMessage>
+                                <UserInfo>
+                                  <UserPic pic={el.userPic} />
+                                </UserInfo>
+                              </MessageWrapper>
+                            ) : (
+                              <MessageWrapper>
+                                <UserInfo>
+                                  <UserPic pic={el.userPic} />
+                                </UserInfo>
+                                <UserMessage style={{ marginLeft: "12px" }}>
+                                  {el.userMsg}
+                                </UserMessage>
+                              </MessageWrapper>
+                            )}
+                          </Message>
+                        ))}
+                    </MsgWrapper>
+                  </SectionWrapper>
+                  <InputArea>
+                    <InputMessageBox
+                      placeholder={"..."}
+                      ref={msgInputRef}
+                      onKeyDown={(
+                        event: React.KeyboardEvent<HTMLInputElement>
+                      ) => {
+                        event.stopPropagation();
+                        if (event.key === "Enter") {
+                          if (msgInputRef.current.value.trim() === "") {
+                            msgInputRef.current!.value = "";
+                            return;
+                          } else {
+                            senMsg();
+                            msgInputRef.current!.value = "";
+                          }
+                        }
+                      }}
+                    ></InputMessageBox>
+                  </InputArea>
+                </React.Fragment>
+              ) : (
+                <ListingWrapper>
+                  {houseHuntingData.map((house) => (
+                    <Listing
+                      isClick={getChatRoom.chatRoomId === house.id}
+                      key={`houseHuntingChat${house.id}`}
+                    >
+                      {house.data().listingTitle}
+                      <GreaterThan
+                        onClick={() => {
+                          dispatch({ type: "OPEN_CHATROOM_STATE" });
+                          dispatch({
+                            type: "OPEN_CHATROOM",
+                            payload: {
+                              chatRoomId: house.id,
+                            },
+                          });
+                        }}
+                      >
+                        &gt;
+                      </GreaterThan>
+                    </Listing>
+                  ))}
+                </ListingWrapper>
+              )}
             </HeaderBar>
           )
         )}

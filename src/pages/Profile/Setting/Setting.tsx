@@ -92,11 +92,7 @@ function Setting({
   }
   async function submitNameOrEmail() {
     firebase
-      .updateUserInfo(
-        userInfo.uid,
-        nameRef.current!.value,
-        emailRef.current!.value
-      )
+      .updateUserInfo(userInfo.uid, nameRef.current!.value)
       .then(() => {
         dispatch({
           type: "OPEN_SUCCESS_ALERT",
@@ -159,20 +155,11 @@ function Setting({
               disabled={!edit}
             />
           </FormGroup>
-          <FormGroup>
-            <FormLabel>信箱</FormLabel>
-            <FormControl
-              ref={emailRef}
-              defaultValue={userInfo!.email}
-              disabled={!edit}
-            />
-          </FormGroup>
           {edit ? (
             <BtnWrapper>
               <SubmitBtn
                 onClick={() => {
                   setEdit(false);
-                  emailRef.current.value = userInfo!.email;
                   nameRef.current.value = userInfo!.name;
                 }}
               >
