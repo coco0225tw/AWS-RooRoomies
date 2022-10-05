@@ -15,6 +15,7 @@ import { firebase, db } from "../../../utils/firebase";
 
 import { RootState } from "../../../redux/rootReducer";
 import { alertActionType } from "../../../redux/Alert/AlertAction";
+import { chatRoomAction } from "../../../redux/ChatRoom/ChatRoomAction";
 
 import ListingItem from "../../../components/ListingItem";
 import Hr from "../../../components/Hr";
@@ -273,11 +274,12 @@ function AllHouseHunting({
             cancelBookTime(cancelBookTimeInfo);
             setCancelBookTimePopup(false);
             if (cancelBookTimeInfo.chatRoomId === getChatRoom.chatRoomId) {
-              if (getChatRoom.isOpen) dispatch({ type: "CLOSE_CHAT" });
+              if (getChatRoom.isOpen)
+                dispatch({ type: chatRoomAction.CLOSE_CHAT });
               if (getChatRoom.chatRoomOpenState)
-                dispatch({ type: "CLOSE_CHATROOM_STATE" });
+                dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
               dispatch({
-                type: "OPEN_CHATROOM",
+                type: chatRoomAction.OPEN_CHATROOM,
                 payload: { chatRoomId: null },
               });
             }
@@ -296,11 +298,12 @@ function AllHouseHunting({
             removeFromGroup(removeUserInfo);
             setRemoveFromGroupPopup(false);
             if (removeUserInfo.chatRoomId === getChatRoom.chatRoomId) {
-              if (getChatRoom.isOpen) dispatch({ type: "CLOSE_CHAT" });
+              if (getChatRoom.isOpen)
+                dispatch({ type: chatRoomAction.CLOSE_CHAT });
               if (getChatRoom.chatRoomOpenState)
-                dispatch({ type: "CLOSE_CHATROOM_STATE" });
+                dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
               dispatch({
-                type: "OPEN_CHATROOM",
+                type: chatRoomAction.OPEN_CHATROOM,
                 payload: { chatRoomId: null },
               });
             }
@@ -388,13 +391,13 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
-                    dispatch({ type: "OPEN_CHATROOM_STATE" });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
 
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
                 />
@@ -445,12 +448,12 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
-                    dispatch({ type: "OPEN_CHATROOM_STATE" });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
                 />
@@ -498,12 +501,12 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
-                    dispatch({ type: "OPEN_CHATROOM_STATE" });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
                 />

@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 
 import { RootState } from "../../redux/rootReducer";
+import { chatRoomAction } from "../../redux/ChatRoom/ChatRoomAction";
 import { firebase, db } from "../../utils/firebase";
 import { PopupComponent } from "../../components/Popup";
 import chat from "../../assets/chat.png";
@@ -229,7 +230,11 @@ function ChatRooms() {
       userId: userInfo.uid,
       userPic: userInfo.image,
     };
-    await firebase.sendMessage(getChatRoom.chatRoomId!, allMessages, msg);
+    await firebase.sendMessage(
+      getChatRoom.chatRoomId as string,
+      allMessages,
+      msg
+    );
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
@@ -268,7 +273,7 @@ function ChatRooms() {
     console.log(getChatRoom.chatRoomId);
     if (getChatRoom.chatRoomId) {
       console.log(getChatRoom.chatRoomId);
-      onSnapshotMessages(getChatRoom.chatRoomId);
+      onSnapshotMessages(getChatRoom.chatRoomId as string);
     }
   }, [getChatRoom.chatRoomId]);
 
@@ -278,13 +283,13 @@ function ChatRooms() {
         <ChatIcon
           isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => {
-            dispatch({ type: "OPEN_CHAT" });
+            dispatch({ type: chatRoomAction.OPEN_CHAT });
             if (
               houseHuntingData.length !== 0 &&
               !getChatRoom.chatRoomOpenState
             ) {
               dispatch({
-                type: "CHECK_CHATROOM",
+                type: chatRoomAction.CHECK_CHATROOM,
                 payload: { chatRoom: true },
               });
             }
@@ -296,9 +301,9 @@ function ChatRooms() {
             msg={`你目前/n沒有預約和湊團哦`}
             notDefaultBtn={`取消`}
             defaultBtn={`去逛逛`}
-            clickClose={() => dispatch({ type: "CLOSE_CHAT" })}
+            clickClose={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}
             clickFunction={() => {
-              dispatch({ type: "CLOSE_CHAT" });
+              dispatch({ type: chatRoomAction.CLOSE_CHAT });
               navigate("/");
             }}
           />
@@ -310,7 +315,7 @@ function ChatRooms() {
                 {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && (
                   <BackBtn
                     onClick={() => {
-                      dispatch({ type: "CLOSE_CHATROOM_STATE" });
+                      dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
                     }}
                   >
                     &larr;
@@ -334,7 +339,9 @@ function ChatRooms() {
                     isShown={
                       getChatRoom.isOpen && houseHuntingData.length !== 0
                     }
-                    onClick={() => dispatch({ type: "CLOSE_CHAT" })}
+                    onClick={() =>
+                      dispatch({ type: chatRoomAction.CLOSE_CHAT })
+                    }
                   >
                     &#10006;
                   </Close>
@@ -414,9 +421,11 @@ function ChatRooms() {
                       {house.data().listingTitle}
                       <GreaterThan
                         onClick={() => {
-                          dispatch({ type: "OPEN_CHATROOM_STATE" });
                           dispatch({
-                            type: "OPEN_CHATROOM",
+                            type: chatRoomAction.OPEN_CHATROOM_STATE,
+                          });
+                          dispatch({
+                            type: chatRoomAction.OPEN_CHATROOM,
                             payload: {
                               chatRoomId: house.id,
                             },
