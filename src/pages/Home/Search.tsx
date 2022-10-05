@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 
 import { RootState } from "../../redux/rootReducer";
-
+import { lastDocAction } from "../../redux/LastDoc/LastDocAction";
 import { firebase } from "../../utils/firebase";
 
 import countyItem from "../../utils/county";
@@ -263,7 +263,7 @@ function Search({
           const lastDoc = listing.docs[listing.docs.length - 1];
 
           dispatch({
-            type: "GET_LAST_LISTING_DOC",
+            type: lastDocAction.GET_LAST_LISTING_DOC,
             payload: { lastDocData: lastDoc },
           });
           let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
@@ -323,7 +323,7 @@ function Search({
           const lastDoc = listing.docs[listing.docs.length - 1];
 
           dispatch({
-            type: "GET_LAST_LISTING_DOC",
+            type: lastDocAction.GET_LAST_LISTING_DOC,
             payload: { lastDocData: lastDoc },
           });
           let listingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
