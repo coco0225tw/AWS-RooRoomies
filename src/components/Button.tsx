@@ -30,21 +30,19 @@ const BtnDiv = styled.div`
   }
 `;
 const InputBtn = styled.input.attrs({
-  type: "submit",
+  // type: "submit",
 })`
-  color: #4f5152;
+ color: #4f5152;
   font-size: 16px;
   letter-spacing: 4px;
   padding: 4px 12px;
   transition-duration: 0.2s;
   cursor: pointer;
-  border: solid 1px #4f5152;
-  background-color: #fff;
-
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  border: none;
   &:hover {
     background-color: #ece2d5;
   }
-  margin-top: 12px;
-  align-self: flex-end;
 `;
 export { BtnLink, BtnDiv, InputBtn };

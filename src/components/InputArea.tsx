@@ -69,12 +69,26 @@ const FormControl = styled.input`
   border: solid 1px #979797;
   padding: 8px;
   margin-top: 12px;
+  color: #4f5152;
+  &:focus {
+    outline: #4f5152;
+  }
   @media screen and (max-width: 1279px) {
     margin-top: 10px;
     width: 100%;
   }
 `;
-
+const ErrorText = styled.div`
+  color: #c77155;
+  display: inline-block;
+  height: 100%;
+  font-size: 16px;
+  margin-left: 12px;
+`;
+const LabelArea = styled.div`
+  display: flex;
+  align-items: baseline;
+`;
 export {
   FormLegend,
   FormGroup,
@@ -84,4 +98,6 @@ export {
   FormCheck,
   FormCheckLabel,
   FormControl,
+  ErrorText,
+  LabelArea,
 };

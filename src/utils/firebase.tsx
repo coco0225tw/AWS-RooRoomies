@@ -37,14 +37,7 @@ import {
 } from "firebase/auth";
 
 import firebaseConfig from "./firebaseConfig";
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q",
-//   authDomain: "rooroomies.firebaseapp.com",
-//   projectId: "rooroomies",
-//   storageBucket: "rooroomies.appspot.com",
-//   messagingSenderId: "902090494840",
-//   appId: "1:902090494840:web:b89eee21700f2fb39e2e8d",
-// };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);

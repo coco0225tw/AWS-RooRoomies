@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { keyframes } from "styled-components";
 import { RootState } from "../../redux/rootReducer";
 import { alertActionType } from "../../redux/Alert/AlertAction";
 
@@ -13,8 +13,10 @@ import {
   FormLabel,
   FormInputWrapper,
   FormControl,
+  ErrorText,
+  LabelArea,
 } from "../../components/InputArea";
-import { BtnDiv } from "../../components/Button";
+import { BtnDiv, InputBtn } from "../../components/Button";
 import loginPage from "../../assets/loginPage.png";
 import userDefaultPic from "../../assets/user2.png";
 
@@ -42,7 +44,7 @@ const FormWrapper = styled.div`
   width: 100%;
 `;
 
-const Form = styled.form.attrs({})`
+const Form = styled.div`
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -80,13 +82,8 @@ const SwitchBtn = styled(BtnDiv)<IsActiveBtnProps>`
     background-color: ${(props) => (props.$isActive ? "#fff7f4 " : "#ece2d5")};
   }
 `;
-const BtnArea = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
-`;
+
 const Text = styled.div`
-  //
   color: grey;
   font-size: 16px;
   letter-spacing: 1.2px;
@@ -95,18 +92,17 @@ const Text = styled.div`
   cursor: pointer;
   position: absolute;
   bottom: 0;
-  transform: translateY(-220%);
 `;
+
+const StyledForm = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+const RegForm = styled(StyledForm)``;
+const SignInForm = styled(StyledForm)``;
 const LoginOptionGroup = ["登入", "建立新帳號"];
-const registerFormGroup = [
-  { label: "使用者名稱", key: "regName" },
-  { label: "信箱", key: "regEmail" },
-  { label: "密碼", key: "regPassword" },
-];
-const signInFormGroup = [
-  { label: "信箱", key: "signInEmail" },
-  { label: "密碼", key: "signInPassword" },
-];
 
 function SignIn() {
   const navigate = useNavigate();
@@ -114,26 +110,103 @@ function SignIn() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
 
-  interface User {
-    email: string;
-  }
+  const {
+    register: registerSignIn,
+    formState: { errors: errorsSignIn },
+    handleSubmit: handleSignInSubmit,
+  } = useForm({
+    mode: "onBlur",
+  });
 
-  const regInfoRef = useRef<HTMLInputElement[]>([]);
-  const signInInfoRef = useRef<HTMLInputElement[]>([]);
-  const testAccount = {
-    account: "guest@gmail.com",
-    password: "123456",
+  const {
+    register: registerReg,
+    formState: { errors: errorsReg },
+    handleSubmit: handleRegSubmit,
+  } = useForm({
+    mode: "onBlur",
+  });
+  const valid = {
+    required: {
+      value: true,
+      message: "※必填欄位",
+    },
+    email:
+      /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/,
   };
-  const regSubmit = async function () {
+  const signInGroup = [
+    {
+      label: "信箱",
+      key: "signInEmail",
+      required: valid.required,
+      pattern: {
+        value: valid.email,
+        message: "※請輸入正確的信箱格式",
+      },
+    },
+    {
+      label: "密碼",
+      key: "signInPassword",
+      required: valid.required,
+    },
+  ];
+  const regGroup = [
+    {
+      label: "使用者名稱",
+      key: "regName",
+      required: valid.required,
+      minLength: {
+        value: 2,
+        message: "※至少2個字元",
+      },
+      maxLength: {
+        value: 10,
+        message: "※不可超過10個字元",
+      },
+    },
+    {
+      label: "信箱",
+      key: "regEmail",
+      required: valid.required,
+      pattern: {
+        value: valid.email,
+        message: "※請輸入正確的信箱格式",
+      },
+    },
+    {
+      label: "密碼",
+      key: "regPassword",
+      required: valid.required,
+      pattern: {
+        value: /^([^0-9]*[^A-Z]*[^a-z]*[a-zA-Z0-9])$/,
+        message: "※請輸入正確的密碼格式",
+      },
+      minLength: {
+        value: 2,
+        message: "※至少2個字元",
+      },
+      maxLength: {
+        value: 10,
+        message: "※不可超過10個字元",
+      },
+    },
+  ];
+  const testAccount = {
+    account: process.env.REACT_APP_TEST_ACCOUNT,
+    password: process.env.REACT_APP_TEST_PASSWORD,
+  };
+  const onSubmitReg = (regInfo: any) => {
+    regSubmit(regInfo);
+  };
+  const regSubmit = async function (regInfo: any) {
     let newUser = await firebase.createNewUser(
-      regInfoRef.current[1].value,
-      regInfoRef.current[2].value
+      regInfo.regEmail,
+      regInfo.regPassword
     );
     firebase
       .setNewUserDocField(
         newUser?.user.uid as string,
-        regInfoRef.current[1].value,
-        regInfoRef.current[0].value,
+        regInfo.regEmail,
+        regInfo.regName,
         userDefaultPic
       )
       .then(() => {
@@ -151,12 +224,12 @@ function SignIn() {
         }, 3000);
       });
   };
-  const signInSubmit = async function () {
+  const onSubmitSignIn = (signInInfo: any) => {
+    signInSubmit(signInInfo);
+  };
+  const signInSubmit = async function (signInInfo) {
     firebase
-      .signInUser(
-        signInInfoRef.current[0]!.value,
-        signInInfoRef.current[1]!.value
-      )
+      .signInUser(signInInfo.signInEmail, signInInfo.signInPassword)
       .then(() => {
         navigate("/");
         dispatch({
@@ -213,17 +286,35 @@ function SignIn() {
         </SwitchBtns>
         <FormWrapper>
           {activeOptionIndex === 0 && (
-            <React.Fragment>
-              {signInFormGroup.map(({ label, key }, index) => (
+            <SignInForm onSubmit={handleSignInSubmit(onSubmitSignIn)}>
+              {signInGroup.map((signIn) => (
                 <FormGroup
                   style={{ marginTop: "0px", marginBottom: "20px" }}
-                  key={key}
+                  key={signIn.key}
                 >
-                  <FormLabel>{label}</FormLabel>
+                  <LabelArea>
+                    <FormLabel htmlFor={signIn.key}>{signIn.label}</FormLabel>
+                    <ErrorText>
+                      {errorsSignIn[signIn.key] &&
+                        (errorsSignIn[signIn.key].message as string)}
+                    </ErrorText>
+                  </LabelArea>
                   <FormInputWrapper>
                     <FormControlFullWidth
-                      type={key.includes("Password") ? "password" : "input"}
-                      ref={(el) => ((signInInfoRef.current[index] as any) = el)}
+                      id={`${signIn.key}`}
+                      type={
+                        signIn.key.includes("Password") ? "password" : "input"
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key == " ") {
+                          e.preventDefault();
+                        }
+                      }}
+                      {...registerSignIn(signIn.key, {
+                        required: signIn.required && signIn.required,
+                        pattern: signIn.pattern && signIn.pattern,
+                      })}
+                      aria-invalid={errorsSignIn[signIn.key] ? "true" : "false"}
                     />
                   </FormInputWrapper>
                 </FormGroup>
@@ -231,34 +322,46 @@ function SignIn() {
               <Text onClick={() => signInWithTestAccount()}>
                 用測試帳號登入
               </Text>
-              <BtnDiv onClick={() => signInSubmit()}>登入</BtnDiv>
-            </React.Fragment>
+              <InputBtn value="送出" type="submit" />
+            </SignInForm>
           )}
 
           {activeOptionIndex === 1 && (
-            <React.Fragment>
-              {registerFormGroup.map(({ label, key }, index) => (
+            <RegForm onSubmit={handleRegSubmit(onSubmitReg)}>
+              {regGroup.map((reg) => (
                 <FormGroup
                   style={{ marginTop: "0px", marginBottom: "20px" }}
-                  key={key}
+                  key={reg.key}
                 >
-                  <FormLabel>{label}</FormLabel>
+                  <LabelArea>
+                    <FormLabel htmlFor={reg.key}>{reg.label}</FormLabel>
+                    <ErrorText>
+                      {errorsReg[reg.key] &&
+                        (errorsReg[reg.key].message as string)}
+                    </ErrorText>
+                  </LabelArea>
                   <FormInputWrapper>
                     <FormControlFullWidth
-                      type={
-                        key.includes("Password")
-                          ? "password"
-                          : key.includes("Picture")
-                          ? "file"
-                          : "input"
-                      }
-                      ref={(el) => ((regInfoRef.current[index] as any) = el)}
+                      id={`${reg.key}`}
+                      type={reg.key.includes("Password") ? "password" : "input"}
+                      onKeyDown={(e) => {
+                        if (e.key == " ") {
+                          e.preventDefault();
+                        }
+                      }}
+                      {...registerReg(reg.key, {
+                        required: reg.required && reg.required,
+                        pattern: reg.pattern && reg.pattern,
+                        maxLength: reg.maxLength && reg.maxLength,
+                        minLength: reg.minLength && reg.minLength,
+                      })}
+                      aria-invalid={errorsReg[reg.key] ? "true" : "false"}
                     />
                   </FormInputWrapper>
                 </FormGroup>
               ))}
-              <BtnDiv onClick={() => regSubmit()}>註冊</BtnDiv>
-            </React.Fragment>
+              <InputBtn value="送出" type="submit" />
+            </RegForm>
           )}
         </FormWrapper>
       </Form>
