@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
 import { collection, doc } from 'firebase/firestore';
 
@@ -61,6 +61,7 @@ function UploadMyListing({
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {
+  const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getAddr = useSelector((state: RootState) => state.UploadAddrReducer) as addrType;
   const [clickTab, setClickTab] = useState<string>('輸入基本資訊');
@@ -130,7 +131,19 @@ function UploadMyListing({
               </SubmitBtn>
             </React.Fragment>
           ) : (
-            <SubmitBtn onClick={() => setEdit(false)}>取消</SubmitBtn>
+            <SubmitBtn
+              onClick={() => {
+                setEdit(false);
+                dispatch({ type: 'RETURN_INITIAL_FACILITY' });
+                dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
+                dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
+                dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
+                dispatch({ type: 'RETURN_INITIAL_TITLE' });
+                dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+              }}
+            >
+              取消
+            </SubmitBtn>
           )}
         </Span>
       </Title>

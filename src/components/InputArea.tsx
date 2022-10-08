@@ -95,6 +95,7 @@ const StyledForm = styled.form`
   flex-direction: column;
   align-items: center;
 `;
+
 export {
   FormLegend,
   FormGroup,

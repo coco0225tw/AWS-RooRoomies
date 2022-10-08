@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { useForm, Controller, useController } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import {
   FormGroup,
@@ -93,7 +93,6 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
 
 function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const titleInfo = useSelector((state: RootState) => state.UploadTitleReducer);
 
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
@@ -155,7 +154,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       },
       pattern: {
         value: /^\d*(\.\d{0,2})?$/,
-        message: '※小數點不可大於兩位',
+        message: '※請輸入數字，且小數點不可大於兩位',
       },
     },
     {
@@ -184,7 +183,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       label: '入住時間 ',
       key: 'moveInDate',
       required: valid.required,
-      pattern: null,
     },
   ];
   const [titleState, setTitleState] = useState<titleType>(initialTitleState);
@@ -260,7 +258,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                                 key={`${o.key}${oIndex}`}
                                 defaultChecked={titleInfo.form === o.label}
                                 name={o.label}
-                                value-={'123'}
+                                value-={o.label}
                                 onChange={(e) => {
                                   onChange(o.label);
                                   if (e.target.checked) {
@@ -312,7 +310,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                 />
               ) : (
                 <StyledFormControl
-                  type={info.key.includes('Sq') ? 'number' : 'input'}
                   id={info.key}
                   {...register(info.key, {
                     required: info.required && info.required,
