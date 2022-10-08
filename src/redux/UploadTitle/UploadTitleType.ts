@@ -4,7 +4,7 @@ interface titleType {
   form: string;
   environmentDescription: string;
   phone: string;
-  moveInDate: string;
+  moveInDate: Date;
 }
 
 export default titleType;

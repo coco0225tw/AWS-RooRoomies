@@ -16,6 +16,7 @@ const CalendarContainer = styled.div`
     width: 2rem;
     // margin: 4px auto;
     margin: 4px auto;
+    cursor: pointer;
     &:hover {
       background-color: white;
       border: 0;
@@ -43,7 +44,10 @@ const CalendarContainer = styled.div`
       max-width: initial !important;
     }
     .react-calendar__tile--range {
-      box-shadow: 0 0 2px 2px grey;
+      // box-shadow: 0 0 2px 2px grey;
+      background-color: white;
+      color: #c77155;
+      border: solid 2px #c77155;
     }
   }
   /* ~~~ neighboring month & weekend styles ~~~ */
@@ -103,11 +107,11 @@ const CalendarContainer = styled.div`
     color: gray;
   }
   .react-calendar__tile:enabled {
-    color: #fff7f4;
+    // color: #fff7f4;
   }
   .react-calendar__tile:enabled:hover {
     background-color: white;
-    color: #f3f2ef;
+    color: #c77155;
     border: solid 2px #c77155;
   }
   ,

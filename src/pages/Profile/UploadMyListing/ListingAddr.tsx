@@ -1,18 +1,12 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
 
-import {
-  FormGroup,
-  FormLabel,
-  FormInputWrapper,
-  FormControl,
-} from "../../../components/InputArea";
-import { RootState } from "../../../redux/rootReducer";
-import { BtnDiv, BtnLink } from "../../../components/Button";
-import GoogleMapKey from "../../../key";
-import addressType from "../../../redux/UploadAddr/UploadAddrType";
-import { uploadAddrAction } from "../../../redux/UploadAddr/UploadAddrAction";
+import { FormGroup, FormLabel, FormInputWrapper, FormControl } from '../../../components/InputArea';
+import { RootState } from '../../../redux/rootReducer';
+import { BtnDiv, BtnLink } from '../../../components/Button';
+import addressType from '../../../redux/UploadAddr/UploadAddrType';
+import { uploadAddrAction } from '../../../redux/UploadAddr/UploadAddrAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,16 +22,12 @@ const SubmitBtn = styled(BtnDiv)`
   align-self: flex-end;
 `;
 const addressFormGroups = [
-  { label: "縣市", key: "countyname" },
-  { label: "鄉鎮市區", key: "townname" },
-  { label: "完整住址 ", key: "completeAddr" },
-  { label: "樓", key: "floor" },
+  { label: '縣市', key: 'countyname' },
+  { label: '鄉鎮市區', key: 'townname' },
+  { label: '完整住址 ', key: 'completeAddr' },
+  { label: '樓', key: 'floor' },
 ];
-function ListingAddr({
-  setClickTab,
-}: {
-  setClickTab: React.Dispatch<React.SetStateAction<string>>;
-}) {
+function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const getAddr = useSelector((state: RootState) => state.UploadAddrReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
@@ -47,7 +37,7 @@ function ListingAddr({
 
   async function submit(addrState: addressType) {
     const chineseAddr = `台灣${addrState.countyname}${addrState.townname}${addrState.completeAddr}`;
-    const getGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${chineseAddr}&key=${GoogleMapKey}`;
+    const getGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${chineseAddr}&key=${process.env.REACT_APP_GOOGLE_MAP_API_KEY}`;
     async function getGeocode() {
       await fetch(getGeocodeUrl).then((res) => {
         res.json().then((data) => {
@@ -73,9 +63,7 @@ function ListingAddr({
           <FormInputWrapper>
             <FormControl
               defaultValue={addrState[key as keyof typeof addrState] as string}
-              onChange={(e) =>
-                setAddrState({ ...addrState, [key]: e.target.value })
-              }
+              onChange={(e) => setAddrState({ ...addrState, [key]: e.target.value })}
             />
           </FormInputWrapper>
         </FormGroup>

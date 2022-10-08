@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const BtnLink = styled(Link)`
   color: #4f5152;
@@ -45,4 +45,10 @@ const InputBtn = styled.input.attrs({
     background-color: #ece2d5;
   }
 `;
-export { BtnLink, BtnDiv, InputBtn };
+const SubmitBtn = styled(InputBtn)`
+  background-color: #fff;
+  align-self: flex-end;
+  margin-top: 20px;
+  border: solid 1px black;
+`;
+export { BtnLink, BtnDiv, InputBtn, SubmitBtn };

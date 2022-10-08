@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 const FormLegend = styled.legend`
   line-height: 19px;
   font-size: 16px;
@@ -89,6 +89,12 @@ const LabelArea = styled.div`
   display: flex;
   align-items: baseline;
 `;
+const StyledForm = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 export {
   FormLegend,
   FormGroup,
@@ -100,4 +106,5 @@ export {
   FormControl,
   ErrorText,
   LabelArea,
+  StyledForm,
 };

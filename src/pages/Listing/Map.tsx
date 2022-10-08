@@ -1,28 +1,27 @@
-import React, { useState, useRef, useMemo, useEffect } from "react";
-import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
-import styled from "styled-components";
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import styled from 'styled-components';
 
-import GoogleMapKey from "../../key";
-import logo from "../../assets/searchHouse.png";
+import logo from '../../assets/searchHouse.png';
 const style = [
   {
-    featureType: "administrative",
-    elementType: "all",
+    featureType: 'administrative',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
     ],
   },
   {
-    featureType: "landscape",
-    elementType: "all",
+    featureType: 'landscape',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
       {
-        hue: "#0066ff",
+        hue: '#0066ff',
       },
       {
         saturation: 74,
@@ -33,29 +32,29 @@ const style = [
     ],
   },
   {
-    featureType: "poi",
-    elementType: "all",
+    featureType: 'poi',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "road",
-    elementType: "all",
+    featureType: 'road',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "road.highway",
-    elementType: "all",
+    featureType: 'road.highway',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
       {
         weight: 0.6,
@@ -69,50 +68,50 @@ const style = [
     ],
   },
   {
-    featureType: "road.highway",
-    elementType: "geometry",
+    featureType: 'road.highway',
+    elementType: 'geometry',
     stylers: [
       {
-        visibility: "on",
+        visibility: 'on',
       },
     ],
   },
   {
-    featureType: "road.arterial",
-    elementType: "all",
+    featureType: 'road.arterial',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
     ],
   },
   {
-    featureType: "road.local",
-    elementType: "all",
+    featureType: 'road.local',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "on",
+        visibility: 'on',
       },
     ],
   },
   {
-    featureType: "transit",
-    elementType: "all",
+    featureType: 'transit',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "water",
-    elementType: "all",
+    featureType: 'water',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
       {
-        color: "#5f94ff",
+        color: '#5f94ff',
       },
       {
         lightness: 26,
@@ -125,11 +124,11 @@ const style = [
 ];
 function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: GoogleMapKey,
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY,
   });
   const mapStyles = {
-    height: "50vh",
-    width: "100%",
+    height: '50vh',
+    width: '100%',
   };
   const Wrapper = styled.div`
     width: 100vw;
@@ -142,12 +141,7 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
   return (
     <Wrapper>
       {isLoaded && (
-        <GoogleMap
-          options={{ styles: style }}
-          mapContainerStyle={mapStyles}
-          zoom={14}
-          center={latLng}
-        >
+        <GoogleMap options={{ styles: style }} mapContainerStyle={mapStyles} zoom={14} center={latLng}>
           <Marker
             icon={{
               url: logo,

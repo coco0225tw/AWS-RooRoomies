@@ -1,40 +1,40 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Provider } from "react-redux";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
-import store from "./redux/store";
-import { firebase, auth, onAuthStateChanged, db } from "./utils/firebase";
-import { RootState } from "./redux/rootReducer";
+import store from './redux/store';
+import { firebase, auth, onAuthStateChanged, db } from './utils/firebase';
+import { RootState } from './redux/rootReducer';
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ChatRooms from "./components/ChatRooms/ChatRooms";
-import Alert from "./components/Alert";
+import Header from './components/Header';
+import Footer from './components/Footer';
+import ChatRooms from './components/ChatRooms/ChatRooms';
+import Alert from './components/Alert';
 
-import { groupsType } from "./redux/Group/GroupType";
-import userType from "./redux/GetAuth/GetAuthType";
-import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
-import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import facilityType from "./redux/UploadFacility/UploadFacilityType";
-import { alertActionType } from "./redux/Alert/AlertAction";
-import { chatRoomAction } from "./redux/ChatRoom/ChatRoomAction";
-import { getAuthAction } from "./redux/GetAuth/GetAuthAction";
-import { getFavoriteAction } from "./redux/GetFavoriteListing/GetFavoriteListingAction";
-import { onAuthChangeAction } from "./redux/OnAuthChange/OnAuthChangeAction";
-import { previewMainImageAction } from "./redux/PreviewMainImage/PreviewMainImageAction";
-import { previewOtherImagesAction } from "./redux/PreviewOtherImages/PreviewOtherImagesAction";
-import { selectTabAction } from "./redux/SelectTab/SelectTabAction";
-import { subTabAction } from "./redux/SubTab/SubTabAction";
-import { uploadAddrAction } from "./redux/UploadAddr/UploadAddrAction";
-import { uploadBookingTimesAction } from "./redux/UploadBookingTimes/UploadBookingTimesAction";
+import { groupsType } from './redux/Group/GroupType';
+import userType from './redux/GetAuth/GetAuthType';
+import roomDetailsType from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import facilityType from './redux/UploadFacility/UploadFacilityType';
+import { alertActionType } from './redux/Alert/AlertAction';
+import { chatRoomAction } from './redux/ChatRoom/ChatRoomAction';
+import { getAuthAction } from './redux/GetAuth/GetAuthAction';
+import { getFavoriteAction } from './redux/GetFavoriteListing/GetFavoriteListingAction';
+import { onAuthChangeAction } from './redux/OnAuthChange/OnAuthChangeAction';
+import { previewMainImageAction } from './redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from './redux/PreviewOtherImages/PreviewOtherImagesAction';
+import { selectTabAction } from './redux/SelectTab/SelectTabAction';
+import { subTabAction } from './redux/SubTab/SubTabAction';
+import { uploadAddrAction } from './redux/UploadAddr/UploadAddrAction';
+import { uploadBookingTimesAction } from './redux/UploadBookingTimes/UploadBookingTimesAction';
 
-import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
-import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
-import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
-import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
+import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
+import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
+import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
+import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
 
 const GlobalStyle = createGlobalStyle`
 @font-face {
@@ -62,7 +62,7 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-   // border: solid 1px black;
+   border: solid 1px black;
     position: relative;
     letter-spacing: 0.4px;
   }
@@ -119,8 +119,8 @@ function User() {
       } else {
         dispatch({ type: getAuthAction.RETURN_INITIAL_GET_USER });
         dispatch({ type: onAuthChangeAction.RETURN_INITIAL_AUTH });
-        dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
-        dispatch({ type: "RETURN_INITIAL_DNDLISTS" });
+        dispatch({ type: 'RETURN_INITIAL_COMPARELISTS' });
+        dispatch({ type: 'RETURN_INITIAL_DNDLISTS' });
         dispatch({ type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS });
         //group
         //lastdoc
@@ -130,12 +130,12 @@ function User() {
         dispatch({
           type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
         });
-        dispatch({ type: "RETURN_INITIAL_FACILITY" });
-        dispatch({ type: "RETURN_INITIAL_LISTING_IMAGES" });
-        dispatch({ type: "RETURN_INITIAL_ROOMMATES_CONDITION" });
-        dispatch({ type: "RETURN_INITIAL_ROOM_DETAILS" });
-        dispatch({ type: "RETURN_INITIAL_TITLE" });
-        dispatch({ type: "RETURN_INITIAL_MEASROOMMATE" });
+        dispatch({ type: 'RETURN_INITIAL_FACILITY' });
+        dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
+        dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
+        dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
+        dispatch({ type: 'RETURN_INITIAL_TITLE' });
+        dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
         dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
         dispatch({
           type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
@@ -145,9 +145,7 @@ function User() {
         dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
       }
       async function getUser() {
-        let data = await firebase.getUserDocFromFirebase(
-          currentUser?.uid as string
-        );
+        let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
         const user: userType = {
           uid: data?.id as string,
           email: data?.data().email,
@@ -160,10 +158,10 @@ function User() {
         const favoriteLists = data?.data().favoriteLists;
         const dndLists = data?.data().dndLists;
         dispatch({
-          type: "GET_COMPARELISTS_FROM_FIREBASE",
+          type: 'GET_COMPARELISTS_FROM_FIREBASE',
           payload: { compareLists },
         });
-        dispatch({ type: "GET_DNDLISTS_FROM_FIREBASE", payload: { dndLists } });
+        dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
         dispatch({
           type: getFavoriteAction.GET_FAVORITE_LISTS_FROM_FIREBASE,
           payload: { favoriteLists },
@@ -174,7 +172,7 @@ function User() {
         });
         if (data?.data().userAsRoommatesConditions) {
           dispatch({
-            type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
+            type: 'GET_USER_AS_ROOMMATES_FROM_FIREBASE',
             payload: {
               meAsRoommatesState: data?.data().userAsRoommatesConditions,
             },
@@ -201,9 +199,7 @@ function User() {
               totalSq: number;
             };
 
-            const listingData = await firebase.getListing(
-              data?.data().userListingId
-            );
+            const listingData = await firebase.getListing(data?.data().userListingId);
             let listingTitle = {
               title: listingData?.title,
               totalSq: listingData?.totalSq,
@@ -211,15 +207,15 @@ function User() {
             };
 
             dispatch({
-              type: "GET_LISTING_TITLE_FROM_FIREBASE",
+              type: 'GET_LISTING_TITLE_FROM_FIREBASE',
               payload: { listingTitle },
             });
             dispatch({
-              type: "GET_ROOMMATESCONDITION_FROM_FIREBASE",
+              type: 'GET_ROOMMATESCONDITION_FROM_FIREBASE',
               payload: { roommatesState: listingData?.roommatesConditions },
             });
             dispatch({
-              type: "GET_FACILITY_FROM_FIREBASE",
+              type: 'GET_FACILITY_FROM_FIREBASE',
               payload: { facilityState: listingData?.facility },
             });
           }
@@ -234,16 +230,9 @@ function User() {
   }, []);
   return null;
 }
-
 function AlertInfo() {
   const alertInfo = useSelector((state: RootState) => state.AlertReducer);
-  return (
-    <Alert
-      alertType={alertInfo.alertType}
-      alertMessage={alertInfo.alertMessage}
-      isAlert={alertInfo.isAlert}
-    />
-  );
+  return <Alert alertType={alertInfo.alertType} alertMessage={alertInfo.alertMessage} isAlert={alertInfo.isAlert} />;
 }
 function App() {
   return (

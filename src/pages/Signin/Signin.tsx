@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
 
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { RootState } from "../../redux/rootReducer";
-import { alertActionType } from "../../redux/Alert/AlertAction";
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { RootState } from '../../redux/rootReducer';
+import { alertActionType } from '../../redux/Alert/AlertAction';
 
-import { firebase, auth, onAuthStateChanged } from "../../utils/firebase";
+import { firebase, auth, onAuthStateChanged } from '../../utils/firebase';
 import {
   FormGroup,
   FormLabel,
@@ -15,10 +15,11 @@ import {
   FormControl,
   ErrorText,
   LabelArea,
-} from "../../components/InputArea";
-import { BtnDiv, InputBtn } from "../../components/Button";
-import loginPage from "../../assets/loginPage.png";
-import userDefaultPic from "../../assets/user2.png";
+  StyledForm,
+} from '../../components/InputArea';
+import { BtnDiv, InputBtn } from '../../components/Button';
+import loginPage from '../../assets/loginPage.png';
+import userDefaultPic from '../../assets/user2.png';
 
 interface IsActiveBtnProps {
   $isActive: boolean;
@@ -75,11 +76,11 @@ const SwitchBtn = styled(BtnDiv)<IsActiveBtnProps>`
   text-align: center;
   cursor: pointer;
   transition-duration: 0.2s;
-  color: ${(props) => (props.$isActive ? "#fff7f4 " : "#4f5152")};
-  background-color: ${(props) => (props.$isActive ? "#c77155 " : "#ffffff")};
+  color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#4f5152')};
+  background-color: ${(props) => (props.$isActive ? '#c77155 ' : '#ffffff')};
   &:hover {
-    color: ${(props) => (props.$isActive ? "#c77155 " : "ece2d5")};
-    background-color: ${(props) => (props.$isActive ? "#fff7f4 " : "#ece2d5")};
+    color: ${(props) => (props.$isActive ? '#c77155 ' : 'ece2d5')};
+    background-color: ${(props) => (props.$isActive ? '#fff7f4 ' : '#ece2d5')};
   }
 `;
 
@@ -94,15 +95,9 @@ const Text = styled.div`
   bottom: 0;
 `;
 
-const StyledForm = styled.form`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
 const RegForm = styled(StyledForm)``;
 const SignInForm = styled(StyledForm)``;
-const LoginOptionGroup = ["登入", "建立新帳號"];
+const LoginOptionGroup = ['登入', '建立新帳號'];
 
 function SignIn() {
   const navigate = useNavigate();
@@ -115,7 +110,7 @@ function SignIn() {
     formState: { errors: errorsSignIn },
     handleSubmit: handleSignInSubmit,
   } = useForm({
-    mode: "onBlur",
+    mode: 'onBlur',
   });
 
   const {
@@ -123,70 +118,69 @@ function SignIn() {
     formState: { errors: errorsReg },
     handleSubmit: handleRegSubmit,
   } = useForm({
-    mode: "onBlur",
+    mode: 'onBlur',
   });
   const valid = {
     required: {
       value: true,
-      message: "※必填欄位",
+      message: '※必填欄位',
     },
-    email:
-      /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/,
+    email: /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/,
   };
   const signInGroup = [
     {
-      label: "信箱",
-      key: "signInEmail",
+      label: '信箱',
+      key: 'signInEmail',
       required: valid.required,
       pattern: {
         value: valid.email,
-        message: "※請輸入正確的信箱格式",
+        message: '※請輸入正確的信箱格式',
       },
     },
     {
-      label: "密碼",
-      key: "signInPassword",
+      label: '密碼',
+      key: 'signInPassword',
       required: valid.required,
     },
   ];
   const regGroup = [
     {
-      label: "使用者名稱",
-      key: "regName",
+      label: '使用者名稱',
+      key: 'regName',
       required: valid.required,
       minLength: {
         value: 2,
-        message: "※至少2個字元",
+        message: '※至少2個字元',
       },
       maxLength: {
         value: 10,
-        message: "※不可超過10個字元",
+        message: '※不可超過10個字元',
       },
     },
     {
-      label: "信箱",
-      key: "regEmail",
+      label: '信箱',
+      key: 'regEmail',
       required: valid.required,
       pattern: {
         value: valid.email,
-        message: "※請輸入正確的信箱格式",
+        message: '※請輸入正確的信箱格式',
       },
     },
     {
-      label: "密碼",
-      key: "regPassword",
+      label: '密碼',
+      key: 'regPassword',
       required: valid.required,
       pattern: {
         value: /^([^0-9]*[^A-Z]*[^a-z]*[a-zA-Z0-9])$/,
-        message: "※請輸入正確的密碼格式",
+        message: '※請輸入正確的密碼格式',
       },
       minLength: {
         value: 2,
-        message: "※至少2個字元",
+        message: '※至少2個字元',
       },
       maxLength: {
         value: 10,
-        message: "※不可超過10個字元",
+        message: '※不可超過10個字元',
       },
     },
   ];
@@ -198,23 +192,15 @@ function SignIn() {
     regSubmit(regInfo);
   };
   const regSubmit = async function (regInfo: any) {
-    let newUser = await firebase.createNewUser(
-      regInfo.regEmail,
-      regInfo.regPassword
-    );
+    let newUser = await firebase.createNewUser(regInfo.regEmail, regInfo.regPassword);
     firebase
-      .setNewUserDocField(
-        newUser?.user.uid as string,
-        regInfo.regEmail,
-        regInfo.regName,
-        userDefaultPic
-      )
+      .setNewUserDocField(newUser?.user.uid as string, regInfo.regEmail, regInfo.regName, userDefaultPic)
       .then(() => {
-        navigate("/");
+        navigate('/');
         dispatch({
           type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
-            alertMessage: "註冊成功",
+            alertMessage: '註冊成功',
           },
         });
         setTimeout(() => {
@@ -228,30 +214,28 @@ function SignIn() {
     signInSubmit(signInInfo);
   };
   const signInSubmit = async function (signInInfo) {
-    firebase
-      .signInUser(signInInfo.signInEmail, signInInfo.signInPassword)
-      .then(() => {
-        navigate("/");
-        dispatch({
-          type: alertActionType.OPEN_SUCCESS_ALERT,
-          payload: {
-            alertMessage: "登入成功",
-          },
-        });
-        setTimeout(() => {
-          dispatch({
-            type: alertActionType.CLOSE_ALERT,
-          });
-        }, 3000);
-      });
-  };
-  const signInWithTestAccount = async function () {
-    firebase.signInUser(testAccount.account, testAccount.password).then(() => {
-      navigate("/");
+    firebase.signInUser(signInInfo.signInEmail, signInInfo.signInPassword).then(() => {
+      navigate('/');
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
-          alertMessage: "登入成功",
+          alertMessage: '登入成功',
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+    });
+  };
+  const signInWithTestAccount = async function () {
+    firebase.signInUser(testAccount.account, testAccount.password).then(() => {
+      navigate('/');
+      dispatch({
+        type: alertActionType.OPEN_SUCCESS_ALERT,
+        payload: {
+          alertMessage: '登入成功',
         },
       });
       setTimeout(() => {
@@ -265,7 +249,7 @@ function SignIn() {
   useEffect(() => {
     if (authChange) {
       onAuthStateChanged(auth, (currentUser) => {});
-      navigate("/profile");
+      navigate('/profile');
     }
   }, [authChange]);
   return (
@@ -288,25 +272,17 @@ function SignIn() {
           {activeOptionIndex === 0 && (
             <SignInForm onSubmit={handleSignInSubmit(onSubmitSignIn)}>
               {signInGroup.map((signIn) => (
-                <FormGroup
-                  style={{ marginTop: "0px", marginBottom: "20px" }}
-                  key={signIn.key}
-                >
+                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={signIn.key}>
                   <LabelArea>
                     <FormLabel htmlFor={signIn.key}>{signIn.label}</FormLabel>
-                    <ErrorText>
-                      {errorsSignIn[signIn.key] &&
-                        (errorsSignIn[signIn.key].message as string)}
-                    </ErrorText>
+                    <ErrorText>{errorsSignIn[signIn.key] && (errorsSignIn[signIn.key].message as string)}</ErrorText>
                   </LabelArea>
                   <FormInputWrapper>
                     <FormControlFullWidth
                       id={`${signIn.key}`}
-                      type={
-                        signIn.key.includes("Password") ? "password" : "input"
-                      }
+                      type={signIn.key.includes('Password') ? 'password' : 'input'}
                       onKeyDown={(e) => {
-                        if (e.key == " ") {
+                        if (e.key == ' ') {
                           e.preventDefault();
                         }
                       }}
@@ -314,14 +290,12 @@ function SignIn() {
                         required: signIn.required && signIn.required,
                         pattern: signIn.pattern && signIn.pattern,
                       })}
-                      aria-invalid={errorsSignIn[signIn.key] ? "true" : "false"}
+                      aria-invalid={errorsSignIn[signIn.key] ? 'true' : 'false'}
                     />
                   </FormInputWrapper>
                 </FormGroup>
               ))}
-              <Text onClick={() => signInWithTestAccount()}>
-                用測試帳號登入
-              </Text>
+              <Text onClick={() => signInWithTestAccount()}>用測試帳號登入</Text>
               <InputBtn value="送出" type="submit" />
             </SignInForm>
           )}
@@ -329,23 +303,17 @@ function SignIn() {
           {activeOptionIndex === 1 && (
             <RegForm onSubmit={handleRegSubmit(onSubmitReg)}>
               {regGroup.map((reg) => (
-                <FormGroup
-                  style={{ marginTop: "0px", marginBottom: "20px" }}
-                  key={reg.key}
-                >
+                <FormGroup style={{ marginTop: '0px', marginBottom: '20px' }} key={reg.key}>
                   <LabelArea>
                     <FormLabel htmlFor={reg.key}>{reg.label}</FormLabel>
-                    <ErrorText>
-                      {errorsReg[reg.key] &&
-                        (errorsReg[reg.key].message as string)}
-                    </ErrorText>
+                    <ErrorText>{errorsReg[reg.key] && (errorsReg[reg.key].message as string)}</ErrorText>
                   </LabelArea>
                   <FormInputWrapper>
                     <FormControlFullWidth
                       id={`${reg.key}`}
-                      type={reg.key.includes("Password") ? "password" : "input"}
+                      type={reg.key.includes('Password') ? 'password' : 'input'}
                       onKeyDown={(e) => {
-                        if (e.key == " ") {
+                        if (e.key == ' ') {
                           e.preventDefault();
                         }
                       }}
@@ -355,7 +323,7 @@ function SignIn() {
                         maxLength: reg.maxLength && reg.maxLength,
                         minLength: reg.minLength && reg.minLength,
                       })}
-                      aria-invalid={errorsReg[reg.key] ? "true" : "false"}
+                      aria-invalid={errorsReg[reg.key] ? 'true' : 'false'}
                     />
                   </FormInputWrapper>
                 </FormGroup>
