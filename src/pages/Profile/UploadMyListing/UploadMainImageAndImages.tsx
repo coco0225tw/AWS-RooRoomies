@@ -1,12 +1,12 @@
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { RootState } from "../../../redux/rootReducer";
-import { previewMainImageAction } from "../../../redux/PreviewMainImage/PreviewMainImageAction";
-import { previewOtherImagesAction } from "../../../redux/PreviewOtherImages/PreviewOtherImagesAction";
-import { BtnDiv } from "../../../components/Button";
-import upload from "../../../assets/upload.png";
+import { RootState } from '../../../redux/rootReducer';
+import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
+import { BtnDiv } from '../../../components/Button';
+import upload from '../../../assets/upload.png';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,11 +17,11 @@ const Wrapper = styled.div`
 `;
 
 const UploadMainImage = styled.input.attrs({
-  type: "file",
-  accept: "image/*",
+  type: 'file',
+  accept: 'image/*',
 })``;
 const UploadImages = styled.input.attrs({
-  type: "file",
+  type: 'file',
   multiple: true,
 })``;
 const PreviewArea = styled.div`
@@ -33,6 +33,11 @@ const PreviewMainImage = styled.div<{ src: string }>`
   height: 100px;
   background-size: cover;
   background-position: center center;
+  border: ${(props) => (props.src ? 'none' : 'dotted 3px #c77155')};
+  color: #c77155;
+  text-align: center;
+  vertical-align: center;
+  line-height: 100px;
 `;
 
 const PreviewImages = styled(PreviewMainImage)`
@@ -46,7 +51,6 @@ const SubmitBtn = styled(BtnDiv)`
   align-self: flex-end;
 `;
 const UploadImgBtn = styled.div`
-  transform: translate(20%, 20%);
   border: none;
   font-size: 12px;
   background: #c77155;
@@ -63,19 +67,17 @@ const UploadImgBtn = styled.div`
   background-size: 40px 40px;
   background-position: center center;
   background-repeat: no-repeat;
+  position: absolute;
+  left: 100%;
+  transform: translate(-50%, -50%);
 `;
-function UploadMainImageAndImages({
-  setClickTab,
-}: {
-  setClickTab: React.Dispatch<React.SetStateAction<string>>;
-}) {
+const UploadArea = styled.div`
+  margin-bottom: 40px;
+`;
+function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const getMainImage = useSelector(
-    (state: RootState) => state.PreviewImageReducer
-  );
-  const getOtherImages = useSelector(
-    (state: RootState) => state.PreviewOtherImagesReducer
-  );
+  const getMainImage = useSelector((state: RootState) => state.PreviewImageReducer);
+  const getOtherImages = useSelector((state: RootState) => state.PreviewOtherImagesReducer);
 
   const [mainImgUrl, setMainImgUrl] = useState<string>(getMainImage);
   const [imagesUrl, setImagesUrl] = useState<string[]>(getOtherImages);
@@ -112,7 +114,7 @@ function UploadMainImageAndImages({
   }
   async function uploadAllImages() {
     let images = { mainImage: mainImgBlob, images: imagesBlob };
-    dispatch({ type: "UPLOAD_IMAGES", payload: { images } });
+    dispatch({ type: 'UPLOAD_IMAGES', payload: { images } });
     dispatch({
       type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
       payload: { mainImage: mainImgUrl },
@@ -124,37 +126,36 @@ function UploadMainImageAndImages({
   }
   return (
     <Wrapper>
-      <UploadImgBtn
-        onClick={() => {
-          mainImgRef.current!.click();
-        }}
-      />
-      <UploadMainImage
-        hidden
-        ref={mainImgRef}
-        onChange={(e) => previewMainImage(e)}
-      />
-      {mainImgUrl && <PreviewMainImage src={mainImgUrl as string} />}
-      <UploadImgBtn
-        onClick={() => {
-          otherImgRef.current!.click();
-        }}
-      />
-      <UploadImages
-        hidden
-        ref={otherImgRef}
-        onChange={(e) => previewImages(e)}
-      />
-      <PreviewArea>
-        {imagesUrl &&
-          imagesUrl.map((url, index) => (
-            <PreviewImages key={`previewImages${index}`} src={url as string} />
-          ))}
-      </PreviewArea>
+      <UploadArea>
+        <PreviewMainImage src={mainImgUrl as string}> {!mainImgUrl && '上傳封面照'}</PreviewMainImage>
+
+        <UploadMainImage hidden ref={mainImgRef} onChange={(e) => previewMainImage(e)} />
+        <UploadImgBtn
+          onClick={() => {
+            mainImgRef.current!.click();
+          }}
+        />
+      </UploadArea>
+      <UploadArea>
+        {imagesUrl.length === 0 && (
+          <PreviewMainImage src={null}> {imagesUrl.length === 0 && '其他照片'}</PreviewMainImage>
+        )}
+
+        <PreviewArea>
+          {imagesUrl.length !== 0 &&
+            imagesUrl.map((url, index) => <PreviewImages key={`previewImages${index}`} src={url as string} />)}
+        </PreviewArea>
+        <UploadImgBtn
+          onClick={() => {
+            otherImgRef.current!.click();
+          }}
+        />
+        <UploadImages hidden ref={otherImgRef} onChange={(e) => previewImages(e)} />
+      </UploadArea>
       <SubmitBtn
         onClick={() => {
           uploadAllImages();
-          setClickTab("房間規格");
+          setClickTab('房間規格');
         }}
       >
         儲存

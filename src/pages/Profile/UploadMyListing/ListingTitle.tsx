@@ -110,16 +110,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     setClickTab('地址');
   };
   const initialTitleState = titleInfo;
-  // const { field } =
 
-  const titleFormGroups = [
-    { label: '名稱', key: 'title' },
-    { label: '坪數', key: 'totalSq' },
-    { label: '規格 ', key: 'form' },
-    { label: '描述 ', key: 'environmentDescription' },
-    { label: '連絡電話 ', key: 'phone' },
-    { label: '入住時間 ', key: 'moveInDate' },
-  ];
   const valid = {
     required: {
       value: true,

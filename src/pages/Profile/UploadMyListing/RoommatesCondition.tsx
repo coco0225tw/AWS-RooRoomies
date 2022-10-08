@@ -1,18 +1,22 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { RootState } from "../../../redux/rootReducer";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { useForm, Controller } from 'react-hook-form';
+
+import { RootState } from '../../../redux/rootReducer';
 import {
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
-  FormCheck,
   FormCheckLabel,
-  FormControl,
-} from "../../../components/InputArea";
-import { BtnDiv } from "../../../components/Button";
-import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+  FormCheck,
+  ErrorText,
+  LabelArea,
+  StyledForm,
+} from '../../../components/InputArea';
+import { SubmitBtn } from '../../../components/Button';
+import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 
 const Wrapper = styled.div`
   display: flex;
@@ -23,231 +27,245 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-
+const CheckedFormCheckLabel = styled(FormCheckLabel)`
+  cursor: pointer;
+`;
+const CheckedFormCheckInput = styled(FormCheckInput)`
+  // width: 100%;
+  // display: none;
+  &:checked + ${CheckedFormCheckLabel} {
+    color: #c77155;
+  }
+`;
+const valid = {
+  required: {
+    value: true,
+    message: '※必填欄位',
+  },
+};
 const roommatesConditionFormGroups = [
   {
-    label: "性別",
-    key: "gender",
+    label: '性別',
+    key: 'gender',
+    required: valid.required,
     options: [
       {
-        label: "female",
-        text: "限女",
-        value: "female",
+        label: 'female',
+        text: '限女',
+        value: 'female',
       },
       {
-        label: "male",
-        text: "限男",
-        value: "male",
+        label: 'male',
+        text: '限男',
+        value: 'male',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "帶朋友過夜",
-    key: "bringFriendToStay",
+    label: '帶朋友過夜',
+    key: 'bringFriendToStay',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "可以",
-        value: "true",
+        label: 'true',
+        text: '可以',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不行",
-        value: "false",
+        label: 'false',
+        text: '不行',
+        value: 'false',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "衛生習慣",
-    key: "hygiene",
+    label: '衛生習慣',
+    key: 'hygiene',
+    required: valid.required,
     options: [
       {
-        label: "good",
-        text: "良好",
-        value: "good",
+        label: 'good',
+        text: '良好',
+        value: 'good',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "生活習慣",
-    key: "livingHabit",
+    label: '生活習慣',
+    key: 'livingHabit',
+    required: valid.required,
     options: [
       {
-        label: "sleepEarly",
-        text: "早睡",
-        value: "sleepEarly",
+        label: 'sleepEarly',
+        text: '早睡',
+        value: 'sleepEarly',
       },
       {
-        label: "nightCat",
-        text: "夜貓子",
-        value: "nightCat",
+        label: 'nightCat',
+        text: '夜貓子',
+        value: 'nightCat',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "性別友善",
-    key: "genderFriendly",
+    label: '性別友善',
+    key: 'genderFriendly',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "是",
-        value: "true",
+        label: 'true',
+        text: '是',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不是",
-        value: "false",
+        label: 'false',
+        text: '不是',
+        value: 'false',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "養寵物",
-    key: "pet",
+    label: '養寵物',
+    key: 'pet',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "可以",
-        value: "true",
+        label: 'true',
+        text: '可以',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不行",
-        value: "false",
+        label: 'false',
+        text: '不行',
+        value: 'false',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "抽菸",
-    key: "smoke",
+    label: '抽菸',
+    key: 'smoke',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "可以",
-        value: "true",
+        label: 'true',
+        text: '可以',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不行",
-        value: "false",
+        label: 'false',
+        text: '不行',
+        value: 'false',
       },
       {
-        label: "unlimited",
-        text: "不限",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '不限',
+        value: 'unlimited',
       },
     ],
   },
 ];
 
-const SubmitBtn = styled(BtnDiv)`
-  margin-top: 20px;
-  align-self: flex-end;
-`;
-function RoommatesCondition({
-  setClickTab,
-}: {
-  setClickTab: React.Dispatch<React.SetStateAction<string>>;
-}) {
+function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const roommatesConditionsInfo = useSelector(
-    (state: RootState) => state.UploadRoommatesConditionReducer
-  );
-  const initialRoommatesState = roommatesConditionsInfo;
+  const roommatesConditionsInfo = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
 
-  const [roommatesState, setRoommatesStateState] =
-    useState<roommatesConditionType>(initialRoommatesState);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    control,
+  } = useForm();
+  const onSubmit = (data) => {
+    console.log(data);
+    submit(data);
+    setClickTab('設施');
+  };
   function submit(roommatesState: roommatesConditionType) {
     dispatch({
-      type: "UPLOAD_ROOMMATESCONDITION",
+      type: 'UPLOAD_ROOMMATESCONDITION',
       payload: { roommatesState },
     });
   }
+  useEffect(() => {
+    for (const [key, value] of Object.entries(roommatesConditionsInfo)) {
+      setValue(key, value, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [roommatesConditionsInfo]);
   return (
     <Wrapper>
-      {roommatesConditionFormGroups.map(({ label, key, options }) => (
-        <FormGroup key={key}>
-          <FormLabel>{label}</FormLabel>
-          <FormInputWrapper>
-            {options ? (
-              options.map((option) => (
-                <FormCheck key={option.value}>
-                  {initialRoommatesState &&
-                  initialRoommatesState[key as keyof roommatesConditionType] ===
-                    option.value ? (
-                    <FormCheckInput
-                      defaultChecked
-                      onChange={(e) => {
-                        if (e.target.checked)
-                          setRoommatesStateState({
-                            ...roommatesState,
-                            [key]: option.value,
-                          });
-                      }}
-                      type="radio"
-                      name={label}
-                    />
-                  ) : (
-                    <FormCheckInput
-                      onChange={(e) => {
-                        if (e.target.checked)
-                          setRoommatesStateState({
-                            ...roommatesState,
-                            [key]: option.value,
-                          });
-                      }}
-                      type="radio"
-                      value={option.value || ""}
-                      name={label}
-                    />
-                  )}
-                  <FormCheckLabel>{option.text}</FormCheckLabel>
-                </FormCheck>
-              ))
-            ) : (
-              <FormControl />
-            )}
-          </FormInputWrapper>
-        </FormGroup>
-      ))}
-      <SubmitBtn
-        onClick={() => {
-          submit(roommatesState!);
-          setClickTab("設施");
-        }}
-      >
-        儲存
-      </SubmitBtn>
+      <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        {roommatesConditionFormGroups.map(({ label, key, options, required }) => (
+          <FormGroup key={key}>
+            <LabelArea>
+              <FormLabel>{label}</FormLabel>
+              <ErrorText>{errors[key] && (errors[key].message as string)}</ErrorText>
+            </LabelArea>
+            <FormInputWrapper>
+              <Controller
+                control={control}
+                name={key}
+                rules={{
+                  required: required && required,
+                }}
+                render={({ field: { onChange, ...props } }) =>
+                  (options as any).map((o, oIndex) => (
+                    <FormCheck key={`${key + o.value}}`} style={{ padding: '8px 0px' }}>
+                      <CheckedFormCheckInput
+                        type="radio"
+                        id={`${key + o.value}`}
+                        defaultChecked={roommatesConditionsInfo[key] === o.value}
+                        {...props}
+                        value={key + o.value}
+                        onChange={(e) => {
+                          onChange(o.label);
+                          if (e.target.checked) {
+                          }
+                        }}
+                      />
+                      <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
+                    </FormCheck>
+                  ))
+                }
+              />
+            </FormInputWrapper>
+          </FormGroup>
+        ))}
+        <SubmitBtn type="submit" value="儲存" />
+      </StyledForm>
     </Wrapper>
   );
 }
