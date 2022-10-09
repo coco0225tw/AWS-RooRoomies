@@ -1,24 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { useForm, Controller } from 'react-hook-form';
 
-import { RootState } from "../../../redux/rootReducer";
-import { alertActionType } from "../../../redux/Alert/AlertAction";
-import { firebase } from "../../../utils/firebase";
-import Hr from "../../../components/Hr";
-import { BtnDiv } from "../../../components/Button";
-import { Title } from "../../../components/ProfileTitle";
-import { Loading } from "../../../components/Loading";
+import { RootState } from '../../../redux/rootReducer';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
+import { firebase } from '../../../utils/firebase';
+import Hr from '../../../components/Hr';
+import { Title } from '../../../components/ProfileTitle';
+import { Loading } from '../../../components/Loading';
 import {
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
-  FormCheck,
   FormCheckLabel,
-} from "../../../components/InputArea";
-import roommatesConditionType from "../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
+  FormCheck,
+  ErrorText,
+  LabelArea,
+  StyledForm,
+} from '../../../components/InputArea';
+import { SubmitBtn, BtnDiv } from '../../../components/Button';
+import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,121 +36,134 @@ const Wrapper = styled.div`
   margin-top: 20px;
 `;
 
+const valid = {
+  required: {
+    value: true,
+    message: '※必填欄位',
+  },
+};
 const roommatesConditionFormGroups = [
   {
-    label: "性別",
-    key: "gender",
+    label: '性別',
+    key: 'gender',
+    required: valid.required,
     options: [
       {
-        label: "female",
-        text: "女",
-        value: "female",
+        label: 'female',
+        text: '女',
+        value: 'female',
       },
       {
-        label: "male",
-        text: "男",
-        value: "male",
+        label: 'male',
+        text: '男',
+        value: 'male',
       },
       {
-        label: "unlimited",
-        text: "其他",
-        value: "unlimited",
+        label: 'unlimited',
+        text: '其他',
+        value: 'unlimited',
       },
     ],
   },
   {
-    label: "是否會帶朋友過夜",
-    key: "bringFriendToStay",
+    label: '是否會帶朋友過夜',
+    key: 'bringFriendToStay',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "會",
-        value: "true",
+        label: 'true',
+        text: '會',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不會",
-        value: "false",
+        label: 'false',
+        text: '不會',
+        value: 'false',
       },
     ],
   },
   {
-    label: "衛生習慣",
-    key: "hygiene",
+    label: '衛生習慣',
+    key: 'hygiene',
+    required: valid.required,
     options: [
       {
-        label: "good",
-        text: "良好",
-        value: "good",
+        label: 'good',
+        text: '良好',
+        value: 'good',
       },
       {
-        label: "bad",
-        text: "不好",
-        value: "bad",
+        label: 'bad',
+        text: '不好',
+        value: 'bad',
       },
     ],
   },
   {
-    label: "生活習慣",
-    key: "livingHabit",
+    label: '生活習慣',
+    key: 'livingHabit',
+    required: valid.required,
     options: [
       {
-        label: "sleepEarly",
-        text: "早睡",
-        value: "sleepEarly",
+        label: 'sleepEarly',
+        text: '早睡',
+        value: 'sleepEarly',
       },
       {
-        label: "nightCat",
-        text: "夜貓子",
-        value: "nightCat",
+        label: 'nightCat',
+        text: '夜貓子',
+        value: 'nightCat',
       },
     ],
   },
   {
-    label: "性別友善",
-    key: "genderFriendly",
+    label: '性別友善',
+    key: 'genderFriendly',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "是",
-        value: "true",
+        label: 'true',
+        text: '是',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "不是",
-        value: "false",
+        label: 'false',
+        text: '不是',
+        value: 'false',
       },
     ],
   },
   {
-    label: "是否養寵物",
-    key: "pet",
+    label: '是否養寵物',
+    key: 'pet',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "有",
-        value: "true",
+        label: 'true',
+        text: '有',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "無",
-        value: "false",
+        label: 'false',
+        text: '無',
+        value: 'false',
       },
     ],
   },
   {
-    label: "是否抽菸",
-    key: "smoke",
+    label: '是否抽菸',
+    key: 'smoke',
+    required: valid.required,
     options: [
       {
-        label: "true",
-        text: "有",
-        value: "true",
+        label: 'true',
+        text: '有',
+        value: 'true',
       },
       {
-        label: "false",
-        text: "無",
-        value: "false",
+        label: 'false',
+        text: '無',
+        value: 'false',
       },
     ],
   },
@@ -156,14 +173,14 @@ const CheckedFormCheckLabel = styled(FormCheckLabel)`
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)<{ edit: boolean }>`
   &:checked + ${CheckedFormCheckLabel} {
-    color: ${(props) => (props.edit ? "#c77155" : "grey")};
+    color: ${(props) => (props.edit ? '#c77155' : 'grey')};
   }
 `;
-const SubmitBtn = styled(BtnDiv)`
+const EditBtn = styled(BtnDiv)`
   align-self: flex-end;
-  margin-top: 20px;
+  margin: 20px 12px 0px;
   display: inline-block;
-  margin-left: 12px;
+
   transform: translateY(-4px);
 `;
 const Span = styled.span`
@@ -180,24 +197,34 @@ function AboutMe({
 
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const userAsRoommate = useSelector(
-    (state: RootState) => state.UserAsRoommateReducer
-  );
+  const userAsRoommate = useSelector((state: RootState) => state.UserAsRoommateReducer);
 
   const [edit, setEdit] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [houseHuntingData, setHouseHuntingData] = useState<boolean>(false);
-  const initialRoommatesState = userAsRoommate;
-  const [meAsRoommatesState, setMeAsRoommatesState] = useState<any>(
-    initialRoommatesState
-  );
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+    getValues,
+    control,
+  } = useForm();
+  async function onSubmit(data) {
+    console.log(data);
+    setEdit(!edit);
+    // submit(data);
+    await submit(data);
+  }
   async function submit(meAsRoommatesState: roommatesConditionType) {
+    if (submitting) return;
     setSubmitting(true);
     firebase.updateUserAsRoommate(userInfo.uid, meAsRoommatesState).then(() => {
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
-          alertMessage: "更新成功",
+          alertMessage: '更新成功',
         },
       });
       setTimeout(() => {
@@ -208,7 +235,7 @@ function AboutMe({
     });
 
     dispatch({
-      type: "UPLOAD_MEASROOMMATE",
+      type: 'UPLOAD_MEASROOMMATE',
       payload: { meAsRoommatesState: meAsRoommatesState },
     });
     setSubmitting(false);
@@ -229,47 +256,44 @@ function AboutMe({
     if (authChange) getAllHouseHuntingData();
   }, [authChange]);
   useEffect(() => {
+    let defaultValues = userAsRoommate as any;
+
+    reset({ ...defaultValues });
+    console.log(defaultValues);
     if (userAsRoommate) {
-      setMeAsRoommatesState(userAsRoommate);
       setTimeout(() => {
         setLoading(false);
       }, 1000);
     }
   }, [userAsRoommate]);
+
   return (
     <Wrapper>
       <Title
         style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
         }}
       >
         關於我
         <Span>
           {edit ? (
             <React.Fragment>
-              <SubmitBtn
+              <EditBtn
                 onClick={() => {
                   setEdit(false);
-                  setMeAsRoommatesState(initialRoommatesState);
+                  let defaultValues = userAsRoommate as any;
+
+                  reset({ ...defaultValues });
                 }}
               >
                 取消
-              </SubmitBtn>
-              <SubmitBtn
-                onClick={() => {
-                  if (!submitting) {
-                    setEdit(false);
-                    submit(meAsRoommatesState!);
-                  }
-                }}
-              >
-                儲存變更
-              </SubmitBtn>
+              </EditBtn>
+              <SubmitBtn type="submit" value="儲存變更" form="aboutMeForm" style={{ transform: 'translateY(-4px)' }} />
             </React.Fragment>
           ) : (
-            <SubmitBtn
+            <EditBtn
               onClick={() => {
                 if (!houseHuntingData) {
                   setEdit(true);
@@ -277,7 +301,7 @@ function AboutMe({
                   dispatch({
                     type: alertActionType.OPEN_ERROR_ALERT,
                     payload: {
-                      alertMessage: "已有湊團房源，無法更改",
+                      alertMessage: '已有湊團房源，無法更改',
                     },
                   });
                   setTimeout(() => {
@@ -289,7 +313,7 @@ function AboutMe({
               }}
             >
               編輯
-            </SubmitBtn>
+            </EditBtn>
           )}
         </Span>
       </Title>
@@ -297,66 +321,47 @@ function AboutMe({
       {loading ? (
         <Loading style={null} />
       ) : (
-        <React.Fragment>
-          {roommatesConditionFormGroups.map(({ label, key, options }) => (
+        <StyledForm id="aboutMeForm" onSubmit={handleSubmit(onSubmit)}>
+          {roommatesConditionFormGroups.map(({ label, key, options, required }) => (
             <FormGroup key={key}>
-              <FormLabel>{label}</FormLabel>
+              <LabelArea>
+                <FormLabel>{label}</FormLabel>
+                <ErrorText>{errors[key] && (errors[key].message as string)}</ErrorText>
+              </LabelArea>
               <FormInputWrapper>
-                {options.map((option) => (
-                  <FormCheck key={option.value}>
-                    {meAsRoommatesState[key] === option.value ? (
-                      <React.Fragment>
-                        <CheckedFormCheckInput
-                          edit={edit}
-                          id={key + option.value}
-                          checked
-                          disabled={!edit}
-                          onChange={(e) => {
-                            if (e.target.checked)
-                              setMeAsRoommatesState({
-                                ...meAsRoommatesState,
-                                [key]: option.value,
-                              });
-                          }}
-                          type="radio"
-                          name={label}
-                          value={option.value || ""}
-                        />
-                        <CheckedFormCheckLabel htmlFor={key + option.value}>
-                          {option.text}
-                        </CheckedFormCheckLabel>
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        <CheckedFormCheckInput
-                          id={key + option.value}
-                          edit={edit}
-                          disabled={!edit}
-                          onChange={(e) => {
-                            if (e.target.checked)
-                              setMeAsRoommatesState({
-                                ...meAsRoommatesState,
-                                [key]: option.value,
-                              });
-                          }}
-                          type="radio"
-                          value={option.value || ""}
-                          name={label}
-                        />
-                        <CheckedFormCheckLabel
-                          // edit={edit}
-                          htmlFor={key + option.value}
-                        >
-                          {option.text}
-                        </CheckedFormCheckLabel>
-                      </React.Fragment>
-                    )}
-                  </FormCheck>
-                ))}
+                <Controller
+                  control={control}
+                  name={key}
+                  rules={{
+                    required: required && required,
+                  }}
+                  render={({ field: { onChange, ...props } }) =>
+                    (options as any).map((o, oIndex) => (
+                      <FormCheck key={o.value}>
+                        <React.Fragment>
+                          <CheckedFormCheckInput
+                            edit={edit}
+                            id={key + o.value}
+                            disabled={!edit}
+                            name={label}
+                            type="radio"
+                            {...props}
+                            value={key + o.value}
+                            onChange={(e) => {
+                              onChange(o.label);
+                            }}
+                            checked={getValues(key) === o.value}
+                          />
+                          <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
+                        </React.Fragment>
+                      </FormCheck>
+                    ))
+                  }
+                />
               </FormInputWrapper>
             </FormGroup>
           ))}
-        </React.Fragment>
+        </StyledForm>
       )}
     </Wrapper>
   );

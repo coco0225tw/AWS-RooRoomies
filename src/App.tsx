@@ -171,6 +171,7 @@ function User() {
           payload: { user },
         });
         if (data?.data().userAsRoommatesConditions) {
+          console.log(data?.data().userAsRoommatesConditions);
           dispatch({
             type: 'GET_USER_AS_ROOMMATES_FROM_FIREBASE',
             payload: {
