@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { RootState } from "../redux/rootReducer";
-import { alertActionType } from "../redux/Alert/AlertAction";
-import { selectTabAction } from "../redux/SelectTab/SelectTabAction";
-import { firebase } from "../utils/firebase";
-import { BtnLink, BtnDiv } from "./Button";
-import { PopupComponent } from "./Popup";
+import { RootState } from '../redux/rootReducer';
+import { alertActionType } from '../redux/Alert/AlertAction';
+import { selectTabAction } from '../redux/SelectTab/SelectTabAction';
+import { firebase } from '../utils/firebase';
+import { BtnLink, BtnDiv } from './Button';
+import { PopupComponent } from './Popup';
 
-import Logo from "../assets/logo.png";
-import search from "../assets/search.svg";
+import Logo from '../assets/logo.png';
+import search from '../assets/search.svg';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -106,7 +106,7 @@ function Header() {
       dispatch({
         type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
-          alertMessage: "已登出",
+          alertMessage: '已登出',
         },
       });
       setTimeout(() => {
@@ -115,7 +115,7 @@ function Header() {
         });
       }, 3000);
       setIsShown(false);
-      navigate("/signin");
+      navigate('/signin');
     });
   }
   return (
@@ -130,26 +130,26 @@ function Header() {
         />
       )}
 
-      <LogoWrapper to={"./"}>
+      <LogoWrapper to={'./'}>
         <LogoText>rooroomies</LogoText>
       </LogoWrapper>
-      <Search />
+      {/* <Search /> */}
       {authChange ? (
         <SectionWrapper>
           <Profile
-            to={"/profile"}
+            to={'/profile'}
             img={userInfo.image}
             onClick={() => {
               dispatch({
                 type: selectTabAction.SELECT_TYPE,
-                payload: { tab: "aboutMe" },
+                payload: { tab: 'aboutMe' },
               });
             }}
           ></Profile>
           <BtnDiv onClick={clickSingOut}>登出</BtnDiv>
         </SectionWrapper>
       ) : (
-        <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
+        <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
       )}
     </Wrapper>
   );

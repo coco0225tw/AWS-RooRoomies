@@ -11,6 +11,7 @@ import { firebase } from '../../utils/firebase';
 import countyItem from '../../utils/county';
 import allTowns from '../../utils/town';
 import carousel from '../../assets/carousel.jpg';
+import search from '../../assets/search.svg';
 
 import {
   FormGroup,
@@ -36,6 +37,16 @@ const Wrapper = styled.div`
   background-position: bottom;
   position: static;
   background-attachment: fixed;
+  background-repeat: no-repeat;
+  z-index: 1;
+  @media screen and (max-width: 960px) {
+    height: 30vh;
+    background-size: contain;
+    background-position: top;
+  }
+  @media screen and (max-width: 660px) {
+    height: 24vh;
+  }
 `;
 
 const SearchBox = styled.div<{ openSearch: boolean }>`
@@ -48,9 +59,14 @@ const SearchBox = styled.div<{ openSearch: boolean }>`
   left: 50%;
   transform: translate(-50%, ${(props) => (props.openSearch ? '0' : '-100%')});
   opacity: ${(props) => (props.openSearch ? '1' : '0')};
+  /* z-index: 1; */
   @media screen and (max-width: 1260px) {
     width: 90%;
     top: 10vh;
+  }
+  @media screen and (max-width: 960px) {
+    transform: translate(-50%, -40%);
+    padding: 0px 40px;
   }
 `;
 const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
@@ -64,9 +80,17 @@ const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
   }
   margin: auto;
   padding: 12px;
+  z-index: 4;
+
   @media screen and (max-width: 1260px) {
-    /* ${(props) =>
-      props.openSearch && 'position: absolute;right: calc(5% + 40px); z-index: 1;top: calc(10px + 30px);'} */
+    ${(props) => props.openSearch && 'position: absolute;right: calc(5% + 40px); z-index: 1;top: calc(10vh + 30px);'}
+  }
+  @media screen and (max-width: 960px) {
+    display: ${(props) => !props.openSearch && 'none'};
+
+    top: ${(props) => props.openSearch && '20px'};
+    padding: 4px 8px;
+    font-size: 12px;
   }
 `;
 const Slogan = styled.p<{ openSearch: boolean }>`
@@ -79,10 +103,21 @@ const Slogan = styled.p<{ openSearch: boolean }>`
   margin: auto;
   letter-spacing: 12px;
   opacity: ${(props) => (props.openSearch ? '0' : '1')};
+  @media screen and (max-width: 960px) {
+    writing-mode: horizontal-tb;
+  }
+  @media screen and (max-width: 660px) {
+    font-size: 20px;
+    letter-spacing: 4px;
+  }
 `;
 
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
+  white-space: nowrap;
+  @media screen and (max-width: 960px) {
+    font-size: 16px;
+  }
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)`
   display: none;
@@ -94,6 +129,10 @@ const CheckedFormCheckInput = styled(FormCheckInput)`
 const StyledFormGroup = styled(FormGroup)`
   flex-direction: row;
   justify-content: space-between;
+  @media screen and (max-width: 960px) {
+    margin-top: 0px;
+    margin-bottom: 8px;
+  }
 `;
 
 const StyledFormLabel = styled(FormLabel)`
@@ -112,16 +151,48 @@ const DropDown = styled(StyledFormLabel)`
   font-size: 28px;
   display: flex;
   align-items: center;
+  @media screen and (max-width: 960px) {
+    font-size: 20px;
+  }
 `;
 const DropDownMenuWrapper = styled(StyledFormInputWrapper)`
   margin-left: 0px;
   position: absolute;
   background-color: #fff;
-  z-index: 1;
+  z-index: 2;
   top: 60px;
   box-shadow: 0px 0px 3px #bbbbbb;
   width: 80%;
   padding: 20px 20px;
+  @media screen and (max-width: 660px) {
+    width: 100%;
+  }
+`;
+const OverflowMenuWrapper = styled(StyledFormInputWrapper)`
+  @media screen and (max-width: 960px) {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    margin-left: 8px;
+    ::-webkit-scrollbar {
+      height: 1px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c77155;
+    }
+  }
+`;
+const FormCheckElement = styled(FormCheck)`
+  padding: 8px 0px;
+  flex-basis: auto;
+  @media screen and (max-width: 960px) {
+    padding: 0 0 4px;
+  }
+  @media screen and (max-width: 550px) {
+    width: 100%;
+    margin-right: 0px;
+  }
 `;
 const DropDownIcon = styled.div<{ openDropDown: boolean }>`
   width: 20px;
@@ -133,6 +204,34 @@ const DropDownIcon = styled.div<{ openDropDown: boolean }>`
   transition-duration: 0.2s;
   margin-left: 20px;
   border: solid 1px #fff7f4;
+  @media screen and (max-width: 960px) {
+    font-size: 16px;
+    margin-left: 12px;
+  }
+`;
+const SearchIconForMobile = styled.div`
+  background-image: url(${search});
+  background-color: #ffffff;
+  border-radius: 8px;
+  position: absolute;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  background-size: 40px 40px;
+  background-position: center;
+  display: none;
+  z-index: 1;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  transform: translate(120%, -100%);
+  @media screen and (max-width: 960px) {
+    display: block;
+  }
+  @media screen and (max-width: 660px) {
+    width: 36px;
+    height: 36px;
+    background-size: 28px 28px;
+  }
 `;
 function Search({
   setLoading,
@@ -338,15 +437,19 @@ function Search({
   }, [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage, noData]);
   return (
     <Wrapper>
-      <Slogan openSearch={openSearch}>房子是租來的，生活不是</Slogan>
+      <Slogan openSearch={openSearch}>
+        房子是租來的，生活不是{' '}
+        <SearchIconForMobile
+          onClick={() => {
+            setOpenSearch(!openSearch);
+          }}
+        />
+      </Slogan>
+
       <SearchIcon
         openSearch={openSearch}
         onClick={() => {
-          if (openSearch) {
-            setOpenSearch(false);
-          } else {
-            setOpenSearch(true);
-          }
+          setOpenSearch(!openSearch);
         }}
       >
         {openSearch ? '關閉搜尋' : '開始搜尋'}
@@ -390,11 +493,11 @@ function Search({
         </StyledFormGroup>
         <StyledFormGroup key={townGroup.key}>
           <StyledFormLabel>{townGroup.label}</StyledFormLabel>
-          <StyledFormInputWrapper>
+          <OverflowMenuWrapper>
             {selectCounty &&
               townGroup.townOptions.map((option: any, oIndex) => (
                 <div key={`${selectCounty.countyCode}${option.key}${oIndex}`}>
-                  <FormCheck style={{ padding: '8px 0px' }}>
+                  <FormCheckElement>
                     <CheckedFormCheckInput
                       defaultChecked={option.key ? true : false}
                       onChange={(e) => {
@@ -414,17 +517,17 @@ function Search({
                     <CheckedFormCheckLabel htmlFor={`${option.townname}`}>
                       {option.key ? option.label : option.townname}
                     </CheckedFormCheckLabel>
-                  </FormCheck>
+                  </FormCheckElement>
                 </div>
               ))}
-          </StyledFormInputWrapper>
+          </OverflowMenuWrapper>
         </StyledFormGroup>
         <StyledFormGroup key={rentGroup.key}>
           <StyledFormLabel>{rentGroup.label}</StyledFormLabel>
-          <StyledFormInputWrapper>
+          <OverflowMenuWrapper>
             {rentGroup.options.map((option: any, oIndex) => (
-              <div key={`${option.key}${oIndex}`}>
-                <FormCheck style={{ padding: '8px 0px' }}>
+              <React.Fragment key={`${option.key}${oIndex}`}>
+                <FormCheckElement>
                   <CheckedFormCheckInput
                     defaultChecked={option.key.includes('unlimited')}
                     onChange={(e) => {
@@ -438,10 +541,10 @@ function Search({
                     id={`${option.key}`}
                   />
                   <CheckedFormCheckLabel htmlFor={`${option.key}`}>{option.label}</CheckedFormCheckLabel>
-                </FormCheck>
-              </div>
+                </FormCheckElement>
+              </React.Fragment>
             ))}
-          </StyledFormInputWrapper>
+          </OverflowMenuWrapper>
         </StyledFormGroup>
       </SearchBox>
     </Wrapper>

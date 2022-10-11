@@ -1,21 +1,17 @@
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { alertActionType } from "../../../redux/Alert/AlertAction";
-import { RootState } from "../../../redux/rootReducer";
-import {
-  FormGroup,
-  FormLabel,
-  FormControl,
-} from "../../../components/InputArea";
-import { BtnDiv } from "../../../components/Button";
-import { Title } from "../../../components/ProfileTitle";
-import { firebase } from "../../../utils/firebase";
-import { Loading } from "../../../components/Loading";
-import Hr from "../../../components/Hr";
+import { alertActionType } from '../../../redux/Alert/AlertAction';
+import { RootState } from '../../../redux/rootReducer';
+import { FormGroup, FormLabel, FormControl } from '../../../components/InputArea';
+import { BtnDiv } from '../../../components/Button';
+import { Title } from '../../../components/ProfileTitle';
+import { firebase } from '../../../utils/firebase';
+import { Loading } from '../../../components/Loading';
+import Hr from '../../../components/Hr';
 
-import upload from "../../../assets/upload.png";
+import upload from '../../../assets/upload.png';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -35,8 +31,7 @@ const SubmitBtn = styled(BtnDiv)`
 const ProfilePic = styled.div<{ img: string; uploadedImg: string }>`
   width: 200px;
   height: 200px;
-  background-image: url(${(props) =>
-    props.uploadedImg !== "" ? props.uploadedImg : props.img});
+  background-image: url(${(props) => (props.uploadedImg !== '' ? props.uploadedImg : props.img)});
   background-size: cover;
   background-position: center center;
   border-radius: 50%;
@@ -76,7 +71,7 @@ function Setting({
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
 
-  const [mainImgUrl, setMainImgUrl] = useState<string>("");
+  const [mainImgUrl, setMainImgUrl] = useState<string>('');
   const [edit, setEdit] = useState<boolean>(false);
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
 
@@ -99,7 +94,7 @@ function Setting({
         dispatch({
           type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
-            alertMessage: "更新使用者資料成功",
+            alertMessage: '更新使用者資料成功',
           },
         });
         setTimeout(() => {
@@ -112,7 +107,7 @@ function Setting({
         dispatch({
           type: alertActionType.OPEN_ERROR_ALERT,
           payload: {
-            alertMessage: "更新使用者資料失敗",
+            alertMessage: '更新使用者資料失敗',
           },
         });
         setTimeout(() => {
@@ -141,21 +136,11 @@ function Setting({
                 }}
               />
             </ProfilePic>
-            <FormControl
-              onChange={(e) => previewMainImage(e)}
-              ref={picRef}
-              type="file"
-              hidden
-              disabled={!edit}
-            />
+            <FormControl onChange={(e) => previewMainImage(e)} ref={picRef} type="file" hidden disabled={!edit} />
           </FormGroup>
           <FormGroup>
             <FormLabel>名字</FormLabel>
-            <FormControl
-              ref={nameRef}
-              defaultValue={userInfo!.name}
-              disabled={!edit}
-            />
+            <FormControl ref={nameRef} defaultValue={userInfo!.name} disabled={!edit} />
           </FormGroup>
           {edit ? (
             <BtnWrapper>
@@ -168,10 +153,10 @@ function Setting({
                 取消
               </SubmitBtn>
               <SubmitBtn
-                style={{ marginLeft: "12px" }}
+                style={{ marginLeft: '12px' }}
                 onClick={() => {
                   setEdit(false);
-                  if (mainImgUrl !== "") {
+                  if (mainImgUrl !== '') {
                     submitImg();
                   }
                   submitNameOrEmail();

@@ -14,7 +14,7 @@ import { Loading } from '../../components/Loading';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -22,6 +22,7 @@ const Wrapper = styled.div`
   height: 100%;
   position: relative;
   margin: 80px auto 0px;
+  flex-grow: 1;
 `;
 
 const ListingWrapper = styled.div`
@@ -31,6 +32,11 @@ const ListingWrapper = styled.div`
   flex-wrap: wrap;
   margin: 32px auto 80px;
   column-gap: 1.25%;
+  height: 100%;
+  flex-grow: 1;
+  @media screen and (max-width: 550px) {
+    width: 98%;
+  }
 `;
 
 const ListingLink = styled(Link)`
@@ -81,8 +87,9 @@ function Home() {
               <Listing listingDocData={listingDocData} />
             </ListingLink>
           ))}
+        {loading && <Loading style={null} />}
       </ListingWrapper>
-      {loading && <Loading style={null} />}
+
       {listingDocData && <ScrollComponent ref={scrollRef} />}
     </Wrapper>
   );
