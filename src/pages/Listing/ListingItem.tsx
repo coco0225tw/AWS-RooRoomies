@@ -3,16 +3,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { RootState } from '../redux/rootReducer';
-import { firebase } from '../utils/firebase';
-import { getFavoriteAction } from '../redux/GetFavoriteListing/GetFavoriteListingAction';
+import { RootState } from '../../redux/rootReducer';
+import { firebase } from '../../utils/firebase';
+import { getFavoriteAction } from '../../redux/GetFavoriteListing/GetFavoriteListingAction';
 
-import { PopupComponent } from './Popup';
+import { PopupComponent } from '../../components/Popup';
 
 import addIcon from '../assets/add.png';
 import unAddIcon from '../assets/unAdd.png';
 import likedIcon from '../assets/heart.png';
 import unLikedIcon from '../assets/unHeart.png';
+
 interface ImgProps {
   img: string;
 }
@@ -196,7 +197,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     <Wrapper>
       {isShown && (
         <PopupComponent
-          msg={'請先進行\n登入註冊進行\n登入註冊'}
+          msg={'請先進行\n登入註冊行\n登入註冊'}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={clickClose}

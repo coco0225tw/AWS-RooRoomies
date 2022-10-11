@@ -1,16 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { DocumentData } from "firebase/firestore";
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { DocumentData } from 'firebase/firestore';
 
-import { RootState } from "../../redux/rootReducer";
+import { RootState } from '../../redux/rootReducer';
 
-import Listing from "./Listing";
-import Search from "./Search";
-import NoListing from "../../components/NoData";
+import Listing from './Listing';
+import Search from './Search';
+import NoListing from '../../components/NoData';
 
-import { Loading } from "../../components/Loading";
+import { Loading } from '../../components/Loading';
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,23 +29,19 @@ const ListingWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 32px auto;
+  margin: 32px auto 80px;
   column-gap: 1.25%;
-`;
-
-const Btn = styled.div`
-  cursor: pointer;
-  padding: 10px;
-  &:hover {
-    color: white;
-    background-color: grey;
-    transition: 0.2s;
-  }
 `;
 
 const ListingLink = styled(Link)`
   width: 24%;
   height: 100%;
+  @media screen and (max-width: 960px) {
+    width: 100%;
+  }
+  @media screen and (max-width: 550px) {
+    width: 49%;
+  }
 `;
 
 const ScrollComponent = styled.div`
@@ -54,12 +50,8 @@ const ScrollComponent = styled.div`
   bottom: 32px;
 `;
 function Home() {
-  const listingDocData = useSelector(
-    (state: RootState) => state.GetListingInHomePageReducer
-  );
-  const lastDocData = useSelector(
-    (state: RootState) => state.GetLastDocReducer
-  );
+  const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
+  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
 
   const arr = [];
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -80,18 +72,12 @@ function Home() {
         scrollRef={scrollRef}
         noData={noData}
         setNoData={setNoData}
-      ></Search>
+      />
       <ListingWrapper>
-        {listingDocData.length === 0 && !loading && (
-          <NoListing msg="沒有符合的物件" />
-        )}
+        {listingDocData.length === 0 && !loading && <NoListing msg="沒有符合的物件" />}
         {listingDocData.length !== 0 &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
-            <ListingLink
-              key={`listing_${index}`}
-              target="_blank"
-              to={`/listing/${listingDocData.id}`}
-            >
+            <ListingLink key={`listing_${index}`} target="_blank" to={`/listing/${listingDocData.id}`}>
               <Listing listingDocData={listingDocData} />
             </ListingLink>
           ))}

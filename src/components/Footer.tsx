@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../utils/firebase";
-import { RootState } from "../redux/rootReducer";
-import { alertActionType } from "../redux/Alert/AlertAction";
-import { BtnLink } from "./Button";
-import { PopupComponent } from "./Popup";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { firebase } from '../utils/firebase';
+import { RootState } from '../redux/rootReducer';
+import { alertActionType } from '../redux/Alert/AlertAction';
+import { BtnLink } from './Button';
+import { PopupComponent } from './Popup';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -17,7 +17,8 @@ const Wrapper = styled.div`
   margin: auto;
   background-color: #f3f2ef;
   flex-shrink: 0;
-  // position: fixed;
+  position: absolute;
+  /* position: fixed; */
   bottom: 0px;
   @media screen and (max-width: 960px) {
     position: fixed;
@@ -56,20 +57,9 @@ const Profile = styled(Link)<{ img: string }>`
   }
 `;
 
-const Notification = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: solid 1px #857c7c;
-  @media screen and (max-width: 960px) {
-    width: 48px;
-    height: 48px;
-    background-size: 48px 48px;
-  }
-`;
 const BtnLinkRwd = styled(BtnLink)`
   display: none;
-  font-size: 28px;
+  font-size: 20px;
   @media screen and (max-width: 960px) {
     display: block;
   }
@@ -89,11 +79,11 @@ function Footer() {
   async function logOut() {
     firebase.signOutUser().then(() => {
       setIsShown(false);
-      navigate("/signin");
+      navigate('/signin');
       dispatch({
         type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
-          alertMessage: "已登出",
+          alertMessage: '已登出',
         },
       });
       setTimeout(() => {
@@ -117,11 +107,11 @@ function Footer() {
       <Title>©rooroomies 2022</Title>
       {authChange ? (
         <SectionWrapper>
-          <Profile to={"/profile"} img={userInfo.image} />
+          <Profile to={'/profile'} img={userInfo.image} />
         </SectionWrapper>
       ) : (
         <SectionWrapper>
-          <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
+          <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
         </SectionWrapper>
       )}
     </Wrapper>

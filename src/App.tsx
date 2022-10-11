@@ -62,21 +62,25 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-  //  border: solid 1px black;
+    border: solid 1px black;
     position: relative;
     letter-spacing: 0.4px;
   }
 
   body {
     font-family: NotoSansTC;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     padding: 0;
     margin: 0;
+    width: 100%;
+    height: 100%;
   }
 
   html {
     padding: 0;
     margin: 0;
+    width: 100%;
+    height: 100%;
   }
   #root {
     min-height: 100vh;

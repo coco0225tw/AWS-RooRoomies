@@ -1,23 +1,23 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { doc, onSnapshot } from "firebase/firestore";
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { doc, onSnapshot } from 'firebase/firestore';
 
-import { firebase, db } from "../../utils/firebase";
+import { firebase, db } from '../../utils/firebase';
 
-import { RootState } from "../../redux/rootReducer";
-import { alertActionType } from "../../redux/Alert/AlertAction";
-import { groupAction } from "../../redux/Group/GroupAction";
-import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
-import { subTabAction } from "../../redux/SubTab/SubTabAction";
+import { RootState } from '../../redux/rootReducer';
+import { alertActionType } from '../../redux/Alert/AlertAction';
+import { groupAction } from '../../redux/Group/GroupAction';
+import { selectTabAction } from '../../redux/SelectTab/SelectTabAction';
+import { subTabAction } from '../../redux/SubTab/SubTabAction';
 
-import { groupsType } from "../../redux/Group/GroupType";
-import { BtnDiv } from "../../components/Button";
-import Hr from "../../components/Hr";
-import SpanLink from "../../components/SpanLink";
-import { PopupComponent } from "../../components/Popup";
-import { Loading } from "../../components/Loading";
+import { groupsType } from '../../redux/Group/GroupType';
+import { BtnDiv } from '../../components/Button';
+import Hr from '../../components/Hr';
+import SpanLink from '../../components/SpanLink';
+import { PopupComponent } from '../../components/Popup';
+import { Loading } from '../../components/Loading';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -60,7 +60,7 @@ const UserPic = styled(AddToGroup)<{ img: string }>`
 `;
 const SubTitle = styled.div`
   font-size: 28px;
-  letter-spacing: 12px
+  letter-spacing: 12px;
   font-weight: bold;
   color: #4f5152;
   width: 100%;
@@ -114,21 +114,17 @@ function Group({
   const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
-  const getGroup = useSelector(
-    (state: RootState) => state.GroupReducer
-  ) as groupsType;
+  const getGroup = useSelector((state: RootState) => state.GroupReducer) as groupsType;
 
   const [isShown, setIsShown] = useState<boolean>(false);
   const [createNewGroup, setCreateNewGroup] = useState<boolean>(false);
-  const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] =
-    useState<boolean>(false);
-  const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] =
-    useState<boolean>(false);
+  const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] = useState<boolean>(false);
+  const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] = useState<boolean>(false);
   const [groupId, setGroupId] = useState<number>();
 
   const newGroup = {
     users: Array(peopleAmount).fill(null),
-    chatRoomId: "",
+    chatRoomId: '',
     isBooked: false,
   };
   function addGroup() {
@@ -151,30 +147,22 @@ function Group({
     });
 
     setHintTextLoading(true);
-    firebase
-      .createChatRoom(
-        nullUsersArray,
-        listingId,
-        listingTitle,
-        getGroup,
-        groupId
-      )
-      .then(() => {
-        setIsInGroup(true);
-        dispatch({
-          type: alertActionType.OPEN_SUCCESS_ALERT,
-          payload: {
-            alertMessage: "成功加入",
-          },
-        });
-        setTimeout(() => {
-          dispatch({
-            type: alertActionType.CLOSE_ALERT,
-          });
-        }, 3000);
-
-        setHintTextLoading(false);
+    firebase.createChatRoom(nullUsersArray, listingId, listingTitle, getGroup, groupId).then(() => {
+      setIsInGroup(true);
+      dispatch({
+        type: alertActionType.OPEN_SUCCESS_ALERT,
+        payload: {
+          alertMessage: '成功加入',
+        },
       });
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+
+      setHintTextLoading(false);
+    });
   }
   async function addUserToFormerGroup() {
     let userIndex = getGroup[groupId].users.indexOf(null);
@@ -203,7 +191,7 @@ function Group({
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
-          alertMessage: "成功加入",
+          alertMessage: '成功加入',
         },
       });
       setTimeout(() => {
@@ -228,22 +216,16 @@ function Group({
   }
   useEffect(() => {
     if (peopleAmount !== undefined) {
-      const groupQuery = doc(db, "listings", listingId);
+      const groupQuery = doc(db, 'listings', listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
         const groups = [...snapshot.data()!.matchGroup];
         dispatch({
           type: groupAction.ADD_GROUP_FROM_FIREBASE,
           payload: { groups },
         });
-        let inGroup = groups.some((g) =>
-          g.users
-            .filter((u) => u !== null)
-            .some((u) => u.userId === userInfo.uid)
-        );
+        let inGroup = groups.some((g) => g.users.filter((u) => u !== null).some((u) => u.userId === userInfo.uid));
         if (inGroup) {
-          let findGroup = groups.find((g) =>
-            g.users.some((u: any) => u && u.userId === userInfo.uid)
-          );
+          let findGroup = groups.find((g) => g.users.some((u: any) => u && u.userId === userInfo.uid));
           setIsInFullGroup(!findGroup.users.includes(null));
           if (!findGroup.users.includes(null)) {
             setCanBook(!findGroup.isBooked);
@@ -258,11 +240,11 @@ function Group({
     <Wrapper>
       {isShown && (
         <PopupComponent
-          msg={`請先進行登入註冊`}
+          msg={`請先進行\n登入註冊進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={() => setIsShown(false)}
-          clickFunction={() => navigate("/signin")}
+          clickFunction={() => navigate('/signin')}
         />
       )}
       {firstTimeAddGroupPopup && (
@@ -274,13 +256,7 @@ function Group({
             setFirstTimeAddGroupPopup(false);
           }}
           clickFunction={() => {
-            createNewChatRoom(
-              userInfo.uid,
-              listingId,
-              listingTitle,
-              getGroup,
-              groupId
-            );
+            createNewChatRoom(userInfo.uid, listingId, listingTitle, getGroup, groupId);
             setFirstTimeAddGroupPopup(false);
           }}
         />
@@ -299,24 +275,24 @@ function Group({
           }}
         />
       )}
-      <Hr style={{ margin: "40px 0px" }} />
-      <SubTitle style={{ marginBottom: "32px" }}>
-        湊團看房{" "}
+      <Hr style={{ margin: '40px 0px' }} />
+      <SubTitle style={{ marginBottom: '32px' }}>
+        湊團看房{' '}
         {hintTextLoading ? (
           <Span
             style={{
-              position: "relative",
+              position: 'relative',
             }}
           >
             <Loading
               style={{
-                left: "0",
-                top: "0",
-                transform: "scale(0.1) translate(-400%,-350%)",
-                position: "absolute",
-                width: "auto",
-                height: "auto",
-                zIndex: "1",
+                left: '0',
+                top: '0',
+                transform: 'scale(0.1) translate(-400%,-350%)',
+                position: 'absolute',
+                width: 'auto',
+                height: 'auto',
+                zIndex: '1',
               }}
             />
           </Span>
@@ -324,89 +300,73 @@ function Group({
           <Span>
             尚未填寫條件,到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
                   type: selectTabAction.SELECT_TYPE,
-                  payload: { tab: "aboutMe" },
+                  payload: { tab: 'aboutMe' },
                 });
               }}
             />
             更新
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          !isInFullGroup ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && !isInFullGroup ? (
           <Span>
             你已加入湊團，到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
                   type: selectTabAction.SELECT_TYPE,
-                  payload: { tab: "allHouseHunting" },
+                  payload: { tab: 'allHouseHunting' },
                 });
 
                 dispatch({
                   type: subTabAction.SELECT_SUB_TAB,
                   payload: {
-                    subTab: isInFullGroup ? "尚未預約" : "等待湊團",
+                    subTab: isInFullGroup ? '尚未預約' : '等待湊團',
                   },
                 });
               }}
             />
             查看
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          !canBook ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && isInFullGroup && !canBook ? (
           <Span>
             你已預約，到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
                   type: selectTabAction.SELECT_TYPE,
-                  payload: { tab: "allHouseHunting" },
+                  payload: { tab: 'allHouseHunting' },
                 });
 
                 dispatch({
                   type: subTabAction.SELECT_SUB_TAB,
                   payload: {
-                    subTab: "已預約",
+                    subTab: '已預約',
                   },
                 });
               }}
             />
             查看
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          canBook ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && isInFullGroup && canBook ? (
           <Span>已湊滿團，可以預約</Span>
         ) : authChange && addUserAsRoommatesCondition && match && !isInGroup ? (
           <Span>符合室友條件</Span>
         ) : (
-          authChange &&
-          addUserAsRoommatesCondition &&
-          !match && <Span>不符合室友條件</Span>
+          authChange && addUserAsRoommatesCondition && !match && <Span>不符合室友條件</Span>
         )}
       </SubTitle>
       {getGroup.length === 0 && match && (
         <Text>
           目前無人湊團
-          <span style={{ display: "inline-block", left: "12px" }}>
+          <span style={{ display: 'inline-block', left: '12px' }}>
             <BtnDiv
               onClick={() => {
                 setCreateNewGroup(true);
@@ -439,7 +399,7 @@ function Group({
                       dispatch({
                         type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
-                          alertMessage: "不可以重新加入",
+                          alertMessage: '不可以重新加入',
                         },
                       });
                       setTimeout(() => {
@@ -451,7 +411,7 @@ function Group({
                       dispatch({
                         type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
-                          alertMessage: "不符合室友條件，無法加入",
+                          alertMessage: '不符合室友條件，無法加入',
                         },
                       });
                       setTimeout(() => {
@@ -472,7 +432,7 @@ function Group({
           </SingleGroup>
         ))}
       {getGroup.length !== 0 && match && !isInGroup && !createNewGroup && (
-        <span style={{ display: "inline-block" }}>
+        <span style={{ display: 'inline-block' }}>
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(true);
@@ -486,7 +446,7 @@ function Group({
         </span>
       )}
       {getGroup.length !== 0 && match && !isInGroup && createNewGroup && (
-        <span style={{ display: "inline-block" }}>
+        <span style={{ display: 'inline-block' }}>
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(false);

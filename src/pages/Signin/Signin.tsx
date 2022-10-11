@@ -26,12 +26,14 @@ interface IsActiveBtnProps {
 }
 
 const Wrapper = styled.div`
-  flex-grow: 1;
   background-image: url(${loginPage});
   width: 100%;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 160px);
   background-size: cover;
   background-position: right;
+  position: fixed;
+  overflow-y: hidden;
+  top: 80px;
   @media screen and (max-width: 1279px) {
     width: 100vw;
   }
@@ -43,6 +45,9 @@ const FormWrapper = styled.div`
   align-items: center;
   margin-top: 20px;
   width: 100%;
+  @media screen and (max-width: 960px) {
+    /* padding-bottom: 40px; */
+  }
 `;
 
 const Form = styled.div`
@@ -58,6 +63,13 @@ const Form = styled.div`
   transition-duration: 0.2s;
   background-color: rgba(255, 255, 255, 0.5);
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+  min-width: 300px;
+  @media screen and (max-width: 1440px) {
+    width: 45vw;
+  }
+  @media screen and (max-width: 960px) {
+    transform: translateX(-50%);
+  }
 `;
 
 const FormControlFullWidth = styled(FormControl)`
@@ -93,6 +105,11 @@ const Text = styled.div`
   cursor: pointer;
   position: absolute;
   bottom: 0;
+  @media screen and (max-width: 960px) {
+    font-size: 12px;
+    /* align-self: center; */
+    transform: translateY(120%);
+  }
 `;
 
 const RegForm = styled(StyledForm)``;

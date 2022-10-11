@@ -1,18 +1,18 @@
-import React, { useState, useRef } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { firebase } from "../../utils/firebase";
+import React, { useState, useRef } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { firebase } from '../../utils/firebase';
 
-import addIcon from "../../assets/add.png";
-import unAddIcon from "../../assets/unAdd.png";
-import likedIcon from "../../assets/heart.png";
-import unLikedIcon from "../../assets/unHeart.png";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/rootReducer";
-import { alertActionType } from "../../redux/Alert/AlertAction";
-import { getFavoriteAction } from "../../redux/GetFavoriteListing/GetFavoriteListingAction";
+import addIcon from '../../assets/add.png';
+import unAddIcon from '../../assets/unAdd.png';
+import likedIcon from '../../assets/heart.png';
+import unLikedIcon from '../../assets/unHeart.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
+import { alertActionType } from '../../redux/Alert/AlertAction';
+import { getFavoriteAction } from '../../redux/GetFavoriteListing/GetFavoriteListingAction';
 
-import { PopupComponent } from "../../components/Popup";
+import { PopupComponent } from '../../components/Popup';
 interface ImgProps {
   img: string;
 }
@@ -20,7 +20,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // margin: auto;
   padding: 10px;
   margin-bottom: 32px;
   flex-grow: 1;
@@ -28,7 +27,6 @@ const Wrapper = styled.div`
   border-radius: 12px;
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    transform: translate(-1%, -1%);
   }
 `;
 
@@ -48,12 +46,18 @@ const IconArea = styled.div`
   padding: 8px 8px 0px 0px;
   align-items: start;
   transition-duration: 0.2s;
+  position: absolute;
+  width: 100%;
+  @media screen and (max-width: 960px) {
+    padding: 0;
+  }
+  @media screen and (max-width: 550px) {
+    padding: 4px 4px 0px 0px;
+  }
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
-  background-image: url(${(props) =>
-    props.isLiked ? likedIcon : unLikedIcon});
+  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
   background-color: #fefefe;
-  box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
 `;
 
 const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
@@ -63,15 +67,20 @@ const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
 const CardWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   color: #4f5152;
   font-size: 16px;
+  @media screen and (max-width: 960px) {
+    flex-direction: row;
+  }
+  @media screen and (max-width: 550px) {
+    flex-direction: column;
+  }
 `;
 
 const MainImage = styled.div<ImgProps>`
   aspect-ratio: 1 / 1;
   width: 100%;
-  background-image: url(${(props) => (props.img ? props.img : "")});
+  background-image: url(${(props) => props.img && props.img});
   background-position: center bottom;
   background-size: cover;
   border-radius: 12px;
@@ -79,9 +88,19 @@ const MainImage = styled.div<ImgProps>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  @media screen and (max-width: 960px) {
+    flex-shrink: 0;
+    flex-basis: 30%;
+    width: 30%;
+    margin-bottom: 0px;
+  }
+  @media screen and (max-width: 550px) {
+    width: 100%;
+    margin-bottom: 12px;
+  }
 `;
 
-const Title = styled.p`
+const Title = styled.div`
   font-size: 20px;
   color: #4f5152;
   letter-spacing: 2px;
@@ -90,6 +109,13 @@ const Title = styled.p`
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
+  margin: 20px 0px;
+  @media screen and (max-width: 960px) {
+    margin: 0;
+  }
+  @media screen and (max-width: 550px) {
+    font-size: 16px;
+  }
 `;
 
 const Time = styled.div``;
@@ -98,8 +124,25 @@ const Rent = styled.div`
   font-size: 20px;
   color: #c77155;
   align-self: flex-end;
+  @media screen and (max-width: 550px) {
+    font-size: 12px;
+  }
 `;
-
+const InfoArea = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  @media screen and (max-width: 960px) {
+    padding: 0 12px;
+    width: 70%;
+    justify-content: space-between;
+  }
+  @media screen and (max-width: 550px) {
+    width: 100%;
+    padding: 0;
+    font-size: 12px;
+  }
+`;
 const Addr = styled.div``;
 const PeopleAmount = styled.div``;
 function Listing({ listingDocData }: { listingDocData: any }) {
@@ -109,20 +152,13 @@ function Listing({ listingDocData }: { listingDocData: any }) {
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
-  const favoriteLists = useSelector(
-    (state: RootState) => state.GetFavoriteListsReducer
-  );
-  const compareLists = useSelector(
-    (state: RootState) => state.GetCompareListsReducer
-  );
+  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
 
   const [isShown, setIsShown] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  function handleLiked(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isLiked: boolean
-  ) {
+  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
     e.preventDefault();
 
@@ -140,7 +176,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           dispatch({
             type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
-              alertMessage: "加入喜歡列表",
+              alertMessage: '加入喜歡列表',
             },
           });
           setTimeout(() => {
@@ -152,10 +188,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         });
       } else {
         async function removeFromFavoriteLists() {
-          await firebase.removeFromFavoriteLists(
-            userInfo.uid,
-            listingDocData.id
-          );
+          await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
         }
         removeFromFavoriteLists().then(() => {
           dispatch({
@@ -165,7 +198,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
           dispatch({
             type: alertActionType.OPEN_NOTIFY_ALERT,
             payload: {
-              alertMessage: "從喜歡列表刪除",
+              alertMessage: '從喜歡列表刪除',
             },
           });
           setTimeout(() => {
@@ -181,10 +214,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
     }
   }
 
-  function handleCompare(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isCompared: boolean
-  ) {
+  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
     if (authChange) {
@@ -194,20 +224,17 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         }
         addToCompareLists();
         dispatch({
-          type: "ADD_TO_COMPARELISTS",
+          type: 'ADD_TO_COMPARELISTS',
           payload: { id: listingDocData.id },
         });
       } else {
         async function removeFromCompareLists() {
-          await firebase.removeFromCompareLists(
-            userInfo.uid,
-            listingDocData.id
-          );
+          await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
         }
         removeFromCompareLists();
         handleDnd(e, isCompared);
         dispatch({
-          type: "REMOVE_FROM_COMPARELISTS",
+          type: 'REMOVE_FROM_COMPARELISTS',
           payload: { id: listingDocData.id },
         });
       }
@@ -215,10 +242,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       setIsShown(true);
     }
   }
-  function handleDnd(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isCompared: boolean
-  ) {
+  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
@@ -227,7 +251,7 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       }
       removeFromDndLists();
       dispatch({
-        type: "REMOVE_FROM_DNDLISTS",
+        type: 'REMOVE_FROM_DNDLISTS',
         payload: { id: listingDocData.id },
       });
     }
@@ -237,15 +261,14 @@ function Listing({ listingDocData }: { listingDocData: any }) {
     setIsShown(false);
   }
   function clickFunction() {
-    navigate("/signin");
+    navigate('/signin');
   }
 
   return (
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
-          msg={`請先進行登入註冊`}
+          msg={`請先進行\n登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={clickClose}
@@ -253,35 +276,29 @@ function Listing({ listingDocData }: { listingDocData: any }) {
         />
       )}
       <CardWrapper>
-        <MainImage img={listingDocData.data().mainImage}>
-          <IconArea>
-            <FavoriteIcon
-              onClick={(e) => {
-                handleLiked(e!, favoriteLists.includes(listingDocData.id));
-              }}
-              isLiked={favoriteLists.includes(listingDocData.id)}
-            />
-            {/* <CompareIcon
-              onClick={(e) => {
-                handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
-              }}
-              isCompared={compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id)}
-            ></CompareIcon> */}
-          </IconArea>
-        </MainImage>
-        <Title>{listingDocData.data().title}</Title>
-        <Addr>
-          {listingDocData.data().countyName}
-          {listingDocData.data().townName}
-        </Addr>
+        <MainImage img={listingDocData.data().mainImage} />
 
-        <PeopleAmount>
-          可入住人數:{listingDocData.data().peopleAmount}
-        </PeopleAmount>
-        <Time></Time>
-        <Rent>
-          {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
-        </Rent>
+        <InfoArea>
+          <Title>{listingDocData.data().title}</Title>
+          <Addr>
+            {listingDocData.data().countyName}
+            {listingDocData.data().townName}
+          </Addr>
+
+          <PeopleAmount>可入住人數:{listingDocData.data().peopleAmount}</PeopleAmount>
+          <Time></Time>
+          <Rent>
+            {listingDocData.data().startRent}~{listingDocData.data().endRent}/月
+          </Rent>
+        </InfoArea>
+        <IconArea>
+          <FavoriteIcon
+            onClick={(e) => {
+              handleLiked(e!, favoriteLists.includes(listingDocData.id));
+            }}
+            isLiked={favoriteLists.includes(listingDocData.id)}
+          />
+        </IconArea>
       </CardWrapper>
     </Wrapper>
   );

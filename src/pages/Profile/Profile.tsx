@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { RootState } from "../../redux/rootReducer";
-import { PopupComponent } from "../../components/Popup";
+import { RootState } from '../../redux/rootReducer';
+import { PopupComponent } from '../../components/Popup';
 
-import UploadMyListing from "./UploadMyListing/UploadMyListing";
-import Setting from "./Setting/Setting";
-import FollowedList from "./FollowedList/FollowedList";
-import AllHouseHunting from "./AllHouseHunting/AllHouseHunting";
-import AboutMe from "./AboutMe/AboutMe";
-import SideBarTab from "./SideBarTab";
+import UploadMyListing from './UploadMyListing/UploadMyListing';
+import Setting from './Setting/Setting';
+import FollowedList from './FollowedList/FollowedList';
+import AllHouseHunting from './AllHouseHunting/AllHouseHunting';
+import AboutMe from './AboutMe/AboutMe';
+import SideBarTab from './SideBarTab';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -29,7 +29,7 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
   padding: 20px;
   background-color: #f3f2ef;
   border-radius: 12px;
-  ${(props) => !props.isShowTab && "display: none"};
+  ${(props) => !props.isShowTab && 'display: none'};
   transition-duration: 0.2s;
   @media screen and (max-width: 960px) {
     width: 40%;
@@ -45,11 +45,11 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   width: 100%;
   align-self: flex-start;
   @media screen and (max-width: 960px) {
-    ${(props) => (props.isShowTab ? "width: 60%" : "width: 100%")};
+    ${(props) => (props.isShowTab ? 'width: 60%' : 'width: 100%')};
   }
   @media screen and (max-width: 425px) {
     top: 0;
-    ${(props) => (props.isShowTab ? "width: 100%" : "width: 60%")};
+    ${(props) => (props.isShowTab ? 'width: 100%' : 'width: 60%')};
   }
 `;
 
@@ -82,21 +82,21 @@ function Profile() {
 
   function clickClose() {
     setIsShown(false);
-    navigate("/");
+    navigate('/');
   }
   function clickFunction() {
-    navigate("/signin");
+    navigate('/signin');
   }
   useEffect(() => {
     if (!authChange) {
-      navigate("/signin");
+      navigate('/signin');
     }
   }, [authChange]);
   return (
     <Wrapper>
       {!authChange && isShown ? (
         <PopupComponent
-          msg={`請先進行登入註冊`}
+          msg={`請先進行\n登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={clickClose}
@@ -105,40 +105,21 @@ function Profile() {
       ) : (
         <React.Fragment>
           <SideBarWrapper isShowTab={showTab}>
-            <SideBarTab
-              showTab={showTab}
-              setShowTab={setShowTab}
-              setLoading={setLoading}
-              loading={loading}
-            />
+            <SideBarTab showTab={showTab} setShowTab={setShowTab} setLoading={setLoading} loading={loading} />
           </SideBarWrapper>
           <Arrow
             windowState={windowState}
             isShowTab={showTab}
             onClick={() => (showTab ? setShowTab(false) : setShowTab(true))}
           >
-            {showTab ? (
-              <ArrowWrap>&#171;</ArrowWrap>
-            ) : (
-              <ArrowWrap>&#187;</ArrowWrap>
-            )}
+            {showTab ? <ArrowWrap>&#171;</ArrowWrap> : <ArrowWrap>&#187;</ArrowWrap>}
           </Arrow>
           <SectionWrapper isShowTab={showTab}>
-            {getTab === "aboutMe" && (
-              <AboutMe setLoading={setLoading} loading={loading} />
-            )}
-            {getTab === "allHouseHunting" && (
-              <AllHouseHunting setLoading={setLoading} loading={loading} />
-            )}
-            {getTab === "followedList" && (
-              <FollowedList setLoading={setLoading} loading={loading} />
-            )}
-            {getTab === "uploadMyListing" && (
-              <UploadMyListing setLoading={setLoading} loading={loading} />
-            )}
-            {getTab === "setting" && (
-              <Setting setLoading={setLoading} loading={loading} />
-            )}
+            {getTab === 'aboutMe' && <AboutMe setLoading={setLoading} loading={loading} />}
+            {getTab === 'allHouseHunting' && <AllHouseHunting setLoading={setLoading} loading={loading} />}
+            {getTab === 'followedList' && <FollowedList setLoading={setLoading} loading={loading} />}
+            {getTab === 'uploadMyListing' && <UploadMyListing setLoading={setLoading} loading={loading} />}
+            {getTab === 'setting' && <Setting setLoading={setLoading} loading={loading} />}
           </SectionWrapper>
         </React.Fragment>
       )}
