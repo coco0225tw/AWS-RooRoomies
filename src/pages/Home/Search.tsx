@@ -88,7 +88,7 @@ const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
   @media screen and (max-width: 960px) {
     display: ${(props) => !props.openSearch && 'none'};
 
-    top: ${(props) => props.openSearch && '20px'};
+    top: ${(props) => props.openSearch && '30px'};
     padding: 4px 8px;
     font-size: 12px;
   }
