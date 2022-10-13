@@ -22,19 +22,25 @@ const Wrapper = styled.div`
   height: 100%;
   position: relative;
   align-items: flex-start;
+  @media screen and (max-width: 760px) {
+    width: 100%;
+  }
 `;
 
 const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
-  width: 28%;
+  width: 45%;
   padding: 20px;
   background-color: #f3f2ef;
   border-radius: 12px;
   ${(props) => !props.isShowTab && 'display: none'};
   transition-duration: 0.2s;
   @media screen and (max-width: 960px) {
+    width: 36%;
+  }
+  @media screen and (max-width: 850px) {
     width: 40%;
   }
-  @media screen and (max-width: 425px) {
+  @media screen and (max-width: 760px) {
     position: absolute;
     width: 100%;
   }
@@ -47,8 +53,10 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   @media screen and (max-width: 960px) {
     ${(props) => (props.isShowTab ? 'width: 60%' : 'width: 100%')};
   }
-  @media screen and (max-width: 425px) {
+  @media screen and (max-width: 760px) {
     top: 0;
+    z-index: -1;
+
     ${(props) => (props.isShowTab ? 'width: 100%' : 'width: 60%')};
   }
 `;

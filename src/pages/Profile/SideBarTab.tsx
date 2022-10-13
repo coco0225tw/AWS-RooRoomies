@@ -1,19 +1,19 @@
-import React from "react";
-import styled from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/rootReducer";
+import React from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../redux/rootReducer';
 
-import { selectTabAction } from "../../redux/SelectTab/SelectTabAction";
-import user from "../../assets/user.png";
-import usero from "../../assets/usero.png";
-import house from "../../assets/houseo.png";
-import houseo from "../../assets/house.png";
-import deadline from "../../assets/deadline.png";
-import deadlineo from "../../assets/deadlineo.png";
-import heart from "../../assets/unHeart.png";
-import unHeart from "../../assets/heart.png";
-import setting from "../../assets/settingso.png";
-import settingo from "../../assets/settings.png";
+import { selectTabAction } from '../../redux/SelectTab/SelectTabAction';
+import user from '../../assets/user.png';
+import usero from '../../assets/usero.png';
+import house from '../../assets/houseo.png';
+import houseo from '../../assets/house.png';
+import deadline from '../../assets/deadline.png';
+import deadlineo from '../../assets/deadlineo.png';
+import heart from '../../assets/unHeart.png';
+import unHeart from '../../assets/heart.png';
+import setting from '../../assets/settingso.png';
+import settingo from '../../assets/settings.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -34,11 +34,11 @@ const TabWrapper = styled.div<{ isChoose: boolean; isShowTab: boolean }>`
   padding: 8px;
   width: 100%;
   border-radius: 12px;
-  color: ${(props) => (props.isChoose ? "#fff " : "#4f5152")};
-  background-color: ${(props) => (props.isChoose ? "#c77155 " : "#ffffff")};
+  color: ${(props) => (props.isChoose ? '#fff ' : '#4f5152')};
+  background-color: ${(props) => (props.isChoose ? '#c77155 ' : '#ffffff')};
   transition-duration: 0.2s;
   &:hover {
-    color: ${(props) => (props.isChoose ? "#fff " : "#4f5152")};
+    color: ${(props) => (props.isChoose ? '#fff ' : '#4f5152')};
   }
 `;
 const Tab = styled.div<{ isShowTab: boolean; isChoose: boolean }>`
@@ -58,8 +58,7 @@ const Img = styled.div<{
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background-image: url(${(props) =>
-    props.isChoose ? props.oimg : props.img});
+  background-image: url(${(props) => (props.isChoose ? props.oimg : props.img)});
   background-position: center center;
   background-size: 20px 20px;
   background-repeat: no-repeat;
@@ -72,7 +71,7 @@ const Img = styled.div<{
 const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   position: absolute;
   right: 0px;
-  transform: translateX(${(props) => (props.windowState ? "180%" : "200%")});
+  transform: translateX(${(props) => (props.windowState ? '180%' : '200%')});
   display: block !important;
   background-color: #f3f2ef;
   height: 50px;
@@ -101,17 +100,17 @@ function SideBarTab({
   const dispatch = useDispatch();
   const getTab = useSelector((state: RootState) => state.SelectTabReducer);
   const tabsOptions = [
-    { key: "aboutMe", img: usero, label: "關於我", value: user },
+    { key: 'aboutMe', img: usero, label: '關於我', value: user },
     {
-      key: "allHouseHunting",
+      key: 'allHouseHunting',
       img: deadlineo,
-      label: "所有看房消息",
+      label: '所有看房消息',
       value: deadline,
     },
     // { key: "compareList", img: "", label: "比較列表" },
-    { key: "followedList", img: unHeart, label: "喜歡列表", value: heart },
-    { key: "uploadMyListing", img: houseo, label: "管理物件", value: house },
-    { key: "setting", img: settingo, label: "設定", value: setting },
+    { key: 'followedList', img: unHeart, label: '喜歡列表', value: heart },
+    { key: 'uploadMyListing', img: houseo, label: '管理物件', value: house },
+    { key: 'setting', img: settingo, label: '設定', value: setting },
   ];
   function clickTab(tabString: string) {
     dispatch({
@@ -138,12 +137,7 @@ function SideBarTab({
             }
           }}
         >
-          <Img
-            isChoose={getTab === options.key}
-            isShowTab={showTab}
-            img={options.value}
-            oimg={options.img}
-          />
+          <Img isChoose={getTab === options.key} isShowTab={showTab} img={options.value} oimg={options.img} />
           <Tab isChoose={getTab === options.key} isShowTab={showTab}>
             {options.label}
           </Tab>
