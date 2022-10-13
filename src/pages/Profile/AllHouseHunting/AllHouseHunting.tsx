@@ -1,33 +1,33 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+
 import styled from "styled-components";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { firebase, db } from "../../../utils/firebase";
 import {
   query,
   collection,
-  limit,
-  QuerySnapshot,
   DocumentData,
   QueryDocumentSnapshot,
   onSnapshot,
-  doc,
   where,
 } from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import { Provider } from "react-redux";
-import store from "../../../redux/store";
+import { firebase, db } from "../../../utils/firebase";
+
 import { RootState } from "../../../redux/rootReducer";
-import { Title } from "../../../components/ProfileTitle";
-import Hr from "../../../components/Hr";
-import { PopupComponent, PopupImage } from "../../../components/Popup";
+import { alertActionType } from "../../../redux/Alert/AlertAction";
+import { chatRoomAction } from "../../../redux/ChatRoom/ChatRoomAction";
+import { subTabAction } from "../../../redux/SubTab/SubTabAction";
+
 import ListingItem from "../../../components/ListingItem";
-import { BtnDiv, BtnLink } from "../../../components/Button";
+import Hr from "../../../components/Hr";
 import chat from "../../../assets/chat.png";
-import { Loading } from "../../../components/Loading";
 import NoListing from "../../../components/NoData";
-import previewMainImage from "../../../redux/PreviewMainImage/PreviewMainImageReducer";
+
+import { Loading } from "../../../components/Loading";
+import { Title } from "../../../components/ProfileTitle";
+import { PopupComponent } from "../../../components/Popup";
+import { BtnDiv } from "../../../components/Button";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -39,15 +39,7 @@ const Wrapper = styled.div`
   color: #4f5152;
   margin-top: 20px;
 `;
-const SectionWrapper = styled(Link)`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-`;
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
+
 const ListingWrapper = styled(Link)`
   display: flex;
   flex-direction: row;
@@ -57,16 +49,13 @@ const ListingWrapper = styled(Link)`
   padding: 20px;
   border-radius: 12px;
 `;
-const StyledBtnDiv = styled(BtnDiv)`
-  // position: absolute;
-`;
+const StyledBtnDiv = styled(BtnDiv)``;
 const InfoWrapper = styled.div`
   position: absolute;
   display: flex;
   flex-direction: row;
   right: 20px;
   top: 40%;
-  // transform: translateY(-70%);
   width: 50%;
   align-items: center;
   justify-content: space-between;
@@ -101,14 +90,15 @@ function AllHouseHunting({
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {
+  const dispatch = useDispatch();
+
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const getSubTab = useSelector((state: RootState) => state.SubTabReducer);
+  const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
   const [houseHuntingData, setHouseHuntingData] = useState<
     QueryDocumentSnapshot<DocumentData>[]
   >([]);
   const [allListingData, setAllListingData] = useState<DocumentData[]>([]);
-  const [clickTab, setClickTab] = useState<string>("已預約");
-  const dispatch = useDispatch();
   const [cancelBookTimePopup, setCancelBookTimePopup] =
     useState<boolean>(false);
   const [cancelBookTimeInfo, setCancelBookTimeInfo] = useState<any>(null);
@@ -140,14 +130,14 @@ function AllHouseHunting({
         ),
       ]).then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "成功退團",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -173,14 +163,14 @@ function AllHouseHunting({
         ),
       ]).then(() => {
         dispatch({
-          type: "OPEN_SUCCESS_ALERT",
+          type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
             alertMessage: "成功退團",
           },
         });
         setTimeout(() => {
           dispatch({
-            type: "CLOSE_ALERT",
+            type: alertActionType.CLOSE_ALERT,
           });
         }, 3000);
       });
@@ -212,16 +202,15 @@ function AllHouseHunting({
       updatedArr[index].data().isBooked = false;
       updatedArr[index].data().bookedTime = {};
 
-      // setHouseHuntingData(updatedArr);
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: "已取消預約",
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });
@@ -257,7 +246,6 @@ function AllHouseHunting({
       }, 1000);
     }
     async function getAllListing(arr: QueryDocumentSnapshot<DocumentData>[]) {
-      // getListing;
       let promise: DocumentData[] = [];
       arr.map((el, index) => {
         promise.push(
@@ -272,7 +260,6 @@ function AllHouseHunting({
 
       setAllListingData(listingDocArr);
     }
-    // getAllHouseHuntingData();
   }, [userInfo]);
   return (
     <Wrapper>
@@ -287,6 +274,16 @@ function AllHouseHunting({
           clickFunction={() => {
             cancelBookTime(cancelBookTimeInfo);
             setCancelBookTimePopup(false);
+            if (cancelBookTimeInfo.chatRoomId === getChatRoom.chatRoomId) {
+              if (getChatRoom.isOpen)
+                dispatch({ type: chatRoomAction.CLOSE_CHAT });
+              if (getChatRoom.chatRoomOpenState)
+                dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
+              dispatch({
+                type: chatRoomAction.OPEN_CHATROOM,
+                payload: { chatRoomId: null },
+              });
+            }
           }}
         />
       )}
@@ -300,8 +297,17 @@ function AllHouseHunting({
           }}
           clickFunction={() => {
             removeFromGroup(removeUserInfo);
-            // cancelBookTime(cancelBookTimeInfo);
             setRemoveFromGroupPopup(false);
+            if (removeUserInfo.chatRoomId === getChatRoom.chatRoomId) {
+              if (getChatRoom.isOpen)
+                dispatch({ type: chatRoomAction.CLOSE_CHAT });
+              if (getChatRoom.chatRoomOpenState)
+                dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
+              dispatch({
+                type: chatRoomAction.OPEN_CHATROOM,
+                payload: { chatRoomId: null },
+              });
+            }
           }}
         />
       )}
@@ -313,15 +319,31 @@ function AllHouseHunting({
             key={`tab${el}`}
             isClick={el === getSubTab}
             onClick={() => {
-              dispatch({ type: "SELECT_SUB_TAB", payload: { subTab: el } });
-
+              dispatch({
+                type: subTabAction.SELECT_SUB_TAB,
+                payload: { subTab: el },
+              });
               setLoading(true);
               setTimeout(() => {
                 setLoading(false);
               }, 1000);
             }}
           >
-            {el}
+            {`${el}(${
+              el === "已預約"
+                ? houseHuntingData.filter(
+                    (doc) => doc.data().isBooked !== false
+                  ).length
+                : el === "尚未預約"
+                ? houseHuntingData.filter(
+                    (doc) =>
+                      doc.data().isFull === true &&
+                      doc.data().isBooked === false
+                  ).length
+                : el === "等待湊團" &&
+                  houseHuntingData.filter((doc) => doc.data().isFull === false)
+                    .length
+            })`}
           </Tab>
         ))}
       </Tabs>
@@ -345,9 +367,8 @@ function AllHouseHunting({
                     (el) => el.id === doc.data().listingId
                   ) as DocumentData
                 }
-              ></ListingItem>
+              />
               <InfoWrapper>
-                {/* <div> */}
                 <div>{`已預約${doc
                   .data()
                   .bookedTime.date.toDate()
@@ -374,15 +395,16 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
+
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))
@@ -410,10 +432,8 @@ function AllHouseHunting({
                     (el) => el.id === doc.data().listingId
                   ) as DocumentData
                 }
-              ></ListingItem>
+              />
               <InfoWrapper>
-                {/* <div> */}
-                {/* <StyledBtnDiv>去預約</StyledBtnDiv> */}
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
@@ -432,15 +452,15 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))
@@ -467,7 +487,6 @@ function AllHouseHunting({
                 }
               ></ListingItem>
               <InfoWrapper>
-                {/* <div> */}
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
@@ -486,15 +505,15 @@ function AllHouseHunting({
                     e.stopPropagation();
                     e.preventDefault();
                     dispatch({
-                      type: "OPEN_CHATROOM",
+                      type: chatRoomAction.OPEN_CHATROOM,
                       payload: { chatRoomId: doc.id },
                     });
+                    dispatch({ type: chatRoomAction.OPEN_CHATROOM_STATE });
                     dispatch({
-                      type: "OPEN_CHAT",
+                      type: chatRoomAction.OPEN_CHAT,
                     });
                   }}
-                ></ChatIcon>
-                {/* </div> */}
+                />
               </InfoWrapper>
             </ListingWrapper>
           ))

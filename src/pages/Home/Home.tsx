@@ -1,25 +1,20 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { DocumentData } from "firebase/firestore";
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { DocumentData } from 'firebase/firestore';
 
-import { RootState } from "../../redux/rootReducer";
+import { RootState } from '../../redux/rootReducer';
 
-import Listing from "./Listing";
-import Search from "./Search";
-import NoListing from "../../components/NoData";
+import Listing from './Listing';
+import Search from './Search';
+import NoListing from '../../components/NoData';
 
-import { Loading } from "../../components/Loading";
-
-import Logo from "../../assets/noHouse.png";
-interface Props {
-  key: string;
-}
+import { Loading } from '../../components/Loading';
 
 const Wrapper = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -27,6 +22,10 @@ const Wrapper = styled.div`
   height: 100%;
   position: relative;
   margin: 80px auto 0px;
+  flex-grow: 1;
+  @media screen and (max-width: 960px) {
+    background-color: #f3f2ef;
+  }
 `;
 
 const ListingWrapper = styled.div`
@@ -34,23 +33,28 @@ const ListingWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  margin: 32px auto;
+  margin: 32px auto 80px;
   column-gap: 1.25%;
-`;
-
-const Btn = styled.div`
-  cursor: pointer;
-  padding: 10px;
-  &:hover {
-    color: white;
-    background-color: grey;
-    transition: 0.2s;
+  height: 100%;
+  flex-grow: 1;
+  @media screen and (max-width: 960px) {
+    flex-direction: column;
+  }
+  @media screen and (max-width: 550px) {
+    width: 98%;
+    flex-direction: row;
   }
 `;
 
 const ListingLink = styled(Link)`
   width: 24%;
   height: 100%;
+  @media screen and (max-width: 960px) {
+    width: 100%;
+  }
+  @media screen and (max-width: 550px) {
+    width: 49%;
+  }
 `;
 
 const ScrollComponent = styled.div`
@@ -59,16 +63,8 @@ const ScrollComponent = styled.div`
   bottom: 32px;
 `;
 function Home() {
-  interface Props {
-    data: DocumentData;
-    key: string;
-  }
-  const listingDocData = useSelector(
-    (state: RootState) => state.GetListingInHomePageReducer
-  );
-  const lastDocData = useSelector(
-    (state: RootState) => state.GetLastDocReducer
-  );
+  const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
+  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
 
   const arr = [];
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -76,35 +72,31 @@ function Home() {
   const [loadFirstPage, setLoadFirstPage] = useState<boolean>(false);
   const [loadNextPage, setLoadNextPage] = useState<boolean>(false);
   const [noData, setNoData] = useState<boolean>(false);
-
+  interface Props {
+    data: DocumentData;
+    key: string;
+  }
   return (
     <Wrapper>
       <Search
-        loading={loading}
         setLoading={setLoading}
-        loadNextPage={loadNextPage}
         loadFirstPage={loadFirstPage}
         setLoadFirstPage={setLoadFirstPage}
         scrollRef={scrollRef}
         noData={noData}
         setNoData={setNoData}
-      ></Search>
+      />
       <ListingWrapper>
-        {listingDocData.length === 0 && !loading && (
-          <NoListing msg="沒有符合的物件" />
-        )}
+        {listingDocData.length === 0 && !loading && <NoListing msg="沒有符合的物件" />}
         {listingDocData.length !== 0 &&
           listingDocData.map((listingDocData: DocumentData, index: number) => (
-            <ListingLink
-              key={`listing_${index}`}
-              target="_blank"
-              to={`/listing/${listingDocData.id}`}
-            >
-              <Listing listingDocData={listingDocData}></Listing>
+            <ListingLink key={`listing_${index}`} target="_blank" to={`/listing/${listingDocData.id}`}>
+              <Listing listingDocData={listingDocData} />
             </ListingLink>
           ))}
+        {loading && <Loading style={null} />}
       </ListingWrapper>
-      {loading && <Loading style={null} />}
+
       {listingDocData && <ScrollComponent ref={scrollRef} />}
     </Wrapper>
   );

@@ -35,21 +35,9 @@ import {
   signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { isCompositeComponent } from "react-dom/test-utils";
-const firebaseConfig = {
-  // apiKey: 'AIzaSyA7CjH0CyRg1ICdCKBUbSK8DbcTVXSvyL8',
-  // authDomain: 'rooroomies-5c4be.firebaseapp.com',
-  // projectId: 'rooroomies-5c4be',
-  // storageBucket: 'rooroomies-5c4be.appspot.com',
-  // messagingSenderId: '50571848700',
-  // appId: '1:50571848700:web:b59e5b8a21ea64b5746079',
-  apiKey: "AIzaSyDxZxLUfOcXF0TTHQr7QJlOmtFNUhH_w2Q",
-  authDomain: "rooroomies.firebaseapp.com",
-  projectId: "rooroomies",
-  storageBucket: "rooroomies.appspot.com",
-  messagingSenderId: "902090494840",
-  appId: "1:902090494840:web:b89eee21700f2fb39e2e8d",
-};
+
+import firebaseConfig from "./firebaseConfig";
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -229,9 +217,7 @@ const firebase = {
     await signOut(auth);
   },
   async signInUser(email: string, password: string) {
-    try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
-    } catch (error: any) {}
+    await signInWithEmailAndPassword(auth, email, password);
   },
   async getBookingTimesSubColForListing(listingId: string) {
     const subColRef = collection(db, "listings", listingId, "bookingTimes");
@@ -261,13 +247,11 @@ const firebase = {
       userListingId: "",
     });
   },
-  async updateUserInfo(uid: string, name: string, email: string) {
-    // const url = await this.uploadUserImage(image, uid);
+  async updateUserInfo(uid: string, name: string) {
     await setDoc(
       doc(db, "users", uid),
       {
         name: name,
-        email: email,
       },
       { merge: true }
     );

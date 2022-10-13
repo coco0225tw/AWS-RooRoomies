@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { RootState } from "../redux/rootReducer";
-import { firebase } from "../utils/firebase";
-import { BtnLink, BtnDiv } from "./Button";
-import { PopupComponent } from "./Popup";
+import { RootState } from '../redux/rootReducer';
+import { alertActionType } from '../redux/Alert/AlertAction';
+import { selectTabAction } from '../redux/SelectTab/SelectTabAction';
+import { firebase } from '../utils/firebase';
+import { BtnLink, BtnDiv } from './Button';
+import { PopupComponent } from './Popup';
 
-import Logo from "../assets/logo.png";
-import search from "../assets/search.svg";
+import search from '../assets/search.svg';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -22,17 +23,8 @@ const Wrapper = styled.div`
   background-color: #f3f2ef;
   z-index: 4;
   top: 0;
-  // margin-bottom: 80px;
-  // @media screen and (max-width: 960px) {
-  //   background-color: white;
-  // }
-  @media screen and (max-width: 960px) {
-  }
 `;
 
-const Title = styled.div`
-  font-size: 30px;
-`;
 const SectionWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -45,20 +37,23 @@ const SectionWrapper = styled.div`
 const LogoWrapper = styled(Link)`
   display: flex;
   align-items: center;
+  @media screen and (max-width: 660px) {
+    align-items: center;
+    width: 100%;
+  }
 `;
-const LogoImg = styled.div`
-  width: 40px;
-  height: 40px;
-  background-image: url(${Logo});
-  background-size: 40px 40px;
-`;
+
 const LogoText = styled.div`
   font-size: 32px;
   letter-spacing: 8px;
   color: #4f5152;
+
   // margin-left: 20px;
   @media screen and (max-width: 960px) {
     font-size: 28px;
+  }
+  @media screen and (max-width: 660px) {
+    margin: auto;
   }
 `;
 
@@ -73,12 +68,6 @@ const Profile = styled(Link)<{ img: string }>`
   background-color: white;
 `;
 
-const Notification = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: solid 1px #857c7c;
-`;
 const BtnLinkRwd = styled(BtnLink)`
   display: block;
   @media screen and (max-width: 960px) {
@@ -113,18 +102,18 @@ function Header() {
   async function logOut() {
     firebase.signOutUser().then(() => {
       dispatch({
-        type: "OPEN_NOTIFY_ALERT",
+        type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
-          alertMessage: "已登出",
+          alertMessage: '已登出',
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
       setIsShown(false);
-      navigate("/signin");
+      navigate('/signin');
     });
   }
   return (
@@ -139,28 +128,25 @@ function Header() {
         />
       )}
 
-      <LogoWrapper to={"./"}>
-        {/* <LogoImg /> */}
+      <LogoWrapper to={'./'}>
         <LogoText>rooroomies</LogoText>
       </LogoWrapper>
-      <Search />
       {authChange ? (
         <SectionWrapper>
-          {/* <Notification></Notification> */}
           <Profile
-            to={"/profile"}
+            to={'/profile'}
             img={userInfo.image}
             onClick={() => {
               dispatch({
-                type: "SELECT_TYPE",
-                payload: { tab: "aboutMe" },
+                type: selectTabAction.SELECT_TYPE,
+                payload: { tab: 'aboutMe' },
               });
             }}
           ></Profile>
           <BtnDiv onClick={clickSingOut}>登出</BtnDiv>
         </SectionWrapper>
       ) : (
-        <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
+        <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
       )}
     </Wrapper>
   );

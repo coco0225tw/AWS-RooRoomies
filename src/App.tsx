@@ -1,40 +1,41 @@
-import { initializeApp } from "firebase/app";
-import {
-  query,
-  getFirestore,
-  getDocs,
-  collection,
-  doc,
-  onSnapshot,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
-import React, { useEffect, Fragment } from "react";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import { Provider } from "react-redux";
-import store from "./redux/store";
-import { firebase, auth, onAuthStateChanged, db } from "./utils/firebase";
-import { RootState } from "./redux/rootReducer";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
+import { Outlet } from 'react-router-dom';
 
-import PingFangTCRegular from "./fonts/PingFang-TC-Regular-2.otf";
-import PingFangTCThin from "./fonts/PingFang-TC-Thin-2.otf";
-import NotoSansTCRegular from "./fonts/NotoSansTC-Regular.otf";
-import NotoSansTCBold from "./fonts/NotoSansTC-Bold.otf";
+import { createGlobalStyle } from 'styled-components';
 
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import ChatRooms from "./components/ChatRooms/ChatRooms";
-import Alert from "./components/Alert";
-import userType from "./redux/GetAuth/GetAuthType";
-import { Loading } from "./components/Loading";
-import { groupType, userInfoType } from "./redux/Group/GroupType";
-import roomDetailsType from "./redux/UploadRoomsDetails/UploadRoomsDetailsType";
-import bookingTimesType from "./redux/UploadBookingTimes/UploadBookingTimesType";
-import roommatesConditionType from "./redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import facilityType from "./redux/UploadFacility/UploadFacilityType";
-import { useNavigate } from "react-router-dom";
+import store from './redux/store';
+import { firebase, auth, onAuthStateChanged, db } from './utils/firebase';
+import { RootState } from './redux/rootReducer';
+
+import Header from './components/Header';
+import Footer from './components/Footer';
+import ChatRooms from './components/ChatRooms/ChatRooms';
+import Alert from './components/Alert';
+
+import { groupsType } from './redux/Group/GroupType';
+import userType from './redux/GetAuth/GetAuthType';
+import roomDetailsType from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import facilityType from './redux/UploadFacility/UploadFacilityType';
+import { alertActionType } from './redux/Alert/AlertAction';
+import { chatRoomAction } from './redux/ChatRoom/ChatRoomAction';
+import { getAuthAction } from './redux/GetAuth/GetAuthAction';
+import { getFavoriteAction } from './redux/GetFavoriteListing/GetFavoriteListingAction';
+import { onAuthChangeAction } from './redux/OnAuthChange/OnAuthChangeAction';
+import { previewMainImageAction } from './redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from './redux/PreviewOtherImages/PreviewOtherImagesAction';
+import { selectTabAction } from './redux/SelectTab/SelectTabAction';
+import { subTabAction } from './redux/SubTab/SubTabAction';
+import { uploadAddrAction } from './redux/UploadAddr/UploadAddrAction';
+import { uploadBookingTimesAction } from './redux/UploadBookingTimes/UploadBookingTimesAction';
+
+import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
+import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
+import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
+import NotoSansTCBold from './fonts/NotoSansTC-Bold.otf';
+
 const GlobalStyle = createGlobalStyle`
 @font-face {
   font-family: PingFangTC;
@@ -61,33 +62,31 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-    // border: solid 1px black;
-    // color: #4f5152;
+   //border: solid 1px black;
     position: relative;
-    // transition-duration: 1s;
     letter-spacing: 0.4px;
   }
 
   body {
     font-family: NotoSansTC;
-    overflow-x: hidden;
+    /* overflow-x: hidden; */
     padding: 0;
     margin: 0;
-    // height: 100vh;
+    width: 100%;
+    height: 100%;
   }
 
   html {
     padding: 0;
     margin: 0;
-    // height: 100vh;
+    width: 100%;
+    height: 100%;
   }
   #root {
     min-height: 100vh;
-    // padding: 140px 0 115px;
     position: relative;
     display: flex;
     flex-direction: column;
-    // flex-grow: 1;
   }
   a {
     color: inherit; /* blue colors for links too */
@@ -116,42 +115,41 @@ const GlobalStyle = createGlobalStyle`
 
 function User() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
 
   useEffect(() => {
     onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         getUser();
-        // navigate('/');
       } else {
-        dispatch({ type: "RETURN_INITIAL_GETUSER" });
-        dispatch({ type: "RETURN_INITIAL_AUTH" });
-        dispatch({ type: "RETURN_INITIAL_COMPARELISTS" });
-        dispatch({ type: "RETURN_INITIAL_DNDLISTS" });
-        dispatch({ type: "RETURN_INITIAL_FAVORITELISTS" });
+        dispatch({ type: getAuthAction.RETURN_INITIAL_GET_USER });
+        dispatch({ type: onAuthChangeAction.RETURN_INITIAL_AUTH });
+        dispatch({ type: 'RETURN_INITIAL_COMPARELISTS' });
+        dispatch({ type: 'RETURN_INITIAL_DNDLISTS' });
+        dispatch({ type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS });
         //group
         //lastdoc
         //listingdocumentforhomepage
-        dispatch({ type: "RETURN_INITIAL_TAB" });
-        dispatch({ type: "RETURN_INITIAL_ADDR" });
-        dispatch({ type: "RETURN_INITIAL_BOOKINGTIMES" });
-        dispatch({ type: "RETURN_INITIAL_FACILITY" });
-        dispatch({ type: "RETURN_INITIAL_LISTING_IMAGES" });
-        dispatch({ type: "RETURN_INITIAL_ROOMMATES_CONDITION" });
-        dispatch({ type: "RETURN_INITIAL_ROOM_DETAILS" });
-        dispatch({ type: "RETURN_INITIAL_TITLE" });
-        dispatch({ type: "RETURN_INITIAL_MEASROOMMATE" });
-        dispatch({ type: "RETURN_INITIAL_IMAGE" });
-        dispatch({ type: "RETURN_INITIAL_OTHER_IMAGES" });
-        dispatch({ type: "RETURN_INITIAL_ALERT" });
-        dispatch({ type: "RETURN_INITIAL_SUB_TAB" });
-        dispatch({ type: "INITIAL_CHATROOM_STATE" });
+        dispatch({ type: selectTabAction.RETURN_INITIAL_TAB });
+        dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
+        dispatch({
+          type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+        });
+        dispatch({ type: 'RETURN_INITIAL_FACILITY' });
+        dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
+        dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
+        dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
+        dispatch({ type: 'RETURN_INITIAL_TITLE' });
+        dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+        dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+        dispatch({
+          type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+        });
+        dispatch({ type: alertActionType.RETURN_INITIAL_ALERT });
+        dispatch({ type: subTabAction.RETURN_INITIAL_SUB_TAB });
+        dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
       }
       async function getUser() {
-        let data = await firebase.getUserDocFromFirebase(
-          currentUser?.uid as string
-        );
+        let data = await firebase.getUserDocFromFirebase(currentUser?.uid as string);
         const user: userType = {
           uid: data?.id as string,
           email: data?.data().email,
@@ -159,38 +157,34 @@ function User() {
           name: data?.data().name,
           userListingId: data?.data().userListingId,
         };
-        const meAsRoommatesState = {
-          userAsRoommatesConditions: data?.data().userAsRoommatesConditions,
-        };
-        const userOnSnapShotQuery = doc(db, "users", data?.id!);
-        const userQuery = onSnapshot(userOnSnapShotQuery, (snapshot) => {
-          const favoriteLists = [...snapshot.data()!.favoriteLists];
-          const compareLists = [...snapshot.data()!.compareLists];
-          const dndLists = [...snapshot.data()!.dndLists];
-        });
+
         const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
         const dndLists = data?.data().dndLists;
         dispatch({
-          type: "GET_COMPARELISTS_FROM_FIREBASE",
+          type: 'GET_COMPARELISTS_FROM_FIREBASE',
           payload: { compareLists },
         });
-        dispatch({ type: "GET_DNDLISTS_FROM_FIREBASE", payload: { dndLists } });
+        dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
         dispatch({
-          type: "GET_FAVORITELISTS_FROM_FIREBASE",
+          type: getFavoriteAction.GET_FAVORITE_LISTS_FROM_FIREBASE,
           payload: { favoriteLists },
         });
-        dispatch({ type: "GETUSER_FROMFIREBASE", payload: { user } });
+        dispatch({
+          type: getAuthAction.GET_USER_FROM_FIREBASE,
+          payload: { user },
+        });
         if (data?.data().userAsRoommatesConditions) {
+          console.log(data?.data().userAsRoommatesConditions);
           dispatch({
-            type: "GET_USER_AS_ROOMMATES_FROM_FIREBASE",
+            type: 'GET_USER_AS_ROOMMATES_FROM_FIREBASE',
             payload: {
               meAsRoommatesState: data?.data().userAsRoommatesConditions,
             },
           });
         }
 
-        dispatch({ type: "AUTH_CHANGE" });
+        dispatch({ type: onAuthChangeAction.AUTH_TRUE });
         if (data?.data().userListingId.length !== 0) {
           async function getListing() {
             type ListingType = {
@@ -205,14 +199,12 @@ function User() {
               facility: facilityType;
               rentRoomDetails: roomDetailsType;
               peopleAmount: number;
-              matchGroup: Array<groupType>;
+              matchGroup: groupsType;
               listingTitle: string;
               totalSq: number;
             };
 
-            const listingData = await firebase.getListing(
-              data?.data().userListingId
-            );
+            const listingData = await firebase.getListing(data?.data().userListingId);
             let listingTitle = {
               title: listingData?.title,
               totalSq: listingData?.totalSq,
@@ -220,45 +212,18 @@ function User() {
             };
 
             dispatch({
-              type: "GET_LISTING_TITLE_FROM_FIREBASE",
+              type: 'GET_LISTING_TITLE_FROM_FIREBASE',
               payload: { listingTitle },
             });
             dispatch({
-              type: "GET_ROOMMATESCONDITION_FROM_FIREBASE",
+              type: 'GET_ROOMMATESCONDITION_FROM_FIREBASE',
               payload: { roommatesState: listingData?.roommatesConditions },
             });
             dispatch({
-              type: "GET_FACILITY_FROM_FIREBASE",
+              type: 'GET_FACILITY_FROM_FIREBASE',
               payload: { facilityState: listingData?.facility },
             });
           }
-          // async function getBookingTimes() {
-          //   await firebase.getBookingTimesSubColForListing(data?.data().listingId).then((times) => {
-          //     let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
-          //     times.forEach((doc) => {
-          //       listingTimesArr.push(doc);
-          //     });
-          //     // setBookingTimesInfo(listingTimesArr);
-
-          //     let enableDate = [];
-          //     if (listingTimesArr?.length !== 0) {
-          //       enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-          //         let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds);
-          //         if (findIndex === -1) {
-          //           acc.push(curr);
-          //         } else {
-          //         }
-          //         return acc;
-          //       }, []);
-          //       // setAbleBookingTimes(enableDate);
-          //     }
-          //     let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
-          //       let date = s.data().date.toDate();
-          //       return date;
-          //     });
-          //     // setAbleBookingTimes(enableDates);
-          //   });
-          // }
           async function promise() {
             await Promise.all([getListing()]);
           }
@@ -270,33 +235,13 @@ function User() {
   }, []);
   return null;
 }
-
-const style = {
-  header: {
-    flexShrink: "0",
-  },
-  outlet: {
-    flex: "1 0 auto",
-  },
-  footer: {
-    flexShrink: "0",
-  },
-} as const;
-
 function AlertInfo() {
   const alertInfo = useSelector((state: RootState) => state.AlertReducer);
-  return (
-    <Alert
-      alertType={alertInfo.alertType}
-      alertMessage={alertInfo.alertMessage}
-      isAlert={alertInfo.isAlert}
-    />
-  );
+  return <Alert alertType={alertInfo.alertType} alertMessage={alertInfo.alertMessage} isAlert={alertInfo.isAlert} />;
 }
 function App() {
   return (
     <Provider store={store}>
-      {/* <Reset /> */}
       <GlobalStyle />
       <ChatRooms />
       <AlertInfo />

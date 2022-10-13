@@ -1,23 +1,23 @@
-import addressType from "./UploadAddrType";
-type Action =
-  | { type: "UPLOAD_ADDR"; payload: { addrState: addressType } }
-  | { type: "RETURN_INITIAL_ADDR" };
-const addrEmptyInitialState = {
-  countyname: "",
-  townname: "",
-  completeAddr: "",
-  floor: "",
+import addressType from './UploadAddrType';
+import { uploadAddrAction, uploadAddrActionType } from './UploadAddrAction';
+
+const addrEmptyInitialState: addressType = {
+  countyname: '臺北市',
+  countycode: 63000,
+  townname: '',
+  completeAddr: '',
+  floor: null,
+  totalFloor: null,
   latLng: { lat: null, lng: null },
 };
 
-export default function UploadAddr(
-  state = addrEmptyInitialState,
-  action: Action
-) {
+export default function UploadAddr(state = addrEmptyInitialState, action: uploadAddrActionType) {
   switch (action.type) {
-    case "UPLOAD_ADDR":
+    case uploadAddrAction.UPLOAD_ADDR:
       return action.payload.addrState;
-    case "RETURN_INITIAL_ADDR":
+    case uploadAddrAction.CLEAR_TOWN:
+      return { ...state, townname: '' };
+    case uploadAddrAction.RETURN_INITIAL_ADDR:
       return addrEmptyInitialState;
     default:
       return state;

@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import { BtnDiv } from "./Button";
+import React from 'react';
+import styled from 'styled-components';
+import { BtnDiv } from './Button';
 
 const Wrapper = styled.div`
   display: flex;
@@ -10,8 +10,7 @@ const Wrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  overflow: hidden;
-  z-index: 999;
+  z-index: 2;
   justify-content: center;
 `;
 
@@ -21,15 +20,42 @@ const Popup = styled.div`
   margin: auto;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px 20px 32px;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  transition-duration: 0.2s;
+  @media screen and (max-width: 1260px) {
+    width: 50%;
+  }
+  @media screen and (max-width: 960px) {
+    width: 80%;
+  }
+  @media screen and (max-width: 960px) {
+    padding: 40px;
+    font-size: 20px;
+  }
 `;
 
 const Message = styled.div`
-  text-align: center;
-  font-size: 32px;
   letter-spacing: 8px;
+
+  @media screen and (max-width: 960px) {
+    font-size: 28px;
+    white-space: break-spaces;
+  }
+`;
+const MessageArea = styled.div`
+  text-align: center;
+  align-items: center;
+  font-size: 32px;
+  justify-content: center;
   height: 20vh;
   color: #4f5152;
+  display: flex;
+  @media screen and (max-width: 960px) {
+    height: auto;
+    padding: 40px 0 60px;
+  }
 `;
 const BtnArea = styled.div`
   display: flex;
@@ -54,15 +80,17 @@ const Close = styled.div`
   text-align: center;
   border-radius: 50%;
   line-height: 40px;
+  transform: translate(100%, -100%);
   cursor: pointer;
   font-size: 20px;
-  right: 12px;
-  top: 12px;
+
   text-align: center;
   z-index: 1;
+  right: 0;
+  background-color: #fff7f4;
+  transition-duration: 0.2s;
   &:hover {
-    border: solid 1px #ece2d5;
-    background-color: #fff7f4;
+    transform: scale(1.1) translate(100%, -100%);
   }
 `;
 const PopImg = styled(Popup)<{ img: string }>`
@@ -74,6 +102,13 @@ const PopImg = styled(Popup)<{ img: string }>`
   background-image: url(${(props) => props.img});
   display: flex;
   padding: 0px;
+  @media screen and (max-width: 960px) {
+    width: 80%;
+  }
+  @media screen and (max-width: 660px) {
+    width: 70%;
+    height: 28%;
+  }
 `;
 function PopupComponent({
   msg,
@@ -91,16 +126,9 @@ function PopupComponent({
   return (
     <Wrapper>
       <Popup>
-        <Close
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            clickClose();
-          }}
-        >
-          &#215;
-        </Close>
-        <Message>{msg}</Message>
+        <MessageArea>
+          <Message>{msg}</Message>
+        </MessageArea>
         <BtnArea>
           <NotDefaultBtn
             onClick={(e) => {
@@ -137,7 +165,7 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
             clickClose();
           }}
         >
-          x
+          &#10006;
         </Close>
       </PopImg>
     </Wrapper>

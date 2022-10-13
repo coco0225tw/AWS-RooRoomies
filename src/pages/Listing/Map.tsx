@@ -1,32 +1,27 @@
-import {
-  GoogleMap,
-  useJsApiLoader,
-  useLoadScript,
-  Marker,
-} from "@react-google-maps/api";
-import React, { useState, useRef, useMemo, useEffect } from "react";
-import styled from "styled-components";
-import GoogleMapKey from "../../key";
-import logo from "../../assets/searchHouse.png";
+import React, { useState, useRef, useMemo, useEffect } from 'react';
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import styled from 'styled-components';
+
+import logo from '../../assets/searchHouse.png';
 const style = [
   {
-    featureType: "administrative",
-    elementType: "all",
+    featureType: 'administrative',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
     ],
   },
   {
-    featureType: "landscape",
-    elementType: "all",
+    featureType: 'landscape',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
       {
-        hue: "#0066ff",
+        hue: '#0066ff',
       },
       {
         saturation: 74,
@@ -37,29 +32,29 @@ const style = [
     ],
   },
   {
-    featureType: "poi",
-    elementType: "all",
+    featureType: 'poi',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "road",
-    elementType: "all",
+    featureType: 'road',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "road.highway",
-    elementType: "all",
+    featureType: 'road.highway',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
       {
         weight: 0.6,
@@ -73,50 +68,50 @@ const style = [
     ],
   },
   {
-    featureType: "road.highway",
-    elementType: "geometry",
+    featureType: 'road.highway',
+    elementType: 'geometry',
     stylers: [
       {
-        visibility: "on",
+        visibility: 'on',
       },
     ],
   },
   {
-    featureType: "road.arterial",
-    elementType: "all",
+    featureType: 'road.arterial',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "off",
+        visibility: 'off',
       },
     ],
   },
   {
-    featureType: "road.local",
-    elementType: "all",
+    featureType: 'road.local',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "on",
+        visibility: 'on',
       },
     ],
   },
   {
-    featureType: "transit",
-    elementType: "all",
+    featureType: 'transit',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
     ],
   },
   {
-    featureType: "water",
-    elementType: "all",
+    featureType: 'water',
+    elementType: 'all',
     stylers: [
       {
-        visibility: "simplified",
+        visibility: 'simplified',
       },
       {
-        color: "#5f94ff",
+        color: '#5f94ff',
       },
       {
         lightness: 26,
@@ -128,77 +123,25 @@ const style = [
   },
 ];
 function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
-  let map: google.maps.Map;
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: GoogleMapKey,
-    // libraries: ['places'],
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API_KEY,
   });
   const mapStyles = {
-    height: "50vh",
-    width: "100%",
+    height: '50vh',
+    width: '100%',
   };
   const Wrapper = styled.div`
     width: 100vw;
     overflow: show;
-    // position: absolute;
-    // bottom: 0px;
-    // left: 0px;
+
     margin: 80px 0px 0px;
     transform: translateX(-10vw);
   `;
-  const chineseAddr = "台灣台北市信義區吳興街220巷73弄5號";
-  const getGeocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${chineseAddr}&key=${GoogleMapKey}`;
-  const keyword = "學校";
-  const radius = 1000;
-  const LatLng = { lat: 25.026221, lng: 121.560623 };
 
-  const getRestaurantUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${LatLng.lat},${LatLng.lng}&radius=${radius}&keyword=${keyword}&language=zh-TW&key=${GoogleMapKey}`;
-  const [allRestaurants, setAllRestaurants] =
-    useState<{ lat: number; lng: number }[]>();
-  const addrs = useMemo(() => ({ lat: 25.026221, lng: 121.560623 }), []);
-  type YourType = { geometry: { location: { lat: number; lng: number } } };
-  const addrsRef = useRef<{ lat: number; lng: number }>();
-  const [addrState, setAddrState] = useState();
-  useEffect(() => {
-    async function getGeocode() {
-      await fetch(getGeocodeUrl).then((res) => {
-        res.json().then((data) => {
-          // const coordinates = new google.maps.LatLng({
-          //   lat: data.results[0].geometry.location.lat as number,
-          //   lng: data.results[0].geometry.location.lng as number,
-          // });
-          //   setAddrState(coordinates);
-        });
-      });
-    }
-    // getGeocode();
-
-    // async function getRestaurant() {
-    //   await fetch(
-    //     `https://us-central1-rooroomies.cloudfunctions.net/googleMap?lat=${LatLng.lat}&lng=${LatLng.lng}&keyword=${keyword}`
-    //   ).then((res) => {
-    //
-    //     res.json().then((data) => {
-    //
-    //       let allRestaurants: [] = [];
-    //       let allLatLng = data.results.map((p: any, index: number) => {
-    //         return p.geometry.location;
-    //       });
-    //       setAllRestaurants(allLatLng);
-    //     });
-    //   });
-    // }
-    // getRestaurant();
-  }, []);
   return (
     <Wrapper>
       {isLoaded && (
-        <GoogleMap
-          options={{ styles: style }}
-          mapContainerStyle={mapStyles}
-          zoom={14}
-          center={latLng}
-        >
+        <GoogleMap options={{ styles: style }} mapContainerStyle={mapStyles} zoom={14} center={latLng}>
           <Marker
             icon={{
               url: logo,
@@ -207,7 +150,7 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
               anchor: new google.maps.Point(0, 0), // anchor
             }}
             position={latLng}
-          ></Marker>
+          />
         </GoogleMap>
       )}
     </Wrapper>

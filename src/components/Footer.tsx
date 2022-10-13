@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { firebase } from "../utils/firebase";
-import { RootState } from "../redux/rootReducer";
-import { BtnLink } from "./Button";
-import { PopupComponent } from "./Popup";
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { firebase } from '../utils/firebase';
+import { RootState } from '../redux/rootReducer';
+import { alertActionType } from '../redux/Alert/AlertAction';
+import { BtnLink, BtnDiv } from './Button';
+import Logo from '../assets/logo.png';
+import { PopupComponent } from './Popup';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -16,11 +18,15 @@ const Wrapper = styled.div`
   margin: auto;
   background-color: #f3f2ef;
   flex-shrink: 0;
-  // position: fixed;
+  position: absolute;
   bottom: 0px;
   @media screen and (max-width: 960px) {
     position: fixed;
     bottom: 0px;
+    padding: 0 120px;
+  }
+  @media screen and (max-width: 960px) {
+    padding: 0 40px;
   }
 `;
 const SectionWrapper = styled.div`
@@ -55,20 +61,17 @@ const Profile = styled(Link)<{ img: string }>`
   }
 `;
 
-const Notification = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: solid 1px #857c7c;
-  @media screen and (max-width: 960px) {
-    width: 48px;
-    height: 48px;
-    background-size: 48px 48px;
-  }
-`;
 const BtnLinkRwd = styled(BtnLink)`
   display: none;
-  font-size: 28px;
+  font-size: 20px;
+  @media screen and (max-width: 960px) {
+    display: block;
+  }
+`;
+const StyledBtnDiv = styled(BtnDiv)`
+  display: none;
+  box-shadow: none;
+  border-bottom: solid 1px black;
   @media screen and (max-width: 960px) {
     display: block;
   }
@@ -88,16 +91,16 @@ function Footer() {
   async function logOut() {
     firebase.signOutUser().then(() => {
       setIsShown(false);
-      navigate("/signin");
+      navigate('/signin');
       dispatch({
-        type: "OPEN_NOTIFY_ALERT",
+        type: alertActionType.OPEN_NOTIFY_ALERT,
         payload: {
-          alertMessage: "已登出",
+          alertMessage: '已登出',
         },
       });
       setTimeout(() => {
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
     });
@@ -116,13 +119,12 @@ function Footer() {
       <Title>©rooroomies 2022</Title>
       {authChange ? (
         <SectionWrapper>
-          {/* <Notification></Notification> */}
-          <Profile to={"/profile"} img={userInfo.image}></Profile>
-          {/* <BtnDiv onClick={clickSingOut}>登出</BtnDiv> */}
+          <Profile to={'/profile'} img={userInfo.image} />
+          <StyledBtnDiv onClick={clickSingOut}>登出</StyledBtnDiv>
         </SectionWrapper>
       ) : (
         <SectionWrapper>
-          <BtnLinkRwd to={"/signin"}>登入/註冊</BtnLinkRwd>
+          <BtnLinkRwd to={'/signin'}>登入/註冊</BtnLinkRwd>
         </SectionWrapper>
       )}
     </Wrapper>

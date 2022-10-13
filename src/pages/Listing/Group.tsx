@@ -1,72 +1,33 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import { firebase, db, timestamp } from "../../utils/firebase";
-import {
-  getFirestore,
-  getDocs,
-  updateDoc,
-  doc,
-  addDoc,
-  collection,
-  Timestamp,
-  onSnapshot,
-  QueryDocumentSnapshot,
-  DocumentData,
-  orderBy,
-  query,
-  FieldValue,
-  serverTimestamp,
-} from "firebase/firestore";
-import roommatesConditionType from "../../redux/UploadRoommatesCondition/UploadRoommatesConditionType";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/rootReducer";
-import { groupType } from "../../redux/Group/GroupType";
-import { Title } from "../../components/ProfileTitle";
-import { BtnDiv } from "../../components/Button";
-import Hr from "../../components/Hr";
-import SpanLink from "../../components/SpanLink";
-import { PopupComponent, PopupImage } from "../../components/Popup";
-import { Link, useNavigate } from "react-router-dom";
-import { connectStorageEmulator } from "firebase/storage";
-import { Loading } from "../../components/Loading";
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { doc, onSnapshot } from 'firebase/firestore';
+
+import { firebase, db } from '../../utils/firebase';
+
+import { RootState } from '../../redux/rootReducer';
+import { alertActionType } from '../../redux/Alert/AlertAction';
+import { groupAction } from '../../redux/Group/GroupAction';
+import { selectTabAction } from '../../redux/SelectTab/SelectTabAction';
+import { subTabAction } from '../../redux/SubTab/SubTabAction';
+
+import { groupsType } from '../../redux/Group/GroupType';
+import { BtnDiv } from '../../components/Button';
+import Hr from '../../components/Hr';
+import SpanLink from '../../components/SpanLink';
+import { PopupComponent } from '../../components/Popup';
+import { Loading } from '../../components/Loading';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  //   justify-content: center;
   align-items: flex-start;
   width: 100%;
-  // height: 100%;
   margin: auto;
 `;
 
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
-
-const ConditionArea = styled.div`
-  display: flex;
-  //   flex-direction: column;
-  justify-content: space-between;
-  width: 80%;
-`;
-const SubmitBtn = styled.div`
-  background-color: grey;
-  color: white;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 4px;
-  align-self: flex-end;
-  &:hover {
-    background-color: #222;
-  }
-`;
 const SingleGroup = styled.div`
   margin-bottom: 20px;
-  align-items: center;
-  display: flex;
-`;
-const SingleGroupWrapper = styled.div`
   align-items: center;
   display: flex;
 `;
@@ -99,8 +60,6 @@ const UserPic = styled(AddToGroup)<{ img: string }>`
 `;
 const SubTitle = styled.div`
   font-size: 28px;
-  letter-spacing: 12px
-  font-weight: bold;
   color: #4f5152;
   width: 100%;
 `;
@@ -111,23 +70,22 @@ const Span = styled.span`
   font-size: 16px;
   letter-spacing: 1.2px;
   color: grey;
-  position: relative;
+  @media screen and (max-width: 660px) {
+    margin-top: 12px;
+    display: block;
+  }
 `;
-// const HintTextLoading = styled(Loading)`
-//   background-color: black;
-// `;
 const Text = styled.div`
   color: grey;
 `;
 
 function Group({
   match,
-  setMatch,
   peopleAmount,
   listingId,
   listingTitle,
   addUserAsRoommatesCondition,
-  setAddUserAsRoommatesCondition,
+
   notAddUserAsRoommatesConditionAlert,
   isInGroup,
   setIsInGroup,
@@ -142,9 +100,7 @@ function Group({
   listingId: string;
   listingTitle: string;
   match: boolean;
-  setMatch: React.Dispatch<React.SetStateAction<boolean>>;
   addUserAsRoommatesCondition: boolean;
-  setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
   notAddUserAsRoommatesConditionAlert: any;
   isInGroup: boolean;
   setIsInGroup: React.Dispatch<React.SetStateAction<boolean>>;
@@ -156,28 +112,24 @@ function Group({
   setHintTextLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch();
-  const [groups, setGroups] = useState<Array<groupType>>([]);
-
+  const navigate = useNavigate();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
-  const getGroup = useSelector(
-    (state: RootState) => state.GroupReducer
-  ) as Array<groupType>;
+  const getGroup = useSelector((state: RootState) => state.GroupReducer) as groupsType;
+
   const [isShown, setIsShown] = useState<boolean>(false);
   const [createNewGroup, setCreateNewGroup] = useState<boolean>(false);
-  const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] =
-    useState<boolean>(false);
-  const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] =
-    useState<boolean>(false);
+  const [firstTimeAddGroupPopup, setFirstTimeAddGroupPopup] = useState<boolean>(false);
+  const [otherTimeAddGroupPopup, setOtherTimeAddGroupPopup] = useState<boolean>(false);
   const [groupId, setGroupId] = useState<number>();
-  const navigate = useNavigate();
+
   const newGroup = {
     users: Array(peopleAmount).fill(null),
-    chatRoomId: "",
+    chatRoomId: '',
     isBooked: false,
   };
   function addGroup() {
-    dispatch({ type: "ADD_GROUP", payload: { newGroup } });
+    dispatch({ type: groupAction.ADD_GROUP, payload: { newGroup } });
   }
   async function createNewChatRoom(
     uid: string,
@@ -191,42 +143,34 @@ function Group({
     nullUsersArray.splice(0, 1, uid);
 
     dispatch({
-      type: "ADD_USER_TO_GROUP",
+      type: groupAction.ADD_USER_TO_GROUP,
       payload: { groupId, userIndex: 0, userInfo },
     });
 
     setHintTextLoading(true);
-    firebase
-      .createChatRoom(
-        nullUsersArray,
-        listingId,
-        listingTitle,
-        getGroup,
-        groupId
-      )
-      .then(() => {
-        setIsInGroup(true);
-        dispatch({
-          type: "OPEN_SUCCESS_ALERT",
-          payload: {
-            alertMessage: "成功加入",
-          },
-        });
-        setTimeout(() => {
-          dispatch({
-            type: "CLOSE_ALERT",
-          });
-        }, 3000);
-
-        setHintTextLoading(false);
+    firebase.createChatRoom(nullUsersArray, listingId, listingTitle, getGroup, groupId).then(() => {
+      setIsInGroup(true);
+      dispatch({
+        type: alertActionType.OPEN_SUCCESS_ALERT,
+        payload: {
+          alertMessage: '成功加入',
+        },
       });
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+
+      setHintTextLoading(false);
+    });
   }
   async function addUserToFormerGroup() {
     let userIndex = getGroup[groupId].users.indexOf(null);
 
     setHintTextLoading(true);
     dispatch({
-      type: "ADD_USER_TO_GROUP",
+      type: groupAction.ADD_USER_TO_GROUP,
       payload: { groupId, userIndex: userIndex, userInfo },
     });
     let newGroup = [...getGroup];
@@ -246,15 +190,15 @@ function Group({
     ]).then(() => {
       setIsInFullGroup(userIndex + 1 === peopleAmount);
       dispatch({
-        type: "OPEN_SUCCESS_ALERT",
+        type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
-          alertMessage: "成功加入",
+          alertMessage: '成功加入',
         },
       });
       setTimeout(() => {
         setHintTextLoading(false);
         dispatch({
-          type: "CLOSE_ALERT",
+          type: alertActionType.CLOSE_ALERT,
         });
       }, 3000);
       setIsInGroup(true);
@@ -273,19 +217,16 @@ function Group({
   }
   useEffect(() => {
     if (peopleAmount !== undefined) {
-      const groupQuery = doc(db, "listings", listingId);
+      const groupQuery = doc(db, 'listings', listingId);
       const getAllGroup = onSnapshot(groupQuery, (snapshot) => {
         const groups = [...snapshot.data()!.matchGroup];
-        dispatch({ type: "ADD_GROUP_FROM_FIREBASE", payload: { groups } });
-        let inGroup = groups.some((g) =>
-          g.users
-            .filter((u) => u !== null)
-            .some((u) => u.userId === userInfo.uid)
-        );
+        dispatch({
+          type: groupAction.ADD_GROUP_FROM_FIREBASE,
+          payload: { groups },
+        });
+        let inGroup = groups.some((g) => g.users.filter((u) => u !== null).some((u) => u.userId === userInfo.uid));
         if (inGroup) {
-          let findGroup = groups.find((g) =>
-            g.users.some((u: any) => u && u.userId === userInfo.uid)
-          );
+          let findGroup = groups.find((g) => g.users.some((u: any) => u && u.userId === userInfo.uid));
           setIsInFullGroup(!findGroup.users.includes(null));
           if (!findGroup.users.includes(null)) {
             setCanBook(!findGroup.isBooked);
@@ -300,12 +241,11 @@ function Group({
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
-          msg={`請先進行登入註冊`}
+          msg={`請先進行\n登入註冊進行登入註冊`}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={() => setIsShown(false)}
-          clickFunction={() => navigate("/signin")}
+          clickFunction={() => navigate('/signin')}
         />
       )}
       {firstTimeAddGroupPopup && (
@@ -317,13 +257,7 @@ function Group({
             setFirstTimeAddGroupPopup(false);
           }}
           clickFunction={() => {
-            createNewChatRoom(
-              userInfo.uid,
-              listingId,
-              listingTitle,
-              getGroup,
-              groupId
-            );
+            createNewChatRoom(userInfo.uid, listingId, listingTitle, getGroup, groupId);
             setFirstTimeAddGroupPopup(false);
           }}
         />
@@ -338,212 +272,102 @@ function Group({
           }}
           clickFunction={() => {
             addUserToFormerGroup();
-            // createNewChatRoom(
-            //   userInfo.uid,
-            //   listingId,
-            //   listingTitle,
-            //   getGroup,
-            //   groupId
-            // );
             setOtherTimeAddGroupPopup(false);
           }}
         />
       )}
-      <Hr style={{ margin: "40px 0px" }} />
-      <SubTitle style={{ marginBottom: "32px" }}>
-        湊團看房{" "}
+      <Hr style={{ margin: '40px 0px' }} />
+      <SubTitle style={{ marginBottom: '32px' }}>
+        湊團看房{' '}
         {hintTextLoading ? (
-          // <span>
           <Span
             style={{
-              // width: "100px",
-              // height: "100px",
-              position: "relative",
+              position: 'relative',
             }}
           >
             <Loading
               style={{
-                left: "0",
-                top: "0",
-                transform: "scale(0.1) translate(-400%,-350%)",
-                position: "absolute",
-                width: "auto",
-                height: "auto",
-                zIndex: "1",
+                left: '0',
+                top: '0',
+                transform: 'scale(0.1) translate(-400%,-350%)',
+                position: 'absolute',
+                width: 'auto',
+                height: 'auto',
+                zIndex: '1',
               }}
             />
           </Span>
-        ) : // </span>
-        authChange && !addUserAsRoommatesCondition ? (
+        ) : authChange && !addUserAsRoommatesCondition ? (
           <Span>
             尚未填寫條件,到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "aboutMe" },
+                  type: selectTabAction.SELECT_TYPE,
+                  payload: { tab: 'aboutMe' },
                 });
               }}
             />
             更新
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          !isInFullGroup ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && !isInFullGroup ? (
           <Span>
             你已加入湊團，到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "allHouseHunting" },
+                  type: selectTabAction.SELECT_TYPE,
+                  payload: { tab: 'allHouseHunting' },
                 });
 
                 dispatch({
-                  type: "SELECT_SUB_TAB",
+                  type: subTabAction.SELECT_SUB_TAB,
                   payload: {
-                    subTab: isInFullGroup ? "尚未預約" : "等待湊團",
+                    subTab: isInFullGroup ? '尚未預約' : '等待湊團',
                   },
                 });
               }}
             />
             查看
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          !canBook ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && isInFullGroup && !canBook ? (
           <Span>
             你已預約，到
             <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
+              path={'/profile'}
+              msg={'個人頁面'}
               otherFn={() => {
                 dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "allHouseHunting" },
+                  type: selectTabAction.SELECT_TYPE,
+                  payload: { tab: 'allHouseHunting' },
                 });
 
                 dispatch({
-                  type: "SELECT_SUB_TAB",
+                  type: subTabAction.SELECT_SUB_TAB,
                   payload: {
-                    subTab: "已預約",
+                    subTab: '已預約',
                   },
                 });
               }}
             />
             查看
           </Span>
-        ) : authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          canBook ? (
+        ) : authChange && addUserAsRoommatesCondition && match && isInGroup && isInFullGroup && canBook ? (
           <Span>已湊滿團，可以預約</Span>
         ) : authChange && addUserAsRoommatesCondition && match && !isInGroup ? (
           <Span>符合室友條件</Span>
         ) : (
-          authChange &&
-          addUserAsRoommatesCondition &&
-          !match && <Span>不符合室友條件</Span>
+          authChange && addUserAsRoommatesCondition && !match && <Span>不符合室友條件</Span>
         )}
-        {/* {authChange && !addUserAsRoommatesCondition && (
-          <Span>
-            尚未填寫條件,到
-            <SpanLink
-              path={"/profile"}
-              msg={"個人頁面"}
-              otherFn={() => {
-                dispatch({
-                  type: "SELECT_TYPE",
-                  payload: { tab: "aboutMe" },
-                });
-              }}
-            />
-            更新
-          </Span>
-        )} */}
-        {/* {authChange && addUserAsRoommatesCondition && match && !isInGroup && (
-          <Span>符合室友條件</Span>
-        )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          !isInFullGroup && (
-            <Span>
-              你已加入湊團，到
-              <SpanLink
-                path={"/profile"}
-                msg={"個人頁面"}
-                otherFn={() => {
-                  dispatch({
-                    type: "SELECT_TYPE",
-                    payload: { tab: "allHouseHunting" },
-                  });
-
-                  dispatch({
-                    type: "SELECT_SUB_TAB",
-                    payload: {
-                      subTab: isInFullGroup ? "尚未預約" : "等待湊團",
-                    },
-                  });
-                }}
-              />
-              查看
-            </Span>
-          )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          !canBook && (
-            <Span>
-              你已預約，到
-              <SpanLink
-                path={"/profile"}
-                msg={"個人頁面"}
-                otherFn={() => {
-                  dispatch({
-                    type: "SELECT_TYPE",
-                    payload: { tab: "allHouseHunting" },
-                  });
-
-                  dispatch({
-                    type: "SELECT_SUB_TAB",
-                    payload: {
-                      subTab: "已預約",
-                    },
-                  });
-                }}
-              />
-              查看
-            </Span>
-          )} */}
-        {/* {authChange &&
-          addUserAsRoommatesCondition &&
-          match &&
-          isInGroup &&
-          isInFullGroup &&
-          canBook && <Span>已湊滿團，可以預約</Span>} */}
-        {/* {authChange && addUserAsRoommatesCondition && !match && (
-          <Span>不符合室友條件</Span>
-        )} */}
       </SubTitle>
       {getGroup.length === 0 && match && (
         <Text>
           目前無人湊團
-          <span style={{ display: "inline-block", left: "12px" }}>
+          <span style={{ display: 'inline-block', left: '12px' }}>
             <BtnDiv
               onClick={() => {
                 setCreateNewGroup(true);
@@ -561,7 +385,6 @@ function Group({
       {getGroup.length !== 0 &&
         getGroup.map((group, gIndex) => (
           <SingleGroup key={`group${gIndex}`}>
-            {/* <SingleGroupWrapper> */}
             <GroupIndex>團{gIndex + 1}</GroupIndex>
             {group.users.map((user, index) =>
               user === null ? (
@@ -575,26 +398,26 @@ function Group({
                       addUserToGroup(gIndex, index);
                     } else if (match && isInGroup) {
                       dispatch({
-                        type: "OPEN_ERROR_ALERT",
+                        type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
-                          alertMessage: "不可以重新加入",
+                          alertMessage: '不可以重新加入',
                         },
                       });
                       setTimeout(() => {
                         dispatch({
-                          type: "CLOSE_ALERT",
+                          type: alertActionType.CLOSE_ALERT,
                         });
                       }, 3000);
                     } else if (!match) {
                       dispatch({
-                        type: "OPEN_ERROR_ALERT",
+                        type: alertActionType.OPEN_ERROR_ALERT,
                         payload: {
-                          alertMessage: "不符合室友條件，無法加入",
+                          alertMessage: '不符合室友條件，無法加入',
                         },
                       });
                       setTimeout(() => {
                         dispatch({
-                          type: "CLOSE_ALERT",
+                          type: alertActionType.CLOSE_ALERT,
                         });
                       }, 3000);
                     }
@@ -607,16 +430,13 @@ function Group({
                 <UserPic key={`user${index}`} img={user.userPic}></UserPic>
               )
             )}
-            {/* <BtnDiv onClick={() => removeGroup(gIndex)}>刪除團</BtnDiv> */}
-            {/* </SingleGroupWrapper> */}
           </SingleGroup>
         ))}
       {getGroup.length !== 0 && match && !isInGroup && !createNewGroup && (
-        <span style={{ display: "inline-block" }}>
+        <span style={{ display: 'inline-block' }}>
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(true);
-
               if (match) {
                 addGroup();
               }
@@ -627,12 +447,12 @@ function Group({
         </span>
       )}
       {getGroup.length !== 0 && match && !isInGroup && createNewGroup && (
-        <span style={{ display: "inline-block" }}>
+        <span style={{ display: 'inline-block' }}>
           <BtnDiv
             onClick={() => {
               setCreateNewGroup(false);
               dispatch({
-                type: "REMOVE_GROUP",
+                type: groupAction.REMOVE_GROUP,
               });
             }}
           >

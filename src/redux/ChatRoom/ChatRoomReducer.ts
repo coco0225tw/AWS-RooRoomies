@@ -1,27 +1,19 @@
-interface chatRoomType {
-  isOpen: boolean;
-  chatRoom: boolean;
-  chatRoomOpenState: boolean;
-  chatRoomId: null | string;
-}
-type Action =
-  | { type: "OPEN_CHAT" }
-  | { type: "CLOSE_CHAT" }
-  | { type: "OPEN_CHATROOM"; payload: { chatRoomId: string } }
-  | { type: "CHECK_CHATROOM"; payload: { chatRoom: boolean } }
-  | { type: "OPEN_CHATROOM_STATE" }
-  | { type: "CLOSE_CHATROOM_STATE" }
-  | { type: "INITIAL_CHATROOM_STATE" };
+import chatRoomType from "./ChatRoomType";
+import { chatRoomAction, chatRoomActionType } from "./ChatRoomAction";
+
 const alertInitialState = {
-  isOpen: false,
   chatRoom: false,
+  isOpen: false,
   chatRoomOpenState: false,
   chatRoomId: null,
-};
+} as chatRoomType;
 
-export default function ChatRoom(state = alertInitialState, action: Action) {
+export default function ChatRoom(
+  state = alertInitialState,
+  action: chatRoomActionType
+) {
   switch (action.type) {
-    case "OPEN_CHAT": {
+    case chatRoomAction.OPEN_CHAT: {
       let newState = { ...state };
       return {
         ...newState,
@@ -29,41 +21,43 @@ export default function ChatRoom(state = alertInitialState, action: Action) {
       };
     }
 
-    case "CLOSE_CHAT": {
+    case chatRoomAction.CLOSE_CHAT: {
       let newState = { ...state };
       return {
         ...newState,
         isOpen: false,
       };
     }
-    case "OPEN_CHATROOM": {
+    case chatRoomAction.OPEN_CHATROOM: {
       let newState = { ...state };
       return {
         ...newState,
         chatRoomId: action.payload.chatRoomId,
       };
     }
-    case "CHECK_CHATROOM": {
+    case chatRoomAction.CHECK_CHATROOM: {
       let newState = { ...state };
       return {
         ...newState,
-        chatRoomId: action.payload.chatRoom,
+        chatRoom: action.payload.chatRoom,
       };
     }
-    case "OPEN_CHATROOM_STATE": {
+    case chatRoomAction.OPEN_CHATROOM_STATE: {
       let newState = { ...state };
       return {
         ...newState,
         chatRoomOpenState: true,
       };
     }
-    case "CLOSE_CHATROOM_STATE": {
+    case chatRoomAction.CLOSE_CHATROOM_STATE: {
       let newState = { ...state };
       return {
         ...newState,
         chatRoomOpenState: false,
       };
     }
+    case chatRoomAction.INITIAL_CHATROOM_STATE:
+      return alertInitialState;
     default:
       return state;
   }

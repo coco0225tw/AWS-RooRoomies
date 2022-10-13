@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
-import Logo from "../assets/noHouse.png";
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import Logo from '../assets/noHouse.png';
 
 const NoLogo = styled.div`
   width: 10vw;
@@ -18,7 +18,7 @@ const NoText = styled.div`
 `;
 const NoArea = styled.div`
   margin: auto;
-  margin-top: 10vh;
+  margin: 5vh auto;
   display: flex;
   align-items: center;
 `;

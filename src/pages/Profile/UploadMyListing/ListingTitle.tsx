@@ -1,22 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import styled from "styled-components";
-import { useForm, Controller } from "react-hook-form";
-import titleType from "../../../redux/UploadTitle/UploadTitleType";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { RootState } from "../../../redux/rootReducer";
-import { BtnDiv, BtnLink, InputBtn } from "../../../components/Button";
-import arrow from "../../../assets/arrow.png";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styled from 'styled-components';
+import { useForm, Controller } from 'react-hook-form';
+
 import {
-  FormLegend,
   FormGroup,
   FormLabel,
   FormInputWrapper,
   FormCheckInput,
-  FormCheck,
   FormCheckLabel,
   FormControl,
-} from "../../../components/InputArea";
+  FormCheck,
+  ErrorText,
+  LabelArea,
+  StyledForm,
+} from '../../../components/InputArea';
+import Calendar from 'react-calendar';
+
+import CalendarContainer from '../../../components/Calendar';
+import { RootState } from '../../../redux/rootReducer';
+import { BtnDiv, InputBtn, SubmitBtn } from '../../../components/Button';
+import arrow from '../../../assets/arrow.png';
+import titleType from '../../../redux/UploadTitle/UploadTitleType';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -24,69 +30,47 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  // background-color: lightgrey;
 `;
 
-const SubmitBtn = styled(BtnDiv)`
-  margin-top: 20px;
-  align-self: flex-end;
-`;
-const TextArea = styled.textarea`
-  height: 20vh;
-  width: 100%;
-  letter-spacing: 1.6px;
-  font-size: 20px;
-  border-radius: 8px;
-  border: solid 1px #979797;
-  padding: 8px;
-  margin-top: 12px;
-`;
-const AlertText = styled.div`
-  color: #c77155;
-  position: absolute;
-  right: 0;
-  top: 100%;
-`;
-const StyledFormControl = styled(FormControl)`
-  // &:focus {
-  //   outline: #c77155;
-  // }
-`;
 const StyledFormInputWrapper = styled(FormInputWrapper)`
   margin-left: 40px;
   margin-top: 0px;
 `;
-const DropDownMenuWrapper = styled(StyledFormInputWrapper)`
-  margin-left: 0px;
-  position: absolute;
-  background-color: #fff;
-  z-index: 1;
-  top: 48px;
-  box-shadow: 0px 0px 3px #bbbbbb;
-  // align-items: flex-start;
-  width: 60%;
-  flex-direction: column;
-  padding: 8px inherit;
-`;
+
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)`
+  // width: 100%;
   display: none;
   &:checked + ${CheckedFormCheckLabel} {
     color: #c77155;
   }
 `;
+const TextArea = styled.textarea`
+  width: 100%;
+  height: 20vh;
+  border-radius: 12px;
+  padding: 8px;
+  letter-spacing: 1.6px;
+  font-size: 20px;
+  color: #4f5152;
+  margin-top: 12px;
+  &:focus {
+    outline: #4f5152;
+  }
+`;
 const StyledFormLabel = styled(FormLabel)`
   flex-shrink: 0;
 `;
+const StyledFormControl = styled(FormControl)``;
 const DropDown = styled(StyledFormLabel)`
   cursor: pointer;
-  // color: #c77155;
+  color: #c77155;
   border-color: #c77155;
-  font-size: 20px;
+
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 `;
 const DropDownIcon = styled.div<{ openDropDown: boolean }>`
   width: 20px;
@@ -94,23 +78,25 @@ const DropDownIcon = styled.div<{ openDropDown: boolean }>`
   background-size: 20px 20px;
   background-image: url(${arrow});
   background-position: center;
-  transform: ${(props) =>
-    props.openDropDown ? "rotate(180deg)" : "rotate(0deg)"};
+  transform: ${(props) => (props.openDropDown ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition-duration: 0.2s;
-  margin-left: 20px;
   border: solid 1px #fff7f4;
+  margin-left: 12px;
+`;
+const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
+  display: ${(props) => (props.openDropDown ? 'block' : 'none')};
+  position: absolute;
+  left: 10%;
+  background-color: #ffffff;
+  z-index: 2;
 `;
 
-function ListingTitle({
-  setClickTab,
-}: {
-  setClickTab: React.Dispatch<React.SetStateAction<string>>;
-}) {
+function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const titleInfo = useSelector((state: RootState) => state.UploadTitleReducer);
+
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
-  const [selectedForm, setSelectedForm] = useState<string>("請選擇");
+  const [selectedForm, setSelectedForm] = useState<string>('請選擇');
   const {
     register,
     handleSubmit,
@@ -119,107 +105,91 @@ function ListingTitle({
     control,
   } = useForm();
   const onSubmit = (data) => {
+    console.log(data);
     submit(data);
-    setClickTab("地址");
+    setClickTab('地址');
   };
-  const initialTitleState =
-    // userInfo!.userListingId?.length !== 0
-    //   ?
-    titleInfo;
+  const initialTitleState = titleInfo;
 
-  // : {
-  //     title: "",
-  //     totalSq: "",
-  //     form: "",
-  //     environmentDescription: "",
-  //   };
-
-  const titleFormGroups = [
-    { label: "名稱", key: "title" },
-    { label: "坪數", key: "totalSq" },
-    { label: "規格 ", key: "form" },
-    { label: "描述 ", key: "environmentDescription" },
-    { label: "連絡電話 ", key: "phone" },
-    { label: "入住時間 ", key: "moveInDate" },
-  ];
+  const valid = {
+    required: {
+      value: true,
+      message: '※必填欄位',
+    },
+  };
   const hookFormGroup = [
     {
-      label: "名稱",
-      key: "title",
-      required: {
-        value: true,
-        message: "※必填欄位",
+      label: '名稱',
+      key: 'title',
+      required: valid.required,
+      minLength: {
+        value: 2,
+        message: '※至少2個字元',
       },
-      pattern: null,
-      // maxLength: {
-      //   value: 5,
-      //   message: "※請輸入至少五個字",
-      // },
+      maxLength: {
+        value: 20,
+        message: '※不可超過20個字元',
+      },
     },
     {
-      label: "總坪數",
-      key: "totalSq",
-      required: {
-        value: true,
-        message: "※必填欄位",
+      label: '總坪數',
+      key: 'totalSq',
+      required: valid.required,
+      min: {
+        value: 1,
+        message: '※至少1坪',
+      },
+      max: {
+        value: 100,
+        message: '※最多100坪',
       },
       pattern: {
-        value: /^([1-9]([0-9]*))$/,
-        message: "※請輸入正確的坪數",
+        value: /^\d*(\.\d{0,2})?$/,
+        message: '※請輸入數字，且小數點不可大於兩位',
       },
-      // maxLength: null,
     },
     {
-      label: "規格",
-      key: "form",
-      required: {
-        value: true,
-        message: "※必填欄位",
-      },
-      // maxLength: null,
-      pattern: null,
+      label: '規格',
+      key: 'form',
+      required: valid.required,
       options: [
-        { label: "公寓", key: "apartment" },
-        { label: "電梯大樓", key: "flat" },
+        { label: '公寓', key: 'apartment' },
+        { label: '電梯大樓', key: 'flat' },
       ],
     },
     {
-      label: "描述",
-      key: "environmentDescription",
-      // maxLength: null,
-      required: null,
-      pattern: null,
+      label: '描述(最多100字)',
+      key: 'environmentDescription',
     },
     {
-      label: "連絡電話(手機)",
-      key: "phone",
-      required: {
-        value: true,
-        message: "※必填欄位",
-      },
-      // maxLength: null,
+      label: '連絡電話(手機)',
+      key: 'phone',
+      required: valid.required,
       pattern: {
         value: /^09[0-9]{8}$/,
-        message: "※請輸入正確的手機號碼",
+        message: '※請輸入正確的手機號碼',
       },
     },
     {
-      label: "入住時間 ",
-      key: "moveInDate",
-      // maxLength: null,
-      required: {
-        value: true,
-        message: "※必填欄位",
-      },
-      pattern: null,
+      label: '入住時間 ',
+      key: 'moveInDate',
+      required: valid.required,
     },
   ];
   const [titleState, setTitleState] = useState<titleType>(initialTitleState);
+  const [selectedDate, setSelectedDate] = useState<Date>(titleInfo.moveInDate && titleInfo.moveInDate);
+  type tileDisabledType = { date: Date };
+  const tileDisabled = ({ date }: tileDisabledType) => {
+    return date < new Date();
+  };
+
+  function clickDate(date: Date) {
+    setSelectedDate(date);
+  }
   function submit(titleState: titleType) {
-    dispatch({ type: "UPLOAD_TITLE", payload: { titleState } });
+    dispatch({ type: 'UPLOAD_TITLE', payload: { titleState } });
   }
   useEffect(() => {
-    // const object = localStorage.getItem("object");
     for (const [key, value] of Object.entries(titleInfo)) {
       setValue(key, value, {
         shouldValidate: true,
@@ -229,114 +199,131 @@ function ListingTitle({
   }, [titleInfo]);
   return (
     <Wrapper>
-      {/* <form onSubmit={handleSubmit(onSubmit)}>
-        {hookFormGroup.map(({ label, key, required, pattern, options }) => (
-          <FormGroup key={key}>
-            <FormLabel htmlFor={key}>{label}</FormLabel>
+      <StyledForm onSubmit={handleSubmit(onSubmit)}>
+        {hookFormGroup.map((info: any) => (
+          <FormGroup key={info.key}>
+            <LabelArea>
+              <FormLabel htmlFor={info.key}>{info.label}</FormLabel>
+              <ErrorText>{errors[info.key] && (errors[info.key].message as string)}</ErrorText>
+              {info.key === 'moveInDate' && selectedDate && (
+                <span style={{ color: '#c77155' }}>
+                  {selectedDate.getFullYear() +
+                    '-' +
+                    ('0' + (selectedDate.getMonth() + 1)).slice(-2) +
+                    '-' +
+                    ('0' + selectedDate.getDate()).slice(-2)}
+                </span>
+              )}
+            </LabelArea>
             <FormInputWrapper>
-              {options ? (
+              {info.options ? (
                 <React.Fragment>
-                  <DropDown
-                    onClick={() =>
-                      openDropDown
-                        ? setOpenDropDown(false)
-                        : setOpenDropDown(true)
-                    }
-                  >
-                    {selectedForm}
+                  <DropDown onClick={() => (openDropDown ? setOpenDropDown(false) : setOpenDropDown(true))}>
+                    {titleInfo.form !== '' ? titleInfo.form : selectedForm}
                     <span>
                       <DropDownIcon openDropDown={openDropDown} />
                     </span>
                   </DropDown>
 
-                  {openDropDown && (
-                    <DropDownMenuWrapper
-                      id={key}
-                      aria-invalid={errors[key] ? "true" : "false"}
-                    >
-                      {options.map((o, oIndex) => (
-                        <React.Fragment key={`${o.key}${oIndex}`}>
-                          <FormCheck style={{ padding: "8px 0px" }}>
-                            <CheckedFormCheckInput
-                              type="radio"
-                              name={o.key}
-                              id={`${o.key}`}
-                              {...register(key, {
-                                required: required,
-                                pattern: pattern,
-                              })}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                               
-                                  setSelectedForm(o.label);
-                                  setOpenDropDown(false);
-                                }
-                              }}
-                            />
-                            <CheckedFormCheckLabel htmlFor={`${o.key}`}>
-                              {o.label}
-                            </CheckedFormCheckLabel>
-                          </FormCheck>
-                        </React.Fragment>
-                      ))}
-                    </DropDownMenuWrapper>
-                  )}
+                  <DropDownMenuWrapper
+                    openDropDown={openDropDown}
+                    id={info.key}
+                    aria-invalid={errors[info.key] ? 'true' : 'false'}
+                  >
+                    <Controller
+                      control={control}
+                      name={info.key}
+                      rules={{
+                        required: info.required && info.required,
+                        pattern: info.pattern && info.pattern,
+                        minLength: info.minLength && info.minLength,
+                        maxLength: info.maxLength && info.maxLength,
+                      }}
+                      render={({ field: { onChange, ...props } }) =>
+                        info.options.map((o, oIndex) => (
+                          <React.Fragment key={`${o.key}${oIndex}`}>
+                            <FormCheck style={{ padding: '8px 0px' }}>
+                              <CheckedFormCheckInput
+                                type="radio"
+                                id={`${o.key}`}
+                                key={`${o.key}${oIndex}`}
+                                defaultChecked={titleInfo.form === o.label}
+                                name={o.label}
+                                value-={o.label}
+                                onChange={(e) => {
+                                  onChange(o.label);
+                                  if (e.target.checked) {
+                                    setSelectedForm(o.label);
+                                    setOpenDropDown(false);
+                                  }
+                                }}
+                              />
+                              <CheckedFormCheckLabel htmlFor={`${o.key}`}>{o.label}</CheckedFormCheckLabel>
+                            </FormCheck>
+                          </React.Fragment>
+                        ))
+                      }
+                    />
+                  </DropDownMenuWrapper>
                 </React.Fragment>
-              ) : key === "environmentDescription" ? (
+              ) : info.key === 'moveInDate' ? (
+                <Controller
+                  control={control}
+                  name={info.key}
+                  rules={{
+                    required: info.required && info.required,
+                    pattern: info.pattern && info.pattern,
+                    minLength: info.minLength && info.minLength,
+                    maxLength: info.maxLength && info.maxLength,
+                  }}
+                  render={({ field }) => (
+                    <CalendarContainer>
+                      <Calendar
+                        {...field}
+                        defaultValue={titleInfo.moveInDate}
+                        onClickDay={clickDate}
+                        selectRange={false}
+                        tileDisabled={tileDisabled}
+                      />
+                    </CalendarContainer>
+                  )}
+                />
+              ) : info.key === 'environmentDescription' ? (
                 <TextArea
-                  id={key}
-                  {...register(key, {
-                    required: required,
-                    pattern: pattern,
+                  id={info.key}
+                  {...register(info.key, {
+                    required: info.required && info.required,
+                    pattern: info.pattern && info.pattern,
+                    minLength: info.minLength && info.minLength,
+                    maxLength: info.maxLength && info.maxLength,
                   })}
-                  aria-invalid={errors[key] ? "true" : "false"}
+                  aria-invalid={errors[info.key] ? 'true' : 'false'}
                 />
               ) : (
                 <StyledFormControl
-                  id={key}
-                  {...register(key, {
-                    required: required,
-                    pattern: pattern,
-                    // maxLength: maxLength,
+                  id={info.key}
+                  {...register(info.key, {
+                    required: info.required && info.required,
+                    pattern: info.pattern && info.pattern,
+                    minLength: info.minLength && info.minLength,
+                    maxLength: info.maxLength && info.maxLength,
+                    min: info.min && info.min,
+                    max: info.max && info.max,
                   })}
                   onKeyDown={(e) => {
-                    if (e.key == " ") {
+                    if (e.key == ' ') {
                       e.preventDefault();
                     }
                   }}
-                  aria-invalid={errors[key] ? "true" : "false"}
+                  aria-invalid={errors[info.key] ? 'true' : 'false'}
                 />
               )}
-              <AlertText>
-                {errors[key] && (errors[key].message as string)}
-              </AlertText>
             </FormInputWrapper>
           </FormGroup>
         ))}
 
-        <InputBtn type="submit" />
-      </form> */}
-      {titleFormGroups.map(({ label, key }) => (
-        <FormGroup key={key}>
-          <FormLabel>{label}</FormLabel>
-          <FormInputWrapper>
-            <FormControl
-              value={titleState[key as keyof titleType] as string}
-              onChange={(e) =>
-                setTitleState({ ...titleState, [key]: e.target.value })
-              }
-            />
-          </FormInputWrapper>
-        </FormGroup>
-      ))}
-      <SubmitBtn
-        onClick={() => {
-          submit(titleState);
-          setClickTab("地址");
-        }}
-      >
-        儲存
-      </SubmitBtn>
+        <SubmitBtn type="submit" value="儲存" />
+      </StyledForm>
     </Wrapper>
   );
 }

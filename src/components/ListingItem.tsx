@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
-import { RootState } from "../redux/rootReducer";
-import { firebase } from "../utils/firebase";
+import { RootState } from '../redux/rootReducer';
+import { firebase } from '../utils/firebase';
+import { getFavoriteAction } from '../redux/GetFavoriteListing/GetFavoriteListingAction';
 
-import { PopupComponent } from "./Popup";
+import { PopupComponent } from './Popup';
 
-import addIcon from "../assets/add.png";
-import unAddIcon from "../assets/unAdd.png";
-import likedIcon from "../assets/heart.png";
-import unLikedIcon from "../assets/unHeart.png";
-
+import addIcon from '../assets/add.png';
+import unAddIcon from '../assets/unAdd.png';
+import likedIcon from '../assets/heart.png';
+import unLikedIcon from '../assets/unHeart.png';
 interface ImgProps {
   img: string;
 }
@@ -40,8 +40,7 @@ const IconArea = styled.div`
   transition-duration: 0.2s;
 `;
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
-  background-image: url(${(props) =>
-    props.isLiked ? likedIcon : unLikedIcon});
+  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
   right: 8px;
 `;
 
@@ -64,7 +63,7 @@ const CardWrapper = styled.div`
 
 const MainImage = styled.div<ImgProps>`
   aspect-ratio: 1 / 1;
-  background-image: url(${(props) => (props.img ? props.img : "")});
+  background-image: url(${(props) => (props.img ? props.img : '')});
   height: 200px;
 
   background-position: cover;
@@ -90,9 +89,6 @@ const Rent = styled.div`
   font-size: 28px;
   color: #c77155;
   align-self: flex-end;
-  //   bottom: 0;
-  //   flex-grow: 1;
-  //   vertical-align: text-bottom;
 `;
 
 const Addr = styled(Detail)``;
@@ -111,20 +107,13 @@ const DetailWrapper = styled.div`
 function ListingItem({ listingDocData }: { listingDocData: any }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const favoriteLists = useSelector(
-    (state: RootState) => state.GetFavoriteListsReducer
-  );
-  const compareLists = useSelector(
-    (state: RootState) => state.GetCompareListsReducer
-  );
+  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
+  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
-  function handleLiked(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isLiked: boolean
-  ) {
+  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
     e.preventDefault();
     if (authChange) {
@@ -134,19 +123,16 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         }
         addToFavoriteLists();
         dispatch({
-          type: "ADD_TO_FAVORITELISTS",
+          type: getFavoriteAction.ADD_TO_FAVORITE_LISTS,
           payload: { id: listingDocData.id },
         });
       } else {
         async function removeFromFavoriteLists() {
-          await firebase.removeFromFavoriteLists(
-            userInfo.uid,
-            listingDocData.id
-          );
+          await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
         }
         removeFromFavoriteLists();
         dispatch({
-          type: "REMOVE_FROM_FAVORITELISTS",
+          type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
           payload: { id: listingDocData.id },
         });
       }
@@ -155,10 +141,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     }
   }
 
-  function handleCompare(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isCompared: boolean
-  ) {
+  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
     if (authChange) {
@@ -168,20 +151,17 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         }
         addToCompareLists();
         dispatch({
-          type: "ADD_TO_COMPARELISTS",
+          type: 'ADD_TO_COMPARELISTS',
           payload: { id: listingDocData.id },
         });
       } else {
         async function removeFromCompareLists() {
-          await firebase.removeFromCompareLists(
-            userInfo.uid,
-            listingDocData.id
-          );
+          await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
         }
         removeFromCompareLists();
         handleDnd(e, isCompared);
         dispatch({
-          type: "REMOVE_FROM_COMPARELISTS",
+          type: 'REMOVE_FROM_COMPARELISTS',
           payload: { id: listingDocData.id },
         });
       }
@@ -189,10 +169,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
       setIsShown(true);
     }
   }
-  function handleDnd(
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    isCompared: boolean
-  ) {
+  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
     e.stopPropagation();
     e.preventDefault();
     if (isCompared) {
@@ -201,7 +178,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
       }
       removeFromDndLists();
       dispatch({
-        type: "REMOVE_FROM_DNDLISTS",
+        type: 'REMOVE_FROM_DNDLISTS',
         payload: { id: listingDocData.id },
       });
     }
@@ -211,7 +188,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     setIsShown(false);
   }
   function clickFunction() {
-    navigate("/signin");
+    navigate('/signin');
   }
   useEffect(() => {}, [listingDocData]);
 
@@ -219,8 +196,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
     <Wrapper>
       {isShown && (
         <PopupComponent
-          // style={{ zIndex: '1' }}
-          msg={`請先進行登入註冊`}
+          msg={'請先進行\n登入註冊進行\n登入註冊'}
           notDefaultBtn={`取消`}
           defaultBtn={`登入`}
           clickClose={clickClose}
@@ -250,9 +226,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
               {listingDocData?.data().townName}
             </Addr>
 
-            <PeopleAmount>
-              可入住人數:{listingDocData?.data().peopleAmount}
-            </PeopleAmount>
+            <PeopleAmount>可入住人數:{listingDocData?.data().peopleAmount}</PeopleAmount>
             <Time></Time>
           </DetailWrapper>
 

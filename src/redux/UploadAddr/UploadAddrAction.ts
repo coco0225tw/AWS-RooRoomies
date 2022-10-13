@@ -1,12 +1,21 @@
-// import addressType from './UploadAddrType';
+import addressType from './UploadAddrType';
 
-// export enum UploadAddrAction {
-//   UPLOAD_ADDR = `UPLOAD_ADDR`,
-// }
+enum uploadAddrAction {
+  UPLOAD_ADDR = 'UPLOAD_ADDR',
+  CLEAR_TOWN = 'CLEAR_TOWN',
+  RETURN_INITIAL_ADDR = 'RETURN_INITIAL_ADDR',
+}
 
-// export function uploadAddr(obj: addressType) {
-//   return {
-//     type: UploadAddrAction.UPLOAD_ADDR,
-//     payload: { obj },
-//   };
-// }
+interface uploadAddr {
+  type: uploadAddrAction.UPLOAD_ADDR;
+  payload: { addrState: addressType };
+}
+interface clearTown {
+  type: uploadAddrAction.CLEAR_TOWN;
+}
+interface returnInitialAddr {
+  type: uploadAddrAction.RETURN_INITIAL_ADDR;
+}
+
+type uploadAddrActionType = uploadAddr | returnInitialAddr | clearTown;
+export { uploadAddrAction, uploadAddrActionType };
