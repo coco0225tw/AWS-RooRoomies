@@ -102,6 +102,13 @@ const PopImg = styled(Popup)<{ img: string }>`
   background-image: url(${(props) => props.img});
   display: flex;
   padding: 0px;
+  @media screen and (max-width: 960px) {
+    width: 80%;
+  }
+  @media screen and (max-width: 660px) {
+    width: 70%;
+    height: 28%;
+  }
 `;
 function PopupComponent({
   msg,

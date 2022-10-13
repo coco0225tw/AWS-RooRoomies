@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { firebase } from '../utils/firebase';
 import { RootState } from '../redux/rootReducer';
 import { alertActionType } from '../redux/Alert/AlertAction';
-import { BtnLink } from './Button';
+import { BtnLink, BtnDiv } from './Button';
+import Logo from '../assets/logo.png';
 import { PopupComponent } from './Popup';
 const Wrapper = styled.div`
   display: flex;
@@ -18,11 +19,14 @@ const Wrapper = styled.div`
   background-color: #f3f2ef;
   flex-shrink: 0;
   position: absolute;
-  /* position: fixed; */
   bottom: 0px;
   @media screen and (max-width: 960px) {
     position: fixed;
     bottom: 0px;
+    padding: 0 120px;
+  }
+  @media screen and (max-width: 960px) {
+    padding: 0 40px;
   }
 `;
 const SectionWrapper = styled.div`
@@ -60,6 +64,14 @@ const Profile = styled(Link)<{ img: string }>`
 const BtnLinkRwd = styled(BtnLink)`
   display: none;
   font-size: 20px;
+  @media screen and (max-width: 960px) {
+    display: block;
+  }
+`;
+const StyledBtnDiv = styled(BtnDiv)`
+  display: none;
+  box-shadow: none;
+  border-bottom: solid 1px black;
   @media screen and (max-width: 960px) {
     display: block;
   }
@@ -108,6 +120,7 @@ function Footer() {
       {authChange ? (
         <SectionWrapper>
           <Profile to={'/profile'} img={userInfo.image} />
+          <StyledBtnDiv onClick={clickSingOut}>登出</StyledBtnDiv>
         </SectionWrapper>
       ) : (
         <SectionWrapper>

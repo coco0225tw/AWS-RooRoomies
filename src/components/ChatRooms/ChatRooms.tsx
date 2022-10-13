@@ -1,36 +1,27 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import {
-  doc,
-  collection,
-  onSnapshot,
-  QueryDocumentSnapshot,
-  DocumentData,
-  query,
-  where,
-} from "firebase/firestore";
+import React, { useState, useRef, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { doc, collection, onSnapshot, QueryDocumentSnapshot, DocumentData, query, where } from 'firebase/firestore';
 
-import { RootState } from "../../redux/rootReducer";
-import { chatRoomAction } from "../../redux/ChatRoom/ChatRoomAction";
-import { firebase, db } from "../../utils/firebase";
-import { PopupComponent } from "../../components/Popup";
-import chat from "../../assets/chat.png";
+import { RootState } from '../../redux/rootReducer';
+import { chatRoomAction } from '../../redux/ChatRoom/ChatRoomAction';
+import { firebase, db } from '../../utils/firebase';
+import { PopupComponent } from '../../components/Popup';
+import chat from '../../assets/chat.png';
 
 const Wrapper = styled.div<{ isShown: boolean }>`
-  bottom: ${(props) => (props.isShown ? "0px" : "50px")};
-  right: ${(props) => (props.isShown ? "120px" : "50px")};
+  bottom: ${(props) => (props.isShown ? '0px' : '50px')};
+  right: ${(props) => (props.isShown ? '120px' : '50px')};
   position: fixed;
   display: flex;
-  z-index: 1;
+  z-index: 2;
   background-color: white;
-  width: ${(props) => (props.isShown ? "20vw" : "auto")};
+  width: ${(props) => (props.isShown ? '20vw' : 'auto')};
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  height: ${(props) => (props.isShown ? "500px" : "auto")};
-  box-shadow: ${(props) =>
-    props.isShown ? "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px" : ""};
-  border-radius: ${(props) => (props.isShown ? "8px 8px 0px 0px " : "50%")};
+  height: ${(props) => (props.isShown ? '500px' : 'auto')};
+  box-shadow: ${(props) => (props.isShown ? 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' : '')};
+  border-radius: ${(props) => (props.isShown ? '8px 8px 0px 0px ' : '50%')};
   color: #4f5152;
 `;
 const ChatIcon = styled.div<{ isShown: boolean }>`
@@ -43,7 +34,7 @@ const ChatIcon = styled.div<{ isShown: boolean }>`
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
-  display: ${(props) => (props.isShown ? "none" : "block")};
+  display: ${(props) => (props.isShown ? 'none' : 'block')};
 `;
 const SectionWrapper = styled.div`
   display: flex;
@@ -71,7 +62,7 @@ const InputArea = styled.div`
 `;
 const Message = styled.div<{ auth: boolean }>`
   width: 80%;
-  align-self: ${(props) => (props.auth ? "flex-end" : "flex-start")};
+  align-self: ${(props) => (props.auth ? 'flex-end' : 'flex-start')};
 `;
 
 const UserInfo = styled.div``;
@@ -81,7 +72,7 @@ const UserPic = styled.div<{ pic: string }>`
   height: 40px;
   border-radius: 50px;
   background-image: url(${(props) => props.pic});
-  background-size: cover;HeaderBarbor
+  background-size: cover;
   background-position: center center;
 `;
 const UserMessage = styled.div`
@@ -129,13 +120,13 @@ const Tab = styled.div<{ isChoose: boolean }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   flex-grow: 1;
-  border-bottom: ${(props) => (props.isChoose ? "solid 2px #c77155" : "")};
-  color: ${(props) => (props.isChoose ? "#c77155" : "#4f5152")};
+  border-bottom: ${(props) => (props.isChoose ? 'solid 2px #c77155' : '')};
+  color: ${(props) => (props.isChoose ? '#c77155' : '#4f5152')};
   cursor: pointer;
   border-radius: 8px 0 0 0;
   color: #ffffff;
   &:hover {
-    border-bottom: ${(props) => (props.isChoose ? "" : "solid 2px #4f5152")};
+    border-bottom: ${(props) => (props.isChoose ? '' : 'solid 2px #4f5152')};
   }
 `;
 
@@ -164,7 +155,7 @@ const OptionsBtn = styled.div`
   }
 `;
 const Close = styled(OptionsBtn)<{ isShown: boolean }>`
-  display: ${(props) => (props.isShown ? "block" : "none")};
+  display: ${(props) => (props.isShown ? 'block' : 'none')};
 `;
 const InfoBtn = styled(OptionsBtn)``;
 const BackBtn = styled(OptionsBtn)`
@@ -206,9 +197,7 @@ const GreaterThan = styled(OptionsBtn)`
 function ChatRooms() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [houseHuntingData, setHouseHuntingData] = useState<
-    QueryDocumentSnapshot<DocumentData>[]
-  >([]);
+  const [houseHuntingData, setHouseHuntingData] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
@@ -230,16 +219,12 @@ function ChatRooms() {
       userId: userInfo.uid,
       userPic: userInfo.image,
     };
-    await firebase.sendMessage(
-      getChatRoom.chatRoomId as string,
-      allMessages,
-      msg
-    );
+    await firebase.sendMessage(getChatRoom.chatRoomId as string, allMessages, msg);
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
     console.log(chooseRoomId);
-    const chatRoomQuery = doc(db, "chatRooms", chooseRoomId);
+    const chatRoomQuery = doc(db, 'chatRooms', chooseRoomId);
 
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
       if (snapshot.data()) {
@@ -251,11 +236,8 @@ function ChatRooms() {
   }
 
   useEffect(() => {
-    const houseHuntingRef = collection(db, "chatRooms");
-    const userChatRef = query(
-      houseHuntingRef,
-      where("userId", "array-contains", userInfo.uid)
-    );
+    const houseHuntingRef = collection(db, 'chatRooms');
+    const userChatRef = query(houseHuntingRef, where('userId', 'array-contains', userInfo.uid));
 
     if (authChange) {
       let onSnapShotData = onSnapshot(userChatRef, (querySnapshot) => {
@@ -284,10 +266,7 @@ function ChatRooms() {
           isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
           onClick={() => {
             dispatch({ type: chatRoomAction.OPEN_CHAT });
-            if (
-              houseHuntingData.length !== 0 &&
-              !getChatRoom.chatRoomOpenState
-            ) {
+            if (houseHuntingData.length !== 0 && !getChatRoom.chatRoomOpenState) {
               dispatch({
                 type: chatRoomAction.CHECK_CHATROOM,
                 payload: { chatRoom: true },
@@ -304,7 +283,7 @@ function ChatRooms() {
             clickClose={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}
             clickFunction={() => {
               dispatch({ type: chatRoomAction.CLOSE_CHAT });
-              navigate("/");
+              navigate('/');
             }}
           />
         ) : (
@@ -325,23 +304,15 @@ function ChatRooms() {
                 <Tab isChoose={true}>
                   {getChatRoom.chatRoomOpenState &&
                     getChatRoom.chatRoomId &&
-                    houseHuntingData
-                      .find((h) => h && h.id === getChatRoom.chatRoomId)
-                      .data().listingTitle}
-                  {!getChatRoom.chatRoomOpenState && "你的聊天室"}
+                    houseHuntingData.find((h) => h && h.id === getChatRoom.chatRoomId).data().listingTitle}
+                  {!getChatRoom.chatRoomOpenState && '你的聊天室'}
                 </Tab>
                 <OptionWrapper>
-                  {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && (
-                    <InfoBtn>&#8505;</InfoBtn>
-                  )}
+                  {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && <InfoBtn>&#8505;</InfoBtn>}
 
                   <Close
-                    isShown={
-                      getChatRoom.isOpen && houseHuntingData.length !== 0
-                    }
-                    onClick={() =>
-                      dispatch({ type: chatRoomAction.CLOSE_CHAT })
-                    }
+                    isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
+                    onClick={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}
                   >
                     &#10006;
                   </Close>
@@ -355,19 +326,14 @@ function ChatRooms() {
                     <MsgWrapper>
                       {allMessages &&
                         allMessages.map((el, index) => (
-                          <Message
-                            auth={el.userId === userInfo.uid}
-                            key={`message${index}`}
-                          >
+                          <Message auth={el.userId === userInfo.uid} key={`message${index}`}>
                             {el.userId === userInfo.uid ? (
-                              <MessageWrapper
-                                style={{ justifyContent: "flex-end" }}
-                              >
+                              <MessageWrapper style={{ justifyContent: 'flex-end' }}>
                                 <UserMessage
                                   style={{
-                                    marginRight: "12px",
-                                    textAlign: "right",
-                                    backgroundColor: "#fff7f4 ",
+                                    marginRight: '12px',
+                                    textAlign: 'right',
+                                    backgroundColor: '#fff7f4 ',
                                   }}
                                 >
                                   {el.userMsg}
@@ -381,9 +347,7 @@ function ChatRooms() {
                                 <UserInfo>
                                   <UserPic pic={el.userPic} />
                                 </UserInfo>
-                                <UserMessage style={{ marginLeft: "12px" }}>
-                                  {el.userMsg}
-                                </UserMessage>
+                                <UserMessage style={{ marginLeft: '12px' }}>{el.userMsg}</UserMessage>
                               </MessageWrapper>
                             )}
                           </Message>
@@ -392,19 +356,17 @@ function ChatRooms() {
                   </SectionWrapper>
                   <InputArea>
                     <InputMessageBox
-                      placeholder={"..."}
+                      placeholder={'...'}
                       ref={msgInputRef}
-                      onKeyDown={(
-                        event: React.KeyboardEvent<HTMLInputElement>
-                      ) => {
+                      onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         event.stopPropagation();
-                        if (event.key === "Enter") {
-                          if (msgInputRef.current.value.trim() === "") {
-                            msgInputRef.current!.value = "";
+                        if (event.key === 'Enter') {
+                          if (msgInputRef.current.value.trim() === '') {
+                            msgInputRef.current!.value = '';
                             return;
                           } else {
                             senMsg();
-                            msgInputRef.current!.value = "";
+                            msgInputRef.current!.value = '';
                           }
                         }
                       }}
@@ -414,10 +376,7 @@ function ChatRooms() {
               ) : (
                 <ListingWrapper>
                   {houseHuntingData.map((house) => (
-                    <Listing
-                      isClick={getChatRoom.chatRoomId === house.id}
-                      key={`houseHuntingChat${house.id}`}
-                    >
+                    <Listing isClick={getChatRoom.chatRoomId === house.id} key={`houseHuntingChat${house.id}`}>
                       {house.data().listingTitle}
                       <GreaterThan
                         onClick={() => {

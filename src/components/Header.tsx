@@ -10,7 +10,6 @@ import { firebase } from '../utils/firebase';
 import { BtnLink, BtnDiv } from './Button';
 import { PopupComponent } from './Popup';
 
-import Logo from '../assets/logo.png';
 import search from '../assets/search.svg';
 const Wrapper = styled.div`
   display: flex;
@@ -26,9 +25,6 @@ const Wrapper = styled.div`
   top: 0;
 `;
 
-const Title = styled.div`
-  font-size: 30px;
-`;
 const SectionWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -41,15 +37,23 @@ const SectionWrapper = styled.div`
 const LogoWrapper = styled(Link)`
   display: flex;
   align-items: center;
+  @media screen and (max-width: 660px) {
+    align-items: center;
+    width: 100%;
+  }
 `;
 
 const LogoText = styled.div`
   font-size: 32px;
   letter-spacing: 8px;
   color: #4f5152;
+
   // margin-left: 20px;
   @media screen and (max-width: 960px) {
     font-size: 28px;
+  }
+  @media screen and (max-width: 660px) {
+    margin: auto;
   }
 `;
 
@@ -64,12 +68,6 @@ const Profile = styled(Link)<{ img: string }>`
   background-color: white;
 `;
 
-const Notification = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: solid 1px #857c7c;
-`;
 const BtnLinkRwd = styled(BtnLink)`
   display: block;
   @media screen and (max-width: 960px) {
@@ -133,7 +131,6 @@ function Header() {
       <LogoWrapper to={'./'}>
         <LogoText>rooroomies</LogoText>
       </LogoWrapper>
-      {/* <Search /> */}
       {authChange ? (
         <SectionWrapper>
           <Profile

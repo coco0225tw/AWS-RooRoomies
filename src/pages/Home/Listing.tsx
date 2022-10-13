@@ -28,12 +28,13 @@ const Wrapper = styled.div`
   &:hover {
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   }
+  background-color: #ffffff;
+
   @media screen and (max-width: 960px) {
-    border: solid 1px lightgrey;
     border-radius: 0;
+    margin-bottom: 12px;
   }
   @media screen and (max-width: 550px) {
-    border: solid 1px lightgrey;
     border-radius: 12px;
   }
 `;

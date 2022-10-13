@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
+import React, { useState, useRef, useEffect } from 'react';
+import styled from 'styled-components';
 
-import Hr from "../../components/Hr";
-import roomDetailsType from "../../redux/UploadRoomsDetails/UploadRoomsDetailsType";
+import Hr from '../../components/Hr';
+import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -13,8 +13,6 @@ const Wrapper = styled.div`
 
 const SubTitle = styled.div`
   font-size: 28px;
-  letter-spacing: 12px
-  font-weight: bold;
   color: #4f5152;
   width: 100%;
 `;
@@ -41,15 +39,15 @@ function RoomDetails(rooms: any) {
 
   return (
     <Wrapper>
-      <Hr style={{ margin: "40px 0px" }} />
-      <SubTitle style={{ marginBottom: "32px" }}>房間規格</SubTitle>
-      <Table style={{ border: "solid 1px #ece2d5" }}>
-        <Tr style={{ borderBottom: " solid 1px #ece2d5 " }}>
-          <Td style={{ borderBottom: " solid 1px #ece2d5 " }} />
-          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>價錢</Td>
-          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>坪數</Td>
-          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>規格</Td>
-          <Td style={{ borderBottom: " solid 1px #ece2d5 " }}>入住人數</Td>
+      <Hr style={{ margin: '40px 0px' }} />
+      <SubTitle style={{ marginBottom: '32px' }}>房間規格</SubTitle>
+      <Table style={{ border: 'solid 1px #ece2d5' }}>
+        <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
+          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
+          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
+          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
+          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
+          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
         </Tr>
         {room &&
           room.map((r: any, index) => (

@@ -23,6 +23,9 @@ const Wrapper = styled.div`
   position: relative;
   margin: 80px auto 0px;
   flex-grow: 1;
+  @media screen and (max-width: 960px) {
+    background-color: #f3f2ef;
+  }
 `;
 
 const ListingWrapper = styled.div`
@@ -34,8 +37,12 @@ const ListingWrapper = styled.div`
   column-gap: 1.25%;
   height: 100%;
   flex-grow: 1;
+  @media screen and (max-width: 960px) {
+    flex-direction: column;
+  }
   @media screen and (max-width: 550px) {
     width: 98%;
+    flex-direction: row;
   }
 `;
 

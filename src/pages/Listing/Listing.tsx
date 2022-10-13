@@ -42,6 +42,12 @@ const Wrapper = styled.div`
   margin: 80px auto 0;
   color: #4f5152;
   padding: 80px 0px 0px;
+  @media screen and (max-width: 1460px) {
+    width: 90%;
+  }
+  @media screen and (max-width: 1200px) {
+    margin-top: 20px;
+  }
 `;
 
 const SectionWrapper = styled.div`
@@ -54,6 +60,9 @@ const ImagesWrapper = styled(SectionWrapper)`
   border-radius: 20px;
   justify-content: space-between;
   align-items: flex-start;
+  @media screen and (max-width: 1200px) {
+    flex-direction: column;
+  }
 `;
 const OtherImagesWrapper = styled(SectionWrapper)`
   flex-wrap: wrap;
@@ -64,11 +73,25 @@ const OtherImagesWrapper = styled(SectionWrapper)`
   justify-content: space-between;
   align-items: flex-start;
   row-gap: 3%;
+  @media screen and (max-width: 1200px) {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    height: 28%;
+    padding: 10px 0;
+    gap: 10px;
+  }
 `;
 const TitleWrapper = styled(SectionWrapper)`
   font-size: 20px;
   flex-direction: column;
   width: 60%;
+  @media screen and (max-width: 1460px) {
+    width: 100%;
+  }
 `;
 
 const DividedCalendarSection = styled(SectionWrapper)`
@@ -76,6 +99,9 @@ const DividedCalendarSection = styled(SectionWrapper)`
   margin: 20px 0px 32px;
   justify-content: space-between;
   align-items: center;
+  @media screen and (max-width: 1460px) {
+    flex-direction: column;
+  }
 `;
 
 const SelectTimeWrapper = styled(SectionWrapper)`
@@ -86,6 +112,13 @@ const SelectTimeWrapper = styled(SectionWrapper)`
   transition: 0.2s;
   justify-content: space-between;
   align-items: baseline;
+  @media screen and (max-width: 1460px) {
+    width: 40%;
+    margin-top: 20px;
+  }
+  @media screen and (max-width: 920px) {
+    width: 100%;
+  }
 `;
 
 const ImageWrap = styled.div`
@@ -96,9 +129,10 @@ const ImageWrap = styled.div`
   &:hover {
     filter: brightness(70%);
   }
-`;
-const OtherImageWrap = styled(ImageWrap)`
-  height: auto;
+  @media screen and (max-width: 1200px) {
+    width: 100%;
+    flex-grow: 1;
+  }
 `;
 const MainImage = styled.div<{ src: string }>`
   width: 100%;
@@ -113,20 +147,37 @@ const MainImage = styled.div<{ src: string }>`
   }
 `;
 const Images = styled(MainImage)`
+  width: 49%;
+  cursor: pointer;
+  overflow: hidden;
+  height: 100%;
+  &:hover {
+    filter: brightness(70%);
+  }
   height: auto;
   aspect-ratio: 1 / 1;
+  @media screen and (max-width: 1200px) {
+    width: 100px;
+    min-width: 100px;
+    /* margin-right: 10px; */
+  }
 `;
 
-const InformationWrapper = styled(SectionWrapper)`
-  flex-direction: row;
-  align-items: start;
-`;
 const Title = styled.div`
   font-size: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 const AddrSection = styled(SectionWrapper)`
+  width: 100%;
   justify-content: space-between;
   margin-top: 32px;
+  align-self: flex-start;
+  flex-direction: column;
+  @media screen and (max-width: 660px) {
+    /* flex-direction: column; */
+  }
 `;
 const StickyCalendarContainer = styled.div`
   display: flex;
@@ -139,6 +190,17 @@ const StickyCalendarContainer = styled.div`
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 20px;
   border-radius: 20px;
+  @media screen and (max-width: 1460px) {
+    position: static;
+    margin-top: 10vh;
+    width: 100%;
+    box-shadow: none;
+    padding: 0;
+    top: 120px;
+  }
+  @media screen and (max-width: 960px) {
+    margin-top: 40px;
+  }
 `;
 
 const Times = styled.div`
@@ -147,12 +209,31 @@ const Times = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding-top: 32px;
+  /* height: auto; */
+  @media screen and (max-width: 1460px) {
+    padding-left: 20px;
+    align-items: flex-start;
+    padding-top: 0;
+  }
+  @media screen and (max-width: 920px) {
+    flex-direction: column;
+  }
+  @media screen and (max-width: 650px) {
+    padding-left: 0px;
+    padding-top: 32px;
+    width: 350px;
+    /* margin: auto; */
+  }
+  @media screen and (max-width: 420px) {
+    width: 100%;
+    padding-top: 0px;
+  }
 `;
 const SelectedDate = styled.div`
   font-size: 20px;
   color: #4f5152;
   width: 100%;
-  margin-top: 32px;
 `;
 
 const Icon = styled.div`
@@ -167,13 +248,8 @@ const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
 `;
 
-const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
-  background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
-  margin-left: 12px;
-`;
 const SubTitle = styled.div`
   font-size: 28px;
-  letter-spacing: 12px;
   font-weight: bold;
   color: #4f5152;
   width: 100%;
@@ -205,13 +281,15 @@ const IconArea = styled.div`
 const Rent = styled.div`
   color: #c77155;
   font-size: 28px;
+  position: absolute;
+  right: 0;
+  @media screen and (max-width: 660px) {
+    position: relative;
+    align-self: flex-start;
+    margin-top: 20px;
+  }
 `;
-const TitleDivide = styled(SectionWrapper)`
-  align-self: flex-start;
-  width: auto;
-  justify-content: space-between;
-  flex-direction: column;
-`;
+
 const TitleInfoWrapper = styled(SectionWrapper)`
   align-items: center;
   width: auto;
@@ -224,11 +302,29 @@ const TitleIcon = styled.div`
 const TitleIconWrapper = styled.div`
   display: flex;
   margin-top: 20px;
+  @media screen and (max-width: 900px) {
+    flex-wrap: wrap;
+  }
 `;
 const Span = styled.span`
   font-size: 16px;
   letter-spacing: 1.2px;
   color: grey;
+`;
+const StyledSubTitle = styled(SubTitle)`
+  font-weight: normal;
+`;
+const TimeAndCalendarWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  @media screen and (max-width: 1460px) {
+    flex-direction: row;
+  }
+  @media screen and (max-width: 650px) {
+    flex-direction: column;
+  }
 `;
 function Listing() {
   const navigate = useNavigate();
@@ -511,16 +607,7 @@ function Listing() {
         <FavoriteIcon
           onClick={(e) => handleLiked(e!, favoriteLists.includes(id!))}
           isLiked={favoriteLists.includes(id!)}
-        ></FavoriteIcon>
-        {/* <CompareIcon
-          onClick={(e) => {
-            handleCompare(
-              e!,
-              compareLists.includes(id!) || dndLists.includes(id!)
-            );
-          }}
-          isCompared={compareLists.includes(id!) || dndLists.includes(id!)}
-        ></CompareIcon> */}
+        />
       </IconArea>
       {popImg && <PopupImage img={clickOnImg} clickClose={() => setPopImg(false)} />}
       {bookedTimePopup && (
@@ -549,9 +636,9 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              <OtherImageWrap key={`images_${index}`}>
-                <Images src={src} onClick={() => clickOnImage(src)} />
-              </OtherImageWrap>
+              // <OtherImageWrap key={`images_${index}`}>
+              <Images key={`images_${index}`} src={src} onClick={() => clickOnImage(src)} />
+              //</OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
@@ -559,23 +646,20 @@ function Listing() {
         <TitleWrapper>
           <Title>{listingInfo?.title}</Title>
           <AddrSection>
-            <TitleDivide>
-              <TitleInfoWrapper>
-                {listingInfo?.countyName}
-                {listingInfo?.townName}
-              </TitleInfoWrapper>
-              <TitleIconWrapper>
-                <TitleIcon>{listingInfo?.form}</TitleIcon>
-                <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
-                <TitleIcon>{listingInfo?.floor}樓</TitleIcon>
-                <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
-                <TitleIcon>{listingInfo?.moveInDate}起可入住</TitleIcon>
-              </TitleIconWrapper>
-            </TitleDivide>
-
+            <TitleInfoWrapper>
+              {listingInfo?.countyName}
+              {listingInfo?.townName}
+            </TitleInfoWrapper>
             <Rent>
               {listingInfo?.startRent}~{listingInfo?.endRent}/月
             </Rent>
+            <TitleIconWrapper>
+              <TitleIcon>{listingInfo?.form}</TitleIcon>
+              <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
+              <TitleIcon>{listingInfo?.floor}樓</TitleIcon>
+              <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
+              <TitleIcon>{listingInfo?.moveInDate}起可入住</TitleIcon>
+            </TitleIconWrapper>
           </AddrSection>
           <div style={{ margin: '20px 0px' }}>{listingInfo?.environmentDescription}</div>
 
@@ -599,12 +683,13 @@ function Listing() {
             setCanBook={setCanBook}
             hintTextLoading={hintTextLoading}
             setHintTextLoading={setHintTextLoading}
-          ></Group>
-          <Facility facility={listingInfo?.facility}></Facility>
-          <RoomDetails room={listingInfo?.rentRoomDetails}></RoomDetails>
+          />
+          <Facility facility={listingInfo?.facility} />
+          <RoomDetails room={listingInfo?.rentRoomDetails} />
         </TitleWrapper>
         <StickyCalendarContainer>
-          <SubTitle style={{ marginBottom: '20px' }}>
+          <Hr style={{ margin: '40px 0' }} />
+          <StyledSubTitle style={{ marginBottom: '20px' }}>
             預約看房
             <span style={{ fontSize: '16px', marginLeft: '20px' }}>
               剩下
@@ -613,39 +698,81 @@ function Listing() {
               </span>
               個時間可以預約
             </span>
-          </SubTitle>
+          </StyledSubTitle>
 
-          <CalendarContainer>
-            <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
-          </CalendarContainer>
-          <Times>
-            {selectedDate && (
-              <SelectedDate>
-                {selectedDate.getFullYear() +
-                  '-' +
-                  ('0' + (selectedDate.getMonth() + 1)).slice(-2) +
-                  '-' +
-                  ('0' + selectedDate.getDate()).slice(-2)}
-              </SelectedDate>
-            )}
-            {selectedDate &&
-              bookingTimesInfo
-                .filter(
-                  (el) => el.data().date.toDate().getTime() === selectedDate.getTime() && el.data().isBooked === false
-                )
-                .map((el, index) => (
-                  <SelectTimeWrapper key={`selectedTimes_${index}`}>
-                    <SelectTime>{el.data().startTime}</SelectTime>
-                    <CanBookedBtn
-                      onClick={() => {
-                        if (!canBook) {
-                          if (!authChange) setIsShown(true);
-                          if (!addUserAsRoommatesCondition) notAddUserAsRoommatesConditionAlert();
-                          if (!match) {
+          <TimeAndCalendarWrapper>
+            <CalendarContainer>
+              <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
+            </CalendarContainer>
+            <Times>
+              {selectedDate && (
+                <SelectedDate>
+                  {selectedDate.getFullYear() +
+                    '-' +
+                    ('0' + (selectedDate.getMonth() + 1)).slice(-2) +
+                    '-' +
+                    ('0' + selectedDate.getDate()).slice(-2)}
+                </SelectedDate>
+              )}
+              {selectedDate &&
+                bookingTimesInfo
+                  .filter(
+                    (el) => el.data().date.toDate().getTime() === selectedDate.getTime() && el.data().isBooked === false
+                  )
+                  .map((el, index) => (
+                    <SelectTimeWrapper key={`selectedTimes_${index}`}>
+                      <SelectTime>{el.data().startTime}</SelectTime>
+                      <CanBookedBtn
+                        onClick={() => {
+                          if (!canBook) {
+                            if (!authChange) setIsShown(true);
+                            if (!addUserAsRoommatesCondition) notAddUserAsRoommatesConditionAlert();
+                            if (!match) {
+                              dispatch({
+                                type: alertActionType.OPEN_ERROR_ALERT,
+                                payload: {
+                                  alertMessage: '條件不符，不能湊團預約',
+                                },
+                              });
+                              setTimeout(() => {
+                                dispatch({
+                                  type: alertActionType.CLOSE_ALERT,
+                                });
+                              }, 3000);
+                              return;
+                            }
+                            if (!isInGroup) {
+                              dispatch({
+                                type: alertActionType.OPEN_ERROR_ALERT,
+                                payload: {
+                                  alertMessage: '請先加入團再預約',
+                                },
+                              });
+                              setTimeout(() => {
+                                dispatch({
+                                  type: alertActionType.CLOSE_ALERT,
+                                });
+                              }, 3000);
+                              return;
+                            }
+                            if (!isInFullGroup) {
+                              dispatch({
+                                type: alertActionType.OPEN_ERROR_ALERT,
+                                payload: {
+                                  alertMessage: '尚未湊滿團，無法預約',
+                                },
+                              });
+                              setTimeout(() => {
+                                dispatch({
+                                  type: alertActionType.CLOSE_ALERT,
+                                });
+                              }, 3000);
+                              return;
+                            }
                             dispatch({
                               type: alertActionType.OPEN_ERROR_ALERT,
                               payload: {
-                                alertMessage: '條件不符，不能湊團預約',
+                                alertMessage: '已經預約過',
                               },
                             });
                             setTimeout(() => {
@@ -654,77 +781,37 @@ function Listing() {
                               });
                             }, 3000);
                             return;
-                          }
-                          if (!isInGroup) {
-                            dispatch({
-                              type: alertActionType.OPEN_ERROR_ALERT,
-                              payload: {
-                                alertMessage: '請先加入團再預約',
+                          } else {
+                            setBookedTimePopup(true);
+                            setBookTimeInfo({
+                              uid: userInfo.uid,
+                              docId: el.id,
+                              listingId: id!,
+                              selectedDateTime: {
+                                date: el.data().date,
+                                startTime: el.data().startTime,
                               },
                             });
-                            setTimeout(() => {
-                              dispatch({
-                                type: alertActionType.CLOSE_ALERT,
-                              });
-                            }, 3000);
-                            return;
                           }
-                          if (!isInFullGroup) {
-                            dispatch({
-                              type: alertActionType.OPEN_ERROR_ALERT,
-                              payload: {
-                                alertMessage: '尚未湊滿團，無法預約',
-                              },
-                            });
-                            setTimeout(() => {
-                              dispatch({
-                                type: alertActionType.CLOSE_ALERT,
-                              });
-                            }, 3000);
-                            return;
-                          }
-                          dispatch({
-                            type: alertActionType.OPEN_ERROR_ALERT,
-                            payload: {
-                              alertMessage: '已經預約過',
-                            },
-                          });
-                          setTimeout(() => {
-                            dispatch({
-                              type: alertActionType.CLOSE_ALERT,
-                            });
-                          }, 3000);
-                          return;
-                        } else {
-                          setBookedTimePopup(true);
-                          setBookTimeInfo({
-                            uid: userInfo.uid,
-                            docId: el.id,
-                            listingId: id!,
-                            selectedDateTime: {
-                              date: el.data().date,
-                              startTime: el.data().startTime,
-                            },
-                          });
-                        }
-                      }}
-                    >
-                      預約
-                    </CanBookedBtn>
-                  </SelectTimeWrapper>
-                ))}
-            {selectedDate &&
-              bookingTimesInfo
-                .filter(
-                  (el) => el.data().date.toDate().getTime() === selectedDate.getTime() && el.data().isBooked === true
-                )
-                .map((el, index) => (
-                  <SelectTimeWrapper key={`selectedTimes_${index}`}>
-                    <SelectTime>{el.data().startTime}</SelectTime>
-                    <CannotBookedBtn>已被預約</CannotBookedBtn>
-                  </SelectTimeWrapper>
-                ))}
-          </Times>
+                        }}
+                      >
+                        預約
+                      </CanBookedBtn>
+                    </SelectTimeWrapper>
+                  ))}
+              {selectedDate &&
+                bookingTimesInfo
+                  .filter(
+                    (el) => el.data().date.toDate().getTime() === selectedDate.getTime() && el.data().isBooked === true
+                  )
+                  .map((el, index) => (
+                    <SelectTimeWrapper key={`selectedTimes_${index}`}>
+                      <SelectTime>{el.data().startTime}</SelectTime>
+                      <CannotBookedBtn>已被預約</CannotBookedBtn>
+                    </SelectTimeWrapper>
+                  ))}
+            </Times>
+          </TimeAndCalendarWrapper>
         </StickyCalendarContainer>
       </DividedCalendarSection>
       <Map latLng={listingInfo?.latLng!}></Map>

@@ -60,8 +60,6 @@ const UserPic = styled(AddToGroup)<{ img: string }>`
 `;
 const SubTitle = styled.div`
   font-size: 28px;
-  letter-spacing: 12px;
-  font-weight: bold;
   color: #4f5152;
   width: 100%;
 `;
@@ -72,7 +70,10 @@ const Span = styled.span`
   font-size: 16px;
   letter-spacing: 1.2px;
   color: grey;
-  position: relative;
+  @media screen and (max-width: 660px) {
+    margin-top: 12px;
+    display: block;
+  }
 `;
 const Text = styled.div`
   color: grey;

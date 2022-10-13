@@ -47,6 +47,11 @@ const Wrapper = styled.div`
   @media screen and (max-width: 660px) {
     height: 24vh;
   }
+  @media screen and (max-width: 450px) {
+    background-size: cover;
+    background-position: bottom;
+    background-attachment: local;
+  }
 `;
 
 const SearchBox = styled.div<{ openSearch: boolean }>`
@@ -65,8 +70,11 @@ const SearchBox = styled.div<{ openSearch: boolean }>`
     top: 10vh;
   }
   @media screen and (max-width: 960px) {
-    transform: translate(-50%, -40%);
+    top: 6vh;
     padding: 0px 40px;
+  }
+  @media screen and (max-width: 660px) {
+    top: 3vh;
   }
 `;
 const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
@@ -88,9 +96,12 @@ const SearchIcon = styled(BtnDiv)<{ openSearch: boolean }>`
   @media screen and (max-width: 960px) {
     display: ${(props) => !props.openSearch && 'none'};
 
-    top: ${(props) => props.openSearch && '30px'};
+    top: ${(props) => props.openSearch && 'calc(6vh + 10px)'};
     padding: 4px 8px;
     font-size: 12px;
+  }
+  @media screen and (max-width: 660px) {
+    top: ${(props) => props.openSearch && 'calc(3vh + 10px)'};
   }
 `;
 const Slogan = styled.p<{ openSearch: boolean }>`
@@ -109,6 +120,9 @@ const Slogan = styled.p<{ openSearch: boolean }>`
   @media screen and (max-width: 660px) {
     font-size: 20px;
     letter-spacing: 4px;
+  }
+  @media screen and (max-width: 450px) {
+    font-size: 16px;
   }
 `;
 
