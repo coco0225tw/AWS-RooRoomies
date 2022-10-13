@@ -1,0 +1,178 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../../redux/rootReducer';
+import { collection, doc } from 'firebase/firestore';
+
+import { firebase, timestamp, db } from '../../../utils/firebase';
+import { Title } from '../../../components/ProfileTitle';
+import { BtnDiv } from '../../../components/Button';
+import NoListing from '../../../components/NoData';
+import Hr from '../../../components/Hr';
+import UploadMainImageAndImages from './UploadMainImageAndImages';
+import SetBookingTimes from './SetBookingTimes';
+import ListingAddr from './ListingAddr';
+import ListingTitle from './ListingTitle';
+import RoommatesCondition from './RoommatesCondition';
+import Facility from './Facility';
+import RentRoomDetails from './RentRoomDetails';
+
+import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import addrType from '../../../redux/UploadAddr/UploadAddrType';
+import titleType from '../../../redux/UploadTitle/UploadTitleType';
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin: auto;
+  width: 80%;
+  height: 100%;
+  color: #4f5152;
+  margin-top: 20px;
+`;
+
+const SubmitBtn = styled(BtnDiv)`
+  align-self: flex-end;
+  margin-top: 20px;
+  display: inline-block;
+  margin-left: 12px;
+  transform: translateY(-4px);
+`;
+const Tabs = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+`;
+const Tab = styled(BtnDiv)<{ isClick: boolean }>`
+  border: none;
+  border-bottom: ${(props) => (props.isClick ? 'solid 3px #c77155 ' : 'solid 3px lightgrey')};
+  box-shadow: none;
+  transition-duration: 0.2s;
+`;
+const Span = styled.span`
+  align-self: flex-end;
+`;
+const TabSelect = ['基本資訊', '地址', '上傳圖片', '房間規格', '設定看房時間', '設定室友條件', '設施'];
+function UploadMyListing({
+  setLoading,
+  loading,
+}: {
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
+}) {
+  const dispatch = useDispatch();
+  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
+  const getAddr = useSelector((state: RootState) => state.UploadAddrReducer) as addrType;
+  const [clickTab, setClickTab] = useState<string>('輸入基本資訊');
+  const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
+  const getTitle = useSelector((state: RootState) => state.UploadTitleReducer) as titleType;
+  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as any;
+  const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
+  const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
+  const [edit, setEdit] = useState<boolean>(false);
+
+  const listingCollection = collection(db, 'listings');
+  function setDoc(facilityOptions: any) {
+    const findPeopleAmount = (getRooms as roomDetailsType).reduce((sum, people) => sum + people.peopleAmount, 0);
+    const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
+      prev.rent < current.rent ? prev : current
+    );
+    const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
+      prev.rent > current.rent ? prev : current
+    );
+    const listingData = {
+      ...getTitle,
+      uploadedTime: timestamp,
+      countyName: getAddr.countyname,
+      townName: getAddr.townname,
+      peopleAmount: findPeopleAmount,
+      startRent: findStartRent.rent,
+      endRent: findEndRent.rent,
+      floor: getAddr.floor,
+      rentRoomDetails: getRooms,
+      facility: facilityOptions,
+      roommatesConditions: getRoommatesCondition,
+      addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`,
+      latLng: getAddr.latLng,
+      matchGroup: [],
+    };
+
+    const newListingRef = doc(listingCollection);
+    firebase.setNewListingDocField(
+      newListingRef,
+      listingData,
+      getBookingTimes,
+      getImages.mainImage,
+      getImages.images,
+      userInfo!.uid
+    );
+  }
+  return (
+    <Wrapper>
+      <Title
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        管理物件
+        <Span>
+          {userInfo!.userListingId?.length === 0 && !edit ? (
+            <React.Fragment>
+              <SubmitBtn
+                onClick={() => {
+                  setEdit(true);
+                  setClickTab('基本資訊');
+                }}
+              >
+                我要上架
+              </SubmitBtn>
+            </React.Fragment>
+          ) : (
+            <SubmitBtn
+              onClick={() => {
+                setEdit(false);
+                dispatch({ type: 'RETURN_INITIAL_FACILITY' });
+                dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
+                dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
+                dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
+                dispatch({ type: 'RETURN_INITIAL_TITLE' });
+                dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+              }}
+            >
+              取消
+            </SubmitBtn>
+          )}
+        </Span>
+      </Title>
+      <Hr />
+      {edit && (
+        <Tabs>
+          {TabSelect.map((el, index) => (
+            <Tab
+              key={`subTab${index}`}
+              isClick={el === clickTab}
+              onClick={() => {
+                setClickTab(el);
+              }}
+            >
+              {el}
+            </Tab>
+          ))}
+        </Tabs>
+      )}
+      {userInfo!.userListingId?.length === 0 && !edit && <NoListing msg="你沒有上架房源" />}
+      {clickTab === '基本資訊' && edit && <ListingTitle setClickTab={setClickTab} />}
+      {clickTab === '地址' && edit && <ListingAddr setClickTab={setClickTab} />}
+      {clickTab === '上傳圖片' && edit && <UploadMainImageAndImages setClickTab={setClickTab} />}
+      {clickTab === '房間規格' && edit && <RentRoomDetails setClickTab={setClickTab} />}
+      {clickTab === '設定看房時間' && edit && <SetBookingTimes setClickTab={setClickTab} />}
+      {clickTab === '設定室友條件' && edit && <RoommatesCondition setClickTab={setClickTab} />}
+      {clickTab === '設施' && edit && <Facility setClickTab={setClickTab} setDoc={setDoc} />}
+    </Wrapper>
+  );
+}
+
+export default UploadMyListing;
