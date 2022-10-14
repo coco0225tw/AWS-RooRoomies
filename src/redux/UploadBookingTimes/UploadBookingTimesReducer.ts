@@ -1,14 +1,8 @@
-import bookingTimesType from "./UploadBookingTimesType";
-import {
-  uploadBookingTimesAction,
-  uploadBookingTimesActionType,
-} from "./UploadBookingTimesAction";
+import { bookingTimesType } from './UploadBookingTimesType';
+import { uploadBookingTimesAction, uploadBookingTimesActionType } from './UploadBookingTimesAction';
 
-const timeEmptyState: bookingTimesType[] = [];
-export default function UploadTimes(
-  state = timeEmptyState,
-  action: uploadBookingTimesActionType
-) {
+const timeEmptyState: bookingTimesType = [];
+export default function UploadTimes(state = timeEmptyState, action: uploadBookingTimesActionType) {
   switch (action.type) {
     case uploadBookingTimesAction.UPLOAD_TIMES:
       return action.payload.selectedTimes;

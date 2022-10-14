@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 
 import { RootState } from '../../../redux/rootReducer';
@@ -23,6 +22,7 @@ import {
 } from '../../../components/InputArea';
 import { SubmitBtn, BtnDiv } from '../../../components/Button';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -168,6 +168,12 @@ const roommatesConditionFormGroups = [
     ],
   },
 ];
+
+interface optionType {
+  label: string;
+  text: string;
+  value: string;
+}
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
 `;
@@ -203,9 +209,7 @@ function AboutMe({
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [houseHuntingData, setHouseHuntingData] = useState<boolean>(false);
   const {
-    register,
     handleSubmit,
-    setValue,
     formState: { errors },
     reset,
     getValues,
@@ -213,7 +217,6 @@ function AboutMe({
   } = useForm();
   async function onSubmit(data) {
     setEdit(!edit);
-    // submit(data);
     await submit(data);
   }
   async function submit(meAsRoommatesState: roommatesConditionType) {
@@ -234,7 +237,7 @@ function AboutMe({
     });
 
     dispatch({
-      type: 'UPLOAD_MEASROOMMATE',
+      type: uploadUserAsRoommateAction.UPLOAD_ME_AS_ROOMMATE,
       payload: { meAsRoommatesState: meAsRoommatesState },
     });
     setSubmitting(false);
@@ -242,7 +245,6 @@ function AboutMe({
   useEffect(() => {
     async function getAllHouseHuntingData() {
       firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
-        let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
         setLoading(true);
         if (listing.size === 0) {
           setHouseHuntingData(false);
@@ -255,7 +257,7 @@ function AboutMe({
     if (authChange) getAllHouseHuntingData();
   }, [authChange]);
   useEffect(() => {
-    let defaultValues = userAsRoommate as any;
+    let defaultValues = userAsRoommate as roommatesConditionType;
 
     reset({ ...defaultValues });
 
@@ -282,7 +284,7 @@ function AboutMe({
               <EditBtn
                 onClick={() => {
                   setEdit(false);
-                  let defaultValues = userAsRoommate as any;
+                  let defaultValues = userAsRoommate as roommatesConditionType;
 
                   reset({ ...defaultValues });
                 }}
@@ -335,7 +337,7 @@ function AboutMe({
                     required: required && required,
                   }}
                   render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o, oIndex) => (
+                    (options as any).map((o: optionType, oIndex: number) => (
                       <FormCheck key={o.value}>
                         <React.Fragment>
                           <CheckedFormCheckInput

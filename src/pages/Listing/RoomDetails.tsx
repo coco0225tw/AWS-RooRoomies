@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import Hr from '../../components/Hr';
-import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType, roomType } from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -28,12 +28,12 @@ const Td = styled.td`
 `;
 const Tr = styled.tr``;
 
-function RoomDetails(rooms: any) {
+function RoomDetails({ rooms }: { rooms: roomDetailsType }) {
   const [room, setRoom] = useState<roomDetailsType>([]);
 
   useEffect(() => {
-    if (rooms?.room) {
-      setRoom(rooms?.room);
+    if (rooms) {
+      setRoom(rooms);
     }
   }, [rooms]);
 
@@ -50,7 +50,7 @@ function RoomDetails(rooms: any) {
           <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
         </Tr>
         {room &&
-          room.map((r: any, index) => (
+          room.map((r: roomType, index) => (
             <Tr key={`room${index}`}>
               <Td>房間{index + 1}</Td>
               <Td>{r.rent}元</Td>

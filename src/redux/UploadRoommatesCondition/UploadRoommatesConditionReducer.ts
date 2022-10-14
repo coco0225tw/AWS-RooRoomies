@@ -1,34 +1,28 @@
-import roommatesConditionType from "./UploadRoommatesConditionType";
-type Action =
-  | {
-      type: "UPLOAD_ROOMMATESCONDITION";
-      payload: { roommatesState: roommatesConditionType };
-    }
-  | {
-      type: "GET_ROOMMATESCONDITION_FROM_FIREBASE";
-      payload: { roommatesState: roommatesConditionType };
-    }
-  | { type: "RETURN_INITIAL_ROOMMATES_CONDITION" };
-const roommatesConditionEmptyState = {
-  gender: "",
-  bringFriendToStay: "",
-  hygiene: "",
-  livingHabit: "",
-  genderFriendly: "",
-  pet: "",
-  smoke: "",
-  // career: '',
+import roommatesConditionType from './UploadRoommatesConditionType';
+import {
+  uploadRoommatesConditionAction,
+  uploadRoommatesConditionActionType,
+} from './UploadRoommatesConditionReducerAction';
+
+const roommatesConditionEmptyState: roommatesConditionType = {
+  gender: '',
+  bringFriendToStay: '',
+  hygiene: '',
+  livingHabit: '',
+  genderFriendly: '',
+  pet: '',
+  smoke: '',
 };
 export default function UploadRoommatesCondition(
   state = roommatesConditionEmptyState,
-  action: Action
+  action: uploadRoommatesConditionActionType
 ) {
   switch (action.type) {
-    case "UPLOAD_ROOMMATESCONDITION":
+    case uploadRoommatesConditionAction.UPLOAD_ROOMMATES_CONDITION:
       return action.payload.roommatesState;
-    case "GET_ROOMMATESCONDITION_FROM_FIREBASE":
+    case uploadRoommatesConditionAction.GET_ROOMMATES_CONDITION_FROM_FIREBASE:
       return action.payload.roommatesState;
-    case "RETURN_INITIAL_ROOMMATES_CONDITION":
+    case uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION:
       return roommatesConditionEmptyState;
     default:
       return state;

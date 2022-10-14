@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
-import { collection, doc } from 'firebase/firestore';
+import { doc, collection, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 
 import { firebase, timestamp, db } from '../../../utils/firebase';
 import { Title } from '../../../components/ProfileTitle';
@@ -18,10 +18,17 @@ import Facility from './Facility';
 import RentRoomDetails from './RentRoomDetails';
 import ListingItem from '../../../components/ListingItem';
 
-import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import addrType from '../../../redux/UploadAddr/UploadAddrType';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
-import GetListingInHomePage from '../../../redux/ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
+import mainImageAndImagesType from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesType';
+import { uploadFacilityAction } from '../../../redux/UploadFacility/UploadFacilityAction';
+import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
+import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,11 +79,12 @@ function UploadMyListing({
   const [clickTab, setClickTab] = useState<string>('輸入基本資訊');
   const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
   const getTitle = useSelector((state: RootState) => state.UploadTitleReducer) as titleType;
-  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as any;
+  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as mainImageAndImagesType;
   const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
   const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
   const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
-  const [listingData, setListingData] = useState<any>(null);
+
+  const [listingData, setListingData] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
 
   const listingCollection = collection(db, 'listings');
@@ -118,7 +126,7 @@ function UploadMyListing({
       getImages.images,
       userInfo!.uid
     );
-    let listingDocData;
+    let listingDocData: QueryDocumentSnapshot<DocumentData> | null;
     listingDocData = await firebase.getListingDoc(newListingRef.id);
     setListingData(listingDocData);
   }
@@ -160,12 +168,14 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(false);
-                dispatch({ type: 'RETURN_INITIAL_FACILITY' });
-                dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
-                dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
-                dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
-                dispatch({ type: 'RETURN_INITIAL_TITLE' });
-                dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+                dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+                dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+                dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+                dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+                dispatch({
+                  type: uploadTitleAction.RETURN_INITIAL_TITLE,
+                });
+                dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
               }}
             >
               取消

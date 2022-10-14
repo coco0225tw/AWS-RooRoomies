@@ -68,24 +68,6 @@ const Img = styled.div<{
   }
 `;
 
-const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
-  position: absolute;
-  right: 0px;
-  transform: translateX(${(props) => (props.windowState ? '180%' : '200%')});
-  display: block !important;
-  background-color: #f3f2ef;
-  height: 50px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 20px;
-  line-height: 50px;
-  transition-duration: 0.2s;
-  &:hover {
-    color: #f3f2ef;
-    background-color: #4f5152;
-  }
-`;
-
 function SideBarTab({
   showTab,
   setShowTab,
@@ -93,7 +75,7 @@ function SideBarTab({
   loading,
 }: {
   showTab: boolean;
-  setShowTab: any;
+  setShowTab: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {

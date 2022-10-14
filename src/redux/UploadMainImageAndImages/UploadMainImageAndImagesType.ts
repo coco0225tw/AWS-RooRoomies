@@ -1,5 +1,5 @@
 interface mainImageAndImagesType {
-  mainImage: any;
+  mainImage: Blob;
   images: Blob[];
 }
 

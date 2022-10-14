@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
@@ -18,9 +18,9 @@ import {
 } from '../../../components/InputArea';
 import { BtnDiv, SubmitBtn } from '../../../components/Button';
 import bin from '../../../assets/bin.png';
-import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType, roomType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import arrow from '../../../assets/arrow.png';
-import AboutMe from '../AboutMe/AboutMe';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -122,7 +122,6 @@ const StyledBtnDiv = styled(BtnDiv)`
   align-self: flex-end;
 `;
 
-type optionType = { label: string; key: string }[];
 const rentRoomDetailsFormGroups = [
   {
     label: '月租',
@@ -192,26 +191,27 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
-
-  const roomRef = useRef<HTMLInputElement[]>([]);
+  interface optionType {
+    label: string;
+    key: string;
+  }
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
     control,
   } = useForm();
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: roomType) => {
     addRooms(data);
     reset();
     setSelectOptions(null);
   };
-  function addRooms(data: any) {
+  function addRooms(data: roomType) {
     setRoomState([...roomState, data]);
   }
   function submit() {
-    dispatch({ type: 'UPLOAD_ROOMS', payload: { roomState: roomState } });
+    dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
   }
   function deleteRoom(index: number) {
     setRoomState(roomState.filter((el, i) => i !== index));
@@ -227,7 +227,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                 <ErrorText>{errors[r.key] && (errors[r.key].message as string)}</ErrorText>
               </LabelArea>
               <FormInputWrapper>
-                {(r.options as optionType) ? (
+                {(r.options as any) ? (
                   <React.Fragment>
                     <DropDown onClick={() => setOpenDropDown(!openDropDown)}>
                       {selectOptions ? selectOptions : '請選擇'}
@@ -249,7 +249,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                           pattern: r.pattern && r.pattern,
                         }}
                         render={({ field: { onChange, ...props } }) =>
-                          (r.options as any).map((o, oIndex) => (
+                          (r.options as any).map((o: optionType, oIndex: number) => (
                             <React.Fragment key={`${o.key}${oIndex}`}>
                               <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
                                 <CheckedFormCheckInput
@@ -301,7 +301,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
           </Tr>
-          {roomState.map((r: any, index: number) => (
+          {roomState.map((r: roomType, index: number) => (
             <Tr key={`room${index}`}>
               <Td>房間{index + 1}</Td>
               <Td>{r.rent}元</Td>
