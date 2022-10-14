@@ -35,9 +35,9 @@ const PreviewMainImage = styled.div<{ src: string }>`
   background-position: center center;
   border: ${(props) => (props.src ? 'none' : 'dotted 3px #c77155')};
   color: #c77155;
-  text-align: center;
-  vertical-align: center;
-  line-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const PreviewImages = styled(PreviewMainImage)`
@@ -127,7 +127,9 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
   return (
     <Wrapper>
       <UploadArea>
-        <PreviewMainImage src={mainImgUrl as string}> {!mainImgUrl && '上傳封面照'}</PreviewMainImage>
+        <PreviewMainImage src={mainImgUrl as string}>
+          {!mainImgUrl && <React.Fragment>上傳封面照</React.Fragment>}
+        </PreviewMainImage>
 
         <UploadMainImage hidden ref={mainImgRef} onChange={(e) => previewMainImage(e)} />
         <UploadImgBtn
@@ -138,7 +140,15 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
       </UploadArea>
       <UploadArea>
         {imagesUrl.length === 0 && (
-          <PreviewMainImage src={null}> {imagesUrl.length === 0 && '其他照片'}</PreviewMainImage>
+          <PreviewMainImage src={null}>
+            {imagesUrl.length === 0 && (
+              <React.Fragment>
+                其他照片
+                <br />
+                (4-10張)
+              </React.Fragment>
+            )}
+          </PreviewMainImage>
         )}
 
         <PreviewArea>

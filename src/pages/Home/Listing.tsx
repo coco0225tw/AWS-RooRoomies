@@ -121,6 +121,7 @@ const Title = styled.div`
   margin: 20px 0px;
   @media screen and (max-width: 960px) {
     margin: 0;
+    font-weight: 600;
   }
   @media screen and (max-width: 550px) {
     font-size: 16px;

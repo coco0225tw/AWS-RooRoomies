@@ -267,7 +267,16 @@ function Facility(facility: any) {
             <FacilityArea key={`facility${index}`}>
               <Label>{el.label}</Label>
               <FacilityIcons>
-                {el.options
+                {typeof facility.facility[el.key] === 'string' && (
+                  <FacilityContainer>
+                    <FacilityIcon img={Icons.deposit} />
+                    <FacilityText>{facility.facility[el.key]}個月</FacilityText>
+                  </FacilityContainer>
+                )}
+                {el.options &&
+                el.options.filter((o) => {
+                  return facility.facility[el.key as keyof typeof keys].includes(o.label);
+                }).length !== 0
                   ? el.options
                       .filter((o) => {
                         return facility.facility[el.key as keyof typeof keys].includes(o.label);
@@ -278,13 +287,7 @@ function Facility(facility: any) {
                           <FacilityText>{i.text}</FacilityText>
                         </FacilityContainer>
                       ))
-                  : ''}
-                {typeof facility.facility[el.key] == 'string' && (
-                  <FacilityContainer>
-                    <FacilityIcon img={Icons.deposit} />
-                    <FacilityText>{facility.facility[el.key]}個月</FacilityText>
-                  </FacilityContainer>
-                )}
+                  : typeof facility.facility[el.key] !== 'string' && <FacilityText>無</FacilityText>}
               </FacilityIcons>
             </FacilityArea>
           ))}

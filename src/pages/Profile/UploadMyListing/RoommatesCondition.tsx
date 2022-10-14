@@ -207,7 +207,6 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
     control,
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
     submit(data);
     setClickTab('設施');
   };

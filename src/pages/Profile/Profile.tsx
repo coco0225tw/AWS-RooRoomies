@@ -34,6 +34,7 @@ const SideBarWrapper = styled.div<{ isShowTab: boolean }>`
   border-radius: 12px;
   ${(props) => !props.isShowTab && 'display: none'};
   transition-duration: 0.2s;
+  z-index: 1;
   @media screen and (max-width: 960px) {
     width: 36%;
   }
@@ -55,9 +56,7 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
   }
   @media screen and (max-width: 760px) {
     top: 0;
-    z-index: -1;
-
-    ${(props) => (props.isShowTab ? 'width: 100%' : 'width: 60%')};
+    ${(props) => (props.isShowTab ? 'width: 100%;' : 'width: 60%;')}
   }
 `;
 
@@ -70,6 +69,8 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   font-size: 20px;
   line-height: 50px;
   transition-duration: 0.2s;
+  position: absolute;
+  z-index: 1;
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;
@@ -77,6 +78,7 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
 `;
 const ArrowWrap = styled.div`
   color: inherit;
+  /* position: absolute; */
 `;
 function Profile() {
   const dispatch = useDispatch();

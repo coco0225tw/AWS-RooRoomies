@@ -27,6 +27,7 @@ const FormLabel = styled.label`
   padding: 4px;
   padding-left: 0px;
   border-bottom: solid 1px #4f5152;
+  white-space: nowrap;
 `;
 const FormInputWrapper = styled.div`
   display: flex;
@@ -59,6 +60,7 @@ const FormCheckLabel = styled.label`
   margin-left: 10px;
   line-height: 26px;
   color: #4f5152;
+  white-space: nowrap;
 `;
 
 const FormControl = styled.input`
@@ -84,10 +86,17 @@ const ErrorText = styled.div`
   height: 100%;
   font-size: 16px;
   margin-left: 12px;
+  white-space: nowrap;
+  @media screen and (max-width: 1600px) {
+    margin-left: 0px;
+  }
 `;
 const LabelArea = styled.div`
   display: flex;
   align-items: baseline;
+  @media screen and (max-width: 1600px) {
+    flex-direction: column;
+  }
 `;
 const StyledForm = styled.form`
   width: 100%;

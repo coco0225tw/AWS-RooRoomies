@@ -62,7 +62,7 @@ const GlobalStyle = createGlobalStyle`
 }
   * {
     box-sizing: border-box;
-   //border: solid 1px black;
+   /* border: solid 1px black; */
     position: relative;
     letter-spacing: 0.4px;
   }
@@ -175,7 +175,6 @@ function User() {
           payload: { user },
         });
         if (data?.data().userAsRoommatesConditions) {
-          console.log(data?.data().userAsRoommatesConditions);
           dispatch({
             type: 'GET_USER_AS_ROOMMATES_FROM_FIREBASE',
             payload: {

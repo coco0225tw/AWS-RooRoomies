@@ -61,15 +61,13 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
   left: 12%;
   background-color: #ffffff;
   z-index: 2;
-  // width: 80%;
   flex-wrap: wrap;
 `;
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
-  ont-size: 20px;
+  font-size: 20px;
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)`
-  // width: 100%;
   display: none;
   &:checked + ${CheckedFormCheckLabel} {
     color: #c77155;
@@ -159,7 +157,6 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
     },
   ];
   const onSubmit = (data) => {
-    console.log(data);
     submit(data);
 
     setClickTab('上傳圖片');

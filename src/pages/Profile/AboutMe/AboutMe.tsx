@@ -212,7 +212,6 @@ function AboutMe({
     control,
   } = useForm();
   async function onSubmit(data) {
-    console.log(data);
     setEdit(!edit);
     // submit(data);
     await submit(data);
@@ -259,7 +258,7 @@ function AboutMe({
     let defaultValues = userAsRoommate as any;
 
     reset({ ...defaultValues });
-    console.log(defaultValues);
+
     if (userAsRoommate) {
       setTimeout(() => {
         setLoading(false);

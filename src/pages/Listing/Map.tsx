@@ -136,6 +136,9 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
 
     margin: 80px 0px 0px;
     transform: translateX(-10vw);
+    @media screen and (max-width: 1460px) {
+      transform: translateX(-5vw);
+    }
   `;
 
   return (

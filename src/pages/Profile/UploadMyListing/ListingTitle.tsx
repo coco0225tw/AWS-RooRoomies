@@ -19,7 +19,7 @@ import Calendar from 'react-calendar';
 
 import CalendarContainer from '../../../components/Calendar';
 import { RootState } from '../../../redux/rootReducer';
-import { BtnDiv, InputBtn, SubmitBtn } from '../../../components/Button';
+import { SubmitBtn } from '../../../components/Button';
 import arrow from '../../../assets/arrow.png';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
 
@@ -105,7 +105,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     control,
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
     submit(data);
     setClickTab('地址');
   };
@@ -277,7 +276,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                     maxLength: info.maxLength && info.maxLength,
                   }}
                   render={({ field }) => (
-                    <CalendarContainer>
+                    <CalendarContainer style={{ marginLeft: '0' }}>
                       <Calendar
                         {...field}
                         defaultValue={titleInfo.moveInDate}

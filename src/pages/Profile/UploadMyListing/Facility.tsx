@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { firebase } from '../../../utils/firebase';
+
 import styled from 'styled-components';
 import {
   FormGroup,
@@ -17,9 +19,12 @@ import { useForm, Controller, ControllerRenderProps } from 'react-hook-form';
 
 import { RootState } from '../../../redux/rootReducer';
 import { BtnDiv, SubmitBtn } from '../../../components/Button';
+import { PopupComponent } from '../../../components/Popup';
 
 import Icons from '../../../assets/facility/Icon';
 import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -63,6 +68,7 @@ const CheckedFormCheckLabel = styled(FormCheckLabel)`
   margin-left: 0px;
 
   align-items: center;
+  white-space: nowrap;
 `;
 const CheckedFormCheckInput = styled(FormCheckInput)`
   display: none;
@@ -148,7 +154,16 @@ const facilityFormGroups = [
         text: '電梯',
         value: Icons.facility.elevator,
       },
-
+      {
+        label: 'kitchen',
+        text: '廚房',
+        value: Icons.facility.kitchen,
+      },
+      {
+        label: 'wifi',
+        text: '網路',
+        value: Icons.facility.wifi,
+      },
       {
         label: 'extinguisher',
         text: '滅火器',
@@ -165,21 +180,13 @@ const facilityFormGroups = [
         text: '熱水器',
         value: Icons.facility.waterHeater,
       },
-      {
-        label: 'kitchen',
-        text: '廚房',
-        value: Icons.facility.kitchen,
-      },
+
       {
         label: 'washingMachine',
         text: '洗衣機',
         value: Icons.facility.washingMachine,
       },
-      {
-        label: 'wifi',
-        text: '網路',
-        value: Icons.facility.wifi,
-      },
+
       {
         label: 'garbage',
         text: '代收垃圾',
@@ -270,9 +277,10 @@ const facilityFormGroups = [
 function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.SetStateAction<string>>; setDoc: any }) {
   const dispatch = useDispatch();
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
-  console.log(facilityInfo);
+
   const initialFacilityEmptyState = facilityInfo;
   const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
+  const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -285,13 +293,26 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
 
   const onSubmit = (data) => {
     submit(data);
+    setConfirmPopup(true);
   };
   async function submit(data) {
     dispatch({ type: 'UPLOAD_FACILITY', payload: { facilityState: data } });
   }
-  async function submitHandler(data) {
-    await submit(data);
-    await setDoc(facilityState);
+  async function submitHandler() {
+    setDoc().then(() => {
+      dispatch({
+        type: alertActionType.OPEN_SUCCESS_ALERT,
+        payload: {
+          alertMessage: '成功上傳',
+        },
+      });
+
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+    });
   }
   const handleChange = (e: any, field: any) => {
     const { checked, name } = e.target;
@@ -304,6 +325,9 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
       );
     }
   };
+  function clickClose() {
+    setConfirmPopup(false);
+  }
   useEffect(() => {
     let defaultValues = facilityInfo as any;
 
@@ -312,6 +336,15 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
 
   return (
     <Wrapper>
+      {confirmPopup && (
+        <PopupComponent
+          msg={`確定要上傳嗎?`}
+          notDefaultBtn={`取消`}
+          defaultBtn={`上傳`}
+          clickClose={clickClose}
+          clickFunction={submitHandler}
+        />
+      )}
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
         {facilityFormGroups.map(({ label, key, options, required, min, max, pattern }) => (
           <FormGroup key={key}>
@@ -334,6 +367,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
                           flexBasis: '25%',
                           justifyContent: 'flex-start',
                           marginBottom: '12px',
+                          marginRight: '8px',
                         }}
                       >
                         <CheckedFormCheckInput
@@ -341,7 +375,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
                           id={o.label}
                           style={{ flexGrow: '0' }}
                           name={o.label}
-                          value={key + o.value}
+                          value={key + o.label}
                           // checked={o.value}
                           defaultChecked={facilityInfo[key as keyof typeof facilityState].includes(o.label)}
                           onChange={(e) => {
