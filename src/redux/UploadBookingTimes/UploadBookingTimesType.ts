@@ -1,7 +1,7 @@
-interface bookTimeInfo {
+interface bookTimeType {
   date: Date;
   startTime: string;
   isBooked: boolean;
 }
-type bookingTimesType = bookTimeInfo[];
-export default bookingTimesType;
+type bookingTimesType = bookTimeType[];
+export { bookingTimesType, bookTimeType };

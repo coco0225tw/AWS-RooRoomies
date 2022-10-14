@@ -201,7 +201,7 @@ function ChatRooms() {
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
-  const [allMessages, setAllMessages] = useState<DocumentData[]>();
+  const [allMessages, setAllMessages] = useState<Msg[]>([]);
   const msgInputRef = useRef<HTMLInputElement>(null);
   interface Msg {
     userMsg: string;
@@ -356,7 +356,7 @@ function ChatRooms() {
                     <InputMessageBox
                       placeholder={'...'}
                       ref={msgInputRef}
-                      onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                      onKeyPress={(event: React.KeyboardEvent<HTMLInputElement>) => {
                         event.stopPropagation();
                         if (event.key === 'Enter') {
                           if (msgInputRef.current.value.trim() === '') {

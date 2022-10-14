@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { DocumentData } from 'firebase/firestore';
 
@@ -64,18 +64,12 @@ const ScrollComponent = styled.div`
 `;
 function Home() {
   const listingDocData = useSelector((state: RootState) => state.GetListingInHomePageReducer);
-  const lastDocData = useSelector((state: RootState) => state.GetLastDocReducer);
 
-  const arr = [];
   const scrollRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadFirstPage, setLoadFirstPage] = useState<boolean>(false);
-  const [loadNextPage, setLoadNextPage] = useState<boolean>(false);
   const [noData, setNoData] = useState<boolean>(false);
-  interface Props {
-    data: DocumentData;
-    key: string;
-  }
+
   return (
     <Wrapper>
       <Search

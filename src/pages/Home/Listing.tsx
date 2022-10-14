@@ -1,10 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { firebase } from '../../utils/firebase';
-
-import addIcon from '../../assets/add.png';
-import unAddIcon from '../../assets/unAdd.png';
+import { DocumentData } from 'firebase/firestore';
 import likedIcon from '../../assets/heart.png';
 import unLikedIcon from '../../assets/unHeart.png';
 import { useSelector, useDispatch } from 'react-redux';
@@ -67,10 +65,6 @@ const IconArea = styled.div`
 const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
   background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
   background-color: #fefefe;
-`;
-
-const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
-  background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
 `;
 
 const CardWrapper = styled.div`
@@ -155,15 +149,13 @@ const InfoArea = styled.div`
 `;
 const Addr = styled.div``;
 const PeopleAmount = styled.div``;
-function Listing({ listingDocData }: { listingDocData: any }) {
+function Listing({ listingDocData }: { listingDocData: DocumentData }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
-  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
 
   const [isShown, setIsShown] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -221,49 +213,6 @@ function Listing({ listingDocData }: { listingDocData: any }) {
       }
     } else if (!authChange) {
       setIsShown(true);
-    }
-  }
-
-  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (authChange) {
-      if (!isCompared) {
-        async function addToCompareLists() {
-          await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
-        }
-        addToCompareLists();
-        dispatch({
-          type: 'ADD_TO_COMPARELISTS',
-          payload: { id: listingDocData.id },
-        });
-      } else {
-        async function removeFromCompareLists() {
-          await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
-        }
-        removeFromCompareLists();
-        handleDnd(e, isCompared);
-        dispatch({
-          type: 'REMOVE_FROM_COMPARELISTS',
-          payload: { id: listingDocData.id },
-        });
-      }
-    } else {
-      setIsShown(true);
-    }
-  }
-  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isCompared) {
-      async function removeFromDndLists() {
-        await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
-      }
-      removeFromDndLists();
-      dispatch({
-        type: 'REMOVE_FROM_DNDLISTS',
-        payload: { id: listingDocData.id },
-      });
     }
   }
 

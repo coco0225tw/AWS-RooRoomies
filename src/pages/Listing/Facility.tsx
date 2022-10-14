@@ -69,7 +69,7 @@ const SubTitle = styled.div`
   color: #4f5152;
   width: 100%;
 `;
-function Facility(facility: any) {
+function Facility({ facility }: { facility: facilityType }) {
   const [keys, setKeys] = useState<string[]>([]);
 
   const facilityFormGroups = [
@@ -249,10 +249,10 @@ function Facility(facility: any) {
   ];
   useEffect(() => {
     function findObjectKeys() {
-      let keys = Object.keys(facility.facility);
+      let keys = Object.keys(facility);
       setKeys(keys);
     }
-    if (facility?.facility) {
+    if (facility) {
       findObjectKeys();
     }
   }, [facility]);
@@ -262,32 +262,32 @@ function Facility(facility: any) {
       <SubTitle style={{ marginBottom: '32px' }}>設施條件</SubTitle>
       <Facilities>
         {keys &&
-          facility.facility &&
+          facility &&
           facilityFormGroups.map((el, index) => (
             <FacilityArea key={`facility${index}`}>
               <Label>{el.label}</Label>
               <FacilityIcons>
-                {typeof facility.facility[el.key] === 'string' && (
+                {typeof facility[el.key] === 'string' && (
                   <FacilityContainer>
                     <FacilityIcon img={Icons.deposit} />
-                    <FacilityText>{facility.facility[el.key]}個月</FacilityText>
+                    <FacilityText>{facility[el.key]}個月</FacilityText>
                   </FacilityContainer>
                 )}
                 {el.options &&
                 el.options.filter((o) => {
-                  return facility.facility[el.key as keyof typeof keys].includes(o.label);
+                  return facility[el.key as keyof typeof keys].includes(o.label);
                 }).length !== 0
                   ? el.options
                       .filter((o) => {
-                        return facility.facility[el.key as keyof typeof keys].includes(o.label);
+                        return facility[el.key as keyof typeof keys].includes(o.label);
                       })
-                      .map((i: any, index: any) => (
+                      .map((i, index) => (
                         <FacilityContainer key={`facilities${index}`}>
                           <FacilityIcon img={i.value} />
                           <FacilityText>{i.text}</FacilityText>
                         </FacilityContainer>
                       ))
-                  : typeof facility.facility[el.key] !== 'string' && <FacilityText>無</FacilityText>}
+                  : typeof facility[el.key] !== 'string' && <FacilityText>無</FacilityText>}
               </FacilityIcons>
             </FacilityArea>
           ))}

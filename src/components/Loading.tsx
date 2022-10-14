@@ -1,16 +1,15 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
 
 const LoaderWrapper = styled.div`
   display: flex;
   width: 100%;
-  height 100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
-  
 `;
 const preloader = keyframes`
-  100% { transform: scale(1.6);
+  100% { transform: scale(1.6) };
 `;
 const LoaderComponent = styled.span`
   border-radius: 100%;
@@ -29,7 +28,7 @@ const LoaderComponent = styled.span`
   }
 `;
 
-function Loading({ style }: { style: any }) {
+function Loading({ style }: { style: React.CSSProperties }) {
   return (
     <LoaderWrapper style={style}>
       <LoaderComponent />

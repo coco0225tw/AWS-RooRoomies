@@ -1,9 +1,10 @@
-import FavoriteListingType from "./GetFavoriteListingType";
+import FavoriteListingType from './GetFavoriteListingType';
 enum getFavoriteAction {
-  GET_FAVORITE_LISTS_FROM_FIREBASE = "GET_FAVORITE_LISTS_FROM_FIREBASE",
-  REMOVE_FROM_FAVORITE_LISTS = "REMOVE_FROM_FAVORITE_LISTS",
-  ADD_TO_FAVORITE_LISTS = "ADD_TO_FAVORITE_LISTS",
-  RETURN_INITIAL_FAVORITE_LISTS = "RETURN_INITIAL_FAVORITE_LISTS",
+  GET_FAVORITE_LISTS_FROM_FIREBASE = 'GET_FAVORITE_LISTS_FROM_FIREBASE',
+  REMOVE_FROM_FAVORITE_LISTS = 'REMOVE_FROM_FAVORITE_LISTS',
+  ADD_TO_FAVORITE_LISTS = 'ADD_TO_FAVORITE_LISTS',
+  RETURN_INITIAL_FAVORITE_LISTS = 'RETURN_INITIAL_FAVORITE_LISTS',
+  REORDER_FAVORITE_LISTS = 'REORDER_FAVORITE_LISTS',
 }
 interface getFavoriteListsFromFirebase {
   type: getFavoriteAction.GET_FAVORITE_LISTS_FROM_FIREBASE;
@@ -22,11 +23,15 @@ interface addToFavoriteLists {
 interface returnInitialFavoriteLists {
   type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS;
 }
-
+interface reorderFavoriteLists {
+  type: getFavoriteAction.REORDER_FAVORITE_LISTS;
+  payload: { favoriteLists: FavoriteListingType };
+}
 type getFavoriteActionType =
   | getFavoriteListsFromFirebase
   | removeFromFavoriteLists
   | addToFavoriteLists
-  | returnInitialFavoriteLists;
+  | returnInitialFavoriteLists
+  | reorderFavoriteLists;
 
 export { getFavoriteAction, getFavoriteActionType };

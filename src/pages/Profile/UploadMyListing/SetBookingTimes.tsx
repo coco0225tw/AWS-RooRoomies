@@ -7,7 +7,7 @@ import { SubTitle } from '../../../components/ProfileTitle';
 import { BtnDiv } from '../../../components/Button';
 import { RootState } from '../../../redux/rootReducer';
 import bin from '../../../assets/bin.png';
-import bookingTimesType from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
+import { bookingTimesType, bookTimeType } from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
 import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
 
 const Wrapper = styled.div`
@@ -32,11 +32,6 @@ const SelectTimes = styled.div`
   display: flex;
   flex-direction: column;
   width: 84px;
-`;
-const AddTimeBtn = styled.div`
-  cursor: pointer;
-  background-color: grey;
-  color: white;
 `;
 
 const TimeInput = styled.input.attrs({
@@ -77,12 +72,12 @@ const Cross = styled.div`
 `;
 function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const timesInfo = useSelector((state: RootState) => state.UploadTimesReducer) as any;
+  const timesInfo = useSelector((state: RootState) => state.UploadTimesReducer) as bookingTimesType;
   const [selectedDays, setSelectedDays] = useState<Date[]>(
     timesInfo
-      .map((d: any, index: number) => d.date)
-      .reduce((acc: any, curr: any) => {
-        let findIndex = acc.findIndex((item: any) => item === curr);
+      .map((d: bookTimeType, index: number) => d.date)
+      .reduce((acc: Date[], curr: Date) => {
+        let findIndex = acc.findIndex((item: Date) => item === curr);
         if (findIndex === -1) {
           acc.push(curr);
         } else {
@@ -152,7 +147,7 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                 <SelectedDay>
                   {s.getFullYear() + '-' + ('0' + (s.getMonth() + 1)).slice(-2) + '-' + ('0' + s.getDate()).slice(-2)}
                 </SelectedDay>
-                <StartTime ref={(el) => ((selectedTimeRef.current[index] as any) = el)}></StartTime>
+                <StartTime ref={(el) => ((selectedTimeRef.current[index] as HTMLInputElement) = el)}></StartTime>
                 <SubmitBtn
                   style={{ marginTop: '0px' }}
                   onClick={() => {

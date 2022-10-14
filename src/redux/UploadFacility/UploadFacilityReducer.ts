@@ -1,8 +1,5 @@
 import facilityType from './UploadFacilityType';
-type Action =
-  | { type: 'UPLOAD_FACILITY'; payload: { facilityState: facilityType } }
-  | { type: 'GET_FACILITY_FROM_FIREBASE'; payload: { facilityState: facilityType } }
-  | { type: 'RETURN_INITIAL_FACILITY' };
+import { uploadFacilityAction, uploadFacilityActionType } from './UploadFacilityAction';
 
 const facilityEmptyState = {
   deposit: '',
@@ -11,14 +8,14 @@ const facilityEmptyState = {
   furniture: [],
   parking: [],
   rules: [],
-};
-export default function UploadFacility(state = facilityEmptyState, action: Action) {
+} as facilityType;
+export default function UploadFacility(state = facilityEmptyState, action: uploadFacilityActionType) {
   switch (action.type) {
-    case 'UPLOAD_FACILITY':
+    case uploadFacilityAction.UPLOAD_FACILITY:
       return action.payload.facilityState;
-    case 'GET_FACILITY_FROM_FIREBASE':
+    case uploadFacilityAction.GET_FACILITY_FROM_FIREBASE:
       return action.payload.facilityState;
-    case 'RETURN_INITIAL_FACILITY':
+    case uploadFacilityAction.RETURN_INITIAL_FACILITY:
       return facilityEmptyState;
     default:
       return state;

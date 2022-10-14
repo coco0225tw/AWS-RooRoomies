@@ -1,6 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { firebase } from '../../../utils/firebase';
 
 import styled from 'styled-components';
 import {
@@ -15,15 +14,16 @@ import {
   StyledForm,
   FormControl,
 } from '../../../components/InputArea';
-import { useForm, Controller, ControllerRenderProps } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import { RootState } from '../../../redux/rootReducer';
-import { BtnDiv, SubmitBtn } from '../../../components/Button';
+import { SubmitBtn } from '../../../components/Button';
 import { PopupComponent } from '../../../components/Popup';
 
 import Icons from '../../../assets/facility/Icon';
 import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
 import { alertActionType } from '../../../redux/Alert/AlertAction';
+import { uploadFacilityAction } from '../../../redux/UploadFacility/UploadFacilityAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -32,19 +32,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-`;
-
-const FormText = styled.div`
-  line-height: 19px;
-  font-size: 16px;
-  color: #8b572a;
-  margin-top: 10px;
-  width: 100%;
-  text-align: right;
-`;
-
-const CustomFormCheckInput = styled(FormCheckInput)`
-  margin-left: 0px;
 `;
 
 const Icon = styled.div<{ img: string }>`
@@ -57,11 +44,6 @@ const Icon = styled.div<{ img: string }>`
   padding: 4px;
 `;
 
-const Input = styled(CustomFormCheckInput)`
-  &:checked + ${FormCheckLabel} {
-    color: blue;
-  }
-`;
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
   display: flex;
@@ -279,7 +261,12 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
 
   const initialFacilityEmptyState = facilityInfo;
-  const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
+  interface optionType {
+    label: string;
+    text: string;
+    value: string;
+  }
+  // const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
   const {
     register,
@@ -296,7 +283,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     setConfirmPopup(true);
   };
   async function submit(data) {
-    dispatch({ type: 'UPLOAD_FACILITY', payload: { facilityState: data } });
+    dispatch({ type: uploadFacilityAction.UPLOAD_FACILITY, payload: { facilityState: data } });
   }
   async function submitHandler() {
     setDoc().then(() => {
@@ -314,14 +301,14 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
       }, 3000);
     });
   }
-  const handleChange = (e: any, field: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const { checked, name } = e.target;
     if (checked) {
-      setValue(field as any, [...getValues(field as any), name]);
+      setValue(field as string, [...getValues(field as string), name]);
     } else {
       setValue(
-        field as any,
-        getValues(field as any).filter((v) => v !== name)
+        field as string,
+        getValues(field as string).filter((v: string) => v !== name)
       );
     }
   };
@@ -329,7 +316,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     setConfirmPopup(false);
   }
   useEffect(() => {
-    let defaultValues = facilityInfo as any;
+    let defaultValues = facilityInfo as facilityType;
 
     reset({ ...defaultValues });
   }, [facilityInfo]);
@@ -356,10 +343,10 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
               {options ? (
                 <Controller
                   control={control}
-                  name={key as any}
+                  name={key as string}
                   defaultValue={[]}
                   render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o, oIndex) => (
+                    (options as any).map((o: optionType, oIndex: number) => (
                       <FormCheck
                         key={o.value}
                         {...props}
@@ -377,7 +364,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
                           name={o.label}
                           value={key + o.label}
                           // checked={o.value}
-                          defaultChecked={facilityInfo[key as keyof typeof facilityState].includes(o.label)}
+                          defaultChecked={facilityInfo[key as keyof typeof initialFacilityEmptyState].includes(o.label)}
                           onChange={(e) => {
                             handleChange(e, key);
                           }}
@@ -394,14 +381,14 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
                 />
               ) : (
                 <FormControl
-                  {...register(key as any, {
+                  {...register(key as string, {
                     required: required && required,
                     pattern: pattern && pattern,
                     min: min && min,
                     max: max && max,
                   })}
                   aria-invalid={errors[key] ? 'true' : 'false'}
-                  defaultValue={facilityState[key as keyof typeof facilityState]}
+                  defaultValue={initialFacilityEmptyState[key as keyof typeof initialFacilityEmptyState]}
                 />
               )}
             </FormInputWrapper>

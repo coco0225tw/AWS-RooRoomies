@@ -273,6 +273,7 @@ function Search({
     countyCode: number | null;
     countyName: string | null;
   }
+
   const [selectCounty, setSelectCounty] = useState<County>({
     countyCode: 63000,
     countyName: '臺北市',
@@ -291,6 +292,15 @@ function Search({
       ...allTowns[`townItem${selectCounty.countyCode}` as keyof typeof allTowns],
     ],
   };
+  type townOptionType = {
+    towncode: number;
+    towncode01: string;
+    townname: string;
+  };
+  type labelType = {
+    label: string;
+    key: string;
+  };
   const rentGroup = {
     label: '租金',
     key: 'rent',
@@ -302,17 +312,7 @@ function Search({
       { label: '20000以上', key: 'over20000' },
     ],
   };
-  const peopleGroup = {
-    label: '人數',
-    key: 'people',
-    options: [
-      { label: '不限', key: 'unlimitedPeople' },
-      { label: '1', key: 'people1' },
-      { label: '2', key: 'people2' },
-      { label: '3', key: 'people3' },
-      { label: '4', key: 'people4' },
-    ],
-  };
+
   async function handleOnchange(county: string, town: string | null, rent: string) {
     setLoading(true);
     if (town === '不限') {
@@ -422,7 +422,7 @@ function Search({
   }
 
   const handleObserver = useCallback(
-    async (entries: any, observer: any) => {
+    async (entries: IntersectionObserverEntry[]) => {
       let isFetching = false;
 
       if (entries[0].intersectionRatio <= 0) return;
@@ -478,8 +478,8 @@ function Search({
           </DropDown>
           {openDropDown && (
             <DropDownMenuWrapper>
-              {countyGroup.countyOptions.map((option: any, oIndex) => (
-                <React.Fragment key={`${option.key}${oIndex}`}>
+              {countyGroup.countyOptions.map((option, oIndex) => (
+                <React.Fragment key={`${option.countycode}${oIndex}`}>
                   <FormCheck style={{ padding: '8px 0px' }}>
                     <CheckedFormCheckInput
                       defaultChecked={selectCounty.countyCode === option.countycode01}
@@ -509,27 +509,31 @@ function Search({
           <StyledFormLabel>{townGroup.label}</StyledFormLabel>
           <OverflowMenuWrapper>
             {selectCounty &&
-              townGroup.townOptions.map((option: any, oIndex) => (
-                <div key={`${selectCounty.countyCode}${option.key}${oIndex}`}>
+              townGroup.townOptions.map((option: townOptionType | labelType, oIndex) => (
+                <div key={`${selectCounty.countyCode}${(option as labelType).key}${oIndex}`}>
                   <FormCheckElement>
                     <CheckedFormCheckInput
-                      defaultChecked={option.key ? true : false}
+                      defaultChecked={(option as labelType).key ? true : false}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setSelectTown(option.key ? option.label : option.townname);
+                          setSelectTown(
+                            (option as labelType).key
+                              ? (option as labelType).label
+                              : (option as townOptionType).townname
+                          );
                         }
                         handleOnchange(
                           selectCounty!.countyName!,
-                          option.key ? option.label : option.townname,
+                          (option as labelType).key ? (option as labelType).label : (option as townOptionType).townname,
                           selectRent!
                         );
                       }}
                       type="radio"
                       name={townGroup.key}
-                      id={`${option.townname}`}
+                      id={`${(option as townOptionType).townname}`}
                     />
-                    <CheckedFormCheckLabel htmlFor={`${option.townname}`}>
-                      {option.key ? option.label : option.townname}
+                    <CheckedFormCheckLabel htmlFor={`${(option as townOptionType).townname}`}>
+                      {(option as labelType).key ? (option as labelType).label : (option as townOptionType).townname}
                     </CheckedFormCheckLabel>
                   </FormCheckElement>
                 </div>
@@ -539,7 +543,7 @@ function Search({
         <StyledFormGroup key={rentGroup.key}>
           <StyledFormLabel>{rentGroup.label}</StyledFormLabel>
           <OverflowMenuWrapper>
-            {rentGroup.options.map((option: any, oIndex) => (
+            {rentGroup.options.map((option, oIndex) => (
               <React.Fragment key={`${option.key}${oIndex}`}>
                 <FormCheckElement>
                   <CheckedFormCheckInput
