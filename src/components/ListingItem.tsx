@@ -107,6 +107,7 @@ const DetailWrapper = styled.div`
 function ListingItem({ listingDocData }: { listingDocData: any }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
   const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
@@ -204,20 +205,7 @@ function ListingItem({ listingDocData }: { listingDocData: any }) {
         />
       )}
       <CardWrapper>
-        <MainImage img={listingDocData?.data().mainImage}>
-          {/* <IconArea>
-            <FavoriteIcon
-              onClick={(e) => handleLiked(e!, favoriteLists.includes(listingDocData.id))}
-              isLiked={favoriteLists.includes(listingDocData.id)}
-            ></FavoriteIcon>
-            <CompareIcon
-              onClick={(e) => {
-                handleCompare(e!, compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id));
-              }}
-              isCompared={compareLists.includes(listingDocData.id) || dndLists.includes(listingDocData.id)}
-            ></CompareIcon>
-          </IconArea> */}
-        </MainImage>
+        <MainImage img={listingDocData?.data().mainImage}></MainImage>
         <InfoWrapper>
           <Title>{listingDocData?.data().title}</Title>
           <DetailWrapper>

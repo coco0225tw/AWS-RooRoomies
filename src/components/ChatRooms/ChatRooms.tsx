@@ -223,7 +223,6 @@ function ChatRooms() {
   }
 
   function onSnapshotMessages(chooseRoomId: string) {
-    console.log(chooseRoomId);
     const chatRoomQuery = doc(db, 'chatRooms', chooseRoomId);
 
     const getAllMessages = onSnapshot(chatRoomQuery, (snapshot) => {
@@ -252,9 +251,8 @@ function ChatRooms() {
   }, [userInfo]);
   useEffect(() => {
     setAllMessages([]);
-    console.log(getChatRoom.chatRoomId);
+
     if (getChatRoom.chatRoomId) {
-      console.log(getChatRoom.chatRoomId);
       onSnapshotMessages(getChatRoom.chatRoomId as string);
     }
   }, [getChatRoom.chatRoomId]);
