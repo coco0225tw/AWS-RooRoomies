@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +13,6 @@ import { selectTabAction } from '../../redux/SelectTab/SelectTabAction';
 import { subTabAction } from '../../redux/SubTab/SubTabAction';
 
 import { groupsType, userInfoType } from '../../redux/Group/GroupType';
-import userType from '../../redux/GetAuth/GetAuthType';
 import { BtnDiv } from '../../components/Button';
 import Hr from '../../components/Hr';
 import SpanLink from '../../components/SpanLink';

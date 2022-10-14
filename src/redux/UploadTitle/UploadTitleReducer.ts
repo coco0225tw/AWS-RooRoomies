@@ -1,27 +1,21 @@
-import titleType from "./UploadTitleType";
-type Action =
-  | { type: "UPLOAD_TITLE"; payload: { titleState: titleType } }
-  | {
-      type: "GET_LISTING_TITLE_FROM_FIREBASE";
-      payload: { listingTitle: titleType };
-    }
-  | { type: "RETURN_INITIAL_TITLE" };
+import titleType from './UploadTitleType';
+import { uploadTitleAction, uploadTitleActionType } from './UploadTitleAction';
 
-const titleEmptyState = {
-  title: "",
-  totalSq: "",
-  form: "",
-  environmentDescription: "",
+const titleEmptyState: titleType = {
+  title: '',
+  totalSq: '',
+  form: '',
+  environmentDescription: '',
   phone: null,
   moveInDate: null,
 };
-export default function UploadTitle(state = titleEmptyState, action: Action) {
+export default function UploadTitle(state = titleEmptyState, action: uploadTitleActionType) {
   switch (action.type) {
-    case "UPLOAD_TITLE":
+    case uploadTitleAction.UPLOAD_TITLE:
       return action.payload.titleState;
-    case "GET_LISTING_TITLE_FROM_FIREBASE":
+    case uploadTitleAction.GET_LISTING_TITLE_FROM_FIREBASE:
       return action.payload.listingTitle;
-    case "RETURN_INITIAL_TITLE":
+    case uploadTitleAction.RETURN_INITIAL_TITLE:
       return titleEmptyState;
     default:
       return state;

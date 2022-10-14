@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm, Controller } from 'react-hook-form';
@@ -20,7 +20,7 @@ import { BtnDiv, SubmitBtn } from '../../../components/Button';
 import bin from '../../../assets/bin.png';
 import { roomDetailsType, roomType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import arrow from '../../../assets/arrow.png';
-import AboutMe from '../AboutMe/AboutMe';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -122,7 +122,6 @@ const StyledBtnDiv = styled(BtnDiv)`
   align-self: flex-end;
 `;
 
-type optionType = { label: string; key: string }[];
 const rentRoomDetailsFormGroups = [
   {
     label: '月租',
@@ -196,12 +195,10 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     label: string;
     key: string;
   }
-  const roomRef = useRef<HTMLInputElement[]>([]);
   const {
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
     control,
   } = useForm();
@@ -214,7 +211,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     setRoomState([...roomState, data]);
   }
   function submit() {
-    dispatch({ type: 'UPLOAD_ROOMS', payload: { roomState: roomState } });
+    dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
   }
   function deleteRoom(index: number) {
     setRoomState(roomState.filter((el, i) => i !== index));

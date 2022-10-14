@@ -30,10 +30,6 @@ const Wrapper = styled.div`
   margin-top: 20px;
 `;
 
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
-`;
 const FavoriteIcon = styled.div`
   background-image: url(${likedIcon});
   height: 40px;
@@ -125,7 +121,6 @@ function FollowedList({
 
   useEffect(() => {
     async function getAllListing() {
-      console.log('getNewListing');
       let promise: DocumentData[] = [];
       favoriteLists.map((id, index) => {
         promise.push(firebase.getFavoriteListing(id) as DocumentData);
@@ -133,7 +128,6 @@ function FollowedList({
       let allPromises = await Promise.all(promise);
       let listingDocArr: DocumentData[] = [];
       allPromises.forEach((doc) => {
-        console.log(doc.data().title);
         listingDocArr.push(doc);
       });
 
@@ -176,8 +170,6 @@ function FollowedList({
 
             let state = { newOrder };
             const newArray = newOrder.map((data, id) => data.id);
-            // if (source.droppableId === 'favoriteLists') {
-            console.log(newArray);
             setAllListingData(newOrder);
             async function updateFavoriteLists() {
               firebase.updateFavoriteLists(userInfo.uid, newArray).then(() => {

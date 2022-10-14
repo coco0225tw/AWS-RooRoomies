@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { DocumentData } from 'firebase/firestore';
 
-import { RootState } from '../redux/rootReducer';
-import { firebase } from '../utils/firebase';
-import { getFavoriteAction } from '../redux/GetFavoriteListing/GetFavoriteListingAction';
-
 import { PopupComponent } from './Popup';
 
-import addIcon from '../assets/add.png';
-import unAddIcon from '../assets/unAdd.png';
-import likedIcon from '../assets/heart.png';
-import unLikedIcon from '../assets/unHeart.png';
 interface ImgProps {
   img: string;
 }
@@ -21,37 +12,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-`;
-
-const Icon = styled.div`
-  aspect-ratio: 1 / 1;
-  height: auto;
-  width: 24px;
-  background-size: 100% 100%;
-  &:hover {
-    width: 32px;
-  }
-`;
-
-const IconArea = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 8px 0px 0px;
-  align-items: start;
-  transition-duration: 0.2s;
-`;
-const FavoriteIcon = styled(Icon)<{ isLiked: boolean }>`
-  background-image: url(${(props) => (props.isLiked ? likedIcon : unLikedIcon)});
-  right: 8px;
-`;
-
-const CompareIcon = styled(Icon)<{ isCompared: boolean }>`
-  background-image: url(${(props) => (props.isCompared ? addIcon : unAddIcon)});
-`;
-
-const SideBarWrapper = styled.div`
-  width: 30%;
-  padding: 20px;
 `;
 
 const CardWrapper = styled.div`
@@ -107,82 +67,8 @@ const DetailWrapper = styled.div`
 `;
 function ListingItem({ listingDocData }: { listingDocData: DocumentData }) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
-  const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);
-  function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (authChange) {
-      if (!isLiked) {
-        async function addToFavoriteLists() {
-          await firebase.addToFavoriteLists(userInfo.uid, listingDocData.id);
-        }
-        addToFavoriteLists();
-        dispatch({
-          type: getFavoriteAction.ADD_TO_FAVORITE_LISTS,
-          payload: { id: listingDocData.id },
-        });
-      } else {
-        async function removeFromFavoriteLists() {
-          await firebase.removeFromFavoriteLists(userInfo.uid, listingDocData.id);
-        }
-        removeFromFavoriteLists();
-        dispatch({
-          type: getFavoriteAction.REMOVE_FROM_FAVORITE_LISTS,
-          payload: { id: listingDocData.id },
-        });
-      }
-    } else {
-      setIsShown(true);
-    }
-  }
-
-  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (authChange) {
-      if (!isCompared) {
-        async function addToCompareLists() {
-          await firebase.addToCompareLists(userInfo.uid, listingDocData.id);
-        }
-        addToCompareLists();
-        dispatch({
-          type: 'ADD_TO_COMPARELISTS',
-          payload: { id: listingDocData.id },
-        });
-      } else {
-        async function removeFromCompareLists() {
-          await firebase.removeFromCompareLists(userInfo.uid, listingDocData.id);
-        }
-        removeFromCompareLists();
-        handleDnd(e, isCompared);
-        dispatch({
-          type: 'REMOVE_FROM_COMPARELISTS',
-          payload: { id: listingDocData.id },
-        });
-      }
-    } else {
-      setIsShown(true);
-    }
-  }
-  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isCompared) {
-      async function removeFromDndLists() {
-        await firebase.removeFromDndLists(userInfo.uid, listingDocData.id);
-      }
-      removeFromDndLists();
-      dispatch({
-        type: 'REMOVE_FROM_DNDLISTS',
-        payload: { id: listingDocData.id },
-      });
-    }
-  }
 
   function clickClose() {
     setIsShown(false);

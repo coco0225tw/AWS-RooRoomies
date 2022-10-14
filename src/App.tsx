@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 
 import store from './redux/store';
-import { firebase, auth, onAuthStateChanged, db } from './utils/firebase';
+import { firebase, auth, onAuthStateChanged } from './utils/firebase';
 import { RootState } from './redux/rootReducer';
 
 import Header from './components/Header';
@@ -14,11 +14,7 @@ import Footer from './components/Footer';
 import ChatRooms from './components/ChatRooms/ChatRooms';
 import Alert from './components/Alert';
 
-import { groupsType } from './redux/Group/GroupType';
 import userType from './redux/GetAuth/GetAuthType';
-import { roomDetailsType } from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
-import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import facilityType from './redux/UploadFacility/UploadFacilityType';
 import { alertActionType } from './redux/Alert/AlertAction';
 import { chatRoomAction } from './redux/ChatRoom/ChatRoomAction';
 import { getAuthAction } from './redux/GetAuth/GetAuthAction';
@@ -30,7 +26,12 @@ import { selectTabAction } from './redux/SelectTab/SelectTabAction';
 import { subTabAction } from './redux/SubTab/SubTabAction';
 import { uploadAddrAction } from './redux/UploadAddr/UploadAddrAction';
 import { uploadBookingTimesAction } from './redux/UploadBookingTimes/UploadBookingTimesAction';
-
+import { uploadFacilityAction } from './redux/UploadFacility/UploadFacilityAction';
+import { uploadImagesAction } from './redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { uploadRoommatesConditionAction } from './redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
+import { uploadRoomDetailsAction } from './redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { uploadTitleAction } from './redux/UploadTitle/UploadTitleAction';
+import { uploadUserAsRoommateAction } from './redux/UserAsRoommate/UserAsRoommateAction';
 import PingFangTCRegular from './fonts/PingFang-TC-Regular-2.otf';
 import PingFangTCThin from './fonts/PingFang-TC-Thin-2.otf';
 import NotoSansTCRegular from './fonts/NotoSansTC-Regular.otf';
@@ -123,8 +124,6 @@ function User() {
       } else {
         dispatch({ type: getAuthAction.RETURN_INITIAL_GET_USER });
         dispatch({ type: onAuthChangeAction.RETURN_INITIAL_AUTH });
-        dispatch({ type: 'RETURN_INITIAL_COMPARELISTS' });
-        dispatch({ type: 'RETURN_INITIAL_DNDLISTS' });
         dispatch({ type: getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS });
         //group
         //lastdoc
@@ -134,12 +133,12 @@ function User() {
         dispatch({
           type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
         });
-        dispatch({ type: 'RETURN_INITIAL_FACILITY' });
-        dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
-        dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
-        dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
-        dispatch({ type: 'RETURN_INITIAL_TITLE' });
-        dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+        dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+        dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+        dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+        dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+        dispatch({ type: uploadTitleAction.RETURN_INITIAL_TITLE });
+        dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
         dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
         dispatch({
           type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
@@ -158,14 +157,8 @@ function User() {
           userListingId: data?.data().userListingId,
         };
 
-        const compareLists = data?.data().compareLists;
         const favoriteLists = data?.data().favoriteLists;
-        const dndLists = data?.data().dndLists;
-        dispatch({
-          type: 'GET_COMPARELISTS_FROM_FIREBASE',
-          payload: { compareLists },
-        });
-        dispatch({ type: 'GET_DNDLISTS_FROM_FIREBASE', payload: { dndLists } });
+
         dispatch({
           type: getFavoriteAction.GET_FAVORITE_LISTS_FROM_FIREBASE,
           payload: { favoriteLists },
@@ -176,7 +169,7 @@ function User() {
         });
         if (data?.data().userAsRoommatesConditions) {
           dispatch({
-            type: 'GET_USER_AS_ROOMMATES_FROM_FIREBASE',
+            type: uploadUserAsRoommateAction.GET_USER_AS_ROOMMATES_FROM_FIREBASE,
             payload: {
               meAsRoommatesState: data?.data().userAsRoommatesConditions,
             },
@@ -186,23 +179,6 @@ function User() {
         dispatch({ type: onAuthChangeAction.AUTH_TRUE });
         if (data?.data().userListingId.length !== 0) {
           async function getListing() {
-            type ListingType = {
-              mainImage: string;
-              images: string[];
-              title: string;
-              countyName: string;
-              townName: string;
-              form: string;
-              environmentDescription: string;
-              roommatesConditions: roommatesConditionType;
-              facility: facilityType;
-              rentRoomDetails: roomDetailsType;
-              peopleAmount: number;
-              matchGroup: groupsType;
-              listingTitle: string;
-              totalSq: number;
-            };
-
             const listingData = await firebase.getListing(data?.data().userListingId);
             let listingTitle = {
               title: listingData?.title,
@@ -211,15 +187,15 @@ function User() {
             };
 
             dispatch({
-              type: 'GET_LISTING_TITLE_FROM_FIREBASE',
+              type: uploadTitleAction.GET_LISTING_TITLE_FROM_FIREBASE,
               payload: { listingTitle },
             });
             dispatch({
-              type: 'GET_ROOMMATESCONDITION_FROM_FIREBASE',
+              type: uploadRoommatesConditionAction.GET_ROOMMATES_CONDITION_FROM_FIREBASE,
               payload: { roommatesState: listingData?.roommatesConditions },
             });
             dispatch({
-              type: 'GET_FACILITY_FROM_FIREBASE',
+              type: uploadFacilityAction.GET_FACILITY_FROM_FIREBASE,
               payload: { facilityState: listingData?.facility },
             });
           }

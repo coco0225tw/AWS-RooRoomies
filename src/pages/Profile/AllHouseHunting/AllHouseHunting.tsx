@@ -18,7 +18,7 @@ import { RootState } from '../../../redux/rootReducer';
 import { alertActionType } from '../../../redux/Alert/AlertAction';
 import { chatRoomAction } from '../../../redux/ChatRoom/ChatRoomAction';
 import { subTabAction } from '../../../redux/SubTab/SubTabAction';
-import { groupsType, userInfoType, usersType, groupType } from '../../../redux/Group/GroupType';
+import { userInfoType, groupType } from '../../../redux/Group/GroupType';
 import ListingItem from '../../../components/ListingItem';
 import Hr from '../../../components/Hr';
 import chat from '../../../assets/chat.png';
@@ -217,19 +217,6 @@ function AllHouseHunting({
       });
     }
 
-    async function getAllHouseHuntingData() {
-      firebase.getAllHouseHunting(userInfo.uid).then((listing) => {
-        let houseHuntingDocArr: QueryDocumentSnapshot<DocumentData>[] = [];
-        listing.forEach((doc) => {
-          houseHuntingDocArr.push(doc);
-        });
-        setHouseHuntingData(houseHuntingDocArr);
-      });
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
     async function getAllListing(arr: QueryDocumentSnapshot<DocumentData>[]) {
       let promise: DocumentData[] = [];
       arr.map((el, index) => {

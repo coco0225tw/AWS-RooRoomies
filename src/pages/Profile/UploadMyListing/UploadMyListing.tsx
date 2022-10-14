@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
-import { doc, collection, onSnapshot, QueryDocumentSnapshot, DocumentData, query, where } from 'firebase/firestore';
+import { doc, collection, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 
 import { firebase, timestamp, db } from '../../../utils/firebase';
 import { Title } from '../../../components/ProfileTitle';
@@ -22,7 +22,13 @@ import { roomDetailsType } from '../../../redux/UploadRoomsDetails/UploadRoomsDe
 import addrType from '../../../redux/UploadAddr/UploadAddrType';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
 import mainImageAndImagesType from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesType';
-import GetListingInHomePage from '../../../redux/ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
+import { uploadFacilityAction } from '../../../redux/UploadFacility/UploadFacilityAction';
+import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
+import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -162,12 +168,14 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(false);
-                dispatch({ type: 'RETURN_INITIAL_FACILITY' });
-                dispatch({ type: 'RETURN_INITIAL_LISTING_IMAGES' });
-                dispatch({ type: 'RETURN_INITIAL_ROOMMATES_CONDITION' });
-                dispatch({ type: 'RETURN_INITIAL_ROOM_DETAILS' });
-                dispatch({ type: 'RETURN_INITIAL_TITLE' });
-                dispatch({ type: 'RETURN_INITIAL_MEASROOMMATE' });
+                dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+                dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+                dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+                dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+                dispatch({
+                  type: uploadTitleAction.RETURN_INITIAL_TITLE,
+                });
+                dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
               }}
             >
               取消

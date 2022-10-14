@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { collection, DocumentData, QueryDocumentSnapshot, onSnapshot, Timestamp } from 'firebase/firestore';
 import { firebase, db } from '../../utils/firebase';
 import { RootState } from '../../redux/rootReducer';
@@ -20,15 +20,13 @@ import Group from './Group';
 
 import likedIcon from '../../assets/heart.png';
 import unLikedIcon from '../../assets/unHeart.png';
-import addIcon from '../../assets/add.png';
-import unAddIcon from '../../assets/unAdd.png';
+
 import { BtnDiv } from '../../components/Button';
 import { PopupComponent, PopupImage } from '../../components/Popup';
 import Hr from '../../components/Hr';
 import SpanLink from '../../components/SpanLink';
 
 import { groupsType } from '../../redux/Group/GroupType';
-import { bookTimeType } from '../../redux/UploadBookingTimes/UploadBookingTimesType';
 import { roomDetailsType } from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from '../../redux/UploadFacility/UploadFacilityType';
@@ -423,39 +421,7 @@ function Listing() {
       setIsShown(true);
     }
   }
-  function handleCompare(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (authChange) {
-      if (!isCompared) {
-        async function addToCompareLists() {
-          await firebase.addToCompareLists(userInfo.uid, id!);
-        }
-        addToCompareLists();
-        dispatch({ type: 'ADD_TO_COMPARELISTS', payload: { id: id! } });
-      } else {
-        async function removeFromCompareLists() {
-          await firebase.removeFromCompareLists(userInfo.uid, id!);
-        }
-        removeFromCompareLists();
-        handleDnd(e, isCompared);
-        dispatch({ type: 'REMOVE_FROM_COMPARELIST', payload: { id: id! } });
-      }
-    } else {
-      setIsShown(true);
-    }
-  }
-  function handleDnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isCompared: boolean) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (isCompared) {
-      async function removeFromDndLists() {
-        await firebase.removeFromDndLists(userInfo.uid, id!);
-      }
-      removeFromDndLists();
-      dispatch({ type: 'REMOVE_FROM_DNDLISTS', payload: { id: id! } });
-    }
-  }
+
   type ListingType = {
     mainImage: string;
     images: string[];

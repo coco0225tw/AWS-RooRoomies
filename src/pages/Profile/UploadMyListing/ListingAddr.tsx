@@ -17,7 +17,7 @@ import {
 } from '../../../components/InputArea';
 import { RootState } from '../../../redux/rootReducer';
 
-import { BtnDiv, InputBtn, SubmitBtn } from '../../../components/Button';
+import { SubmitBtn } from '../../../components/Button';
 import arrow from '../../../assets/arrow.png';
 import addressType from '../../../redux/UploadAddr/UploadAddrType';
 import { uploadAddrAction } from '../../../redux/UploadAddr/UploadAddrAction';
@@ -246,7 +246,6 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       name={info.key}
                       rules={{
                         required: info.required && info.required,
-
                         maxLength: info.maxLength && info.maxLength,
                       }}
                       render={({ field: { onChange, ...props } }) =>

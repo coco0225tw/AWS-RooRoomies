@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/rootReducer';
 
 import Hr from '../../components/Hr';
-import { BtnDiv } from '../../components/Button';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 const Wrapper = styled.div`
   display: flex;

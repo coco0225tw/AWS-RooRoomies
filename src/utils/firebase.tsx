@@ -13,19 +13,15 @@ import {
   startAfter,
   DocumentData,
   serverTimestamp,
-  addDoc,
-  onSnapshot,
-  QueryDocumentSnapshot,
   where,
   arrayUnion,
   arrayRemove,
   deleteDoc,
   Timestamp,
-  CollectionReference,
   DocumentReference,
   QueryConstraint,
 } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -49,12 +45,7 @@ type selectDateTimeType = {
   date: Timestamp;
   startTime: string;
 };
-type bookTimeInfoType = {
-  uid: string;
-  docId: string;
-  listingId: string;
-  selectedDateTime: selectDateTimeType;
-};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -176,7 +167,6 @@ const firebase = {
     if (docSnap.exists()) {
       return docSnap;
     } else {
-      // window.alert("No such document!");
     }
   },
 
@@ -280,7 +270,6 @@ const firebase = {
     if (docSnap.exists()) {
       return docSnap;
     } else {
-      // window.alert("No such document!");
     }
   },
   async sendMessage(chatRoomId: string, oldMsg: Msg[], newMsg: Msg) {
@@ -438,16 +427,7 @@ const firebase = {
       favoriteLists: arrayRemove(listingId),
     });
   },
-  async addToCompareLists(uid: string, listingId: string) {
-    await updateDoc(doc(db, 'users', uid), {
-      compareLists: arrayUnion(listingId),
-    });
-  },
-  async removeFromCompareLists(uid: string, listingId: string) {
-    await updateDoc(doc(db, 'users', uid), {
-      compareLists: arrayRemove(listingId),
-    });
-  },
+
   async updateFavoriteLists(uid: string, listingArray: string[]) {
     const reverseArray = listingArray.reverse();
     await setDoc(
@@ -457,29 +437,6 @@ const firebase = {
       },
       { merge: true }
     );
-  },
-  // async updateCompareListsField(uid: string, compareLists: any) {
-  //   await setDoc(
-  //     doc(db, 'users', uid),
-  //     {
-  //       compareLists: compareLists,
-  //     },
-  //     { merge: true }
-  //   );
-  // },
-  // async updateDndListsField(uid: string, dndLists: any) {
-  //   await setDoc(
-  //     doc(db, 'users', uid),
-  //     {
-  //       dndLists: dndLists,
-  //     },
-  //     { merge: true }
-  //   );
-  // },
-  async removeFromDndLists(uid: string, listingId: string) {
-    await updateDoc(doc(db, 'users', uid), {
-      dndLists: arrayRemove(listingId),
-    });
   },
 
   // cancelBookTime

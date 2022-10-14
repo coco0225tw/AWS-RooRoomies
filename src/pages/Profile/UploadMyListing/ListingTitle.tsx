@@ -22,7 +22,7 @@ import { RootState } from '../../../redux/rootReducer';
 import { SubmitBtn } from '../../../components/Button';
 import arrow from '../../../assets/arrow.png';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
-
+import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -30,11 +30,6 @@ const Wrapper = styled.div`
   align-items: flex-start;
   width: 100%;
   height: 100%;
-`;
-
-const StyledFormInputWrapper = styled(FormInputWrapper)`
-  margin-left: 40px;
-  margin-top: 0px;
 `;
 
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
@@ -108,7 +103,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     submit(data);
     setClickTab('地址');
   };
-  const initialTitleState = titleInfo;
 
   const valid = {
     required: {
@@ -116,21 +110,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       message: '※必填欄位',
     },
   };
-  interface hookFormGroupType {
-    label: string;
-    key: string;
-    required?: { value: boolean; message: string };
-    valueAsNumber?: { value: boolean; message: string };
-    maxLength?: { value: number; message: string };
-    minLength?: { value: number; message: string };
-    min?: { value: number; message: string };
-    max?: { value: number; message: string };
-    pattern?: {
-      value: RegExp;
-      message: string;
-    };
-    options: { label: string; key: string }[];
-  }
+
   const hookFormGroup = [
     {
       label: '名稱',
@@ -190,7 +170,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       required: valid.required,
     },
   ];
-  const [titleState, setTitleState] = useState<titleType>(initialTitleState);
   const [selectedDate, setSelectedDate] = useState<Date>(titleInfo.moveInDate && titleInfo.moveInDate);
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
@@ -201,7 +180,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     setSelectedDate(date);
   }
   function submit(titleState: titleType) {
-    dispatch({ type: 'UPLOAD_TITLE', payload: { titleState } });
+    dispatch({ type: uploadTitleAction.UPLOAD_TITLE, payload: { titleState } });
   }
   useEffect(() => {
     for (const [key, value] of Object.entries(titleInfo)) {

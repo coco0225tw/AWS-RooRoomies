@@ -273,11 +273,6 @@ function Search({
     countyCode: number | null;
     countyName: string | null;
   }
-  interface countyOption {
-    countycode: string;
-    countyname: string;
-    countycode01: number;
-  }
 
   const [selectCounty, setSelectCounty] = useState<County>({
     countyCode: 63000,
@@ -317,17 +312,7 @@ function Search({
       { label: '20000以上', key: 'over20000' },
     ],
   };
-  const peopleGroup = {
-    label: '人數',
-    key: 'people',
-    options: [
-      { label: '不限', key: 'unlimitedPeople' },
-      { label: '1', key: 'people1' },
-      { label: '2', key: 'people2' },
-      { label: '3', key: 'people3' },
-      { label: '4', key: 'people4' },
-    ],
-  };
+
   async function handleOnchange(county: string, town: string | null, rent: string) {
     setLoading(true);
     if (town === '不限') {

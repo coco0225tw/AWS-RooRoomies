@@ -15,7 +15,6 @@ export default function GetFavoriteLists(state = favoriteListsState, action: get
       });
     }
     case getFavoriteAction.ADD_TO_FAVORITE_LISTS: {
-      let newState = [...state];
       return [...state, action.payload.id];
     }
     case getFavoriteAction.RETURN_INITIAL_FAVORITE_LISTS: {

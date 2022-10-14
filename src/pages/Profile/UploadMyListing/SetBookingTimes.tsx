@@ -33,11 +33,6 @@ const SelectTimes = styled.div`
   flex-direction: column;
   width: 84px;
 `;
-const AddTimeBtn = styled.div`
-  cursor: pointer;
-  background-color: grey;
-  color: white;
-`;
 
 const TimeInput = styled.input.attrs({
   type: 'time',

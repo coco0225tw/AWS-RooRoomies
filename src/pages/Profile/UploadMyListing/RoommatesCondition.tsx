@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { useForm, Controller } from 'react-hook-form';
@@ -17,6 +17,7 @@ import {
 } from '../../../components/InputArea';
 import { SubmitBtn } from '../../../components/Button';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -204,7 +205,6 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
     value: string;
   }
   const {
-    register,
     handleSubmit,
     setValue,
     formState: { errors },
@@ -216,7 +216,7 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
   };
   function submit(roommatesState: roommatesConditionType) {
     dispatch({
-      type: 'UPLOAD_ROOMMATESCONDITION',
+      type: uploadRoommatesConditionAction.UPLOAD_ROOMMATES_CONDITION,
       payload: { roommatesState },
     });
   }

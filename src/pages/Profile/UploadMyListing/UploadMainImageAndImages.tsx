@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
 import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
 import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
+import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+
 import { BtnDiv } from '../../../components/Button';
 import upload from '../../../assets/upload.png';
 const Wrapper = styled.div`
@@ -114,7 +116,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
   }
   async function uploadAllImages() {
     let images = { mainImage: mainImgBlob, images: imagesBlob };
-    dispatch({ type: 'UPLOAD_IMAGES', payload: { images } });
+    dispatch({ type: uploadImagesAction.UPLOAD_IMAGES, payload: { images } });
     dispatch({
       type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
       payload: { mainImage: mainImgUrl },
