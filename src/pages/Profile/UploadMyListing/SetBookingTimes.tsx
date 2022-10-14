@@ -1,14 +1,14 @@
-import React, { useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import Calendar from "react-calendar";
-import styled from "styled-components";
-import CalendarContainer from "../../../components/Calendar";
-import { SubTitle } from "../../../components/ProfileTitle";
-import { BtnDiv } from "../../../components/Button";
-import { RootState } from "../../../redux/rootReducer";
-import bin from "../../../assets/bin.png";
-import bookingTimesType from "../../../redux/UploadBookingTimes/UploadBookingTimesType";
-import { uploadBookingTimesAction } from "../../../redux/UploadBookingTimes/UploadBookingTimesAction";
+import React, { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import Calendar from 'react-calendar';
+import styled from 'styled-components';
+import CalendarContainer from '../../../components/Calendar';
+import { SubTitle } from '../../../components/ProfileTitle';
+import { BtnDiv } from '../../../components/Button';
+import { RootState } from '../../../redux/rootReducer';
+import bin from '../../../assets/bin.png';
+import bookingTimesType from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
+import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -40,7 +40,7 @@ const AddTimeBtn = styled.div`
 `;
 
 const TimeInput = styled.input.attrs({
-  type: "time",
+  type: 'time',
 })`
   accent-color: #c77155;
 `;
@@ -54,7 +54,7 @@ const StartTime = styled(TimeInput)``;
 
 const SectionDivider = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   justify-content: space-between;
 `;
@@ -75,15 +75,9 @@ const Cross = styled.div`
     transform: scale(1.2);
   }
 `;
-function SetBookingTimes({
-  setClickTab,
-}: {
-  setClickTab: React.Dispatch<React.SetStateAction<string>>;
-}) {
+function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
-  const timesInfo = useSelector(
-    (state: RootState) => state.UploadTimesReducer
-  ) as any;
+  const timesInfo = useSelector((state: RootState) => state.UploadTimesReducer) as any;
   const [selectedDays, setSelectedDays] = useState<Date[]>(
     timesInfo
       .map((d: any, index: number) => d.date)
@@ -96,8 +90,7 @@ function SetBookingTimes({
         return acc;
       }, [])
   );
-  const [selectedTimes, setSelectedTimes] =
-    useState<bookingTimesType>(timesInfo);
+  const [selectedTimes, setSelectedTimes] = useState<bookingTimesType>(timesInfo);
   const selectedTimeRef = useRef<HTMLInputElement[]>([]);
 
   type tileDisabledType = { date: Date };
@@ -148,30 +141,20 @@ function SetBookingTimes({
   return (
     <Wrapper>
       <SectionDivider>
-        <CalendarContainer>
-          <Calendar
-            onClickDay={clickDate}
-            selectRange={false}
-            tileDisabled={tileDisabled}
-          />
+        <CalendarContainer style={{ marginLeft: '0', marginBottom: '12px' }}>
+          <Calendar onClickDay={clickDate} selectRange={false} tileDisabled={tileDisabled} />
         </CalendarContainer>
         <SectionWrapper>
-          <SubTitle style={{ marginBottom: "12px" }}>選擇的日期</SubTitle>
+          <SubTitle style={{ marginBottom: '12px' }}>選擇的日期</SubTitle>
           {selectedDays &&
             selectedDays.map((s, index) => (
               <SelectedDays key={`selectedDays${index}`}>
                 <SelectedDay>
-                  {s.getFullYear() +
-                    "-" +
-                    ("0" + (s.getMonth() + 1)).slice(-2) +
-                    "-" +
-                    ("0" + s.getDate()).slice(-2)}
+                  {s.getFullYear() + '-' + ('0' + (s.getMonth() + 1)).slice(-2) + '-' + ('0' + s.getDate()).slice(-2)}
                 </SelectedDay>
-                <StartTime
-                  ref={(el) => ((selectedTimeRef.current[index] as any) = el)}
-                ></StartTime>
+                <StartTime ref={(el) => ((selectedTimeRef.current[index] as any) = el)}></StartTime>
                 <SubmitBtn
-                  style={{ marginTop: "0px" }}
+                  style={{ marginTop: '0px' }}
                   onClick={() => {
                     clickTime(s, index);
                   }}
@@ -185,11 +168,7 @@ function SetBookingTimes({
                       .map((time, index) => (
                         <SelectTime key={`selectedTimes${index}`}>
                           <div>{time.startTime}</div>
-                          <Cross
-                            onClick={() =>
-                              deleteTime(time.date, time.startTime)
-                            }
-                          />
+                          <Cross onClick={() => deleteTime(time.date, time.startTime)} />
                         </SelectTime>
                       ))}
                 </SelectTimes>
@@ -201,7 +180,7 @@ function SetBookingTimes({
       <SubmitBtn
         onClick={() => {
           submit(selectedTimes);
-          setClickTab("設定室友條件");
+          setClickTab('設定室友條件');
         }}
       >
         儲存

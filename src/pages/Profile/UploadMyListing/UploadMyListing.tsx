@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
@@ -16,10 +16,12 @@ import ListingTitle from './ListingTitle';
 import RoommatesCondition from './RoommatesCondition';
 import Facility from './Facility';
 import RentRoomDetails from './RentRoomDetails';
+import ListingItem from '../../../components/ListingItem';
 
 import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import addrType from '../../../redux/UploadAddr/UploadAddrType';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
+import GetListingInHomePage from '../../../redux/ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -43,12 +45,15 @@ const Tabs = styled.div`
   display: flex;
   flex-direction: row;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 8px;
 `;
 const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   border: none;
   border-bottom: ${(props) => (props.isClick ? 'solid 3px #c77155 ' : 'solid 3px lightgrey')};
   box-shadow: none;
   transition-duration: 0.2s;
+  white-space: nowrap;
 `;
 const Span = styled.span`
   align-self: flex-end;
@@ -70,16 +75,22 @@ function UploadMyListing({
   const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as any;
   const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
   const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
+  const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
+  const [listingData, setListingData] = useState<any>(null);
   const [edit, setEdit] = useState<boolean>(false);
 
   const listingCollection = collection(db, 'listings');
-  function setDoc(facilityOptions: any) {
-    const findPeopleAmount = (getRooms as roomDetailsType).reduce((sum, people) => sum + people.peopleAmount, 0);
-    const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent < current.rent ? prev : current
+  async function setDoc() {
+    const findPeopleAmount = (getRooms as roomDetailsType).reduce(
+      (sum, people) => Number(sum) + Number(people.peopleAmount),
+      0
     );
-    const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
+    const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
       prev.rent > current.rent ? prev : current
+    );
+
+    const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
+      prev.rent < current.rent ? prev : current
     );
     const listingData = {
       ...getTitle,
@@ -87,11 +98,11 @@ function UploadMyListing({
       countyName: getAddr.countyname,
       townName: getAddr.townname,
       peopleAmount: findPeopleAmount,
-      startRent: findStartRent.rent,
-      endRent: findEndRent.rent,
+      startRent: Number(findStartRent.rent),
+      endRent: Number(findEndRent.rent),
       floor: getAddr.floor,
       rentRoomDetails: getRooms,
-      facility: facilityOptions,
+      facility: getFacility,
       roommatesConditions: getRoommatesCondition,
       addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`,
       latLng: getAddr.latLng,
@@ -99,7 +110,7 @@ function UploadMyListing({
     };
 
     const newListingRef = doc(listingCollection);
-    firebase.setNewListingDocField(
+    await firebase.setNewListingDocField(
       newListingRef,
       listingData,
       getBookingTimes,
@@ -107,7 +118,20 @@ function UploadMyListing({
       getImages.images,
       userInfo!.uid
     );
+    let listingDocData;
+    listingDocData = await firebase.getListingDoc(newListingRef.id);
+    setListingData(listingDocData);
   }
+  useEffect(() => {
+    async function getListing() {
+      let listingDocData;
+
+      listingDocData = await firebase.getListingDoc(userInfo!.userListingId);
+
+      setListingData(listingDocData);
+    }
+    getListing();
+  }, [userInfo!.userListingId?.length !== 0]);
   return (
     <Wrapper>
       <Title
@@ -118,19 +142,21 @@ function UploadMyListing({
         }}
       >
         管理物件
-        <Span>
-          {userInfo!.userListingId?.length === 0 && !edit ? (
-            <React.Fragment>
-              <SubmitBtn
-                onClick={() => {
-                  setEdit(true);
-                  setClickTab('基本資訊');
-                }}
-              >
-                我要上架
-              </SubmitBtn>
-            </React.Fragment>
-          ) : (
+        {userInfo!.userListingId?.length !== 0 ? (
+          <span style={{ fontSize: '20px', alignSelf: 'flex-end' }}>你的物件</span>
+        ) : !edit ? (
+          <React.Fragment>
+            <SubmitBtn
+              onClick={() => {
+                setEdit(true);
+                setClickTab('基本資訊');
+              }}
+            >
+              我要上架
+            </SubmitBtn>
+          </React.Fragment>
+        ) : (
+          <Span>
             <SubmitBtn
               onClick={() => {
                 setEdit(false);
@@ -144,10 +170,11 @@ function UploadMyListing({
             >
               取消
             </SubmitBtn>
-          )}
-        </Span>
+          </Span>
+        )}
       </Title>
       <Hr />
+      {userInfo!.userListingId?.length !== 0 && <ListingItem listingDocData={listingData} />}
       {edit && (
         <Tabs>
           {TabSelect.map((el, index) => (

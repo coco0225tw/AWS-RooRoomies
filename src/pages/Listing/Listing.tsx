@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { collection, DocumentData, QueryDocumentSnapshot, onSnapshot } from 'firebase/firestore';
+import { collection, DocumentData, QueryDocumentSnapshot, onSnapshot, Timestamp } from 'firebase/firestore';
 import { firebase, db } from '../../utils/firebase';
 import { RootState } from '../../redux/rootReducer';
 import { alertActionType } from '../../redux/Alert/AlertAction';
@@ -159,7 +159,6 @@ const Images = styled(MainImage)`
   @media screen and (max-width: 1200px) {
     width: 100px;
     min-width: 100px;
-    /* margin-right: 10px; */
   }
 `;
 
@@ -175,9 +174,6 @@ const AddrSection = styled(SectionWrapper)`
   margin-top: 32px;
   align-self: flex-start;
   flex-direction: column;
-  @media screen and (max-width: 660px) {
-    /* flex-direction: column; */
-  }
 `;
 const StickyCalendarContainer = styled.div`
   display: flex;
@@ -223,7 +219,6 @@ const Times = styled.div`
     padding-left: 0px;
     padding-top: 32px;
     width: 350px;
-    /* margin: auto; */
   }
   @media screen and (max-width: 420px) {
     width: 100%;
@@ -297,7 +292,10 @@ const TitleInfoWrapper = styled(SectionWrapper)`
 const TitleIcon = styled.div`
   font-size: 20px;
   margin-right: 12px;
-  border-bottom: solid 3px #c77155;
+  & + & {
+    border-left: solid 3px #c77155;
+    padding-left: 12px;
+  }
 `;
 const TitleIconWrapper = styled.div`
   display: flex;
@@ -324,6 +322,13 @@ const TimeAndCalendarWrapper = styled.div`
   }
   @media screen and (max-width: 650px) {
     flex-direction: column;
+  }
+`;
+const StyledHr = styled(Hr)`
+  display: none;
+  @media screen and (max-width: 1460px) {
+    display: block;
+    margin: 40px 0;
   }
 `;
 function Listing() {
@@ -465,7 +470,7 @@ function Listing() {
     endRent: number;
     totalSq: number;
     floor: number;
-    moveInDate: string;
+    moveInDate: Timestamp;
     latLng: { lat: number; lng: number };
   };
 
@@ -656,9 +661,15 @@ function Listing() {
             <TitleIconWrapper>
               <TitleIcon>{listingInfo?.form}</TitleIcon>
               <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
-              <TitleIcon>{listingInfo?.floor}樓</TitleIcon>
+              <TitleIcon>{listingInfo?.floor}F</TitleIcon>
               <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
-              <TitleIcon>{listingInfo?.moveInDate}起可入住</TitleIcon>
+              <TitleIcon>
+                {listingInfo?.moveInDate.toDate().getFullYear() +
+                  '-' +
+                  ('0' + (listingInfo?.moveInDate.toDate().getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + listingInfo?.moveInDate.toDate().getDate()).slice(-2)}
+              </TitleIcon>
             </TitleIconWrapper>
           </AddrSection>
           <div style={{ margin: '20px 0px' }}>{listingInfo?.environmentDescription}</div>
@@ -688,7 +699,7 @@ function Listing() {
           <RoomDetails room={listingInfo?.rentRoomDetails} />
         </TitleWrapper>
         <StickyCalendarContainer>
-          <Hr style={{ margin: '40px 0' }} />
+          <StyledHr />
           <StyledSubTitle style={{ marginBottom: '20px' }}>
             預約看房
             <span style={{ fontSize: '16px', marginLeft: '20px' }}>
