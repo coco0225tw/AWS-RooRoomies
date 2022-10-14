@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { firebase } from '../../utils/firebase';
-
+import { DocumentData } from 'firebase/firestore';
 import addIcon from '../../assets/add.png';
 import unAddIcon from '../../assets/unAdd.png';
 import likedIcon from '../../assets/heart.png';
@@ -155,15 +155,13 @@ const InfoArea = styled.div`
 `;
 const Addr = styled.div``;
 const PeopleAmount = styled.div``;
-function Listing({ listingDocData }: { listingDocData: any }) {
+function Listing({ listingDocData }: { listingDocData: DocumentData }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
-  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
 
   const [isShown, setIsShown] = useState<boolean>(false);
   const [submitting, setSubmitting] = useState<boolean>(false);

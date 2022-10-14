@@ -18,7 +18,7 @@ import {
 } from '../../../components/InputArea';
 import { BtnDiv, SubmitBtn } from '../../../components/Button';
 import bin from '../../../assets/bin.png';
-import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType, roomType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import arrow from '../../../assets/arrow.png';
 import AboutMe from '../AboutMe/AboutMe';
 
@@ -192,7 +192,10 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
-
+  interface optionType {
+    label: string;
+    key: string;
+  }
   const roomRef = useRef<HTMLInputElement[]>([]);
   const {
     register,
@@ -202,12 +205,12 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     formState: { errors },
     control,
   } = useForm();
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: roomType) => {
     addRooms(data);
     reset();
     setSelectOptions(null);
   };
-  function addRooms(data: any) {
+  function addRooms(data: roomType) {
     setRoomState([...roomState, data]);
   }
   function submit() {
@@ -227,7 +230,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                 <ErrorText>{errors[r.key] && (errors[r.key].message as string)}</ErrorText>
               </LabelArea>
               <FormInputWrapper>
-                {(r.options as optionType) ? (
+                {(r.options as any) ? (
                   <React.Fragment>
                     <DropDown onClick={() => setOpenDropDown(!openDropDown)}>
                       {selectOptions ? selectOptions : '請選擇'}
@@ -249,7 +252,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                           pattern: r.pattern && r.pattern,
                         }}
                         render={({ field: { onChange, ...props } }) =>
-                          (r.options as any).map((o, oIndex) => (
+                          (r.options as any).map((o: optionType, oIndex: number) => (
                             <React.Fragment key={`${o.key}${oIndex}`}>
                               <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
                                 <CheckedFormCheckInput
@@ -301,7 +304,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
           </Tr>
-          {roomState.map((r: any, index: number) => (
+          {roomState.map((r: roomType, index: number) => (
             <Tr key={`room${index}`}>
               <Td>房間{index + 1}</Td>
               <Td>{r.rent}元</Td>

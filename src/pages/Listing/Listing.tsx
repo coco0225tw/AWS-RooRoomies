@@ -28,7 +28,8 @@ import Hr from '../../components/Hr';
 import SpanLink from '../../components/SpanLink';
 
 import { groupsType } from '../../redux/Group/GroupType';
-import roomDetailsType from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { bookTimeType } from '../../redux/UploadBookingTimes/UploadBookingTimesType';
+import { roomDetailsType } from '../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from '../../redux/UploadFacility/UploadFacilityType';
 
@@ -337,9 +338,7 @@ function Listing() {
   const { id } = useParams<string>();
 
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
-  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
   const getGroup = useSelector((state: RootState) => state.GroupReducer) as groupsType;
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
 
@@ -347,17 +346,21 @@ function Listing() {
   const [hintTextLoading, setHintTextLoading] = useState<boolean>(false);
   const [listingInfo, setListingInfo] = useState<ListingType>();
   const [bookingTimesInfo, setBookingTimesInfo] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
-  const [ableBookingTimes, setAbleBookingTimes] = useState<number[]>([]);
+  const [ableBookingTimes, setAbleBookingTimes] = useState<Date[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickOnImg, setClickOnImg] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
+  type selectDateTimeType = {
+    date: Timestamp;
+    startTime: string;
+  };
   const [bookTimeInfo, setBookTimeInfo] = useState<{
     uid: string;
     docId: string;
     listingId: string;
-    selectedDateTime: any;
+    selectedDateTime: selectDateTimeType;
   }>();
   const [addUserAsRoommatesCondition, setAddUserAsRoommatesCondition] = useState<boolean>(false);
   const [match, setMatch] = useState<boolean>(false);
@@ -477,7 +480,7 @@ function Listing() {
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
       return !ableBookingTimes.some(
-        (disabledDate: any) =>
+        (disabledDate) =>
           date.getFullYear() === disabledDate.getFullYear() &&
           date.getMonth() === disabledDate.getMonth() &&
           date.getDate() === disabledDate.getDate()
@@ -582,14 +585,19 @@ function Listing() {
 
         let enableDate = [];
         if (listingTimesArr?.length !== 0) {
-          enableDate = listingTimesArr?.reduce((acc: any, curr: any) => {
-            let findIndex = acc.findIndex((item: any) => item?.data().date.seconds === curr.data().date.seconds);
-            if (findIndex === -1) {
-              acc.push(curr);
-            } else {
-            }
-            return acc;
-          }, []);
+          enableDate = listingTimesArr?.reduce(
+            (acc: QueryDocumentSnapshot<DocumentData>[], curr: QueryDocumentSnapshot<DocumentData>) => {
+              let findIndex = acc.findIndex(
+                (item: QueryDocumentSnapshot<DocumentData>) => item?.data().date.seconds === curr.data().date.seconds
+              );
+              if (findIndex === -1) {
+                acc.push(curr);
+              } else {
+              }
+              return acc;
+            },
+            []
+          );
           setAbleBookingTimes(enableDate);
         }
         let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
@@ -696,7 +704,7 @@ function Listing() {
             setHintTextLoading={setHintTextLoading}
           />
           <Facility facility={listingInfo?.facility} />
-          <RoomDetails room={listingInfo?.rentRoomDetails} />
+          <RoomDetails rooms={listingInfo?.rentRoomDetails} />
         </TitleWrapper>
         <StickyCalendarContainer>
           <StyledHr />

@@ -106,7 +106,27 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
     countyname: getAddr.countyname,
   });
   const [selectTown, setSelectTown] = useState<string>('');
-
+  interface addressGroupType {
+    label: string;
+    key: string;
+    required?: { value: boolean; message: string };
+    valueAsNumber?: { value: boolean; message: string };
+    maxLength?: { value: number; message: string };
+    min?: { value: number; message: string };
+    max?: { value: number; message: string };
+    countyOptions?: any;
+    townOptions?: any;
+  }
+  interface countyType {
+    countycode: string;
+    countyname: string;
+    countycode01: number;
+  }
+  interface townType {
+    towncode: number;
+    towncode01: string;
+    townname: string;
+  }
   const addressFormGroups = [
     { label: '縣市', key: 'countyname', countyOptions: countyItem, required: valid.required },
     {
@@ -194,7 +214,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
   return (
     <Wrapper>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
-        {addressFormGroups.map((info: any) => (
+        {addressFormGroups.map((info: addressGroupType) => (
           <FormGroup key={info.key}>
             <LabelArea>
               <FormLabel>{info.label}</FormLabel>
@@ -226,12 +246,11 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       name={info.key}
                       rules={{
                         required: info.required && info.required,
-                        pattern: info.pattern && info.pattern,
-                        minLength: info.minLength && info.minLength,
+
                         maxLength: info.maxLength && info.maxLength,
                       }}
                       render={({ field: { onChange, ...props } }) =>
-                        info.countyOptions.map((o, oIndex) => (
+                        info.countyOptions.map((o: countyType, oIndex: number) => (
                           <React.Fragment key={`${o.countycode01}${oIndex}`}>
                             <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
                               <CheckedFormCheckInput
@@ -286,12 +305,10 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       name={info.key}
                       rules={{
                         required: info.required && info.required,
-                        pattern: info.pattern && info.pattern,
-                        minLength: info.minLength && info.minLength,
                         maxLength: info.maxLength && info.maxLength,
                       }}
                       render={({ field: { onChange, ...props } }) =>
-                        info.townOptions.map((o, oIndex) => (
+                        info.townOptions.map((o: townType, oIndex: number) => (
                           <React.Fragment key={`${o.townname}${oIndex}`}>
                             <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
                               <CheckedFormCheckInput
@@ -322,8 +339,6 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                   id={info.key}
                   {...register(info.key, {
                     required: info.required && info.required,
-                    pattern: info.pattern && info.pattern,
-                    minLength: info.minLength && info.minLength,
                     maxLength: info.maxLength && info.maxLength,
                     min: info.min && info.min,
                     max: info.max && info.max,

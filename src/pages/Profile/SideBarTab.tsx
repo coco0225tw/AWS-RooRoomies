@@ -93,7 +93,7 @@ function SideBarTab({
   loading,
 }: {
   showTab: boolean;
-  setShowTab: any;
+  setShowTab: React.Dispatch<React.SetStateAction<boolean>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
 }) {

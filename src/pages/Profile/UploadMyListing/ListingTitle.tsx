@@ -116,6 +116,21 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       message: '※必填欄位',
     },
   };
+  interface hookFormGroupType {
+    label: string;
+    key: string;
+    required?: { value: boolean; message: string };
+    valueAsNumber?: { value: boolean; message: string };
+    maxLength?: { value: number; message: string };
+    minLength?: { value: number; message: string };
+    min?: { value: number; message: string };
+    max?: { value: number; message: string };
+    pattern?: {
+      value: RegExp;
+      message: string;
+    };
+    options: { label: string; key: string }[];
+  }
   const hookFormGroup = [
     {
       label: '名稱',

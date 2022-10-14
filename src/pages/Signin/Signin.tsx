@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler, RegisterOptions } from 'react-hook-form';
 
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
@@ -121,12 +121,20 @@ function SignIn() {
   const dispatch = useDispatch();
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
-
+  interface signInType {
+    signInEmail: string;
+    signInPassword: string;
+  }
+  interface regType {
+    regName: string;
+    regPassword: string;
+    regEmail: string;
+  }
   const {
     register: registerSignIn,
     formState: { errors: errorsSignIn },
     handleSubmit: handleSignInSubmit,
-  } = useForm({
+  } = useForm<signInType>({
     mode: 'onBlur',
   });
 
@@ -134,7 +142,7 @@ function SignIn() {
     register: registerReg,
     formState: { errors: errorsReg },
     handleSubmit: handleRegSubmit,
-  } = useForm({
+  } = useForm<regType>({
     mode: 'onBlur',
   });
   const valid = {
@@ -205,10 +213,10 @@ function SignIn() {
     account: process.env.REACT_APP_TEST_ACCOUNT,
     password: process.env.REACT_APP_TEST_PASSWORD,
   };
-  const onSubmitReg = (regInfo: any) => {
+  const onSubmitReg = (regInfo: regType) => {
     regSubmit(regInfo);
   };
-  const regSubmit = async function (regInfo: any) {
+  const regSubmit = async function (regInfo: regType) {
     let newUser = await firebase.createNewUser(regInfo.regEmail, regInfo.regPassword);
     firebase
       .setNewUserDocField(newUser?.user.uid as string, regInfo.regEmail, regInfo.regName, userDefaultPic)
@@ -227,10 +235,10 @@ function SignIn() {
         }, 3000);
       });
   };
-  const onSubmitSignIn = (signInInfo: any) => {
+  const onSubmitSignIn = (signInInfo: signInType) => {
     signInSubmit(signInInfo);
   };
-  const signInSubmit = async function (signInInfo) {
+  const signInSubmit = async function (signInInfo: signInType) {
     firebase.signInUser(signInInfo.signInEmail, signInInfo.signInPassword).then(() => {
       navigate('/');
       dispatch({
@@ -303,7 +311,7 @@ function SignIn() {
                           e.preventDefault();
                         }
                       }}
-                      {...registerSignIn(signIn.key, {
+                      {...registerSignIn(signIn.key as 'signInEmail' | 'signInPassword', {
                         required: signIn.required && signIn.required,
                         pattern: signIn.pattern && signIn.pattern,
                       })}
@@ -334,7 +342,7 @@ function SignIn() {
                           e.preventDefault();
                         }
                       }}
-                      {...registerReg(reg.key, {
+                      {...registerReg(reg.key as 'regName' | 'regEmail' | 'regPassword', {
                         required: reg.required && reg.required,
                         pattern: reg.pattern && reg.pattern,
                         maxLength: reg.maxLength && reg.maxLength,

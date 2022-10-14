@@ -1,4 +1,4 @@
-import roomDetailsType from './UploadRoomsDetailsType';
+import { roomDetailsType } from './UploadRoomsDetailsType';
 type Action =
   | { type: 'UPLOAD_ROOMS'; payload: { roomState: roomDetailsType } }
   | { type: 'RETURN_INITIAL_ROOM_DETAILS' };

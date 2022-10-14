@@ -20,6 +20,10 @@ import {
   arrayUnion,
   arrayRemove,
   deleteDoc,
+  Timestamp,
+  CollectionReference,
+  DocumentReference,
+  QueryConstraint,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from 'firebase/storage';
 import {
@@ -31,7 +35,26 @@ import {
 } from 'firebase/auth';
 
 import firebaseConfig from './firebaseConfig';
-
+import { bookingTimesType, bookTimeType } from '../redux/UploadBookingTimes/UploadBookingTimesType';
+import roommatesConditionType from '../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
+import { groupsType } from '../redux/Group/GroupType';
+interface Msg {
+  userMsg: string;
+  sendTime: number;
+  userName: string;
+  userId: string;
+  userPic: string;
+}
+type selectDateTimeType = {
+  date: Timestamp;
+  startTime: string;
+};
+type bookTimeInfoType = {
+  uid: string;
+  docId: string;
+  listingId: string;
+  selectedDateTime: selectDateTimeType;
+};
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -50,11 +73,11 @@ const bookingTimesCollection = 'bookingTimes';
 const timestamp = serverTimestamp();
 const firebase = {
   async setNewListingDocField(
-    newListingRef: any,
+    newListingRef: DocumentReference,
     fieldData: any,
-    bookingTimes: any,
+    bookingTimes: bookingTimesType,
     mainImgBlob: Blob,
-    imagesBlob: [],
+    imagesBlob: Blob[],
     uid: string
   ) {
     const mainImageUrl = await this.uploadMainImage(mainImgBlob, newListingRef.id);
@@ -67,7 +90,7 @@ const firebase = {
     });
     let bookingTimePromises: Promise<void>[] = [];
 
-    bookingTimes.map((bookingTime: any, index: number) => {
+    bookingTimes.map((bookingTime: bookTimeType, index: number) => {
       bookingTimePromises.push(
         setDoc(doc(collection(db, 'listings', newListingRef.id, bookingTimesCollection)), { ...bookingTime })
       );
@@ -77,7 +100,7 @@ const firebase = {
   },
 
   async getAllListings(county: string | null, town: string | null, startRent: number | null, endRent: number | null) {
-    const whereQuery: any[] = [];
+    const whereQuery: QueryConstraint[] = [];
     let convertedCounty: string | null = null;
     if (startRent) whereQuery.push(where('startRent', '>=', startRent));
     if (endRent) whereQuery.push(where('startRent', '<=', endRent));
@@ -85,7 +108,7 @@ const firebase = {
     if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
     if (town) whereQuery.push(where('townName', '==', town));
 
-    let orderByQuery: any[] = [];
+    let orderByQuery: QueryConstraint[] = [];
     if (startRent || endRent) orderByQuery.push(orderBy('startRent', descending));
 
     const listingsQuery = query(
@@ -106,7 +129,7 @@ const firebase = {
     startRent: number | null,
     endRent: number | null
   ) {
-    const whereQuery: any[] = [];
+    const whereQuery: QueryConstraint[] = [];
     let convertedCounty: string | null = null;
     if (startRent) whereQuery.push(where('startRent', '>=', startRent));
     if (endRent) whereQuery.push(where('startRent', '<=', endRent));
@@ -114,7 +137,7 @@ const firebase = {
     if (county) whereQuery.push(where('countyName', 'in', [county, convertedCounty]));
     if (town) whereQuery.push(where('townName', '==', town));
 
-    let orderByQuery: any[] = [];
+    let orderByQuery: QueryConstraint[] = [];
     if (startRent || endRent) orderByQuery.push(orderBy('startRent', descending));
 
     const listingsQuery = query(
@@ -157,14 +180,14 @@ const firebase = {
     }
   },
 
-  async uploadMainImage(mainImgBlob: Blob, listingRefId: any) {
+  async uploadMainImage(mainImgBlob: Blob, listingRefId: string) {
     const imagesRef = ref(storage, `${listingRefId}/images/main_image`);
     let url = await uploadBytes(imagesRef, mainImgBlob).then((uploadResult) => {
       return getDownloadURL(uploadResult.ref);
     });
     return url;
   },
-  async uploadImages(imagesBlob: [], listingRefId: any) {
+  async uploadImages(imagesBlob: [], listingRefId: string) {
     let promises: Promise<string>[] = [];
     imagesBlob.map((file, index) => {
       const imagesRef = ref(storage, `${listingRefId}/images/image${index + 1}`);
@@ -189,7 +212,10 @@ const firebase = {
     try {
       const newUser = await createUserWithEmailAndPassword(auth, email, password);
       return newUser;
-    } catch (error: any) {}
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) message = error.message;
+    }
   },
   async signOutUser() {
     await signOut(auth);
@@ -257,14 +283,14 @@ const firebase = {
       // window.alert("No such document!");
     }
   },
-  async sendMessage(chatRoomId: string, oldMsg: any, newMsg: any) {
+  async sendMessage(chatRoomId: string, oldMsg: Msg[], newMsg: Msg) {
     const chatRoomRef = doc(db, 'chatRooms', chatRoomId);
 
     await updateDoc(chatRoomRef, {
       msg: [...oldMsg, newMsg],
     });
   },
-  async updateUserAsRoommate(uid: string, userAsRoommate: any) {
+  async updateUserAsRoommate(uid: string, userAsRoommate: roommatesConditionType) {
     await setDoc(
       doc(db, 'users', uid),
       {
@@ -276,7 +302,7 @@ const firebase = {
   async addUserToGroupAndCreateChatRoom(
     //空的組加入
     listingId: string,
-    updateGroup: any,
+    updateGroup: groupsType,
     chatRoomId: string,
     index: number
   ) {
@@ -293,7 +319,7 @@ const firebase = {
   async updateAddUserToGroup(
     //既有的組加入(match)
     listingId: string,
-    updateGroup: any
+    updateGroup: groupsType
   ) {
     await setDoc(
       doc(db, 'listings', listingId),
@@ -307,7 +333,7 @@ const firebase = {
     //既有的組加入(chatRoom)
     chatId: string,
     isFull: boolean,
-    userId: any
+    userId: (string | null)[]
   ) {
     await setDoc(
       doc(db, 'chatRooms', chatId),
@@ -324,7 +350,7 @@ const firebase = {
     userId: string | null[],
     listingId: string,
     listingTitle: string,
-    updateGroup: any,
+    updateGroup: groupsType,
     index: number
   ) {
     const newChatRoomRef = doc(collection(db, 'chatRooms'));
@@ -350,7 +376,7 @@ const firebase = {
     const querySnapshot = await getDocs(userChatRef);
     return querySnapshot;
   },
-  async bookedTimeInChatRoom(chatRoomId: string, bookedTime: any) {
+  async bookedTimeInChatRoom(chatRoomId: string, bookedTime: selectDateTimeType) {
     await setDoc(
       doc(db, 'chatRooms', chatRoomId),
       {
@@ -363,7 +389,7 @@ const firebase = {
   async bookedTimeInMatch(
     //既有的組加入(match)
     listingId: string,
-    updateGroup: any
+    updateGroup: groupsType
   ) {
     await setDoc(
       doc(db, 'listings', listingId),
@@ -373,9 +399,7 @@ const firebase = {
       { merge: true }
     );
   },
-  async createBookedTimeInfo(listingId: string, bookedTimeInfo: any) {
-    await setDoc(doc(collection(db, 'listings', listingId, 'bookedTimeInfos')), { ...bookedTimeInfo });
-  },
+
   async getAllHouseHunting(uid: string) {
     const houseHuntingRef = collection(db, 'chatRooms');
     const userChatRef = query(houseHuntingRef, where('userId', 'array-contains', uid));
@@ -393,7 +417,7 @@ const firebase = {
     const querySnapshot = await getDocs(userChatRef);
     return querySnapshot;
   },
-  async updateChatRoomIdInListing(listingId: string, updateGroup: any, index: number, chatRoomId: string) {
+  async updateChatRoomIdInListing(listingId: string, updateGroup: groupsType, index: number, chatRoomId: string) {
     updateGroup[index].chatRoomId = chatRoomId;
 
     await setDoc(
@@ -424,24 +448,34 @@ const firebase = {
       compareLists: arrayRemove(listingId),
     });
   },
-  async updateCompareListsField(uid: string, compareLists: any) {
+  async updateFavoriteLists(uid: string, listingArray: string[]) {
+    const reverseArray = listingArray.reverse();
     await setDoc(
       doc(db, 'users', uid),
       {
-        compareLists: compareLists,
+        favoriteLists: reverseArray,
       },
       { merge: true }
     );
   },
-  async updateDndListsField(uid: string, dndLists: any) {
-    await setDoc(
-      doc(db, 'users', uid),
-      {
-        dndLists: dndLists,
-      },
-      { merge: true }
-    );
-  },
+  // async updateCompareListsField(uid: string, compareLists: any) {
+  //   await setDoc(
+  //     doc(db, 'users', uid),
+  //     {
+  //       compareLists: compareLists,
+  //     },
+  //     { merge: true }
+  //   );
+  // },
+  // async updateDndListsField(uid: string, dndLists: any) {
+  //   await setDoc(
+  //     doc(db, 'users', uid),
+  //     {
+  //       dndLists: dndLists,
+  //     },
+  //     { merge: true }
+  //   );
+  // },
   async removeFromDndLists(uid: string, listingId: string) {
     await updateDoc(doc(db, 'users', uid), {
       dndLists: arrayRemove(listingId),
@@ -460,7 +494,7 @@ const firebase = {
       { merge: true }
     );
   },
-  async cancelBookedTimeInMatch(listingId: string, updateGroup: any) {
+  async cancelBookedTimeInMatch(listingId: string, updateGroup: groupsType) {
     await setDoc(
       doc(db, 'listings', listingId),
       {
@@ -469,7 +503,7 @@ const firebase = {
       { merge: true }
     );
   },
-  async cancelBookedTime(listingId: string, date: Date, time: string) {
+  async cancelBookedTime(listingId: string, date: Timestamp, time: string) {
     const bookedRef = collection(db, 'listings', listingId, 'bookingTimes');
     const bookedTimeRef = query(bookedRef, where('date', '==', date), where('startTime', '==', time));
     const querySnapshot = await getDocs(bookedTimeRef);
@@ -481,7 +515,7 @@ const firebase = {
     });
   },
   //退團
-  async removeUserFromGroupInMatch(listingId: string, updateGroup: any) {
+  async removeUserFromGroupInMatch(listingId: string, updateGroup: groupsType) {
     await setDoc(
       doc(db, 'listings', listingId),
       {
@@ -490,7 +524,7 @@ const firebase = {
       { merge: true }
     );
   },
-  async removeUserInChatRoom(chatId: string, userId: any) {
+  async removeUserInChatRoom(chatId: string, userId: (string | null)[]) {
     await setDoc(
       doc(db, 'chatRooms', chatId),
       {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
-import { collection, doc } from 'firebase/firestore';
+import { doc, collection, onSnapshot, QueryDocumentSnapshot, DocumentData, query, where } from 'firebase/firestore';
 
 import { firebase, timestamp, db } from '../../../utils/firebase';
 import { Title } from '../../../components/ProfileTitle';
@@ -18,9 +18,10 @@ import Facility from './Facility';
 import RentRoomDetails from './RentRoomDetails';
 import ListingItem from '../../../components/ListingItem';
 
-import roomDetailsType from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import addrType from '../../../redux/UploadAddr/UploadAddrType';
 import titleType from '../../../redux/UploadTitle/UploadTitleType';
+import mainImageAndImagesType from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesType';
 import GetListingInHomePage from '../../../redux/ListingDocumentForHomePage/ListingDocumentForHomePageReducer';
 const Wrapper = styled.div`
   display: flex;
@@ -72,11 +73,12 @@ function UploadMyListing({
   const [clickTab, setClickTab] = useState<string>('輸入基本資訊');
   const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
   const getTitle = useSelector((state: RootState) => state.UploadTitleReducer) as titleType;
-  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as any;
+  const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as mainImageAndImagesType;
   const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
   const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
   const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
-  const [listingData, setListingData] = useState<any>(null);
+
+  const [listingData, setListingData] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
 
   const listingCollection = collection(db, 'listings');
@@ -118,7 +120,7 @@ function UploadMyListing({
       getImages.images,
       userInfo!.uid
     );
-    let listingDocData;
+    let listingDocData: QueryDocumentSnapshot<DocumentData> | null;
     listingDocData = await firebase.getListingDoc(newListingRef.id);
     setListingData(listingDocData);
   }

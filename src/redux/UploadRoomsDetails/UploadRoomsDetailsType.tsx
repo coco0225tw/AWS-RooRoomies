@@ -1,10 +1,10 @@
-interface arr {
+interface roomType {
   rent: number;
   sq: string;
   form: string;
   peopleAmount: number;
 }
 
-type roomDetailsType = arr[];
+type roomDetailsType = roomType[];
 
-export default roomDetailsType;
+export { roomDetailsType, roomType };

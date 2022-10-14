@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { DocumentData } from 'firebase/firestore';
 
 import { RootState } from '../redux/rootReducer';
 import { firebase } from '../utils/firebase';
@@ -104,13 +105,11 @@ const DetailWrapper = styled.div`
   flex-direction: column;
   flex-grow: 1;
 `;
-function ListingItem({ listingDocData }: { listingDocData: any }) {
+function ListingItem({ listingDocData }: { listingDocData: DocumentData }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const favoriteLists = useSelector((state: RootState) => state.GetFavoriteListsReducer);
-  const compareLists = useSelector((state: RootState) => state.GetCompareListsReducer);
-  const dndLists = useSelector((state: RootState) => state.GetDndListsReducer);
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const [isShown, setIsShown] = useState<boolean>(false);

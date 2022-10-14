@@ -1,7 +1,7 @@
-import bookingTimesType from "./UploadBookingTimesType";
+import { bookingTimesType } from './UploadBookingTimesType';
 enum uploadBookingTimesAction {
-  UPLOAD_TIMES = "UPLOAD_TIMES",
-  RETURN_INITIAL_BOOKING_TIMES = "RETURN_INITIAL_BOOKING_TIMES",
+  UPLOAD_TIMES = 'UPLOAD_TIMES',
+  RETURN_INITIAL_BOOKING_TIMES = 'RETURN_INITIAL_BOOKING_TIMES',
 }
 
 interface uploadTimes {

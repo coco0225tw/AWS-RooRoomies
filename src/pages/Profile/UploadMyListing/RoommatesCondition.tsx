@@ -198,7 +198,11 @@ const roommatesConditionFormGroups = [
 function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const roommatesConditionsInfo = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
-
+  interface optionType {
+    label: string;
+    text: string;
+    value: string;
+  }
   const {
     register,
     handleSubmit,
@@ -241,7 +245,7 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
                   required: required && required,
                 }}
                 render={({ field: { onChange, ...props } }) =>
-                  (options as any).map((o, oIndex) => (
+                  (options as any).map((o: optionType, oIndex: number) => (
                     <FormCheck key={`${key + o.value}}`} style={{ padding: '8px 0px' }}>
                       <CheckedFormCheckInput
                         type="radio"

@@ -12,7 +12,8 @@ import { groupAction } from '../../redux/Group/GroupAction';
 import { selectTabAction } from '../../redux/SelectTab/SelectTabAction';
 import { subTabAction } from '../../redux/SubTab/SubTabAction';
 
-import { groupsType } from '../../redux/Group/GroupType';
+import { groupsType, userInfoType } from '../../redux/Group/GroupType';
+import userType from '../../redux/GetAuth/GetAuthType';
 import { BtnDiv } from '../../components/Button';
 import Hr from '../../components/Hr';
 import SpanLink from '../../components/SpanLink';
@@ -135,7 +136,7 @@ function Group({
     uid: string,
     listingId: string,
     listingTitle: string,
-    getGroup: any,
+    getGroup: groupsType,
     groupId: number
   ) {
     let nullUsersArray = Array(peopleAmount).fill(null);
@@ -224,9 +225,11 @@ function Group({
           type: groupAction.ADD_GROUP_FROM_FIREBASE,
           payload: { groups },
         });
-        let inGroup = groups.some((g) => g.users.filter((u) => u !== null).some((u) => u.userId === userInfo.uid));
+        let inGroup = groups.some((g) =>
+          g.users.filter((u: userInfoType) => u !== null).some((u: userInfoType) => u.userId === userInfo.uid)
+        );
         if (inGroup) {
-          let findGroup = groups.find((g) => g.users.some((u: any) => u && u.userId === userInfo.uid));
+          let findGroup = groups.find((g) => g.users.some((u: userInfoType) => u && u.userId === userInfo.uid));
           setIsInFullGroup(!findGroup.users.includes(null));
           if (!findGroup.users.includes(null)) {
             setCanBook(!findGroup.isBooked);

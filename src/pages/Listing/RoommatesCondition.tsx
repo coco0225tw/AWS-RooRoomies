@@ -5,6 +5,7 @@ import { RootState } from '../../redux/rootReducer';
 
 import Hr from '../../components/Hr';
 import { BtnDiv } from '../../components/Button';
+import roommatesConditionType from '../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -206,7 +207,7 @@ function RoommatesCondition({
   setMatch,
   setAddUserAsRoommatesCondition,
 }: {
-  roommatesConditions: any;
+  roommatesConditions: roommatesConditionType;
   setMatch: React.Dispatch<React.SetStateAction<boolean>>;
   setAddUserAsRoommatesCondition: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -214,7 +215,7 @@ function RoommatesCondition({
   const [keys, setKeys] = useState<string[]>([]);
 
   function checkMatch() {
-    function getTrueKey(object: any) {
+    function getTrueKey(object: roommatesConditionType) {
       let keys = ['bringFriendToStay', 'pet', 'smoke'];
       let newObj = { ...object };
       for (let key of keys) {
@@ -224,7 +225,7 @@ function RoommatesCondition({
       }
       return newObj;
     }
-    function getNonUnlimitedKey(object: any, value: any) {
+    function getNonUnlimitedKey(object: roommatesConditionType, value: string) {
       let unlimitedKey = Object.keys(object).filter((key) => object[key] === value);
       for (let key of unlimitedKey) {
         delete object[key];
@@ -232,7 +233,7 @@ function RoommatesCondition({
       return object;
     }
 
-    function shallowEqual(object1: any, object2: any) {
+    function shallowEqual(object1: roommatesConditionType, object2: roommatesConditionType) {
       const keys1 = Object.keys(object1);
 
       for (let key of keys1) {
@@ -249,7 +250,7 @@ function RoommatesCondition({
   }
 
   useEffect(() => {
-    function checkIfUserConditionIsEmpty(userAsRoommate: any) {
+    function checkIfUserConditionIsEmpty(userAsRoommate: roommatesConditionType) {
       for (const key in userAsRoommate) {
         if (userAsRoommate[key] === '') {
           return false;

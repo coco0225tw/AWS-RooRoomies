@@ -16,7 +16,7 @@ import Alert from './components/Alert';
 
 import { groupsType } from './redux/Group/GroupType';
 import userType from './redux/GetAuth/GetAuthType';
-import roomDetailsType from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import { roomDetailsType } from './redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import roommatesConditionType from './redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import facilityType from './redux/UploadFacility/UploadFacilityType';
 import { alertActionType } from './redux/Alert/AlertAction';

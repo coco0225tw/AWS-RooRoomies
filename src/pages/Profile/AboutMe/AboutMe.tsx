@@ -168,6 +168,14 @@ const roommatesConditionFormGroups = [
     ],
   },
 ];
+interface optionsType {
+  (options: { label: string; text: string; value: string }[]): JSX.Element[]; // or JSX.Element[]
+}
+interface optionType {
+  label: string;
+  text: string;
+  value: string;
+}
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
 `;
@@ -255,7 +263,7 @@ function AboutMe({
     if (authChange) getAllHouseHuntingData();
   }, [authChange]);
   useEffect(() => {
-    let defaultValues = userAsRoommate as any;
+    let defaultValues = userAsRoommate as roommatesConditionType;
 
     reset({ ...defaultValues });
 
@@ -282,7 +290,7 @@ function AboutMe({
               <EditBtn
                 onClick={() => {
                   setEdit(false);
-                  let defaultValues = userAsRoommate as any;
+                  let defaultValues = userAsRoommate as roommatesConditionType;
 
                   reset({ ...defaultValues });
                 }}
@@ -335,7 +343,7 @@ function AboutMe({
                     required: required && required,
                   }}
                   render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o, oIndex) => (
+                    (options as any).map((o: optionType, oIndex: number) => (
                       <FormCheck key={o.value}>
                         <React.Fragment>
                           <CheckedFormCheckInput

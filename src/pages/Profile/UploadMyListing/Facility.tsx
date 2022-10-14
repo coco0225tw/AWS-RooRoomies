@@ -279,6 +279,11 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
 
   const initialFacilityEmptyState = facilityInfo;
+  interface optionType {
+    label: string;
+    text: string;
+    value: string;
+  }
   const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
   const {
@@ -314,14 +319,14 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
       }, 3000);
     });
   }
-  const handleChange = (e: any, field: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
     const { checked, name } = e.target;
     if (checked) {
-      setValue(field as any, [...getValues(field as any), name]);
+      setValue(field as string, [...getValues(field as string), name]);
     } else {
       setValue(
-        field as any,
-        getValues(field as any).filter((v) => v !== name)
+        field as string,
+        getValues(field as string).filter((v: string) => v !== name)
       );
     }
   };
@@ -329,7 +334,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     setConfirmPopup(false);
   }
   useEffect(() => {
-    let defaultValues = facilityInfo as any;
+    let defaultValues = facilityInfo as facilityType;
 
     reset({ ...defaultValues });
   }, [facilityInfo]);
@@ -356,10 +361,10 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
               {options ? (
                 <Controller
                   control={control}
-                  name={key as any}
+                  name={key as string}
                   defaultValue={[]}
                   render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o, oIndex) => (
+                    (options as any).map((o: optionType, oIndex: number) => (
                       <FormCheck
                         key={o.value}
                         {...props}
@@ -394,7 +399,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
                 />
               ) : (
                 <FormControl
-                  {...register(key as any, {
+                  {...register(key as string, {
                     required: required && required,
                     pattern: pattern && pattern,
                     min: min && min,
