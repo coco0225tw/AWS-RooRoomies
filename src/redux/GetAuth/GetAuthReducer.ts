@@ -15,6 +15,8 @@ export default function User(state = userInitialState, action: getAuthActionType
       return action.payload.user;
     case getAuthAction.UPLOAD_LISTING:
       return { ...state, userListingId: action.payload.userListingId };
+    case getAuthAction.UPLOAD_USER_IMAGE:
+      return { ...state, image: action.payload.image };
     case getAuthAction.RETURN_INITIAL_GET_USER:
       return userInitialState;
     default:

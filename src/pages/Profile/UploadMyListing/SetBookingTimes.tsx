@@ -97,8 +97,6 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   };
 
   function clickDate(date: Date) {
-    console.log(date);
-    console.log(selectedDays);
     if (
       selectedDays.some(
         (d) =>
@@ -158,7 +156,6 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                     date.getDate() === d.getDate()
                 )
               ) {
-                console.log(true);
                 return 'highlight';
               }
             }}
