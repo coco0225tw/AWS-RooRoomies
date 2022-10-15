@@ -21,7 +21,7 @@ Build with
 ## Demo
 	
 * Compound search for county, town and rent range
-<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-14%20%E4%B8%8B%E5%8D%886.16.28.gif?alt=media&token=de472079-6708-408f-8661-d2b782aa78a8" align="left" width="100%" ></a>	
+<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-16%20%E4%B8%8A%E5%8D%884.58.33.gif?alt=media&token=a6dcef33-8842-4f93-b2ad-94ad09e61fba" align="left" width="100%" ></a>	
 	
 * Set user's condition
 <a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-14%20%E4%B8%8B%E5%8D%886.29.09.gif?alt=media&token=fc2a2155-4b96-4793-8c2a-6aa088e8ec72" align="left" width="100%" ></a>	
@@ -30,14 +30,16 @@ Build with
 <a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-14%20%E4%B8%8B%E5%8D%886.42.28.gif?alt=media&token=c22841f9-a903-4e81-b7d5-bb139793f5b2" align="left" width="100%" ></a>	
 
 * Add to a former group of the listing, and book view house time
-<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-14%20%E4%B8%8B%E5%8D%886.55.49.gif?alt=media&token=633250c8-045b-48af-bfaf-3d2bf5f29c5e" align="left" width="100%" ></a>		
+<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-14%20%E4%B8%8B%E5%8D%886.55.49.gif?alt=media&token=633250c8-045b-48af-bfaf-3d2bf5f29c5e" align="left" width="100%" ></a>	
+
 * Add to favorite lists and drag and drop to reorder
-	
+<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-16%20%E4%B8%8A%E5%8D%885.13.01.gif?alt=media&token=5436383e-5acb-4632-8faf-5a4c13541beb" align="left" width="100%" ></a>
+
 * Upload a listing
+<a href="url"><img src="https://firebasestorage.googleapis.com/v0/b/rooroomies.appspot.com/o/%E8%9E%A2%E5%B9%95%E9%8C%84%E8%A3%BD%202022-10-16%20%E4%B8%8A%E5%8D%885.20.38.gif?alt=media&token=0d848d4d-1728-45ae-8387-554a1cb91c2d" align="left" width="100%" ></a>
 ## Future Features
 	
 * Update for listing state
-	
 * Rejection or acceptance for viewing room request
 	
 * Notification for tenants when listing is updated and result of viewing room request
