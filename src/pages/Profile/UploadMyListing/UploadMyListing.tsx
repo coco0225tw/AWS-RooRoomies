@@ -139,6 +139,7 @@ function UploadMyListing({
       startRent: Number(findStartRent.rent),
       endRent: Number(findEndRent.rent),
       floor: getAddr.floor,
+      totalFloor: getAddr.totalFloor,
       rentRoomDetails: getRooms,
       facility: getFacility,
       roommatesConditions: getRoommatesCondition,
@@ -269,7 +270,11 @@ function UploadMyListing({
       {!isUploading && edit && (
         <Tabs>
           {TabSelect.map((el, index) => (
-            <Tab key={`subTab${index}`} isClick={el === clickTab} onClick={() => setClickTab(el)}>
+            <Tab
+              key={`subTab${index}`}
+              isClick={el === clickTab}
+              // onClick={() => setClickTab(el)}
+            >
               {el}
             </Tab>
           ))}

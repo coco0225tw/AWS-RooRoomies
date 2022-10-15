@@ -102,12 +102,11 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
         payload: { mainImage: URL.createObjectURL((files as FileList)[0]) },
       });
-      console.log('dispatch');
+
       dispatch({
         type: uploadImagesAction.UPLOAD_MAIN_IMAGE,
         payload: { mainImage: (files as FileList)[0] },
       });
-      console.log('dispatch2');
     }
   }
 
@@ -141,7 +140,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
     } else {
       dispatch({ type: previewOtherImagesAction.DELETE_OTHER_IMAGE, payload: { url: clickImgUrl } });
       let index = getOtherImages.findIndex((u) => u === clickImgUrl);
-      console.log(index);
+
       dispatch({ type: uploadImagesAction.DELETE_OTHER_IMAGE, payload: { index: index } });
     }
   }
@@ -223,7 +222,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         <SubmitBtn
           onClick={() => {
             // uploadAllImages();
-            console.log(imageBlob);
+
             if (!imageBlob.mainImage || imageBlob.images.length < 4 || imageBlob.images.length > 10) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,

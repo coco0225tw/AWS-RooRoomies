@@ -86,7 +86,6 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         return acc;
       }, [])
   );
-  const [selectedTimes, setSelectedTimes] = useState<bookingTimesType>(timesInfo);
   const selectedTimeRef = useRef<HTMLInputElement[]>([]);
 
   type tileDisabledType = { date: Date };
@@ -125,22 +124,16 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         startTime: selectedTimeRef.current[index]?.value,
         isBooked: false,
       };
-      setSelectedTimes([...(selectedTimes as bookingTimesType), time]);
+      dispatch({ type: uploadBookingTimesAction.ADD_TIME, payload: { time: time } });
     }
   }
 
   function deleteTime(date: Date, time: string) {
-    setSelectedTimes(selectedTimes.filter((i) => i.startTime !== time || i.date !== date));
+    dispatch({ type: uploadBookingTimesAction.DELETE_TIME, payload: { date: date, time: time } });
   }
   function deleteDay(date: Date) {
     setSelectedDays(selectedDays.filter((i) => i !== date));
-    setSelectedTimes(selectedTimes.filter((i) => i.date !== date));
-  }
-  function submit(selectedTimes: bookingTimesType) {
-    dispatch({
-      type: uploadBookingTimesAction.UPLOAD_TIMES,
-      payload: { selectedTimes },
-    });
+    dispatch({ type: uploadBookingTimesAction.DELETE_DATE, payload: { date: date } });
   }
   return (
     <Wrapper>
@@ -166,8 +159,8 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                   加入時間
                 </SubmitBtn>
                 <SelectTimes>
-                  {selectedTimes &&
-                    selectedTimes
+                  {timesInfo &&
+                    timesInfo
                       .filter((t) => t.date === s)
                       .map((time, index) => (
                         <SelectTime key={`selectedTimes${index}`}>
@@ -191,8 +184,7 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         </LastPageBtn>
         <SubmitBtn
           onClick={() => {
-            submit(selectedTimes);
-            if (selectedTimes.length === 0) {
+            if (timesInfo.length === 0) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,
                 payload: {

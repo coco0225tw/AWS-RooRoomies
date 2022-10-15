@@ -174,7 +174,6 @@ function FollowedList({
       setAllListingData(listingDocArr.reverse());
     }
     getAllListing();
-    console.log(favoriteLists);
   }, []);
   return (
     <Wrapper>

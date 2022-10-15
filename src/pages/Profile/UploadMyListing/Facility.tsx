@@ -276,7 +276,8 @@ function Facility({
     text: string;
     value: string;
   }
-  // const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
+
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
   const {
     register,
@@ -296,10 +297,14 @@ function Facility({
     dispatch({ type: uploadFacilityAction.UPLOAD_FACILITY, payload: { facilityState: data } });
   }
   async function submitHandler() {
+    if (submitting) return;
+    setSubmitting(true);
     clickClose();
     setIsUploading(true);
     setEdit(false);
     setDoc().then(() => {
+      setSubmitting(false);
+      setIsUploading(false);
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
@@ -308,7 +313,6 @@ function Facility({
       });
 
       setTimeout(() => {
-        setIsUploading(false);
         dispatch({
           type: alertActionType.CLOSE_ALERT,
         });

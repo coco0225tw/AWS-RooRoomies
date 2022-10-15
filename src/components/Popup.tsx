@@ -81,7 +81,7 @@ const Close = styled.div`
   text-align: center;
   border-radius: 50%;
   line-height: 40px;
-  transform: translate(100%, -100%);
+  transform: translate(100%, -120%);
   cursor: pointer;
   font-size: 20px;
 
@@ -91,7 +91,7 @@ const Close = styled.div`
   background-color: #fff7f4;
   transition-duration: 0.2s;
   &:hover {
-    transform: scale(1.1) translate(100%, -100%);
+    transform: scale(1.1) translate(100%, -120%);
   }
 `;
 const PopImg = styled(Popup)<{ img: string }>`
@@ -123,7 +123,7 @@ const Cross = styled.div`
   background-repeat: no-repeat;
   border-radius: 50%;
   line-height: 40px;
-  transform: translate(250%, -100%);
+  transform: translate(-50%, -120%);
   cursor: pointer;
   font-size: 20px;
 
@@ -133,7 +133,7 @@ const Cross = styled.div`
   background-color: #fff7f4;
   transition-duration: 0.2s;
   &:hover {
-    transform: scale(1.1) translate(250%, -100%);
+    transform: scale(1.1) translate(-50%, -120%);
   }
 `;
 function PopupComponent({

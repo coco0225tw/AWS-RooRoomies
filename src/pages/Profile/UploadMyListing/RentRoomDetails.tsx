@@ -190,7 +190,6 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const dispatch = useDispatch();
 
   const roomInfo = useSelector((state: RootState) => state.UploadRoomsReducer);
-  // const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
   interface optionType {
@@ -210,16 +209,10 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     setSelectOptions(null);
   };
   function addRooms(data: roomType) {
-    // setRoomState([...roomState, data]);
     dispatch({ type: uploadRoomDetailsAction.ADD_ROOM, payload: { room: data } });
   }
-  // function submit() {
-  //   dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
-  // }
   function deleteRoom(index: number) {
     dispatch({ type: uploadRoomDetailsAction.DELETE_ROOM, payload: { index: index } });
-
-    // setRoomState(roomState.filter((el, i) => i !== index));
   }
   return (
     <Wrapper>
@@ -330,7 +323,6 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         </LastPageBtn>
         <StyledBtnDiv
           onClick={() => {
-            // submit();
             if (roomInfo.length === 0) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,

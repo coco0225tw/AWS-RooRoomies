@@ -441,6 +441,7 @@ function Listing() {
     floor: number;
     moveInDate: Timestamp;
     latLng: { lat: number; lng: number };
+    totalFloor: number;
   };
 
   const tileDisabled = ({ date }: tileDisabledType) => {
@@ -635,7 +636,9 @@ function Listing() {
             <TitleIconWrapper>
               <TitleIcon>{listingInfo?.form}</TitleIcon>
               <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
-              <TitleIcon>{listingInfo?.floor}F</TitleIcon>
+              <TitleIcon>
+                {listingInfo?.floor}/{listingInfo?.totalFloor}F
+              </TitleIcon>
               <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
               <TitleIcon>
                 {listingInfo?.moveInDate.toDate().getFullYear() +
