@@ -291,26 +291,30 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
       </StyledFormGroup>
       {roomInfo.length !== 0 && (
         <Table style={{ border: 'solid 1px #ece2d5', marginBottom: '12px' }}>
-          <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
-          </Tr>
-          {roomInfo.map((r: roomType, index: number) => (
-            <Tr key={`room${index}`}>
-              <Td>房間{index + 1}</Td>
-              <Td>{r.rent}元</Td>
-              <Td>{r.sq}坪</Td>
-              <Td>{r.form}</Td>
-              <Td>{r.peopleAmount}人</Td>
-              <Td>
-                <Cross onClick={() => deleteRoom(index)} />
-              </Td>
+          <thead>
+            <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
             </Tr>
-          ))}
+          </thead>
+          <tbody>
+            {roomInfo.map((r: roomType, index: number) => (
+              <Tr key={`room${index}`}>
+                <Td>房間{index + 1}</Td>
+                <Td>{r.rent}元</Td>
+                <Td>{r.sq}坪</Td>
+                <Td>{r.form}</Td>
+                <Td>{r.peopleAmount}人</Td>
+                <Td>
+                  <Cross onClick={() => deleteRoom(index)} />
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
         </Table>
       )}
       <BtnArea>
