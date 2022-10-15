@@ -92,17 +92,20 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date < new Date() ||
-      date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate()) ||
-      selectedDays.some(
-        (disabledDate) =>
-          date.getFullYear() === disabledDate.getFullYear() &&
-          date.getMonth() === disabledDate.getMonth() &&
-          date.getDate() === disabledDate.getDate()
-      )
+      date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate())
     );
   };
 
   function clickDate(date: Date) {
+    console.log(date);
+    console.log(selectedDays);
+    if (
+      selectedDays.some(
+        (d) =>
+          date.getFullYear() === d.getFullYear() && date.getMonth() === d.getMonth() && date.getDate() === d.getDate()
+      )
+    )
+      return;
     setSelectedDays((prev) => [...prev, date]);
   }
 
@@ -146,6 +149,19 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             view="month"
             selectRange={false}
             tileDisabled={tileDisabled}
+            tileClassName={({ date, view }) => {
+              if (
+                selectedDays.some(
+                  (d) =>
+                    date.getFullYear() === d.getFullYear() &&
+                    date.getMonth() === d.getMonth() &&
+                    date.getDate() === d.getDate()
+                )
+              ) {
+                console.log(true);
+                return 'highlight';
+              }
+            }}
           />
         </CalendarContainer>
         <SectionWrapper>

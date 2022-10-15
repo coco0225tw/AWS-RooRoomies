@@ -468,6 +468,8 @@ function Listing() {
           date.getMonth() === disabledDate.getMonth() &&
           date.getDate() === disabledDate.getDate()
       );
+    } else if (ableBookingTimes.length === 0) {
+      return true;
     } else {
       return false;
     }
@@ -574,7 +576,9 @@ function Listing() {
       const getAllMessages = onSnapshot(subColRef, (snapshot) => {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
         snapshot.forEach((doc) => {
-          listingTimesArr.push(doc);
+          if (doc.data().date.toDate() > new Date()) {
+            listingTimesArr.push(doc);
+          }
         });
         setBookingTimesInfo(listingTimesArr);
         findMinCanBookDate(listingTimesArr);
@@ -593,7 +597,7 @@ function Listing() {
             },
             []
           );
-          setAbleBookingTimes(enableDate);
+          // setAbleBookingTimes(enableDate);
         }
         let enableDates = enableDate.map((s: QueryDocumentSnapshot<DocumentData>) => {
           let date = s.data().date.toDate();

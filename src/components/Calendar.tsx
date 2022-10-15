@@ -38,7 +38,7 @@ const CalendarContainer = styled.div`
       color: #fff7f4;
     }
     &:active {
-      background-color: #fff7f4;
+      background-color: white;
     }
   }
   // calendar style
@@ -135,7 +135,7 @@ const CalendarContainer = styled.div`
     color: gray;
   }
   .react-calendar__tile:enabled {
-    // color: #fff7f4;
+    /* background-color: #fff7f4; */
   }
   .react-calendar__tile:enabled:hover {
     background-color: white;

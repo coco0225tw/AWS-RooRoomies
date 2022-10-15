@@ -82,7 +82,7 @@ const WrapListingDoc = styled.div`
   display: flex;
   flex-direction: column;
 `;
-const BookedTimeWrap = styled.div`
+const BookedTimeWrap = styled.div<{ isOutdated: boolean }>`
   font-size: 20px;
   padding: 12px;
   display: flex;
@@ -90,8 +90,9 @@ const BookedTimeWrap = styled.div`
   justify-content: space-between;
   border: solid 1px #f3f2ef;
   border-radius: 8px;
+  background-color: ${(props) => !props.isOutdated && '#f3f2ef'};
 `;
-const Date = styled.div``;
+const DateArea = styled.div``;
 const StartTime = styled.div``;
 const TabSelect = ['基本資訊', '地址', '上傳圖片', '房間規格', '設定看房時間', '設定室友條件', '設施'];
 function UploadMyListing({
@@ -117,6 +118,7 @@ function UploadMyListing({
   const [listingData, setListingData] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [nowDate, setNowDate] = useState<null | Date>(null);
   const listingCollection = collection(db, 'listings');
   async function setDoc() {
     const findPeopleAmount = (getRooms as roomDetailsType).reduce(
@@ -165,23 +167,22 @@ function UploadMyListing({
       payload: { userListingId: newListingRef.id },
     });
   }
-  useEffect(() => {
-    async function getListing() {
-      let listingDocData: QueryDocumentSnapshot<DocumentData>;
 
-      listingDocData = await firebase.getListingDoc(userInfo!.userListingId);
-
-      setListingData(listingDocData);
-    }
-    if (userInfo!.userListingId?.length !== 0 && !listingData) {
-      getListing();
-    }
-  }, [userInfo!.userListingId]);
   useEffect(() => {
     if (userInfo!.userListingId?.length !== 0 && !listingData) {
       getBookingTimes();
     }
     function getBookingTimes() {
+      async function getListing() {
+        let listingDocData: QueryDocumentSnapshot<DocumentData>;
+
+        listingDocData = await firebase.getListingDoc(userInfo!.userListingId);
+
+        setListingData(listingDocData);
+      }
+      if (userInfo!.userListingId?.length !== 0 && !listingData) {
+        getListing();
+      }
       const subColRef = collection(db, 'listings', userInfo!.userListingId, 'bookingTimes');
       const getAllMessages = onSnapshot(subColRef, (snapshot) => {
         let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
@@ -250,31 +251,45 @@ function UploadMyListing({
           </StyleLink>
           <SubTitle>已被預約的時間</SubTitle>
           {bookingTimesInfo.length === 0 ? (
-            <BookedTimeWrap>無</BookedTimeWrap>
+            <BookedTimeWrap isOutdated={false}>無</BookedTimeWrap>
           ) : (
-            bookingTimesInfo.map((data, index) => (
-              <BookedTimeWrap>
-                <Date>
-                  {data.data().date.toDate().getFullYear() +
-                    '-' +
-                    ('0' + (data.data().date.toDate().getMonth() + 1)).slice(-2) +
-                    '-' +
-                    ('0' + data.data().date.toDate().getDate()).slice(-2)}
-                </Date>
-                <StartTime>{data.data().startTime}</StartTime>
-              </BookedTimeWrap>
-            ))
+            <React.Fragment>
+              {bookingTimesInfo
+                .filter((data, index) => data.data().date.toDate() > new Date())
+                .map((data, index) => (
+                  <BookedTimeWrap isOutdated={false}>
+                    <DateArea>
+                      {data.data().date.toDate().getFullYear() +
+                        '-' +
+                        ('0' + (data.data().date.toDate().getMonth() + 1)).slice(-2) +
+                        '-' +
+                        ('0' + data.data().date.toDate().getDate()).slice(-2)}
+                    </DateArea>
+                    <StartTime>{data.data().startTime}</StartTime>
+                  </BookedTimeWrap>
+                ))}
+              {bookingTimesInfo
+                .filter((data, index) => data.data().date.toDate() < new Date())
+                .map((data, index) => (
+                  <BookedTimeWrap isOutdated={true}>
+                    <DateArea>
+                      {data.data().date.toDate().getFullYear() +
+                        '-' +
+                        ('0' + (data.data().date.toDate().getMonth() + 1)).slice(-2) +
+                        '-' +
+                        ('0' + data.data().date.toDate().getDate()).slice(-2)}
+                    </DateArea>
+                    <StartTime>{data.data().startTime}</StartTime>
+                  </BookedTimeWrap>
+                ))}
+            </React.Fragment>
           )}
         </WrapListingDoc>
       )}
       {!isUploading && edit && (
         <Tabs>
           {TabSelect.map((el, index) => (
-            <Tab
-              key={`subTab${index}`}
-              isClick={el === clickTab}
-              // onClick={() => setClickTab(el)}
-            >
+            <Tab key={`subTab${index}`} isClick={el === clickTab}>
               {el}
             </Tab>
           ))}
