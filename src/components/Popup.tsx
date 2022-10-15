@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { BtnDiv } from './Button';
+import bin from '../assets/bin.png';
 
 const Wrapper = styled.div`
   display: flex;
@@ -110,6 +111,31 @@ const PopImg = styled(Popup)<{ img: string }>`
     height: 28%;
   }
 `;
+const Cross = styled.div`
+  background-image: url(${bin});
+
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  background-size: 30px 30px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  line-height: 40px;
+  transform: translate(250%, -100%);
+  cursor: pointer;
+  font-size: 20px;
+
+  text-align: center;
+  z-index: 1;
+  right: 0;
+  background-color: #fff7f4;
+  transition-duration: 0.2s;
+  &:hover {
+    transform: scale(1.1) translate(250%, -100%);
+  }
+`;
 function PopupComponent({
   msg,
   notDefaultBtn,
@@ -171,4 +197,29 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
     </Wrapper>
   );
 }
-export { PopupComponent, PopupImage };
+function PopupImageDelete({ img, clickClose, deleteFn }: { img: string; clickClose: any; deleteFn: any }) {
+  return (
+    <Wrapper>
+      <PopImg img={img}>
+        <Close
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            clickClose();
+          }}
+        >
+          &#10006;
+        </Close>
+        <Cross
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            deleteFn();
+            clickClose();
+          }}
+        />
+      </PopImg>
+    </Wrapper>
+  );
+}
+export { PopupComponent, PopupImage, PopupImageDelete };

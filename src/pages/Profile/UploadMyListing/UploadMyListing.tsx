@@ -269,7 +269,7 @@ function UploadMyListing({
       {!isUploading && edit && (
         <Tabs>
           {TabSelect.map((el, index) => (
-            <Tab key={`subTab${index}`} isClick={el === clickTab}>
+            <Tab key={`subTab${index}`} isClick={el === clickTab} onClick={() => setClickTab(el)}>
               {el}
             </Tab>
           ))}

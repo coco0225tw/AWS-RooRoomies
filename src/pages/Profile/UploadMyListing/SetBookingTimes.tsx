@@ -130,9 +130,6 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   }
 
   function deleteTime(date: Date, time: string) {
-    console.log(selectedTimes);
-    console.log(time);
-    console.log(selectedTimes.filter((i) => i.startTime !== time || i.date !== date));
     setSelectedTimes(selectedTimes.filter((i) => i.startTime !== time || i.date !== date));
   }
   function deleteDay(date: Date) {

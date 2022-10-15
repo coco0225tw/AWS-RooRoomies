@@ -80,8 +80,6 @@ const InfoWrapper = styled.div`
   transform: translate(calc(-100% - 20px - 8px), calc(100% + 20px + 8px));
   @media screen and (max-width: 1300px) {
     bottom: 40%;
-    /* font-size: 12px; */
-    /* color: green; */
   }
 `;
 const ChatIcon = styled.div`
