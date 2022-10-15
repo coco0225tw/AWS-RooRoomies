@@ -95,7 +95,7 @@ const TitleWrapper = styled(SectionWrapper)`
 
 const DividedCalendarSection = styled(SectionWrapper)`
   flex-direction: row;
-  margin: 20px 0px 32px;
+  margin: 20px 0px 60px;
   justify-content: space-between;
   align-items: center;
   @media screen and (max-width: 1460px) {
@@ -853,7 +853,7 @@ function Listing() {
           </TimeAndCalendarWrapper>
         </StickyCalendarContainer>
       </DividedCalendarSection>
-
+      <TitleIcon>(點擊圖示查看位置)</TitleIcon>
       <Map latLng={listingInfo?.latLng!}></Map>
     </Wrapper>
   );

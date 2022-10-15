@@ -132,6 +132,7 @@ function UploadMyListing({
     const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
       prev.rent > current.rent ? prev : current
     );
+
     const listingData = {
       ...getTitle,
       uploadedTime: timestamp,
