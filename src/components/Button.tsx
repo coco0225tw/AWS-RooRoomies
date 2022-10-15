@@ -23,6 +23,7 @@ const BtnDiv = styled.div`
   padding: 4px 12px;
   transition-duration: 0.2s;
   cursor: pointer;
+  white-space: nowrap;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
   &:hover {
     background-color: #ece2d5;

@@ -44,22 +44,45 @@ const Wrapper = styled.div`
 const ListingWrapper = styled(Link)`
   display: flex;
   flex-direction: row;
+  /* position: relative; */
   border: solid 1px #f3f2ef;
   width: 100%;
   margin-bottom: 32px;
   padding: 20px;
   border-radius: 12px;
 `;
-const StyledBtnDiv = styled(BtnDiv)``;
+const ListingWrap = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  @media screen and (max-width: 1300px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2%;
+  }
+`;
+const StyledBtnDiv = styled(BtnDiv)`
+  align-self: flex-end;
+  position: absolute;
+  bottom: 80%;
+  left: 100%;
+  transform: translate(calc(-100% - 20px - 8px), calc(100% + 20px + 8px));
+  @media screen and (max-width: 1300px) {
+    bottom: 28%;
+  }
+`;
 const InfoWrapper = styled.div`
   position: absolute;
-  display: flex;
-  flex-direction: row;
-  right: 20px;
-  top: 40%;
-  width: 50%;
-  align-items: center;
-  justify-content: space-between;
+
+  bottom: 56%;
+  left: 100%;
+  white-space: nowrap;
+  transform: translate(calc(-100% - 20px - 8px), calc(100% + 20px + 8px));
+  @media screen and (max-width: 1300px) {
+    bottom: 40%;
+    /* font-size: 12px; */
+    /* color: green; */
+  }
 `;
 const ChatIcon = styled.div`
   width: 40px;
@@ -67,10 +90,20 @@ const ChatIcon = styled.div`
   background-image: url(${chat});
   background-size: 30px 30px;
   border-radius: 50%;
+  /* position: absolute; */
   background-color: #c77155;
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
+  position: absolute;
+  background-position: center center;
+  background-repeat: no-repeat;
+  bottom: 100%;
+  left: 100%;
+  transform: translate(calc(-100% - 20px - 8px), calc(100% + 20px + 8px));
+
+  @media screen and (max-width: 1300px) {
+  }
 `;
 const Tabs = styled.div`
   display: flex;
@@ -295,7 +328,8 @@ function AllHouseHunting({
               }, 1000);
             }}
           >
-            {`${el}(${
+            {el}
+            {`(${
               el === '已預約'
                 ? houseHuntingData.filter((doc) => doc.data().isBooked !== false).length
                 : el === '尚未預約'
@@ -305,38 +339,29 @@ function AllHouseHunting({
           </Tab>
         ))}
       </Tabs>
-      {getSubTab === '已預約' && loading ? (
-        <Loading style={null} />
-      ) : houseHuntingData.filter((doc) => doc.data().isBooked !== false).length === 0 && getSubTab === '已預約' ? (
-        <NoListing msg="沒有預約的房源" />
-      ) : (
-        getSubTab === '已預約' &&
-        houseHuntingData
-          .filter((doc) => doc.data().isBooked !== false)
-          .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
-              <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
-              />
-              <InfoWrapper>
-                <div>{`已預約${doc.data().bookedTime.date.toDate().toDateString()} ${
-                  doc.data().bookedTime.startTime
-                }看房`}</div>
-                <StyledBtnDiv
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    setCancelBookTimePopup(true);
-                    setCancelBookTimeInfo({
-                      chatRoomId: doc.id,
-                      listingId: doc.data().listingId,
-                      date: doc.data().bookedTime.date,
-                      time: doc.data().bookedTime.startTime,
-                    });
-                  }}
-                >
-                  取消預約
-                </StyledBtnDiv>
+      <ListingWrap>
+        {getSubTab === '已預約' && loading ? (
+          <Loading style={null} />
+        ) : houseHuntingData.filter((doc) => doc.data().isBooked !== false).length === 0 && getSubTab === '已預約' ? (
+          <NoListing msg="沒有預約的房源" />
+        ) : (
+          getSubTab === '已預約' &&
+          houseHuntingData
+            .filter((doc) => doc.data().isBooked !== false)
+            .map((doc, id) => (
+              <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+                <ListingItem
+                  listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                />
+                <InfoWrapper>
+                  {`已預約${
+                    doc.data().bookedTime.date.toDate().getFullYear() +
+                    '-' +
+                    ('0' + (doc.data().bookedTime.date.toDate().getMonth() + 1)).slice(-2) +
+                    '-' +
+                    ('0' + doc.data().bookedTime.date.toDate().getDate()).slice(-2)
+                  }   ${doc.data().bookedTime.startTime}看房`}
+                </InfoWrapper>
                 <ChatIcon
                   onClick={(e) => {
                     e.stopPropagation();
@@ -352,38 +377,39 @@ function AllHouseHunting({
                     });
                   }}
                 />
-              </InfoWrapper>
-            </ListingWrapper>
-          ))
-      )}
-      {getSubTab === '尚未預約' && loading ? (
-        <Loading style={null} />
-      ) : houseHuntingData.filter((doc) => doc.data().isFull === true && doc.data().isBooked === false).length === 0 &&
-        getSubTab === '尚未預約' ? (
-        <NoListing msg="沒有尚未預約的房源" />
-      ) : (
-        getSubTab === '尚未預約' &&
-        houseHuntingData
-          .filter((doc) => doc.data().isFull === true && doc.data().isBooked === false)
-          .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
-              <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
-              />
-              <InfoWrapper>
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    setRemoveFromGroupPopup(true);
-                    setRemoveUserInfo({
+                    setCancelBookTimePopup(true);
+                    setCancelBookTimeInfo({
                       chatRoomId: doc.id,
                       listingId: doc.data().listingId,
+                      date: doc.data().bookedTime.date,
+                      time: doc.data().bookedTime.startTime,
                     });
                   }}
                 >
-                  退團
+                  取消預約
                 </StyledBtnDiv>
+              </ListingWrapper>
+            ))
+        )}
+        {getSubTab === '尚未預約' && loading ? (
+          <Loading style={null} />
+        ) : houseHuntingData.filter((doc) => doc.data().isFull === true && doc.data().isBooked === false).length ===
+            0 && getSubTab === '尚未預約' ? (
+          <NoListing msg="沒有尚未預約的房源" />
+        ) : (
+          getSubTab === '尚未預約' &&
+          houseHuntingData
+            .filter((doc) => doc.data().isFull === true && doc.data().isBooked === false)
+            .map((doc, id) => (
+              <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+                <ListingItem
+                  listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                />
+
                 <ChatIcon
                   onClick={(e) => {
                     e.stopPropagation();
@@ -398,24 +424,6 @@ function AllHouseHunting({
                     });
                   }}
                 />
-              </InfoWrapper>
-            </ListingWrapper>
-          ))
-      )}
-      {getSubTab === '等待湊團' && loading ? (
-        <Loading style={null} />
-      ) : houseHuntingData.filter((doc) => doc.data().isFull === false).length === 0 && getSubTab === '等待湊團' ? (
-        <NoListing msg="沒有等待湊房的房源" />
-      ) : (
-        getSubTab === '等待湊團' &&
-        houseHuntingData
-          .filter((doc) => doc.data().isFull === false)
-          .map((doc, id) => (
-            <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
-              <ListingItem
-                listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
-              ></ListingItem>
-              <InfoWrapper>
                 <StyledBtnDiv
                   onClick={(e) => {
                     e.stopPropagation();
@@ -429,6 +437,23 @@ function AllHouseHunting({
                 >
                   退團
                 </StyledBtnDiv>
+              </ListingWrapper>
+            ))
+        )}
+        {getSubTab === '等待湊團' && loading ? (
+          <Loading style={null} />
+        ) : houseHuntingData.filter((doc) => doc.data().isFull === false).length === 0 && getSubTab === '等待湊團' ? (
+          <NoListing msg="沒有等待湊房的房源" />
+        ) : (
+          getSubTab === '等待湊團' &&
+          houseHuntingData
+            .filter((doc) => doc.data().isFull === false)
+            .map((doc, id) => (
+              <ListingWrapper to={`/listing/${doc.data().listingId}`} key={`houseHunting${doc.data().listingId}`}>
+                <ListingItem
+                  listingDocData={allListingData.find((el) => el.id === doc.data().listingId) as DocumentData}
+                ></ListingItem>
+
                 <ChatIcon
                   onClick={(e) => {
                     e.stopPropagation();
@@ -443,10 +468,23 @@ function AllHouseHunting({
                     });
                   }}
                 />
-              </InfoWrapper>
-            </ListingWrapper>
-          ))
-      )}
+                <StyledBtnDiv
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setRemoveFromGroupPopup(true);
+                    setRemoveUserInfo({
+                      chatRoomId: doc.id,
+                      listingId: doc.data().listingId,
+                    });
+                  }}
+                >
+                  退團
+                </StyledBtnDiv>
+              </ListingWrapper>
+            ))
+        )}
+      </ListingWrap>
     </Wrapper>
   );
 }

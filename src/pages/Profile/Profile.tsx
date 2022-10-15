@@ -63,6 +63,7 @@ const SectionWrapper = styled.div<{ isShowTab: boolean }>`
 const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   left: 0px;
   background-color: #f3f2ef;
+  width: 20px;
   height: 50px;
   cursor: pointer;
   border-radius: 4px;
@@ -71,6 +72,10 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
   transition-duration: 0.2s;
   position: absolute;
   z-index: 1;
+  display: flex;
+  top: 35px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+
   &:hover {
     color: #f3f2ef;
     background-color: #4f5152;
@@ -78,7 +83,7 @@ const Arrow = styled.div<{ isShowTab: boolean; windowState: boolean }>`
 `;
 const ArrowWrap = styled.div`
   color: inherit;
-  /* position: absolute; */
+  margin: auto;
 `;
 function Profile() {
   const dispatch = useDispatch();
@@ -102,6 +107,7 @@ function Profile() {
       navigate('/signin');
     }
   }, [authChange]);
+
   return (
     <Wrapper>
       {!authChange && isShown ? (
