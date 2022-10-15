@@ -6,8 +6,11 @@ import { RootState } from '../../../redux/rootReducer';
 import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
 import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { PopupImage, PopupImageDelete } from '../../../components/Popup';
 
-import { BtnDiv } from '../../../components/Button';
+import { BtnDiv, BtnArea, LastPageBtn } from '../../../components/Button';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
+
 import upload from '../../../assets/upload.png';
 const Wrapper = styled.div`
   display: flex;
@@ -28,6 +31,9 @@ const UploadImages = styled.input.attrs({
 })``;
 const PreviewArea = styled.div`
   display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
 `;
 const PreviewMainImage = styled.div<{ src: string }>`
   background-image: url(${(props) => props.src});
@@ -40,13 +46,15 @@ const PreviewMainImage = styled.div<{ src: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border-radius: 8px;
+  transition-duration: 0.2s;
+  :hover {
+    transform: scale(1.1);
+  }
 `;
 
-const PreviewImages = styled(PreviewMainImage)`
-  margin-right: 12px;
-  overflow-x: auto;
-  overflow-y: hidden;
-`;
+const PreviewImages = styled(PreviewMainImage)``;
 
 const SubmitBtn = styled(BtnDiv)`
   margin-top: 20px;
@@ -71,20 +79,19 @@ const UploadImgBtn = styled.div`
   background-repeat: no-repeat;
   position: absolute;
   left: 100%;
-  transform: translate(-50%, -50%);
+  transform: translate(-100%, -100%);
 `;
 const UploadArea = styled.div`
   margin-bottom: 40px;
+  width: 100%;
 `;
 function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const getMainImage = useSelector((state: RootState) => state.PreviewImageReducer);
   const getOtherImages = useSelector((state: RootState) => state.PreviewOtherImagesReducer);
-
-  const [mainImgUrl, setMainImgUrl] = useState<string>(getMainImage);
-  const [imagesUrl, setImagesUrl] = useState<string[]>(getOtherImages);
-  const [imagesBlob, setImagesBlob] = useState<Blob[]>();
-  const [mainImgBlob, setMainImgBlob] = useState<Blob>();
+  const imageBlob = useSelector((state: RootState) => state.UploadImagesReducer);
+  const [popImg, setPopImg] = useState<boolean>(false);
+  const [clickImgUrl, setClickImgUrl] = useState<string | null>(null);
   const mainImgRef = useRef<HTMLInputElement>(null);
   const otherImgRef = useRef<HTMLInputElement>(null);
 
@@ -92,8 +99,15 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
     let target = e.target as HTMLInputElement;
     let files = target.files;
     if ((files as FileList)[0]) {
-      setMainImgUrl(URL.createObjectURL((files as FileList)[0]));
-      setMainImgBlob((files as FileList)[0]);
+      dispatch({
+        type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
+        payload: { mainImage: URL.createObjectURL((files as FileList)[0]) },
+      });
+
+      dispatch({
+        type: uploadImagesAction.UPLOAD_MAIN_IMAGE,
+        payload: { mainImage: (files as FileList)[0] },
+      });
     }
   }
 
@@ -109,28 +123,53 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         arr.push(URL.createObjectURL(file));
         blobArr.push(file);
       }
-      setImagesUrl(arr);
-      setImagesBlob(blobArr);
+      dispatch({
+        type: previewOtherImagesAction.PREVIEW_OTHER_IMAGES,
+        payload: { otherImages: arr },
+      });
+      dispatch({
+        type: uploadImagesAction.UPLOAD_IMAGES,
+        payload: { images: blobArr },
+      });
     }
     loopImages(files!);
   }
-  async function uploadAllImages() {
-    let images = { mainImage: mainImgBlob, images: imagesBlob };
-    dispatch({ type: uploadImagesAction.UPLOAD_IMAGES, payload: { images } });
-    dispatch({
-      type: previewMainImageAction.PREVIEW_MAIN_IMAGE,
-      payload: { mainImage: mainImgUrl },
-    });
-    dispatch({
-      type: previewOtherImagesAction.PREVIEW_OTHER_IMAGES,
-      payload: { otherImages: imagesUrl },
-    });
+  function deletePhoto() {
+    if (clickImgUrl === getMainImage) {
+      dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+      dispatch({ type: uploadImagesAction.DELETE_MAIN_IMAGE });
+    } else {
+      dispatch({ type: previewOtherImagesAction.DELETE_OTHER_IMAGE, payload: { url: clickImgUrl } });
+      let index = getOtherImages.findIndex((u) => u === clickImgUrl);
+
+      dispatch({ type: uploadImagesAction.DELETE_OTHER_IMAGE, payload: { index: index } });
+    }
   }
   return (
     <Wrapper>
+      {popImg && (
+        <PopupImageDelete
+          img={clickImgUrl as string}
+          clickClose={() => {
+            setClickImgUrl(null);
+            setPopImg(false);
+          }}
+          deleteFn={() => {
+            deletePhoto();
+          }}
+        />
+      )}
       <UploadArea>
-        <PreviewMainImage src={mainImgUrl as string}>
-          {!mainImgUrl && <React.Fragment>上傳封面照</React.Fragment>}
+        <PreviewMainImage
+          src={getMainImage as string}
+          onClick={() => {
+            if (getMainImage) {
+              setClickImgUrl(getMainImage);
+              setPopImg(true);
+            }
+          }}
+        >
+          {!getMainImage && <React.Fragment>上傳封面照</React.Fragment>}
         </PreviewMainImage>
 
         <UploadMainImage hidden ref={mainImgRef} onChange={(e) => previewMainImage(e)} />
@@ -141,9 +180,9 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         />
       </UploadArea>
       <UploadArea>
-        {imagesUrl.length === 0 && (
+        {getOtherImages.length === 0 && (
           <PreviewMainImage src={null}>
-            {imagesUrl.length === 0 && (
+            {getOtherImages.length === 0 && (
               <React.Fragment>
                 其他照片
                 <br />
@@ -154,8 +193,17 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         )}
 
         <PreviewArea>
-          {imagesUrl.length !== 0 &&
-            imagesUrl.map((url, index) => <PreviewImages key={`previewImages${index}`} src={url as string} />)}
+          {getOtherImages.length !== 0 &&
+            getOtherImages.map((url, index) => (
+              <PreviewImages
+                onClick={() => {
+                  setClickImgUrl(url);
+                  setPopImg(true);
+                }}
+                key={`previewImages${index}`}
+                src={url as string}
+              />
+            ))}
         </PreviewArea>
         <UploadImgBtn
           onClick={() => {
@@ -164,14 +212,38 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         />
         <UploadImages hidden ref={otherImgRef} onChange={(e) => previewImages(e)} />
       </UploadArea>
-      <SubmitBtn
-        onClick={() => {
-          uploadAllImages();
-          setClickTab('房間規格');
-        }}
-      >
-        儲存
-      </SubmitBtn>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('地址');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <SubmitBtn
+          onClick={() => {
+            // uploadAllImages();
+
+            if (!imageBlob.mainImage || imageBlob.images.length < 4 || imageBlob.images.length > 10) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請上傳一張封面及4~10張其他照片',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('房間規格');
+            }
+          }}
+        >
+          儲存
+        </SubmitBtn>
+      </BtnArea>
     </Wrapper>
   );
 }

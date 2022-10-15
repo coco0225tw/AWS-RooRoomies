@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Wrapper = styled.div<{ isAlert: boolean; alertType: string }>`
   position: fixed;
   display: flex;
-  z-index: 3;
+  z-index: 5;
   background-color: #fff;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   top: 20vh;

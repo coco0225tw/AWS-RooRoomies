@@ -171,7 +171,6 @@ function ListingItem({ listingDocData }: { listingDocData: DocumentData }) {
             </Addr>
 
             <PeopleAmount>可入住人數:{listingDocData?.data().peopleAmount}</PeopleAmount>
-            <Time></Time>
           </DetailWrapper>
 
           <Rent>

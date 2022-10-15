@@ -15,14 +15,26 @@ const Wrapper = styled.div<{ isShown: boolean }>`
   right: ${(props) => (props.isShown ? '120px' : '50px')};
   position: fixed;
   display: flex;
-  z-index: 2;
+  z-index: 5;
   background-color: white;
-  width: ${(props) => (props.isShown ? '20vw' : 'auto')};
+  width: ${(props) => (props.isShown ? '360px' : 'auto')};
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   height: ${(props) => (props.isShown ? '500px' : 'auto')};
   box-shadow: ${(props) => (props.isShown ? 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' : '')};
-  border-radius: ${(props) => (props.isShown ? '8px 8px 0px 0px ' : '50%')};
+  border-radius: ${(props) => (props.isShown ? '8px 8px 8px 8px ' : '50%')};
   color: #4f5152;
+  @media screen and (max-width: 900px) {
+    width: ${(props) => (props.isShown ? '90%' : 'auto')};
+    height: ${(props) => props.isShown && '90%'};
+    right: ${(props) => (props.isShown ? 'auto' : '50px')};
+    left: ${(props) => props.isShown && '50%'};
+    top: ${(props) => props.isShown && '50%'};
+    /* bottom: ${(props) => props.isShown && '0'}; */
+    transform: ${(props) => props.isShown && 'translate(-50%,-50%)'};
+  }
+  @media screen and (max-width: 550px) {
+    height: ${(props) => (props.isShown ? 'calc(100vh - 180px)' : 'auto')};
+  }
 `;
 const ChatIcon = styled.div<{ isShown: boolean }>`
   width: 80px;
@@ -35,6 +47,11 @@ const ChatIcon = styled.div<{ isShown: boolean }>`
   background-repeat: no-repeat;
   cursor: pointer;
   display: ${(props) => (props.isShown ? 'none' : 'block')};
+  @media screen and (max-width: 550px) {
+    width: 60px;
+    height: 60px;
+    background-size: 40px 40px;
+  }
 `;
 const SectionWrapper = styled.div`
   display: flex;
@@ -45,20 +62,26 @@ const SectionWrapper = styled.div`
 `;
 
 const MsgWrapper = styled.div`
-  // overflow: scroll;
-  // overflow-x: hidden;
+  overflow-y: scroll;
   display: inline-flex;
   flex-wrap: nowrap;
   flex-direction: column;
-  flex-grow: 1;
   padding: 0px 12px;
-  // height: 100%;
-  justify-content: flex-end;
+  height: 100%;
+  /* justify-content: flex-end;
+   */
 `;
 const InputArea = styled.div`
   display: flex;
   background-color: #c77155;
   height: 48px;
+  border-radius: 0 0 8px 8px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1%;
+  @media screen and (max-width: 900px) {
+    justify-content: space-around;
+  }
 `;
 const Message = styled.div<{ auth: boolean }>`
   width: 80%;
@@ -79,6 +102,7 @@ const UserMessage = styled.div`
   word-break: break-all;
   padding: 0 12px;
   border-radius: 8px;
+  line-height: 40px;
 `;
 
 const InputMessageBox = styled.input`
@@ -89,10 +113,11 @@ const InputMessageBox = styled.input`
   border-radius: 20px;
   width: 96%;
   height: 80%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+  @media screen and (max-width: 900px) {
+    width: auto;
+    flex-grow: 1;
+  }
 `;
 
 const HeaderBar = styled.div`
@@ -157,7 +182,6 @@ const OptionsBtn = styled.div`
 const Close = styled(OptionsBtn)<{ isShown: boolean }>`
   display: ${(props) => (props.isShown ? 'block' : 'none')};
 `;
-const InfoBtn = styled(OptionsBtn)``;
 const BackBtn = styled(OptionsBtn)`
   margin-left: 12px;
 `;
@@ -168,7 +192,6 @@ const ListingWrapper = styled.div`
   overflow-x: hidden;
   overflow-y: scroll;
   flex-direction: column;
-  // padding: 0 12px;
 `;
 const Listing = styled.div<{ isClick: boolean }>`
   width: 100%;
@@ -194,6 +217,23 @@ const GreaterThan = styled(OptionsBtn)`
     transform: translateY(-50%) scale(1.1);
   }
 `;
+const AddMsgIcon = styled.div`
+  display: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #c77155;
+  @media screen and (max-width: 900px) {
+    width: 32px;
+    height: 32px;
+    margin-left: 12px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: block;
+    text-align: center;
+    line-height: 32px;
+  }
+`;
+const AutoScroll = styled.div``;
 function ChatRooms() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -202,6 +242,7 @@ function ChatRooms() {
   const authChange = useSelector((state: RootState) => state.AuthChangeReducer);
   const getChatRoom = useSelector((state: RootState) => state.ChatRoomReducer);
   const [allMessages, setAllMessages] = useState<Msg[]>([]);
+  const autoScrollRef = useRef<HTMLDivElement>(null);
   const msgInputRef = useRef<HTMLInputElement>(null);
   interface Msg {
     userMsg: string;
@@ -271,11 +312,11 @@ function ChatRooms() {
               });
             }
           }}
-        ></ChatIcon>
+        />
 
         {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
           <PopupComponent
-            msg={`你目前/n沒有預約和湊團哦`}
+            msg={`你目前\n沒有預約和湊團哦`}
             notDefaultBtn={`取消`}
             defaultBtn={`去逛逛`}
             clickClose={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}
@@ -306,8 +347,6 @@ function ChatRooms() {
                   {!getChatRoom.chatRoomOpenState && '你的聊天室'}
                 </Tab>
                 <OptionWrapper>
-                  {getChatRoom.chatRoomId && getChatRoom.chatRoomOpenState && <InfoBtn>&#8505;</InfoBtn>}
-
                   <Close
                     isShown={getChatRoom.isOpen && houseHuntingData.length !== 0}
                     onClick={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}
@@ -315,8 +354,6 @@ function ChatRooms() {
                     &#10006;
                   </Close>
                 </OptionWrapper>
-
-                {/* </TabsWrapper> */}
               </Tabs>
               {getChatRoom.chatRoomOpenState ? (
                 <React.Fragment>
@@ -345,11 +382,14 @@ function ChatRooms() {
                                 <UserInfo>
                                   <UserPic pic={el.userPic} />
                                 </UserInfo>
-                                <UserMessage style={{ marginLeft: '12px' }}>{el.userMsg}</UserMessage>
+                                <UserMessage style={{ marginLeft: '12px', backgroundColor: ' #f3f2ef' }}>
+                                  {el.userMsg}
+                                </UserMessage>
                               </MessageWrapper>
                             )}
                           </Message>
                         ))}
+                      <AutoScroll ref={autoScrollRef} />
                     </MsgWrapper>
                   </SectionWrapper>
                   <InputArea>
@@ -365,32 +405,47 @@ function ChatRooms() {
                           } else {
                             senMsg();
                             msgInputRef.current!.value = '';
+                            autoScrollRef.current?.scrollIntoView({ behavior: 'smooth' });
                           }
                         }
                       }}
-                    ></InputMessageBox>
+                    />
+                    <AddMsgIcon
+                      onClick={() => {
+                        if (msgInputRef.current.value.trim() === '') {
+                          msgInputRef.current!.value = '';
+                          return;
+                        } else {
+                          senMsg();
+                          msgInputRef.current!.value = '';
+                          autoScrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                    >
+                      &#43;
+                    </AddMsgIcon>
                   </InputArea>
                 </React.Fragment>
               ) : (
                 <ListingWrapper>
                   {houseHuntingData.map((house) => (
-                    <Listing isClick={getChatRoom.chatRoomId === house.id} key={`houseHuntingChat${house.id}`}>
+                    <Listing
+                      onClick={() => {
+                        dispatch({
+                          type: chatRoomAction.OPEN_CHATROOM_STATE,
+                        });
+                        dispatch({
+                          type: chatRoomAction.OPEN_CHATROOM,
+                          payload: {
+                            chatRoomId: house.id,
+                          },
+                        });
+                      }}
+                      isClick={getChatRoom.chatRoomId === house.id}
+                      key={`houseHuntingChat${house.id}`}
+                    >
                       {house.data().listingTitle}
-                      <GreaterThan
-                        onClick={() => {
-                          dispatch({
-                            type: chatRoomAction.OPEN_CHATROOM_STATE,
-                          });
-                          dispatch({
-                            type: chatRoomAction.OPEN_CHATROOM,
-                            payload: {
-                              chatRoomId: house.id,
-                            },
-                          });
-                        }}
-                      >
-                        &gt;
-                      </GreaterThan>
+                      <GreaterThan>&gt;</GreaterThan>
                     </Listing>
                   ))}
                 </ListingWrapper>

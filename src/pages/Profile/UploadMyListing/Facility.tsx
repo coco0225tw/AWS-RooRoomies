@@ -17,14 +17,22 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 
 import { RootState } from '../../../redux/rootReducer';
-import { SubmitBtn } from '../../../components/Button';
+import { SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import { PopupComponent } from '../../../components/Popup';
 
 import Icons from '../../../assets/facility/Icon';
 import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
 import { alertActionType } from '../../../redux/Alert/AlertAction';
 import { uploadFacilityAction } from '../../../redux/UploadFacility/UploadFacilityAction';
-
+import { uploadAddrAction } from '../../../redux/UploadAddr/UploadAddrAction';
+import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
+import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
+import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -256,7 +264,17 @@ const facilityFormGroups = [
   },
 ];
 
-function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.SetStateAction<string>>; setDoc: any }) {
+function Facility({
+  setClickTab,
+  setDoc,
+  setIsUploading,
+  setEdit,
+}: {
+  setClickTab: React.Dispatch<React.SetStateAction<string>>;
+  setDoc: any;
+  setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const dispatch = useDispatch();
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
 
@@ -266,7 +284,8 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     text: string;
     value: string;
   }
-  // const [facilityState, setFacilityState] = useState<facilityType>(initialFacilityEmptyState);
+
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
   const {
     register,
@@ -286,14 +305,34 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     dispatch({ type: uploadFacilityAction.UPLOAD_FACILITY, payload: { facilityState: data } });
   }
   async function submitHandler() {
+    if (submitting) return;
+    setSubmitting(true);
+    clickClose();
+    setIsUploading(true);
+    setEdit(false);
     setDoc().then(() => {
+      setSubmitting(false);
+      setIsUploading(false);
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
         payload: {
           alertMessage: '成功上傳',
         },
       });
-
+      dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
+      dispatch({
+        type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+      });
+      dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+      dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+      dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+      dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+      dispatch({ type: uploadTitleAction.RETURN_INITIAL_TITLE });
+      dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+      dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+      dispatch({
+        type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+      });
       setTimeout(() => {
         dispatch({
           type: alertActionType.CLOSE_ALERT,
@@ -394,7 +433,16 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
             </FormInputWrapper>
           </FormGroup>
         ))}
-        <SubmitBtn type="submit" value="送出" />
+        <BtnArea>
+          <LastPageBtn
+            onClick={() => {
+              setClickTab('設定室友條件');
+            }}
+          >
+            上一頁
+          </LastPageBtn>
+          <SubmitBtn type="submit" value="送出" />
+        </BtnArea>
       </StyledForm>
     </Wrapper>
   );

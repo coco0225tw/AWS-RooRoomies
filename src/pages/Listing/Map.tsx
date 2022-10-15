@@ -134,7 +134,7 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
     width: 100vw;
     overflow: show;
 
-    margin: 80px 0px 0px;
+    margin: 0px 0px 0px;
     transform: translateX(-10vw);
     @media screen and (max-width: 1460px) {
       transform: translateX(-5vw);
@@ -148,11 +148,14 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
           <Marker
             icon={{
               url: logo,
-              scaledSize: new google.maps.Size(28, 28), // scaled size
+              scaledSize: new google.maps.Size(40, 40), // scaled size
               origin: new google.maps.Point(0, 0), // origin
               anchor: new google.maps.Point(0, 0), // anchor
             }}
             position={latLng}
+            onClick={() => {
+              window.open(`https://maps.google.com?q=${latLng.lat},${latLng.lng}`);
+            }}
           />
         </GoogleMap>
       )}

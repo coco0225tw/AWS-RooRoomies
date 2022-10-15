@@ -36,7 +36,18 @@ const FavoriteIcon = styled.div`
   width: 40px;
   background-size: 40px 40px;
   position: absolute;
+  background-position: center center;
+  background-repeat: no-repeat;
   right: 20px;
+  @media screen and (max-width: 1300px) {
+    height: 28px;
+    width: 28px;
+    right: 8px;
+    background-size: 20px 20px;
+    border-radius: 8px;
+    margin: 8px 8px 0 0;
+    background-color: #fefefe;
+  }
 `;
 const DragIcon = styled.div`
   background-image: url(${dragIcon});
@@ -56,10 +67,30 @@ const DragIcon = styled.div`
     width: 40px;
     border-radius: 4px;
   }
+  @media screen and (max-width: 1300px) {
+    height: 28px;
+    width: 28px;
+    right: 0px;
+    background-size: 12px 12px;
+    border-radius: 8px;
+    top: 16px;
+    background-color: #fefefe;
+    :hover {
+      background-color: lightgrey;
+      height: 28px;
+      width: 28px;
+    }
+  }
 `;
 const ListingWrap = styled.div`
   display: flex;
   flex-direction: row;
+  @media screen and (max-width: 1300px) {
+    width: 48%;
+  }
+  @media screen and (max-width: 900px) {
+    width: 100%;
+  }
 `;
 const ListingWrapper = styled(Link)`
   display: flex;
@@ -69,12 +100,21 @@ const ListingWrapper = styled(Link)`
   margin-bottom: 32px;
   padding: 20px;
   border-radius: 12px;
+  @media screen and (max-width: 1300px) {
+    margin-bottom: 12px;
+    padding: 8px;
+  }
 `;
 const Drop = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 1300px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2%;
+  }
 `;
 function FollowedList({
   setLoading,

@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { alertActionType } from '../../../redux/Alert/AlertAction';
+import { getAuthAction } from '../../../redux/GetAuth/GetAuthAction';
+
 import { RootState } from '../../../redux/rootReducer';
 import { FormGroup, FormLabel, FormControl } from '../../../components/InputArea';
 import { BtnDiv } from '../../../components/Button';
@@ -71,7 +73,7 @@ function Setting({
   const dispatch = useDispatch();
   const userInfo = useSelector((state: RootState) => state.GetAuthReducer);
 
-  const [mainImgUrl, setMainImgUrl] = useState<string>('');
+  const [mainImgUrl, setMainImgUrl] = useState<string>(userInfo.image);
   const [edit, setEdit] = useState<boolean>(false);
   const [mainImgBlob, setMainImgBlob] = useState<Blob>();
 
@@ -91,6 +93,12 @@ function Setting({
     firebase
       .updateUserInfo(userInfo.uid, nameRef.current!.value)
       .then(() => {
+        dispatch({
+          type: getAuthAction.UPLOAD_USER_IMAGE,
+          payload: {
+            image: mainImgUrl,
+          },
+        });
         dispatch({
           type: alertActionType.OPEN_SUCCESS_ALERT,
           payload: {
@@ -147,6 +155,7 @@ function Setting({
               <SubmitBtn
                 onClick={() => {
                   setEdit(false);
+                  setMainImgUrl('');
                   nameRef.current.value = userInfo!.name;
                 }}
               >

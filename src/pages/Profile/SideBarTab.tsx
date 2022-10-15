@@ -89,7 +89,6 @@ function SideBarTab({
       label: '所有看房消息',
       value: deadline,
     },
-    // { key: "compareList", img: "", label: "比較列表" },
     { key: 'followedList', img: unHeart, label: '喜歡列表', value: heart },
     { key: 'uploadMyListing', img: houseo, label: '管理物件', value: house },
     { key: 'setting', img: settingo, label: '設定', value: setting },
@@ -114,7 +113,7 @@ function SideBarTab({
           isChoose={getTab === options.key}
           onClick={() => {
             clickTab(options.key);
-            if (window.innerWidth < 425) {
+            if (window.innerWidth < 850) {
               setShowTab(false);
             }
           }}
