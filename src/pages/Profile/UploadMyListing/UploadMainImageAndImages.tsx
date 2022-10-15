@@ -47,6 +47,7 @@ const PreviewMainImage = styled.div<{ src: string }>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border-radius: 8px;
   transition-duration: 0.2s;
   :hover {
     transform: scale(1.1);
@@ -227,7 +228,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,
                 payload: {
-                  alertMessage: '請上傳正確照片數',
+                  alertMessage: '請上傳一張封面及4~10張其他照片',
                 },
               });
               setTimeout(() => {

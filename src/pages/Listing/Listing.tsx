@@ -125,9 +125,7 @@ const ImageWrap = styled.div`
   cursor: pointer;
   overflow: hidden;
   height: 100%;
-  &:hover {
-    filter: brightness(70%);
-  }
+
   @media screen and (max-width: 1200px) {
     width: 100%;
     flex-grow: 1;
@@ -142,7 +140,7 @@ const MainImage = styled.div<{ src: string }>`
 
   transition-duration: 0.2s;
   &:hover {
-    transform: scale(120%);
+    filter: brightness(70%);
   }
 `;
 const Images = styled(MainImage)`
@@ -152,6 +150,8 @@ const Images = styled(MainImage)`
   height: 100%;
   &:hover {
     filter: brightness(70%);
+    transform: scale(100%);
+    /* background-size: 120%; */
   }
   height: auto;
   aspect-ratio: 1 / 1;
@@ -330,6 +330,21 @@ const StyledHr = styled(Hr)`
     margin: 40px 0;
   }
 `;
+const OtherImageWrap = styled(MainImage)`
+  width: 49%;
+  cursor: pointer;
+  overflow: hidden;
+  height: 100%;
+  &:hover {
+    filter: brightness(70%);
+  }
+  height: auto;
+  aspect-ratio: 1 / 1;
+  @media screen and (max-width: 1200px) {
+    width: 100px;
+    min-width: 100px;
+  }
+`;
 function Listing() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -350,6 +365,7 @@ function Listing() {
   const [clickOnImg, setClickOnImg] = useState<string>('');
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<null | Date>(null);
   type selectDateTimeType = {
     date: Timestamp;
     startTime: string;
@@ -495,6 +511,18 @@ function Listing() {
     }
     updateAllBookedTime();
   }
+  const findMinCanBookDate = (bookingTimesInfo: QueryDocumentSnapshot<DocumentData>[]) => {
+    let canBook = bookingTimesInfo.filter((el) => el.data().isBooked === false);
+    if (canBook.length === 0) {
+      let startDate = bookingTimesInfo
+        .map((time, index) => time.data().date.toDate())
+        .reduce((a, b) => (a < b ? a : b));
+      setStartDate(startDate);
+    } else {
+      let startDate = canBook.map((time, index) => time.data().date.toDate()).reduce((a, b) => (a < b ? a : b));
+      setStartDate(startDate);
+    }
+  };
   function notAddUserAsRoommatesConditionAlert() {
     dispatch({
       type: alertActionType.OPEN_NOTIFY_ALERT,
@@ -549,7 +577,7 @@ function Listing() {
           listingTimesArr.push(doc);
         });
         setBookingTimesInfo(listingTimesArr);
-
+        findMinCanBookDate(listingTimesArr);
         let enableDate = [];
         if (listingTimesArr?.length !== 0) {
           enableDate = listingTimesArr?.reduce(
@@ -574,12 +602,13 @@ function Listing() {
         setAbleBookingTimes(enableDates);
       });
     }
-    async function promise() {
-      getListing();
-    }
+    // async function promise() {
+    getListing();
+    // }
+
     getBookingTimes();
 
-    promise();
+    // promise();
   }, [id]);
   return (
     <Wrapper>
@@ -617,8 +646,8 @@ function Listing() {
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
               // <OtherImageWrap key={`images_${index}`}>
-              <Images key={`images_${index}`} src={src} onClick={() => clickOnImage(src)} />
-              //</OtherImageWrap>
+              <Images src={src} key={`images_${index}`} onClick={() => clickOnImage(src)} />
+              // </OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
@@ -637,7 +666,8 @@ function Listing() {
               <TitleIcon>{listingInfo?.form}</TitleIcon>
               <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
               <TitleIcon>
-                {listingInfo?.floor}/{listingInfo?.totalFloor}F
+                {listingInfo?.floor}
+                {listingInfo?.totalFloor && `/${listingInfo?.totalFloor}`}F
               </TitleIcon>
               <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
               <TitleIcon>
@@ -690,7 +720,21 @@ function Listing() {
 
           <TimeAndCalendarWrapper>
             <CalendarContainer>
-              <Calendar tileDisabled={tileDisabled} onClickDay={clickDate} />
+              <Calendar
+                defaultValue={startDate}
+                minDetail="month"
+                view="month"
+                tileDisabled={tileDisabled}
+                onClickDay={clickDate}
+                tileClassName={({ date, view }) => {
+                  const dateInfo = bookingTimesInfo.filter(
+                    (doc) => doc.data().date.toDate().getTime() === date.getTime()
+                  );
+                  if (dateInfo.length !== 0 && dateInfo.every((doc) => doc.data().isBooked === true)) {
+                    return 'highlight';
+                  }
+                }}
+              />
             </CalendarContainer>
             <Times>
               {selectedDate && (

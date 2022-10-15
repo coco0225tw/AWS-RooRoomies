@@ -92,6 +92,7 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date < new Date() ||
+      date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate()) ||
       selectedDays.some(
         (disabledDate) =>
           date.getFullYear() === disabledDate.getFullYear() &&
@@ -139,10 +140,18 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     <Wrapper>
       <SectionDivider>
         <CalendarContainer style={{ marginLeft: '0', marginBottom: '12px' }}>
-          <Calendar onClickDay={clickDate} selectRange={false} tileDisabled={tileDisabled} />
+          <Calendar
+            onClickDay={clickDate}
+            minDetail="month"
+            view="month"
+            selectRange={false}
+            tileDisabled={tileDisabled}
+          />
         </CalendarContainer>
         <SectionWrapper>
-          <SubTitle style={{ marginBottom: '12px' }}>選擇的日期</SubTitle>
+          <SubTitle style={{ marginBottom: '12px' }}>
+            選擇的日期<span style={{ fontSize: '16px' }}>(半年內)</span>
+          </SubTitle>
           {selectedDays &&
             selectedDays.map((s, index) => (
               <SelectedDays key={`selectedDays${index}`}>

@@ -113,7 +113,7 @@ function SideBarTab({
           isChoose={getTab === options.key}
           onClick={() => {
             clickTab(options.key);
-            if (window.innerWidth < 760) {
+            if (window.innerWidth < 850) {
               setShowTab(false);
             }
           }}

@@ -316,7 +316,7 @@ function ChatRooms() {
 
         {houseHuntingData.length === 0 && getChatRoom.isOpen ? (
           <PopupComponent
-            msg={`你目前/n沒有預約和湊團哦`}
+            msg={`你目前\n沒有預約和湊團哦`}
             notDefaultBtn={`取消`}
             defaultBtn={`去逛逛`}
             clickClose={() => dispatch({ type: chatRoomAction.CLOSE_CHAT })}

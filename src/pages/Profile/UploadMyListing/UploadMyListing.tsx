@@ -124,11 +124,11 @@ function UploadMyListing({
       0
     );
     const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent > current.rent ? prev : current
+      prev.rent < current.rent ? prev : current
     );
 
     const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent < current.rent ? prev : current
+      prev.rent > current.rent ? prev : current
     );
     const listingData = {
       ...getTitle,

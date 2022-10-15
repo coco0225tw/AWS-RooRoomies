@@ -166,7 +166,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
       },
     },
     {
-      label: '入住時間 ',
+      label: '入住時間(半年內) ',
       key: 'moveInDate',
       required: valid.required,
     },
@@ -174,7 +174,10 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
   const [selectedDate, setSelectedDate] = useState<Date>(titleInfo.moveInDate && titleInfo.moveInDate);
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
-    return date < new Date();
+    return (
+      date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate()) ||
+      date < new Date()
+    );
   };
 
   function clickDate(date: Date) {
@@ -274,6 +277,8 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                     <CalendarContainer style={{ marginLeft: '0' }}>
                       <Calendar
                         {...field}
+                        minDetail="month"
+                        view="month"
                         defaultValue={titleInfo.moveInDate}
                         onClickDay={clickDate}
                         selectRange={false}

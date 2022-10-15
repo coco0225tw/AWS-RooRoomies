@@ -24,7 +24,15 @@ import Icons from '../../../assets/facility/Icon';
 import facilityType from '../../../redux/UploadFacility/UploadFacilityType';
 import { alertActionType } from '../../../redux/Alert/AlertAction';
 import { uploadFacilityAction } from '../../../redux/UploadFacility/UploadFacilityAction';
-
+import { uploadAddrAction } from '../../../redux/UploadAddr/UploadAddrAction';
+import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
+import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
+import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
+import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
+import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -311,7 +319,20 @@ function Facility({
           alertMessage: '成功上傳',
         },
       });
-
+      dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
+      dispatch({
+        type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+      });
+      dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+      dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+      dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+      dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+      dispatch({ type: uploadTitleAction.RETURN_INITIAL_TITLE });
+      dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+      dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+      dispatch({
+        type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+      });
       setTimeout(() => {
         dispatch({
           type: alertActionType.CLOSE_ALERT,
