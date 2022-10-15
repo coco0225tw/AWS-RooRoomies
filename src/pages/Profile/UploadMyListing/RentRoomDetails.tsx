@@ -16,11 +16,12 @@ import {
   LabelArea,
   StyledForm,
 } from '../../../components/InputArea';
-import { BtnDiv, SubmitBtn } from '../../../components/Button';
+import { BtnDiv, SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import bin from '../../../assets/bin.png';
 import { roomDetailsType, roomType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import arrow from '../../../assets/arrow.png';
 import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -101,6 +102,7 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
   z-index: 2;
   flex-wrap: wrap;
   top: 100%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
@@ -188,7 +190,6 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const dispatch = useDispatch();
 
   const roomInfo = useSelector((state: RootState) => state.UploadRoomsReducer);
-  const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
   interface optionType {
@@ -208,13 +209,10 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     setSelectOptions(null);
   };
   function addRooms(data: roomType) {
-    setRoomState([...roomState, data]);
-  }
-  function submit() {
-    dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
+    dispatch({ type: uploadRoomDetailsAction.ADD_ROOM, payload: { room: data } });
   }
   function deleteRoom(index: number) {
-    setRoomState(roomState.filter((el, i) => i !== index));
+    dispatch({ type: uploadRoomDetailsAction.DELETE_ROOM, payload: { index: index } });
   }
   return (
     <Wrapper>
@@ -291,39 +289,64 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         </InputArea>
         <StyledSubmitBtn value="加入房間" type="submit" />
       </StyledFormGroup>
-      {roomState.length !== 0 && (
+      {roomInfo.length !== 0 && (
         <Table style={{ border: 'solid 1px #ece2d5', marginBottom: '12px' }}>
-          <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
-            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
-          </Tr>
-          {roomState.map((r: roomType, index: number) => (
-            <Tr key={`room${index}`}>
-              <Td>房間{index + 1}</Td>
-              <Td>{r.rent}元</Td>
-              <Td>{r.sq}坪</Td>
-              <Td>{r.form}</Td>
-              <Td>{r.peopleAmount}人</Td>
-              <Td>
-                <Cross onClick={() => deleteRoom(index)} />
-              </Td>
+          <thead>
+            <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
+              <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
             </Tr>
-          ))}
+          </thead>
+          <tbody>
+            {roomInfo.map((r: roomType, index: number) => (
+              <Tr key={`room${index}`}>
+                <Td>房間{index + 1}</Td>
+                <Td>{r.rent}元</Td>
+                <Td>{r.sq}坪</Td>
+                <Td>{r.form}</Td>
+                <Td>{r.peopleAmount}人</Td>
+                <Td>
+                  <Cross onClick={() => deleteRoom(index)} />
+                </Td>
+              </Tr>
+            ))}
+          </tbody>
         </Table>
       )}
-
-      <StyledBtnDiv
-        onClick={() => {
-          submit();
-          setClickTab('設定看房時間');
-        }}
-      >
-        儲存
-      </StyledBtnDiv>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('上傳圖片');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <StyledBtnDiv
+          onClick={() => {
+            if (roomInfo.length === 0) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請加入至少一間房間',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('設定看房時間');
+            }
+          }}
+        >
+          儲存
+        </StyledBtnDiv>
+      </BtnArea>
     </Wrapper>
   );
 }

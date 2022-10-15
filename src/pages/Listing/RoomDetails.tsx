@@ -42,23 +42,27 @@ function RoomDetails({ rooms }: { rooms: roomDetailsType }) {
       <Hr style={{ margin: '40px 0px' }} />
       <SubTitle style={{ marginBottom: '32px' }}>房間規格</SubTitle>
       <Table style={{ border: 'solid 1px #ece2d5' }}>
-        <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
-          <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
-        </Tr>
-        {room &&
-          room.map((r: roomType, index) => (
-            <Tr key={`room${index}`}>
-              <Td>房間{index + 1}</Td>
-              <Td>{r.rent}元</Td>
-              <Td>{r.sq}坪</Td>
-              <Td>{r.form}</Td>
-              <Td>{r.peopleAmount}人</Td>
-            </Tr>
-          ))}
+        <thead>
+          <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
+            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
+            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>價錢</Td>
+            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>坪數</Td>
+            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>規格</Td>
+            <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
+          </Tr>
+        </thead>
+        <tbody>
+          {room &&
+            room.map((r: roomType, index) => (
+              <Tr key={`room${index}`}>
+                <Td>房間{index + 1}</Td>
+                <Td>{r.rent}元</Td>
+                <Td>{r.sq}坪</Td>
+                <Td>{r.form}</Td>
+                <Td>{r.peopleAmount}人</Td>
+              </Tr>
+            ))}
+        </tbody>
       </Table>
     </Wrapper>
   );

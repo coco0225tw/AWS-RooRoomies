@@ -4,11 +4,12 @@ import Calendar from 'react-calendar';
 import styled from 'styled-components';
 import CalendarContainer from '../../../components/Calendar';
 import { SubTitle } from '../../../components/ProfileTitle';
-import { BtnDiv } from '../../../components/Button';
+import { BtnDiv, BtnArea, LastPageBtn } from '../../../components/Button';
 import { RootState } from '../../../redux/rootReducer';
 import bin from '../../../assets/bin.png';
 import { bookingTimesType, bookTimeType } from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
 import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -85,62 +86,85 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         return acc;
       }, [])
   );
-  const [selectedTimes, setSelectedTimes] = useState<bookingTimesType>(timesInfo);
   const selectedTimeRef = useRef<HTMLInputElement[]>([]);
 
   type tileDisabledType = { date: Date };
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date < new Date() ||
-      selectedDays.some(
-        (disabledDate) =>
-          date.getFullYear() === disabledDate.getFullYear() &&
-          date.getMonth() === disabledDate.getMonth() &&
-          date.getDate() === disabledDate.getDate()
-      )
+      date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate())
     );
   };
 
   function clickDate(date: Date) {
+    if (
+      selectedDays.some(
+        (d) =>
+          date.getFullYear() === d.getFullYear() && date.getMonth() === d.getMonth() && date.getDate() === d.getDate()
+      )
+    )
+      return;
     setSelectedDays((prev) => [...prev, date]);
   }
 
   function clickTime(date: Date, index: number) {
-    const time = {
-      date: date,
-      startTime: selectedTimeRef.current[index]?.value,
-      isBooked: false,
-    };
-
-    setSelectedTimes([
-      ...(selectedTimes as {
-        date: Date;
-        startTime: string;
-        isBooked: boolean;
-      }[]),
-      time,
-    ]);
+    if (selectedTimeRef.current[index]?.value === '') {
+      dispatch({
+        type: alertActionType.OPEN_ERROR_ALERT,
+        payload: {
+          alertMessage: '請選擇時段',
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+    } else {
+      const time = {
+        date: date,
+        startTime: selectedTimeRef.current[index]?.value,
+        isBooked: false,
+      };
+      dispatch({ type: uploadBookingTimesAction.ADD_TIME, payload: { time: time } });
+    }
   }
 
-  function deleteTime(date: Date, time: string) {}
+  function deleteTime(date: Date, time: string) {
+    dispatch({ type: uploadBookingTimesAction.DELETE_TIME, payload: { date: date, time: time } });
+  }
   function deleteDay(date: Date) {
     setSelectedDays(selectedDays.filter((i) => i !== date));
-    setSelectedTimes(selectedTimes.filter((i) => i.date !== date));
-  }
-  function submit(selectedTimes: bookingTimesType) {
-    dispatch({
-      type: uploadBookingTimesAction.UPLOAD_TIMES,
-      payload: { selectedTimes },
-    });
+    dispatch({ type: uploadBookingTimesAction.DELETE_DATE, payload: { date: date } });
   }
   return (
     <Wrapper>
       <SectionDivider>
         <CalendarContainer style={{ marginLeft: '0', marginBottom: '12px' }}>
-          <Calendar onClickDay={clickDate} selectRange={false} tileDisabled={tileDisabled} />
+          <Calendar
+            onClickDay={clickDate}
+            minDetail="month"
+            view="month"
+            selectRange={false}
+            tileDisabled={tileDisabled}
+            tileClassName={({ date, view }) => {
+              if (
+                selectedDays.some(
+                  (d) =>
+                    date.getFullYear() === d.getFullYear() &&
+                    date.getMonth() === d.getMonth() &&
+                    date.getDate() === d.getDate()
+                )
+              ) {
+                return 'highlight';
+              }
+            }}
+          />
         </CalendarContainer>
         <SectionWrapper>
-          <SubTitle style={{ marginBottom: '12px' }}>選擇的日期</SubTitle>
+          <SubTitle style={{ marginBottom: '12px' }}>
+            選擇的日期<span style={{ fontSize: '16px' }}>(半年內)</span>
+          </SubTitle>
           {selectedDays &&
             selectedDays.map((s, index) => (
               <SelectedDays key={`selectedDays${index}`}>
@@ -157,8 +181,8 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                   加入時間
                 </SubmitBtn>
                 <SelectTimes>
-                  {selectedTimes &&
-                    selectedTimes
+                  {timesInfo &&
+                    timesInfo
                       .filter((t) => t.date === s)
                       .map((time, index) => (
                         <SelectTime key={`selectedTimes${index}`}>
@@ -172,14 +196,36 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             ))}
         </SectionWrapper>
       </SectionDivider>
-      <SubmitBtn
-        onClick={() => {
-          submit(selectedTimes);
-          setClickTab('設定室友條件');
-        }}
-      >
-        儲存
-      </SubmitBtn>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('房間規格');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <SubmitBtn
+          onClick={() => {
+            if (timesInfo.length === 0) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請加入至少一個時間',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('設定室友條件');
+            }
+          }}
+        >
+          儲存
+        </SubmitBtn>
+      </BtnArea>
     </Wrapper>
   );
 }

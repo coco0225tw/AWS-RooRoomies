@@ -17,7 +17,7 @@ import {
 } from '../../../components/InputArea';
 import { RootState } from '../../../redux/rootReducer';
 
-import { SubmitBtn } from '../../../components/Button';
+import { SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import arrow from '../../../assets/arrow.png';
 import addressType from '../../../redux/UploadAddr/UploadAddrType';
 import { uploadAddrAction } from '../../../redux/UploadAddr/UploadAddrAction';
@@ -62,6 +62,7 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
   background-color: #ffffff;
   z-index: 2;
   flex-wrap: wrap;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
@@ -353,7 +354,10 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
             </FormInputWrapper>
           </FormGroup>
         ))}
-        <SubmitBtn type="submit" value="儲存" />
+        <BtnArea>
+          <LastPageBtn onClick={() => setClickTab('基本資訊')}>上一頁</LastPageBtn>
+          <SubmitBtn type="submit" value="儲存" />
+        </BtnArea>
       </StyledForm>
     </Wrapper>
   );

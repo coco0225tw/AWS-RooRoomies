@@ -20,6 +20,9 @@ const CardWrapper = styled.div`
   width: 100%;
   color: #4f5152;
   font-size: 16px;
+  @media screen and (max-width: 1300px) {
+    flex-direction: column;
+  }
 `;
 
 const MainImage = styled.div<ImgProps>`
@@ -27,8 +30,8 @@ const MainImage = styled.div<ImgProps>`
   background-image: url(${(props) => (props.img ? props.img : '')});
   height: 200px;
 
-  background-position: cover;
-  background-size: 100% 100%;
+  background-position: center;
+  background-size: cover;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -40,6 +43,20 @@ const Title = styled.div`
   color: #4f5152;
   letter-spacing: 2px;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 80%;
+  flex-shrink: 1;
+  position: absolute;
+
+  @media screen and (max-width: 960px) {
+    margin: 0;
+    font-weight: 600;
+  }
+  @media screen and (max-width: 550px) {
+    font-size: 16px;
+  }
 `;
 const Detail = styled.div`
   margin-top: 12px;
@@ -50,6 +67,9 @@ const Rent = styled.div`
   font-size: 28px;
   color: #c77155;
   align-self: flex-end;
+  @media screen and (max-width: 1300px) {
+    font-size: 20px;
+  }
 `;
 
 const Addr = styled(Detail)``;
@@ -59,11 +79,20 @@ const InfoWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   margin-left: 20px;
+  flex-shrink: 1;
+  @media screen and (max-width: 1300px) {
+    margin-left: 0;
+    margin-top: 12px;
+  }
 `;
 const DetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  top: 20%;
+  @media screen and (max-width: 1300px) {
+    margin-top: 40px;
+  }
 `;
 function ListingItem({ listingDocData }: { listingDocData: DocumentData }) {
   const navigate = useNavigate();
@@ -100,7 +129,6 @@ function ListingItem({ listingDocData }: { listingDocData: DocumentData }) {
             </Addr>
 
             <PeopleAmount>可入住人數:{listingDocData?.data().peopleAmount}</PeopleAmount>
-            <Time></Time>
           </DetailWrapper>
 
           <Rent>
