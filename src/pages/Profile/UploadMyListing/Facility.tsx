@@ -17,7 +17,7 @@ import {
 import { useForm, Controller } from 'react-hook-form';
 
 import { RootState } from '../../../redux/rootReducer';
-import { SubmitBtn } from '../../../components/Button';
+import { SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import { PopupComponent } from '../../../components/Popup';
 
 import Icons from '../../../assets/facility/Icon';
@@ -256,7 +256,17 @@ const facilityFormGroups = [
   },
 ];
 
-function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.SetStateAction<string>>; setDoc: any }) {
+function Facility({
+  setClickTab,
+  setDoc,
+  setIsUploading,
+  setEdit,
+}: {
+  setClickTab: React.Dispatch<React.SetStateAction<string>>;
+  setDoc: any;
+  setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const dispatch = useDispatch();
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
 
@@ -286,6 +296,9 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
     dispatch({ type: uploadFacilityAction.UPLOAD_FACILITY, payload: { facilityState: data } });
   }
   async function submitHandler() {
+    clickClose();
+    setIsUploading(true);
+    setEdit(false);
     setDoc().then(() => {
       dispatch({
         type: alertActionType.OPEN_SUCCESS_ALERT,
@@ -295,6 +308,7 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
       });
 
       setTimeout(() => {
+        setIsUploading(false);
         dispatch({
           type: alertActionType.CLOSE_ALERT,
         });
@@ -394,7 +408,16 @@ function Facility({ setClickTab, setDoc }: { setClickTab: React.Dispatch<React.S
             </FormInputWrapper>
           </FormGroup>
         ))}
-        <SubmitBtn type="submit" value="送出" />
+        <BtnArea>
+          <LastPageBtn
+            onClick={() => {
+              setClickTab('設定室友條件');
+            }}
+          >
+            上一頁
+          </LastPageBtn>
+          <SubmitBtn type="submit" value="送出" />
+        </BtnArea>
       </StyledForm>
     </Wrapper>
   );

@@ -49,4 +49,13 @@ const SubmitBtn = styled(InputBtn)`
   align-self: flex-end;
   margin-top: 20px;
 `;
-export { BtnLink, BtnDiv, InputBtn, SubmitBtn };
+const LastPageBtn = styled(BtnDiv)`
+  margin-top: 20px;
+`;
+const BtnArea = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+`;
+export { BtnLink, BtnDiv, InputBtn, SubmitBtn, BtnArea, LastPageBtn };

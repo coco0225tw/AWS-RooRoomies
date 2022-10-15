@@ -7,7 +7,9 @@ import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewM
 import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
 
-import { BtnDiv } from '../../../components/Button';
+import { BtnDiv, BtnArea, LastPageBtn } from '../../../components/Button';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
+
 import upload from '../../../assets/upload.png';
 const Wrapper = styled.div`
   display: flex;
@@ -28,6 +30,9 @@ const UploadImages = styled.input.attrs({
 })``;
 const PreviewArea = styled.div`
   display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 12px;
 `;
 const PreviewMainImage = styled.div<{ src: string }>`
   background-image: url(${(props) => props.src});
@@ -42,11 +47,7 @@ const PreviewMainImage = styled.div<{ src: string }>`
   justify-content: center;
 `;
 
-const PreviewImages = styled(PreviewMainImage)`
-  margin-right: 12px;
-  overflow-x: auto;
-  overflow-y: hidden;
-`;
+const PreviewImages = styled(PreviewMainImage)``;
 
 const SubmitBtn = styled(BtnDiv)`
   margin-top: 20px;
@@ -71,20 +72,22 @@ const UploadImgBtn = styled.div`
   background-repeat: no-repeat;
   position: absolute;
   left: 100%;
-  transform: translate(-50%, -50%);
+  transform: translate(-100%, -100%);
 `;
 const UploadArea = styled.div`
   margin-bottom: 40px;
+  width: 100%;
 `;
 function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const getMainImage = useSelector((state: RootState) => state.PreviewImageReducer);
   const getOtherImages = useSelector((state: RootState) => state.PreviewOtherImagesReducer);
+  const imageBlob = useSelector((state: RootState) => state.UploadImagesReducer);
 
   const [mainImgUrl, setMainImgUrl] = useState<string>(getMainImage);
   const [imagesUrl, setImagesUrl] = useState<string[]>(getOtherImages);
-  const [imagesBlob, setImagesBlob] = useState<Blob[]>();
-  const [mainImgBlob, setMainImgBlob] = useState<Blob>();
+  const [imagesBlob, setImagesBlob] = useState<Blob[]>(imageBlob.images);
+  const [mainImgBlob, setMainImgBlob] = useState<Blob>(imageBlob.mainImage);
   const mainImgRef = useRef<HTMLInputElement>(null);
   const otherImgRef = useRef<HTMLInputElement>(null);
 
@@ -164,14 +167,37 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         />
         <UploadImages hidden ref={otherImgRef} onChange={(e) => previewImages(e)} />
       </UploadArea>
-      <SubmitBtn
-        onClick={() => {
-          uploadAllImages();
-          setClickTab('房間規格');
-        }}
-      >
-        儲存
-      </SubmitBtn>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('地址');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <SubmitBtn
+          onClick={() => {
+            uploadAllImages();
+            if (!mainImgBlob || imagesBlob.length < 4 || imagesBlob.length > 10) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請上傳正確照片數',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('房間規格');
+            }
+          }}
+        >
+          儲存
+        </SubmitBtn>
+      </BtnArea>
     </Wrapper>
   );
 }

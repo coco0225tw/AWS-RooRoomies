@@ -84,6 +84,7 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
   left: 10%;
   background-color: #ffffff;
   z-index: 2;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 
 function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {

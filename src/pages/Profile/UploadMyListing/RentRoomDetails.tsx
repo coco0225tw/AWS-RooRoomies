@@ -16,11 +16,12 @@ import {
   LabelArea,
   StyledForm,
 } from '../../../components/InputArea';
-import { BtnDiv, SubmitBtn } from '../../../components/Button';
+import { BtnDiv, SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import bin from '../../../assets/bin.png';
 import { roomDetailsType, roomType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import arrow from '../../../assets/arrow.png';
 import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -101,6 +102,7 @@ const DropDownMenuWrapper = styled.div<{ openDropDown: boolean }>`
   z-index: 2;
   flex-wrap: wrap;
   top: 100%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `;
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
@@ -315,15 +317,37 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
           ))}
         </Table>
       )}
-
-      <StyledBtnDiv
-        onClick={() => {
-          submit();
-          setClickTab('設定看房時間');
-        }}
-      >
-        儲存
-      </StyledBtnDiv>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('上傳圖片');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <StyledBtnDiv
+          onClick={() => {
+            submit();
+            if (roomState.length === 0) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請加入至少一間房間',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('設定看房時間');
+            }
+          }}
+        >
+          儲存
+        </StyledBtnDiv>
+      </BtnArea>
     </Wrapper>
   );
 }

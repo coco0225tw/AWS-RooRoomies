@@ -4,11 +4,12 @@ import Calendar from 'react-calendar';
 import styled from 'styled-components';
 import CalendarContainer from '../../../components/Calendar';
 import { SubTitle } from '../../../components/ProfileTitle';
-import { BtnDiv } from '../../../components/Button';
+import { BtnDiv, BtnArea, LastPageBtn } from '../../../components/Button';
 import { RootState } from '../../../redux/rootReducer';
 import bin from '../../../assets/bin.png';
 import { bookingTimesType, bookTimeType } from '../../../redux/UploadBookingTimes/UploadBookingTimesType';
 import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+import { alertActionType } from '../../../redux/Alert/AlertAction';
 
 const Wrapper = styled.div`
   display: flex;
@@ -106,23 +107,34 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   }
 
   function clickTime(date: Date, index: number) {
-    const time = {
-      date: date,
-      startTime: selectedTimeRef.current[index]?.value,
-      isBooked: false,
-    };
-
-    setSelectedTimes([
-      ...(selectedTimes as {
-        date: Date;
-        startTime: string;
-        isBooked: boolean;
-      }[]),
-      time,
-    ]);
+    if (selectedTimeRef.current[index]?.value === '') {
+      dispatch({
+        type: alertActionType.OPEN_ERROR_ALERT,
+        payload: {
+          alertMessage: '請選擇時段',
+        },
+      });
+      setTimeout(() => {
+        dispatch({
+          type: alertActionType.CLOSE_ALERT,
+        });
+      }, 3000);
+    } else {
+      const time = {
+        date: date,
+        startTime: selectedTimeRef.current[index]?.value,
+        isBooked: false,
+      };
+      setSelectedTimes([...(selectedTimes as bookingTimesType), time]);
+    }
   }
 
-  function deleteTime(date: Date, time: string) {}
+  function deleteTime(date: Date, time: string) {
+    console.log(selectedTimes);
+    console.log(time);
+    console.log(selectedTimes.filter((i) => i.startTime !== time || i.date !== date));
+    setSelectedTimes(selectedTimes.filter((i) => i.startTime !== time || i.date !== date));
+  }
   function deleteDay(date: Date) {
     setSelectedDays(selectedDays.filter((i) => i !== date));
     setSelectedTimes(selectedTimes.filter((i) => i.date !== date));
@@ -172,14 +184,37 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             ))}
         </SectionWrapper>
       </SectionDivider>
-      <SubmitBtn
-        onClick={() => {
-          submit(selectedTimes);
-          setClickTab('設定室友條件');
-        }}
-      >
-        儲存
-      </SubmitBtn>
+      <BtnArea>
+        <LastPageBtn
+          onClick={() => {
+            setClickTab('房間規格');
+          }}
+        >
+          上一頁
+        </LastPageBtn>
+        <SubmitBtn
+          onClick={() => {
+            submit(selectedTimes);
+            if (selectedTimes.length === 0) {
+              dispatch({
+                type: alertActionType.OPEN_ERROR_ALERT,
+                payload: {
+                  alertMessage: '請加入至少一個時間',
+                },
+              });
+              setTimeout(() => {
+                dispatch({
+                  type: alertActionType.CLOSE_ALERT,
+                });
+              }, 3000);
+            } else {
+              setClickTab('設定室友條件');
+            }
+          }}
+        >
+          儲存
+        </SubmitBtn>
+      </BtnArea>
     </Wrapper>
   );
 }

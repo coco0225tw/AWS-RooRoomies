@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../../redux/rootReducer';
-import { doc, collection, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { doc, collection, QueryDocumentSnapshot, DocumentData, onSnapshot } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 
 import { firebase, timestamp, db } from '../../../utils/firebase';
-import { Title } from '../../../components/ProfileTitle';
+import { Title, SubTitle } from '../../../components/ProfileTitle';
 import { BtnDiv } from '../../../components/Button';
 import NoListing from '../../../components/NoData';
 import Hr from '../../../components/Hr';
@@ -17,6 +18,7 @@ import RoommatesCondition from './RoommatesCondition';
 import Facility from './Facility';
 import RentRoomDetails from './RentRoomDetails';
 import ListingItem from '../../../components/ListingItem';
+import { Loading } from '../../../components/Loading';
 
 import { roomDetailsType } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsType';
 import addrType from '../../../redux/UploadAddr/UploadAddrType';
@@ -28,7 +30,7 @@ import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCo
 import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/UploadRoomsDetailsAction';
 import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
 import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
-
+import { getAuthAction } from '../../../redux/GetAuth/GetAuthAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -61,10 +63,36 @@ const Tab = styled(BtnDiv)<{ isClick: boolean }>`
   box-shadow: none;
   transition-duration: 0.2s;
   white-space: nowrap;
+  &:hover {
+    background-color: #fff;
+  }
 `;
 const Span = styled.span`
   align-self: flex-end;
 `;
+const StyleLink = styled(Link)`
+  width: 100%;
+  margin-bottom: 20px;
+  border: solid 1px #f3f2ef;
+  padding: 12px;
+  border-radius: 8px;
+`;
+const WrapListingDoc = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+const BookedTimeWrap = styled.div`
+  font-size: 20px;
+  padding: 12px;
+  display: flex;
+  margin-top: 12px;
+  justify-content: space-between;
+  border: solid 1px #f3f2ef;
+  border-radius: 8px;
+`;
+const Date = styled.div``;
+const StartTime = styled.div``;
 const TabSelect = ['基本資訊', '地址', '上傳圖片', '房間規格', '設定看房時間', '設定室友條件', '設施'];
 function UploadMyListing({
   setLoading,
@@ -84,9 +112,11 @@ function UploadMyListing({
   const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
   const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
 
+  const [bookingTimesInfo, setBookingTimesInfo] = useState<QueryDocumentSnapshot<DocumentData>[]>([]);
+
   const [listingData, setListingData] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
-
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const listingCollection = collection(db, 'listings');
   async function setDoc() {
     const findPeopleAmount = (getRooms as roomDetailsType).reduce(
@@ -129,17 +159,41 @@ function UploadMyListing({
     let listingDocData: QueryDocumentSnapshot<DocumentData> | null;
     listingDocData = await firebase.getListingDoc(newListingRef.id);
     setListingData(listingDocData);
+    dispatch({
+      type: getAuthAction.UPLOAD_LISTING,
+      payload: { userListingId: newListingRef.id },
+    });
   }
   useEffect(() => {
     async function getListing() {
-      let listingDocData;
+      let listingDocData: QueryDocumentSnapshot<DocumentData>;
 
       listingDocData = await firebase.getListingDoc(userInfo!.userListingId);
 
       setListingData(listingDocData);
     }
-    getListing();
-  }, [userInfo!.userListingId?.length !== 0]);
+    if (userInfo!.userListingId?.length !== 0 && !listingData) {
+      getListing();
+    }
+  }, [userInfo!.userListingId]);
+  useEffect(() => {
+    if (userInfo!.userListingId?.length !== 0 && !listingData) {
+      getBookingTimes();
+    }
+    function getBookingTimes() {
+      const subColRef = collection(db, 'listings', userInfo!.userListingId, 'bookingTimes');
+      const getAllMessages = onSnapshot(subColRef, (snapshot) => {
+        let listingTimesArr: QueryDocumentSnapshot<DocumentData>[] = [];
+        snapshot.forEach((doc) => {
+          if (doc.data().isBooked) {
+            listingTimesArr.push(doc);
+          }
+        });
+        listingTimesArr.sort((a, b) => a.data().date - b.data().date);
+        setBookingTimesInfo(listingTimesArr);
+      });
+    }
+  }, [userInfo!.userListingId]);
   return (
     <Wrapper>
       <Title
@@ -150,9 +204,9 @@ function UploadMyListing({
         }}
       >
         管理物件
-        {userInfo!.userListingId?.length !== 0 ? (
+        {listingData ? (
           <span style={{ fontSize: '20px', alignSelf: 'flex-end' }}>你的物件</span>
-        ) : !edit ? (
+        ) : !edit && !isUploading ? (
           <React.Fragment>
             <SubmitBtn
               onClick={() => {
@@ -164,50 +218,73 @@ function UploadMyListing({
             </SubmitBtn>
           </React.Fragment>
         ) : (
-          <Span>
-            <SubmitBtn
-              onClick={() => {
-                setEdit(false);
-                dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
-                dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
-                dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
-                dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
-                dispatch({
-                  type: uploadTitleAction.RETURN_INITIAL_TITLE,
-                });
-                dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
-              }}
-            >
-              取消
-            </SubmitBtn>
-          </Span>
+          !isUploading &&
+          edit && (
+            <Span>
+              <SubmitBtn
+                onClick={() => {
+                  setEdit(false);
+                  dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+                  dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
+                  dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+                  dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+                  dispatch({
+                    type: uploadTitleAction.RETURN_INITIAL_TITLE,
+                  });
+                  dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+                }}
+              >
+                取消
+              </SubmitBtn>
+            </Span>
+          )
         )}
       </Title>
       <Hr />
-      {userInfo!.userListingId?.length !== 0 && <ListingItem listingDocData={listingData} />}
-      {edit && (
+      {isUploading && <Loading style={null} />}
+      {listingData && !isUploading && (
+        <WrapListingDoc>
+          <StyleLink to={`/listing/${listingData.id}`}>
+            <ListingItem listingDocData={listingData} />
+          </StyleLink>
+          <SubTitle>已被預約的時間</SubTitle>
+          {bookingTimesInfo.length === 0 ? (
+            <BookedTimeWrap>無</BookedTimeWrap>
+          ) : (
+            bookingTimesInfo.map((data, index) => (
+              <BookedTimeWrap>
+                <Date>
+                  {data.data().date.toDate().getFullYear() +
+                    '-' +
+                    ('0' + (data.data().date.toDate().getMonth() + 1)).slice(-2) +
+                    '-' +
+                    ('0' + data.data().date.toDate().getDate()).slice(-2)}
+                </Date>
+                <StartTime>{data.data().startTime}</StartTime>
+              </BookedTimeWrap>
+            ))
+          )}
+        </WrapListingDoc>
+      )}
+      {!isUploading && edit && (
         <Tabs>
           {TabSelect.map((el, index) => (
-            <Tab
-              key={`subTab${index}`}
-              isClick={el === clickTab}
-              onClick={() => {
-                setClickTab(el);
-              }}
-            >
+            <Tab key={`subTab${index}`} isClick={el === clickTab}>
               {el}
             </Tab>
           ))}
         </Tabs>
       )}
-      {userInfo!.userListingId?.length === 0 && !edit && <NoListing msg="你沒有上架房源" />}
+      {!listingData && !edit && <NoListing msg={isUploading ? '上傳中' : '你沒有上傳的物件'} />}
       {clickTab === '基本資訊' && edit && <ListingTitle setClickTab={setClickTab} />}
       {clickTab === '地址' && edit && <ListingAddr setClickTab={setClickTab} />}
       {clickTab === '上傳圖片' && edit && <UploadMainImageAndImages setClickTab={setClickTab} />}
       {clickTab === '房間規格' && edit && <RentRoomDetails setClickTab={setClickTab} />}
       {clickTab === '設定看房時間' && edit && <SetBookingTimes setClickTab={setClickTab} />}
       {clickTab === '設定室友條件' && edit && <RoommatesCondition setClickTab={setClickTab} />}
-      {clickTab === '設施' && edit && <Facility setClickTab={setClickTab} setDoc={setDoc} />}
+      {!isUploading && clickTab === '設施' && edit && (
+        <Facility setClickTab={setClickTab} setDoc={setDoc} setIsUploading={setIsUploading} setEdit={setEdit} />
+      )}
     </Wrapper>
   );
 }

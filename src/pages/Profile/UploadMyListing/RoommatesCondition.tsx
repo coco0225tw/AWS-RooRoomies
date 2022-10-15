@@ -15,7 +15,7 @@ import {
   LabelArea,
   StyledForm,
 } from '../../../components/InputArea';
-import { SubmitBtn } from '../../../components/Button';
+import { SubmitBtn, BtnArea, LastPageBtn } from '../../../components/Button';
 import roommatesConditionType from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import { uploadRoommatesConditionAction } from '../../../redux/UploadRoommatesCondition/UploadRoommatesConditionReducerAction';
 
@@ -267,7 +267,16 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
             </FormInputWrapper>
           </FormGroup>
         ))}
-        <SubmitBtn type="submit" value="儲存" />
+        <BtnArea>
+          <LastPageBtn
+            onClick={() => {
+              setClickTab('設定看房時間');
+            }}
+          >
+            上一頁
+          </LastPageBtn>
+          <SubmitBtn type="submit" value="儲存" />
+        </BtnArea>
       </StyledForm>
     </Wrapper>
   );
