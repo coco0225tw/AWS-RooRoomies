@@ -458,6 +458,7 @@ function Listing() {
     moveInDate: Timestamp;
     latLng: { lat: number; lng: number };
     totalFloor: number;
+    phone: number;
   };
 
   const tileDisabled = ({ date }: tileDisabledType) => {
@@ -669,6 +670,7 @@ function Listing() {
             <TitleIconWrapper>
               <TitleIcon>{listingInfo?.form}</TitleIcon>
               <TitleIcon>{listingInfo?.totalSq}坪</TitleIcon>
+
               <TitleIcon>
                 {listingInfo?.floor}
                 {listingInfo?.totalFloor && `/${listingInfo?.totalFloor}`}F
@@ -681,6 +683,7 @@ function Listing() {
                   '-' +
                   ('0' + listingInfo?.moveInDate.toDate().getDate()).slice(-2)}
               </TitleIcon>
+              <TitleIcon>{listingInfo?.phone!}</TitleIcon>
             </TitleIconWrapper>
           </AddrSection>
           <div style={{ margin: '20px 0px' }}>{listingInfo?.environmentDescription}</div>
@@ -850,6 +853,7 @@ function Listing() {
           </TimeAndCalendarWrapper>
         </StickyCalendarContainer>
       </DividedCalendarSection>
+
       <Map latLng={listingInfo?.latLng!}></Map>
     </Wrapper>
   );

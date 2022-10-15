@@ -153,6 +153,9 @@ function Map({ latLng }: { latLng: { lat: number; lng: number } }) {
               anchor: new google.maps.Point(0, 0), // anchor
             }}
             position={latLng}
+            onClick={() => {
+              window.open(`https://maps.google.com?q=${latLng.lat},${latLng.lng}`);
+            }}
           />
         </GoogleMap>
       )}
