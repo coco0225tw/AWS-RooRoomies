@@ -190,7 +190,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const dispatch = useDispatch();
 
   const roomInfo = useSelector((state: RootState) => state.UploadRoomsReducer);
-  const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
+  // const [roomState, setRoomState] = useState<roomDetailsType>(roomInfo);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
   interface optionType {
@@ -210,13 +210,16 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
     setSelectOptions(null);
   };
   function addRooms(data: roomType) {
-    setRoomState([...roomState, data]);
+    // setRoomState([...roomState, data]);
+    dispatch({ type: uploadRoomDetailsAction.ADD_ROOM, payload: { room: data } });
   }
-  function submit() {
-    dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
-  }
+  // function submit() {
+  //   dispatch({ type: uploadRoomDetailsAction.UPLOAD_ROOMS, payload: { roomState: roomState } });
+  // }
   function deleteRoom(index: number) {
-    setRoomState(roomState.filter((el, i) => i !== index));
+    dispatch({ type: uploadRoomDetailsAction.DELETE_ROOM, payload: { index: index } });
+
+    // setRoomState(roomState.filter((el, i) => i !== index));
   }
   return (
     <Wrapper>
@@ -293,7 +296,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         </InputArea>
         <StyledSubmitBtn value="加入房間" type="submit" />
       </StyledFormGroup>
-      {roomState.length !== 0 && (
+      {roomInfo.length !== 0 && (
         <Table style={{ border: 'solid 1px #ece2d5', marginBottom: '12px' }}>
           <Tr style={{ borderBottom: ' solid 1px #ece2d5 ' }}>
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }} />
@@ -303,7 +306,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>入住人數</Td>
             <Td style={{ borderBottom: ' solid 1px #ece2d5 ' }}>刪除</Td>
           </Tr>
-          {roomState.map((r: roomType, index: number) => (
+          {roomInfo.map((r: roomType, index: number) => (
             <Tr key={`room${index}`}>
               <Td>房間{index + 1}</Td>
               <Td>{r.rent}元</Td>
@@ -327,8 +330,8 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
         </LastPageBtn>
         <StyledBtnDiv
           onClick={() => {
-            submit();
-            if (roomState.length === 0) {
+            // submit();
+            if (roomInfo.length === 0) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,
                 payload: {
