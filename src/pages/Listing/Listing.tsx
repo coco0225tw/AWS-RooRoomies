@@ -677,11 +677,11 @@ function Listing() {
               </TitleIcon>
               <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
               <TitleIcon>
-                {listingInfo?.moveInDate.toDate().getFullYear() +
+                {listingInfo?.moveInDate?.toDate().getFullYear() +
                   '-' +
-                  ('0' + (listingInfo?.moveInDate.toDate().getMonth() + 1)).slice(-2) +
+                  ('0' + (listingInfo?.moveInDate?.toDate().getMonth() + 1)).slice(-2) +
                   '-' +
-                  ('0' + listingInfo?.moveInDate.toDate().getDate()).slice(-2)}
+                  ('0' + listingInfo?.moveInDate?.toDate().getDate()).slice(-2)}
               </TitleIcon>
               <TitleIcon>{listingInfo?.phone!}</TitleIcon>
             </TitleIconWrapper>

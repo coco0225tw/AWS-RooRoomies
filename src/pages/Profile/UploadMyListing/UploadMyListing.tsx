@@ -218,7 +218,7 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(true);
-                setClickTab('上傳圖片');
+                setClickTab('基本資訊');
               }}
             >
               我要上架
