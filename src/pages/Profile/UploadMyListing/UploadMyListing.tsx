@@ -31,6 +31,10 @@ import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/Uploa
 import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
 import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
 import { getAuthAction } from '../../../redux/GetAuth/GetAuthAction';
+import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+
+import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -235,6 +239,13 @@ function UploadMyListing({
                     type: uploadTitleAction.RETURN_INITIAL_TITLE,
                   });
                   dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+                  dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+                  dispatch({
+                    type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+                  });
+                  dispatch({
+                    type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+                  });
                 }}
               >
                 取消
