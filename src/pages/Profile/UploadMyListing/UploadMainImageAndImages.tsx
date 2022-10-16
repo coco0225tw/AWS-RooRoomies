@@ -93,6 +93,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
   const dispatch = useDispatch();
   const getMainImage = useSelector((state: RootState) => state.PreviewImageReducer);
   const getOtherImages = useSelector((state: RootState) => state.PreviewOtherImagesReducer);
+
   const imageBlob = useSelector((state: RootState) => state.UploadImagesReducer);
   const [popImg, setPopImg] = useState<boolean>(false);
   const [clickImgUrl, setClickImgUrl] = useState<string | null>(null);
@@ -185,6 +186,17 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         <StyledSubTitle>其他照片</StyledSubTitle>
 
         <PreviewArea>
+          {getOtherImages.length !== 0 &&
+            getOtherImages.map((url, index) => (
+              <PreviewImages
+                onClick={() => {
+                  setClickImgUrl(url);
+                  setPopImg(true);
+                }}
+                key={`previewImages${index}`}
+                src={url as string}
+              />
+            ))}
           <PreviewMainImage
             onClick={() => {
               otherImgRef.current!.click();
@@ -197,17 +209,6 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
               (4-10張)
             </React.Fragment>
           </PreviewMainImage>
-          {getOtherImages.length !== 0 &&
-            getOtherImages.map((url, index) => (
-              <PreviewImages
-                onClick={() => {
-                  setClickImgUrl(url);
-                  setPopImg(true);
-                }}
-                key={`previewImages${index}`}
-                src={url as string}
-              />
-            ))}
         </PreviewArea>
 
         <UploadImages hidden ref={otherImgRef} onChange={(e) => previewImages(e)} />
@@ -222,8 +223,9 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         </LastPageBtn>
         <SubmitBtn
           onClick={() => {
-            // uploadAllImages();
-
+            console.log(imageBlob.mainImage);
+            console.log(imageBlob.images.length);
+            console.log(imageBlob.images);
             if (!imageBlob.mainImage || imageBlob.images.length < 4 || imageBlob.images.length > 10) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,
