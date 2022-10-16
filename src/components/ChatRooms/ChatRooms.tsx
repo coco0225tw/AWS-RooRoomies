@@ -432,14 +432,16 @@ function ChatRooms() {
                     <Listing
                       onClick={() => {
                         dispatch({
-                          type: chatRoomAction.OPEN_CHATROOM_STATE,
-                        });
-                        dispatch({
                           type: chatRoomAction.OPEN_CHATROOM,
                           payload: {
                             chatRoomId: house.id,
                           },
                         });
+                        setTimeout(() => {
+                          dispatch({
+                            type: chatRoomAction.OPEN_CHATROOM_STATE,
+                          });
+                        }, 50);
                       }}
                       isClick={getChatRoom.chatRoomId === house.id}
                       key={`houseHuntingChat${house.id}`}
