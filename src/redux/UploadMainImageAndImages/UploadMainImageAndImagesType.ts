@@ -1,6 +1,6 @@
 interface mainImageAndImagesType {
   mainImage: Blob | null;
-  images: (Blob | null)[];
+  images: Blob[];
 }
 
 export default mainImageAndImagesType;

@@ -129,20 +129,22 @@ function User() {
         //lastdoc
         //listingdocumentforhomepage
         dispatch({ type: selectTabAction.RETURN_INITIAL_TAB });
-        dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
-        dispatch({
-          type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
-        });
-        dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
-        dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
-        dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
-        dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+
         dispatch({ type: uploadTitleAction.RETURN_INITIAL_TITLE });
-        dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+        dispatch({ type: uploadAddrAction.RETURN_INITIAL_ADDR });
+        dispatch({ type: uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES });
         dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
         dispatch({
           type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
         });
+        dispatch({
+          type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
+        });
+        dispatch({ type: uploadFacilityAction.RETURN_INITIAL_FACILITY });
+        dispatch({ type: uploadRoommatesConditionAction.RETURN_INITIAL_ROOMMATES_CONDITION });
+        dispatch({ type: uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS });
+
+        dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
         dispatch({ type: alertActionType.RETURN_INITIAL_ALERT });
         dispatch({ type: subTabAction.RETURN_INITIAL_SUB_TAB });
         dispatch({ type: chatRoomAction.CLOSE_CHATROOM_STATE });
