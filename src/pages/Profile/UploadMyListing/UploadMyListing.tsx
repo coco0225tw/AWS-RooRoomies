@@ -31,6 +31,8 @@ import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/Uploa
 import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
 import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
 import { getAuthAction } from '../../../redux/GetAuth/GetAuthAction';
+import { uploadBookingTimesAction } from '../../../redux/UploadBookingTimes/UploadBookingTimesAction';
+
 import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
 import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 const Wrapper = styled.div`
@@ -216,7 +218,7 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(true);
-                setClickTab('上傳圖片');
+                setClickTab('基本資訊');
               }}
             >
               我要上架
@@ -240,6 +242,9 @@ function UploadMyListing({
                   dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
                   dispatch({
                     type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+                  });
+                  dispatch({
+                    type: uploadBookingTimesAction.RETURN_INITIAL_BOOKING_TIMES,
                   });
                 }}
               >
