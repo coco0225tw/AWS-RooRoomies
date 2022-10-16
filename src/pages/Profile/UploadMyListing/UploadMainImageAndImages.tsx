@@ -223,9 +223,6 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         </LastPageBtn>
         <SubmitBtn
           onClick={() => {
-            console.log(imageBlob.mainImage);
-            console.log(imageBlob.images.length);
-            console.log(imageBlob.images);
             if (!imageBlob.mainImage || imageBlob.images.length < 4 || imageBlob.images.length > 10) {
               dispatch({
                 type: alertActionType.OPEN_ERROR_ALERT,

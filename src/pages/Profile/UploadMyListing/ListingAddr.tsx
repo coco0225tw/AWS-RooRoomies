@@ -117,6 +117,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
     max?: { value: number; message: string };
     countyOptions?: any;
     townOptions?: any;
+    pattern?: { value: RegExp; message: string };
   }
   interface countyType {
     countycode: string;
@@ -147,7 +148,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
       key: 'floor',
       required: valid.required,
       pattern: {
-        value: /^[0-9]*$/,
+        value: /^\d*$/,
         message: '※請輸入數字',
       },
       min: {
@@ -164,7 +165,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
       key: 'totalFloor',
       required: valid.required,
       pattern: {
-        value: /^[0-9]*$/,
+        value: /^\d*$/,
         message: '※請輸入數字',
       },
       min: {
@@ -248,6 +249,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       rules={{
                         required: info.required && info.required,
                         maxLength: info.maxLength && info.maxLength,
+                        pattern: info.pattern && info.pattern,
                       }}
                       render={({ field: { onChange, ...props } }) =>
                         info.countyOptions.map((o: countyType, oIndex: number) => (
@@ -306,6 +308,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       rules={{
                         required: info.required && info.required,
                         maxLength: info.maxLength && info.maxLength,
+                        pattern: info.pattern && info.pattern,
                       }}
                       render={({ field: { onChange, ...props } }) =>
                         info.townOptions.map((o: townType, oIndex: number) => (
@@ -342,6 +345,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                     maxLength: info.maxLength && info.maxLength,
                     min: info.min && info.min,
                     max: info.max && info.max,
+                    pattern: info.pattern && info.pattern,
                   })}
                   onKeyDown={(e) => {
                     if (e.key == ' ') {
