@@ -31,6 +31,8 @@ import { uploadRoomDetailsAction } from '../../../redux/UploadRoomsDetails/Uploa
 import { uploadTitleAction } from '../../../redux/UploadTitle/UploadTitleAction';
 import { uploadUserAsRoommateAction } from '../../../redux/UserAsRoommate/UserAsRoommateAction';
 import { getAuthAction } from '../../../redux/GetAuth/GetAuthAction';
+import { previewMainImageAction } from '../../../redux/PreviewMainImage/PreviewMainImageAction';
+import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/PreviewOtherImagesAction';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -214,7 +216,7 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(true);
-                setClickTab('基本資訊');
+                setClickTab('上傳圖片');
               }}
             >
               我要上架
@@ -235,6 +237,10 @@ function UploadMyListing({
                     type: uploadTitleAction.RETURN_INITIAL_TITLE,
                   });
                   dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
+                  dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
+                  dispatch({
+                    type: previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES,
+                  });
                 }}
               >
                 取消

@@ -8,6 +8,7 @@ import { previewOtherImagesAction } from '../../../redux/PreviewOtherImages/Prev
 import { uploadImagesAction } from '../../../redux/UploadMainImageAndImages/UploadMainImageAndImagesAction';
 import { PopupImage, PopupImageDelete } from '../../../components/Popup';
 
+import { SubTitle } from '../../../components/ProfileTitle';
 import { BtnDiv, BtnArea, LastPageBtn } from '../../../components/Button';
 import { alertActionType } from '../../../redux/Alert/AlertAction';
 
@@ -85,6 +86,9 @@ const UploadArea = styled.div`
   margin-bottom: 40px;
   width: 100%;
 `;
+const StyledSubTitle = styled(SubTitle)`
+  margin-bottom: 20px;
+`;
 function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const getMainImage = useSelector((state: RootState) => state.PreviewImageReducer);
@@ -116,8 +120,8 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
     let files = target.files;
     function loopImages(files: FileList) {
       const fl = files.length;
-      let arr = [];
-      let blobArr = [];
+      let arr = getOtherImages;
+      let blobArr = imageBlob.images;
       for (let i = 0; i < fl; i++) {
         let file = files[i];
         arr.push(URL.createObjectURL(file));
@@ -160,12 +164,15 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         />
       )}
       <UploadArea>
+        <StyledSubTitle>封面照</StyledSubTitle>
         <PreviewMainImage
           src={getMainImage as string}
           onClick={() => {
             if (getMainImage) {
               setClickImgUrl(getMainImage);
               setPopImg(true);
+            } else {
+              mainImgRef.current!.click();
             }
           }}
         >
@@ -173,26 +180,23 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
         </PreviewMainImage>
 
         <UploadMainImage hidden ref={mainImgRef} onChange={(e) => previewMainImage(e)} />
-        <UploadImgBtn
-          onClick={() => {
-            mainImgRef.current!.click();
-          }}
-        />
       </UploadArea>
       <UploadArea>
-        {getOtherImages.length === 0 && (
-          <PreviewMainImage src={null}>
-            {getOtherImages.length === 0 && (
-              <React.Fragment>
-                其他照片
-                <br />
-                (4-10張)
-              </React.Fragment>
-            )}
-          </PreviewMainImage>
-        )}
+        <StyledSubTitle>其他照片</StyledSubTitle>
 
         <PreviewArea>
+          <PreviewMainImage
+            onClick={() => {
+              otherImgRef.current!.click();
+            }}
+            src={null}
+          >
+            <React.Fragment>
+              其他照片
+              <br />
+              (4-10張)
+            </React.Fragment>
+          </PreviewMainImage>
           {getOtherImages.length !== 0 &&
             getOtherImages.map((url, index) => (
               <PreviewImages
@@ -205,11 +209,7 @@ function UploadMainImageAndImages({ setClickTab }: { setClickTab: React.Dispatch
               />
             ))}
         </PreviewArea>
-        <UploadImgBtn
-          onClick={() => {
-            otherImgRef.current!.click();
-          }}
-        />
+
         <UploadImages hidden ref={otherImgRef} onChange={(e) => previewImages(e)} />
       </UploadArea>
       <BtnArea>
