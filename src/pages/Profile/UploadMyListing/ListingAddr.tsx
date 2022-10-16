@@ -142,6 +142,10 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
       key: 'completeAddr',
       required: valid.required,
       maxLength: { value: 30, message: '※不可超過30字元' },
+      pattern: {
+        value: /^(\D+?[村里])?(\d+[鄰])?((\D+?(村路|[路街道段])?(\D?段)?))?(\d+巷)?(\d+弄)?(\d+號)+$/,
+        message: '※例:精忠巷48號',
+      },
     },
     {
       label: '樓',
