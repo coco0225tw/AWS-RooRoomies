@@ -18,7 +18,10 @@ export default function UploadImages(state = mainImageAndImagesEmptyState, actio
       let filterImages = newImages.filter((blob, index) => index !== action.payload.index);
       return { ...state, images: filterImages };
     case uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES:
-      return mainImageAndImagesEmptyState;
+      return {
+        mainImage: null,
+        images: [],
+      };
     default:
       return state;
   }

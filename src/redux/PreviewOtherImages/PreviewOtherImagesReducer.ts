@@ -10,7 +10,7 @@ export default function previewOtherImages(state = otherImagesInitialState, acti
     case previewOtherImagesAction.DELETE_OTHER_IMAGE:
       return state.filter((url) => url !== action.payload.url);
     case previewOtherImagesAction.RETURN_INITIAL_OTHER_IMAGES:
-      return otherImagesInitialState;
+      return [];
     default:
       return state;
   }

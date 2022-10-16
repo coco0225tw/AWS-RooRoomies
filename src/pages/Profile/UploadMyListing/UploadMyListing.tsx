@@ -218,7 +218,7 @@ function UploadMyListing({
             <SubmitBtn
               onClick={() => {
                 setEdit(true);
-                setClickTab('基本資訊');
+                setClickTab('上傳圖片');
               }}
             >
               我要上架
@@ -238,6 +238,7 @@ function UploadMyListing({
                   dispatch({
                     type: uploadTitleAction.RETURN_INITIAL_TITLE,
                   });
+
                   dispatch({ type: uploadUserAsRoommateAction.RETURN_INITIAL_ME_AS_ROOMMATE });
                   dispatch({ type: previewMainImageAction.RETURN_INITIAL_IMAGE });
                   dispatch({
