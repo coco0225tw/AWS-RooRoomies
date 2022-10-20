@@ -526,7 +526,7 @@ function Listing() {
       setStartDate(startDate);
     }
   };
-  function notAddUserAsRoommatesConditionAlert() {
+  function notAddUserAsRoommatesConditionAlert(): void {
     dispatch({
       type: alertActionType.OPEN_NOTIFY_ALERT,
       payload: {
@@ -542,10 +542,12 @@ function Listing() {
             <SpanLink
               path={'/profile'}
               msg={'個人頁面'}
-              otherFn={dispatch({
-                type: selectTabAction.SELECT_TYPE,
-                payload: { tab: 'aboutMe' },
-              })}
+              otherFn={() => {
+                dispatch({
+                  type: selectTabAction.SELECT_TYPE,
+                  payload: { tab: 'aboutMe' },
+                });
+              }}
             />
             更新
           </Span>

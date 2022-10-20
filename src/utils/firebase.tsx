@@ -34,6 +34,8 @@ import firebaseConfig from './firebaseConfig';
 import { bookingTimesType, bookTimeType } from '../redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from '../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
 import { groupsType } from '../redux/Group/GroupType';
+import titleType from "../redux/UploadTitle/UploadTitleType";
+
 interface Msg {
   userMsg: string;
   sendTime: number;
@@ -46,6 +48,22 @@ type selectDateTimeType = {
   startTime: string;
 };
 
+type fieldDataType = {
+  // uploadedTime: FieldData,
+  //     countyName: getAddr.countyname,
+  //     townName: getAddr.townname,
+  //     rentRoomDetails: getRooms,
+  //     facility: getFacility,
+  //     roommatesConditions: getRoommatesCondition,
+  //     peopleAmount: findPeopleAmount,
+  //     startRent: Number(findStartRent.rent),
+  //     endRent: Number(findEndRent.rent),
+  //     floor: getAddr.floor,
+  //     totalFloor: getAddr.totalFloor,
+  //     addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`,
+  //     latLng: getAddr.latLng,
+  //     matchGroup: [],
+}
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -65,7 +83,7 @@ const timestamp = serverTimestamp();
 const firebase = {
   async setNewListingDocField(
     newListingRef: DocumentReference,
-    fieldData: any,
+    fieldData: ,
     bookingTimes: bookingTimesType,
     mainImgBlob: Blob,
     imagesBlob: Blob[],
