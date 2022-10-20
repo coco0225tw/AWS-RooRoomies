@@ -113,7 +113,7 @@ function UploadMyListing({
   const getRoommatesCondition = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
   const getTitle = useSelector((state: RootState) => state.UploadTitleReducer) as titleType;
   const getImages = useSelector((state: RootState) => state.UploadImagesReducer) as mainImageAndImagesType;
-  const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer);
+  const getRooms = useSelector((state: RootState) => state.UploadRoomsReducer) as roomDetailsType;
   const getBookingTimes = useSelector((state: RootState) => state.UploadTimesReducer);
   const getFacility = useSelector((state: RootState) => state.UploadFacilityReducer);
 
@@ -125,17 +125,10 @@ function UploadMyListing({
   const [nowDate, setNowDate] = useState<null | Date>(null);
   const listingCollection = collection(db, 'listings');
   async function setDoc() {
-    const findPeopleAmount = (getRooms as roomDetailsType).reduce(
-      (sum, people) => Number(sum) + Number(people.peopleAmount),
-      0
-    );
-    const findStartRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent < current.rent ? prev : current
-    );
+    const findPeopleAmount = getRooms.reduce((sum, people) => Number(sum) + Number(people.peopleAmount), 0);
+    const findStartRent = getRooms.reduce((prev, current) => (prev.rent < current.rent ? prev : current));
 
-    const findEndRent = (getRooms as roomDetailsType).reduce((prev, current) =>
-      prev.rent > current.rent ? prev : current
-    );
+    const findEndRent = getRooms.reduce((prev, current) => (prev.rent > current.rent ? prev : current));
 
     const listingData = {
       ...getTitle,

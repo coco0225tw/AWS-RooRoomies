@@ -176,7 +176,9 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     },
   ];
   const [selectedDate, setSelectedDate] = useState<Date>(titleInfo.moveInDate && titleInfo.moveInDate);
-  type tileDisabledType = { date: Date };
+  interface tileDisabledType {
+    date: Date;
+  }
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate()) ||

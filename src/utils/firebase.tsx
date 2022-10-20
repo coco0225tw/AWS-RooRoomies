@@ -20,6 +20,7 @@ import {
   Timestamp,
   DocumentReference,
   QueryConstraint,
+  FieldValue,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
@@ -33,8 +34,11 @@ import {
 import firebaseConfig from './firebaseConfig';
 import { bookingTimesType, bookTimeType } from '../redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from '../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import { groupsType } from '../redux/Group/GroupType';
-import titleType from "../redux/UploadTitle/UploadTitleType";
+import { groupsType, groupType } from '../redux/Group/GroupType';
+import facilityType from '../redux/UploadFacility/UploadFacilityType';
+import { roomDetailsType } from '../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import addressType from '../redux/UploadAddr/UploadAddrType';
+import titleType from '../redux/UploadTitle/UploadTitleType';
 
 interface Msg {
   userMsg: string;
@@ -43,27 +47,28 @@ interface Msg {
   userId: string;
   userPic: string;
 }
-type selectDateTimeType = {
+interface selectDateTimeType {
   date: Timestamp;
   startTime: string;
-};
-
-type fieldDataType = {
-  // uploadedTime: FieldData,
-  //     countyName: getAddr.countyname,
-  //     townName: getAddr.townname,
-  //     rentRoomDetails: getRooms,
-  //     facility: getFacility,
-  //     roommatesConditions: getRoommatesCondition,
-  //     peopleAmount: findPeopleAmount,
-  //     startRent: Number(findStartRent.rent),
-  //     endRent: Number(findEndRent.rent),
-  //     floor: getAddr.floor,
-  //     totalFloor: getAddr.totalFloor,
-  //     addr: `${getAddr.countyname}${getAddr.townname}${getAddr.completeAddr}${getAddr.floor}樓`,
-  //     latLng: getAddr.latLng,
-  //     matchGroup: [],
 }
+
+interface fieldDataType {
+  uploadedTime: FieldValue;
+  countyName: string;
+  townName: string;
+  rentRoomDetails: roomDetailsType;
+  facility: facilityType;
+  roommatesConditions: roommatesConditionType;
+  peopleAmount: number;
+  startRent: number;
+  endRent: number;
+  floor: number;
+  totalFloor: number;
+  addr: string;
+  latLng: { lat: number; lng: number };
+  matchGroup: groupType[];
+}
+interface allFieldData extends fieldDataType, titleType {}
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -83,7 +88,7 @@ const timestamp = serverTimestamp();
 const firebase = {
   async setNewListingDocField(
     newListingRef: DocumentReference,
-    fieldData: ,
+    fieldData: allFieldData,
     bookingTimes: bookingTimesType,
     mainImgBlob: Blob,
     imagesBlob: Blob[],

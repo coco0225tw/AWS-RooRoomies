@@ -3,11 +3,11 @@ interface userInfoType {
   userPic: string;
   userName: string;
 }
-type usersType = (userInfoType | null)[];
+interface usersType extends Array<userInfoType | null> {}
 interface groupType {
   users: usersType;
   chatRoomId: string;
   isBooked: boolean;
 }
-type groupsType = groupType[];
+interface groupsType extends Array<groupType> {}
 export { groupsType, userInfoType, usersType, groupType };

@@ -292,15 +292,15 @@ function Search({
       ...allTowns[`townItem${selectCounty.countyCode}` as keyof typeof allTowns],
     ],
   };
-  type townOptionType = {
+  interface townOptionType {
     towncode: number;
     towncode01: string;
     townname: string;
-  };
-  type labelType = {
+  }
+  interface labelType {
     label: string;
     key: string;
-  };
+  }
   const rentGroup = {
     label: '租金',
     key: 'rent',

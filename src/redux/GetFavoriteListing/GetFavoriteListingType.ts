@@ -1,2 +1,2 @@
-type FavoriteListingType = string[];
+interface FavoriteListingType extends Array<string> {}
 export default FavoriteListingType;

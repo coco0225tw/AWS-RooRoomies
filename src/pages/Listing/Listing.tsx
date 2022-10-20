@@ -366,10 +366,10 @@ function Listing() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<null | Date>(null);
-  type selectDateTimeType = {
+  interface selectDateTimeType {
     date: Timestamp;
     startTime: string;
-  };
+  }
   const [bookTimeInfo, setBookTimeInfo] = useState<{
     uid: string;
     docId: string;
@@ -381,7 +381,9 @@ function Listing() {
   const [isInGroup, setIsInGroup] = useState<boolean>(false);
   const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
   const [canBook, setCanBook] = useState<boolean>(false);
-  type tileDisabledType = { date: Date };
+  interface tileDisabledType {
+    date: Date;
+  }
 
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
@@ -438,7 +440,7 @@ function Listing() {
     }
   }
 
-  type ListingType = {
+  interface ListingType {
     mainImage: string;
     images: string[];
     title: string;
@@ -459,7 +461,7 @@ function Listing() {
     latLng: { lat: number; lng: number };
     totalFloor: number;
     phone: number;
-  };
+  }
 
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {

@@ -88,7 +88,9 @@ function SetBookingTimes({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   );
   const selectedTimeRef = useRef<HTMLInputElement[]>([]);
 
-  type tileDisabledType = { date: Date };
+  interface tileDisabledType {
+    date: Date;
+  }
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date < new Date() ||

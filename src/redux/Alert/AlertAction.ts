@@ -1,9 +1,9 @@
 enum alertActionType {
-  OPEN_NOTIFY_ALERT = "OPEN_NOTIFY_ALERT",
-  OPEN_SUCCESS_ALERT = "OPEN_SUCCESS_ALERT",
-  OPEN_ERROR_ALERT = "OPEN_ERROR_ALERT",
-  CLOSE_ALERT = "CLOSE_ALERT",
-  RETURN_INITIAL_ALERT = "RETURN_INITIAL_ALERT",
+  OPEN_NOTIFY_ALERT = 'OPEN_NOTIFY_ALERT',
+  OPEN_SUCCESS_ALERT = 'OPEN_SUCCESS_ALERT',
+  OPEN_ERROR_ALERT = 'OPEN_ERROR_ALERT',
+  CLOSE_ALERT = 'CLOSE_ALERT',
+  RETURN_INITIAL_ALERT = 'RETURN_INITIAL_ALERT',
 }
 
 interface openNotifyAlert {
@@ -26,11 +26,6 @@ interface returnInitialAlert {
   type: alertActionType.RETURN_INITIAL_ALERT;
 }
 
-type alertAction =
-  | openNotifyAlert
-  | openSuccessAlert
-  | openErrorAlert
-  | closeAlert
-  | returnInitialAlert;
+type alertAction = openNotifyAlert | openSuccessAlert | openErrorAlert | closeAlert | returnInitialAlert;
 
 export { alertActionType, alertAction };
