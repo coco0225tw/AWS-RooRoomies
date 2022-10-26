@@ -1,6 +1,6 @@
-import lastDocType from "./LastDocType";
+import lastDocType from './LastDocType';
 enum lastDocAction {
-  GET_LAST_LISTING_DOC = "GET_LAST_LISTING_DOC",
+  GET_LAST_LISTING_DOC = 'GET_LAST_LISTING_DOC',
 }
 
 interface getLastListingDoc {

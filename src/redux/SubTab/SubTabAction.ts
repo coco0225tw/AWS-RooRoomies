@@ -1,8 +1,8 @@
-import subTabType from "./SubTabType";
+import subTabType from './SubTabType';
 
 enum subTabAction {
-  SELECT_SUB_TAB = "SELECT_SUB_TAB",
-  RETURN_INITIAL_SUB_TAB = "RETURN_INITIAL_SUB_TAB",
+  SELECT_SUB_TAB = 'SELECT_SUB_TAB',
+  RETURN_INITIAL_SUB_TAB = 'RETURN_INITIAL_SUB_TAB',
 }
 interface selectSubTab {
   type: subTabAction.SELECT_SUB_TAB;

@@ -7,21 +7,26 @@ const mainImageAndImagesEmptyState: mainImageAndImagesType = {
 };
 export default function UploadImages(state = mainImageAndImagesEmptyState, action: uploadImagesActionType) {
   switch (action.type) {
-    case uploadImagesAction.UPLOAD_IMAGES:
-      return { ...state, images: action.payload.images };
-    case uploadImagesAction.UPLOAD_MAIN_IMAGE:
-      return { ...state, mainImage: action.payload.mainImage };
-    case uploadImagesAction.DELETE_MAIN_IMAGE:
-      return { ...state, mainImage: null };
-    case uploadImagesAction.DELETE_OTHER_IMAGE:
+    case uploadImagesAction.UPLOAD_IMAGES: {
+      let newState = { ...state, images: action.payload.images };
+      return newState;
+    }
+    case uploadImagesAction.UPLOAD_MAIN_IMAGE: {
+      let newState = { ...state, mainImage: action.payload.mainImage };
+      return newState;
+    }
+    case uploadImagesAction.DELETE_MAIN_IMAGE: {
+      let newState = { ...state, mainImage: null };
+      return newState;
+    }
+    case uploadImagesAction.DELETE_OTHER_IMAGE: {
       let newImages = [...state.images];
       let filterImages = newImages.filter((blob, index) => index !== action.payload.index);
-      return { ...state, images: filterImages };
+      let newState = { ...state, images: filterImages };
+      return newState;
+    }
     case uploadImagesAction.RETURN_INITIAL_LISTING_IMAGES:
-      return {
-        mainImage: null,
-        images: [],
-      };
+      return mainImageAndImagesEmptyState;
     default:
       return state;
   }

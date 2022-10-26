@@ -5,6 +5,6 @@ interface roomType {
   peopleAmount: number;
 }
 
-type roomDetailsType = roomType[];
+interface roomDetailsType extends Array<roomType> {}
 
 export { roomDetailsType, roomType };

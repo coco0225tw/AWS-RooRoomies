@@ -366,10 +366,10 @@ function Listing() {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [bookedTimePopup, setBookedTimePopup] = useState<boolean>(false);
   const [startDate, setStartDate] = useState<null | Date>(null);
-  type selectDateTimeType = {
+  interface selectDateTimeType {
     date: Timestamp;
     startTime: string;
-  };
+  }
   const [bookTimeInfo, setBookTimeInfo] = useState<{
     uid: string;
     docId: string;
@@ -381,7 +381,9 @@ function Listing() {
   const [isInGroup, setIsInGroup] = useState<boolean>(false);
   const [isInFullGroup, setIsInFullGroup] = useState<boolean>(false);
   const [canBook, setCanBook] = useState<boolean>(false);
-  type tileDisabledType = { date: Date };
+  interface tileDisabledType {
+    date: Date;
+  }
 
   function handleLiked(e: React.MouseEvent<HTMLDivElement, MouseEvent>, isLiked: boolean) {
     e.stopPropagation();
@@ -438,7 +440,7 @@ function Listing() {
     }
   }
 
-  type ListingType = {
+  interface ListingType {
     mainImage: string;
     images: string[];
     title: string;
@@ -459,7 +461,7 @@ function Listing() {
     latLng: { lat: number; lng: number };
     totalFloor: number;
     phone: number;
-  };
+  }
 
   const tileDisabled = ({ date }: tileDisabledType) => {
     if (ableBookingTimes.length !== 0) {
@@ -526,7 +528,7 @@ function Listing() {
       setStartDate(startDate);
     }
   };
-  function notAddUserAsRoommatesConditionAlert() {
+  function notAddUserAsRoommatesConditionAlert(): void {
     dispatch({
       type: alertActionType.OPEN_NOTIFY_ALERT,
       payload: {
@@ -542,10 +544,12 @@ function Listing() {
             <SpanLink
               path={'/profile'}
               msg={'個人頁面'}
-              otherFn={dispatch({
-                type: selectTabAction.SELECT_TYPE,
-                payload: { tab: 'aboutMe' },
-              })}
+              otherFn={() => {
+                dispatch({
+                  type: selectTabAction.SELECT_TYPE,
+                  payload: { tab: 'aboutMe' },
+                });
+              }}
             />
             更新
           </Span>
@@ -650,9 +654,7 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              // <OtherImageWrap key={`images_${index}`}>
               <Images src={src} key={`images_${index}`} onClick={() => clickOnImage(src)} />
-              // </OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
@@ -677,11 +679,11 @@ function Listing() {
               </TitleIcon>
               <TitleIcon>{listingInfo?.peopleAmount}人可入住</TitleIcon>
               <TitleIcon>
-                {listingInfo?.moveInDate.toDate().getFullYear() +
+                {listingInfo?.moveInDate?.toDate().getFullYear() +
                   '-' +
-                  ('0' + (listingInfo?.moveInDate.toDate().getMonth() + 1)).slice(-2) +
+                  ('0' + (listingInfo?.moveInDate?.toDate().getMonth() + 1)).slice(-2) +
                   '-' +
-                  ('0' + listingInfo?.moveInDate.toDate().getDate()).slice(-2)}
+                  ('0' + listingInfo?.moveInDate?.toDate().getDate()).slice(-2)}
               </TitleIcon>
               <TitleIcon>{listingInfo?.phone!}</TitleIcon>
             </TitleIconWrapper>

@@ -271,7 +271,7 @@ function Facility({
   setEdit,
 }: {
   setClickTab: React.Dispatch<React.SetStateAction<string>>;
-  setDoc: any;
+  setDoc: () => Promise<void>;
   setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
   setEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -279,11 +279,6 @@ function Facility({
   const facilityInfo = useSelector((state: RootState) => state.UploadFacilityReducer);
 
   const initialFacilityEmptyState = facilityInfo;
-  interface optionType {
-    label: string;
-    text: string;
-    value: string;
-  }
 
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [confirmPopup, setConfirmPopup] = useState<boolean>(false);
@@ -297,11 +292,11 @@ function Facility({
     control,
   } = useForm();
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: facilityType) => {
     submit(data);
     setConfirmPopup(true);
   };
-  async function submit(data) {
+  async function submit(data: facilityType) {
     dispatch({ type: uploadFacilityAction.UPLOAD_FACILITY, payload: { facilityState: data } });
   }
   async function submitHandler() {
@@ -384,47 +379,51 @@ function Facility({
                   control={control}
                   name={key as string}
                   defaultValue={[]}
-                  render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o: optionType, oIndex: number) => (
-                      <FormCheck
-                        key={o.value}
-                        {...props}
-                        style={{
-                          flexBasis: '25%',
-                          justifyContent: 'flex-start',
-                          marginBottom: '12px',
-                          marginRight: '8px',
-                        }}
-                      >
-                        <CheckedFormCheckInput
-                          type="checkbox"
-                          id={o.label}
-                          style={{ flexGrow: '0' }}
-                          name={o.label}
-                          value={key + o.label}
-                          // checked={o.value}
-                          defaultChecked={facilityInfo[key as keyof typeof initialFacilityEmptyState].includes(o.label)}
-                          onChange={(e) => {
-                            handleChange(e, key);
+                  render={({ field: { onChange, ...props } }) => (
+                    <React.Fragment>
+                      {options.map((o, oIndex) => (
+                        <FormCheck
+                          key={o.value}
+                          {...props}
+                          style={{
+                            flexBasis: '25%',
+                            justifyContent: 'flex-start',
+                            marginBottom: '12px',
+                            marginRight: '8px',
                           }}
-                        />
-                        <CheckedFormCheckLabel htmlFor={o.label}>
-                          {o.text}
-                          <span style={{ marginLeft: '12px' }}>
-                            <Icon img={o.value} />
-                          </span>
-                        </CheckedFormCheckLabel>
-                      </FormCheck>
-                    ))
-                  }
+                        >
+                          <CheckedFormCheckInput
+                            type="checkbox"
+                            id={o.label}
+                            style={{ flexGrow: '0' }}
+                            name={o.label}
+                            value={key + o.label}
+                            // checked={o.value}
+                            defaultChecked={facilityInfo[key as keyof typeof initialFacilityEmptyState].includes(
+                              o.label
+                            )}
+                            onChange={(e) => {
+                              handleChange(e, key);
+                            }}
+                          />
+                          <CheckedFormCheckLabel htmlFor={o.label}>
+                            {o.text}
+                            <span style={{ marginLeft: '12px' }}>
+                              <Icon img={o.value} />
+                            </span>
+                          </CheckedFormCheckLabel>
+                        </FormCheck>
+                      ))}
+                    </React.Fragment>
+                  )}
                 />
               ) : (
                 <FormControl
                   {...register(key as string, {
-                    required: required && required,
-                    pattern: pattern && pattern,
-                    min: min && min,
-                    max: max && max,
+                    required: required,
+                    pattern: pattern,
+                    min: min,
+                    max: max,
                   })}
                   aria-invalid={errors[key] ? 'true' : 'false'}
                   defaultValue={initialFacilityEmptyState[key as keyof typeof initialFacilityEmptyState]}

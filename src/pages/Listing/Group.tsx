@@ -101,7 +101,7 @@ function Group({
   listingTitle: string;
   match: boolean;
   addUserAsRoommatesCondition: boolean;
-  notAddUserAsRoommatesConditionAlert: any;
+  notAddUserAsRoommatesConditionAlert: () => void;
   isInGroup: boolean;
   setIsInGroup: React.Dispatch<React.SetStateAction<boolean>>;
   isInFullGroup: boolean;

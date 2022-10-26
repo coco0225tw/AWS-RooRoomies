@@ -146,8 +146,8 @@ function PopupComponent({
   msg: string;
   notDefaultBtn: string;
   defaultBtn: string;
-  clickClose: any;
-  clickFunction: any;
+  clickClose: () => void;
+  clickFunction: () => void;
 }) {
   return (
     <Wrapper>
@@ -180,7 +180,7 @@ function PopupComponent({
   );
 }
 
-function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
+function PopupImage({ img, clickClose }: { img: string; clickClose: () => void }) {
   return (
     <Wrapper>
       <PopImg img={img}>
@@ -197,7 +197,15 @@ function PopupImage({ img, clickClose }: { img: string; clickClose: any }) {
     </Wrapper>
   );
 }
-function PopupImageDelete({ img, clickClose, deleteFn }: { img: string; clickClose: any; deleteFn: any }) {
+function PopupImageDelete({
+  img,
+  clickClose,
+  deleteFn,
+}: {
+  img: string;
+  clickClose: () => void;
+  deleteFn: () => void;
+}) {
   return (
     <Wrapper>
       <PopImg img={img}>

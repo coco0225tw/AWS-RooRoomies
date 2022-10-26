@@ -1,7 +1,7 @@
-import onAuthChangeType from "./OnAuthChangeType";
+import onAuthChangeType from './OnAuthChangeType';
 enum onAuthChangeAction {
-  AUTH_TRUE = "AUTH_TRUE",
-  RETURN_INITIAL_AUTH = "RETURN_INITIAL_AUTH",
+  AUTH_TRUE = 'AUTH_TRUE',
+  RETURN_INITIAL_AUTH = 'RETURN_INITIAL_AUTH',
 }
 
 interface authTrue {

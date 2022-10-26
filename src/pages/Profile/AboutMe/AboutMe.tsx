@@ -169,11 +169,6 @@ const roommatesConditionFormGroups = [
   },
 ];
 
-interface optionType {
-  label: string;
-  text: string;
-  value: string;
-}
 const CheckedFormCheckLabel = styled(FormCheckLabel)`
   cursor: pointer;
 `;
@@ -336,28 +331,30 @@ function AboutMe({
                   rules={{
                     required: required && required,
                   }}
-                  render={({ field: { onChange, ...props } }) =>
-                    (options as any).map((o: optionType, oIndex: number) => (
-                      <FormCheck key={o.value}>
-                        <React.Fragment>
-                          <CheckedFormCheckInput
-                            edit={edit}
-                            id={key + o.value}
-                            disabled={!edit}
-                            name={label}
-                            type="radio"
-                            {...props}
-                            value={key + o.value}
-                            onChange={(e) => {
-                              onChange(o.label);
-                            }}
-                            checked={getValues(key) === o.value}
-                          />
-                          <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
-                        </React.Fragment>
-                      </FormCheck>
-                    ))
-                  }
+                  render={({ field: { onChange, ...props } }) => (
+                    <React.Fragment>
+                      {options.map((o, oIndex) => (
+                        <FormCheck key={o.value}>
+                          <React.Fragment>
+                            <CheckedFormCheckInput
+                              edit={edit}
+                              id={key + o.value}
+                              disabled={!edit}
+                              name={label}
+                              type="radio"
+                              {...props}
+                              value={key + o.value}
+                              onChange={(e) => {
+                                onChange(o.label);
+                              }}
+                              checked={getValues(key) === o.value}
+                            />
+                            <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
+                          </React.Fragment>
+                        </FormCheck>
+                      ))}
+                    </React.Fragment>
+                  )}
                 />
               </FormInputWrapper>
             </FormGroup>

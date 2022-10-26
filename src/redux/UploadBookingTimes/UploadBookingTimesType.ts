@@ -3,5 +3,5 @@ interface bookTimeType {
   startTime: string;
   isBooked: boolean;
 }
-type bookingTimesType = bookTimeType[];
+interface bookingTimesType extends Array<bookTimeType> {}
 export { bookingTimesType, bookTimeType };

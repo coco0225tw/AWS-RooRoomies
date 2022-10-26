@@ -38,7 +38,7 @@ const Message = styled.div`
   }
 `;
 
-function Alert({ alertType, alertMessage, isAlert }: { alertType: string; alertMessage: any; isAlert: boolean }) {
+function Alert({ alertType, alertMessage, isAlert }: { alertType: string; alertMessage: string; isAlert: boolean }) {
   return (
     <Wrapper isAlert={isAlert} alertType={alertType}>
       <Message>{alertMessage}</Message>

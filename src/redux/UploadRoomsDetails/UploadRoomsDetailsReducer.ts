@@ -6,10 +6,14 @@ export default function UploadRooms(state = roomEmptyState, action: uploadRoomsA
   switch (action.type) {
     case uploadRoomDetailsAction.UPLOAD_ROOMS:
       return action.payload.roomState;
-    case uploadRoomDetailsAction.ADD_ROOM:
-      return [...state, action.payload.room];
-    case uploadRoomDetailsAction.DELETE_ROOM:
-      return state.filter((el, i) => i !== action.payload.index);
+    case uploadRoomDetailsAction.ADD_ROOM: {
+      let newState = [...state, action.payload.room];
+      return newState;
+    }
+    case uploadRoomDetailsAction.DELETE_ROOM: {
+      let newState = state.filter((el, i) => i !== action.payload.index);
+      return newState;
+    }
     case uploadRoomDetailsAction.RETURN_INITIAL_ROOM_DETAILS:
       return roomEmptyState;
     default:
