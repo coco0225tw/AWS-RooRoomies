@@ -654,9 +654,7 @@ function Listing() {
         <OtherImagesWrapper>
           {listingInfo?.images &&
             listingInfo.images.map((src, index) => (
-              // <OtherImageWrap key={`images_${index}`}>
               <Images src={src} key={`images_${index}`} onClick={() => clickOnImage(src)} />
-              // </OtherImageWrap>
             ))}
         </OtherImagesWrapper>
       </ImagesWrapper>
