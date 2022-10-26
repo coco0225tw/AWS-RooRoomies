@@ -1,25 +1,17 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 const Wrapper = styled(Link)`
   color: #c77155;
   border-bottom: solid 1px #c77155;
 `;
 
-function SpanLink({
-  path,
-  msg,
-  otherFn,
-}: {
-  path: string;
-  msg: string;
-  otherFn: any;
-}) {
+function SpanLink({ path, msg, otherFn }: { path: string; msg: string; otherFn: () => void }) {
   return (
     <Wrapper
       style={{
-        fontSize: "inherit",
-        letterSpacing: "inherit",
+        fontSize: 'inherit',
+        letterSpacing: 'inherit',
       }}
       onClick={() => {
         otherFn();

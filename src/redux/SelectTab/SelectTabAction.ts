@@ -1,7 +1,7 @@
-import tabType from "./SelectTabType";
+import tabType from './SelectTabType';
 enum selectTabAction {
-  SELECT_TYPE = "SELECT_TAB",
-  RETURN_INITIAL_TAB = "RETURN_INITIAL_TAB",
+  SELECT_TYPE = 'SELECT_TAB',
+  RETURN_INITIAL_TAB = 'RETURN_INITIAL_TAB',
 }
 
 interface selectTab {

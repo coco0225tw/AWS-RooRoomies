@@ -20,6 +20,7 @@ import {
   Timestamp,
   DocumentReference,
   QueryConstraint,
+  FieldValue,
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
@@ -33,7 +34,12 @@ import {
 import firebaseConfig from './firebaseConfig';
 import { bookingTimesType, bookTimeType } from '../redux/UploadBookingTimes/UploadBookingTimesType';
 import roommatesConditionType from '../redux/UploadRoommatesCondition/UploadRoommatesConditionType';
-import { groupsType } from '../redux/Group/GroupType';
+import { groupsType, groupType } from '../redux/Group/GroupType';
+import facilityType from '../redux/UploadFacility/UploadFacilityType';
+import { roomDetailsType } from '../redux/UploadRoomsDetails/UploadRoomsDetailsType';
+import addressType from '../redux/UploadAddr/UploadAddrType';
+import titleType from '../redux/UploadTitle/UploadTitleType';
+
 interface Msg {
   userMsg: string;
   sendTime: number;
@@ -41,11 +47,28 @@ interface Msg {
   userId: string;
   userPic: string;
 }
-type selectDateTimeType = {
+interface selectDateTimeType {
   date: Timestamp;
   startTime: string;
-};
+}
 
+interface fieldDataType {
+  uploadedTime: FieldValue;
+  countyName: string;
+  townName: string;
+  rentRoomDetails: roomDetailsType;
+  facility: facilityType;
+  roommatesConditions: roommatesConditionType;
+  peopleAmount: number;
+  startRent: number;
+  endRent: number;
+  floor: number;
+  totalFloor: number;
+  addr: string;
+  latLng: { lat: number; lng: number };
+  matchGroup: groupType[];
+}
+interface allFieldData extends fieldDataType, titleType {}
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -65,7 +88,7 @@ const timestamp = serverTimestamp();
 const firebase = {
   async setNewListingDocField(
     newListingRef: DocumentReference,
-    fieldData: any,
+    fieldData: allFieldData,
     bookingTimes: bookingTimesType,
     mainImgBlob: Blob,
     imagesBlob: Blob[],

@@ -192,10 +192,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
   const roomInfo = useSelector((state: RootState) => state.UploadRoomsReducer);
   const [openDropDown, setOpenDropDown] = useState<boolean>(false);
   const [selectOptions, setSelectOptions] = useState<string | null>(null);
-  interface optionType {
-    label: string;
-    key: string;
-  }
+
   const {
     register,
     handleSubmit,
@@ -225,7 +222,7 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                 <ErrorText>{errors[r.key] && (errors[r.key].message as string)}</ErrorText>
               </LabelArea>
               <FormInputWrapper>
-                {(r.options as any) ? (
+                {r.options ? (
                   <React.Fragment>
                     <DropDown onClick={() => setOpenDropDown(!openDropDown)}>
                       {selectOptions ? selectOptions : '請選擇'}
@@ -243,32 +240,34 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                         control={control}
                         name={r.key}
                         rules={{
-                          required: r.required && r.required,
-                          pattern: r.pattern && r.pattern,
+                          required: r.required,
+                          pattern: r.pattern,
                         }}
-                        render={({ field: { onChange, ...props } }) =>
-                          (r.options as any).map((o: optionType, oIndex: number) => (
-                            <React.Fragment key={`${o.key}${oIndex}`}>
-                              <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
-                                <CheckedFormCheckInput
-                                  type="radio"
-                                  id={`${o.key}`}
-                                  key={`${o.key}${oIndex}`}
-                                  name={r.key}
-                                  value-={o.key}
-                                  onChange={(e) => {
-                                    onChange(o.label);
-                                    if (e.target.checked) {
-                                      setSelectOptions(o.label);
-                                      setOpenDropDown(!openDropDown);
-                                    }
-                                  }}
-                                />
-                                <CheckedFormCheckLabel htmlFor={`${o.key}`}>{o.label}</CheckedFormCheckLabel>
-                              </FormCheck>
-                            </React.Fragment>
-                          ))
-                        }
+                        render={({ field: { onChange, ...props } }) => (
+                          <React.Fragment>
+                            {r.options.map((o, oIndex) => (
+                              <React.Fragment key={`${o.key}${oIndex}`}>
+                                <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
+                                  <CheckedFormCheckInput
+                                    type="radio"
+                                    id={`${o.key}`}
+                                    key={`${o.key}${oIndex}`}
+                                    name={r.key}
+                                    value-={o.key}
+                                    onChange={(e) => {
+                                      onChange(o.label);
+                                      if (e.target.checked) {
+                                        setSelectOptions(o.label);
+                                        setOpenDropDown(!openDropDown);
+                                      }
+                                    }}
+                                  />
+                                  <CheckedFormCheckLabel htmlFor={`${o.key}`}>{o.label}</CheckedFormCheckLabel>
+                                </FormCheck>
+                              </React.Fragment>
+                            ))}
+                          </React.Fragment>
+                        )}
                       />
                     </DropDownMenuWrapper>
                   </React.Fragment>
@@ -276,10 +275,10 @@ function RentRoomDetails({ setClickTab }: { setClickTab: React.Dispatch<React.Se
                   <FormControl
                     type="input"
                     {...register(r.key, {
-                      required: r.required && r.required,
-                      pattern: r.pattern && r.pattern,
-                      min: r.min && r.min,
-                      max: r.max && r.max,
+                      required: r.required,
+                      pattern: r.pattern,
+                      min: r.min,
+                      max: r.max,
                     })}
                   />
                 )}

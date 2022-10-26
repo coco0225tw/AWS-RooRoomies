@@ -115,8 +115,9 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
     maxLength?: { value: number; message: string };
     min?: { value: number; message: string };
     max?: { value: number; message: string };
-    countyOptions?: any;
-    townOptions?: any;
+    countyOptions?: countyType[];
+    townOptions?: townType[];
+    pattern?: { value: RegExp; message: string };
   }
   interface countyType {
     countycode: string;
@@ -141,13 +142,17 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
       key: 'completeAddr',
       required: valid.required,
       maxLength: { value: 30, message: '※不可超過30字元' },
+      pattern: {
+        value: /^(\D+?[村里])?(\d+[鄰])?((\D+?(村路|[路街道段])?(\D?段)?))?(\d+巷)?(\d+弄)?(\d+號)+$/,
+        message: '※例:精忠巷48號',
+      },
     },
     {
       label: '樓',
       key: 'floor',
       required: valid.required,
       pattern: {
-        value: /^[0-9]*$/,
+        value: /^\d*$/,
         message: '※請輸入數字',
       },
       min: {
@@ -164,7 +169,7 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
       key: 'totalFloor',
       required: valid.required,
       pattern: {
-        value: /^[0-9]*$/,
+        value: /^\d*$/,
         message: '※請輸入數字',
       },
       min: {
@@ -246,13 +251,14 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       control={control}
                       name={info.key}
                       rules={{
-                        required: info.required && info.required,
-                        maxLength: info.maxLength && info.maxLength,
+                        required: info.required,
+                        maxLength: info.maxLength,
+                        pattern: info.pattern,
                       }}
-                      render={({ field: { onChange, ...props } }) =>
-                        info.countyOptions.map((o: countyType, oIndex: number) => (
-                          <React.Fragment key={`${o.countycode01}${oIndex}`}>
-                            <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
+                      render={({ field: { onChange, ...props } }) => (
+                        <React.Fragment>
+                          {info.countyOptions.map((o: countyType, oIndex: number) => (
+                            <FormCheck key={`${o.countycode01}${oIndex}`} style={{ padding: '8px 0px', width: 'auto' }}>
                               <CheckedFormCheckInput
                                 type="radio"
                                 id={`${o.countycode01}`}
@@ -279,9 +285,9 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                                 {o.countyname}
                               </CheckedFormCheckLabel>
                             </FormCheck>
-                          </React.Fragment>
-                        ))
-                      }
+                          ))}
+                        </React.Fragment>
+                      )}
                     />
                   </DropDownMenuWrapper>
                 </React.Fragment>
@@ -304,33 +310,36 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                       control={control}
                       name={info.key}
                       rules={{
-                        required: info.required && info.required,
-                        maxLength: info.maxLength && info.maxLength,
+                        required: info.required,
+                        maxLength: info.maxLength,
+                        pattern: info.pattern,
                       }}
-                      render={({ field: { onChange, ...props } }) =>
-                        info.townOptions.map((o: townType, oIndex: number) => (
-                          <React.Fragment key={`${o.townname}${oIndex}`}>
-                            <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
-                              <CheckedFormCheckInput
-                                type="radio"
-                                id={`${o.townname}`}
-                                key={`${o.townname}${oIndex}`}
-                                name={info.key}
-                                value-={o.townname}
-                                defaultChecked={getAddr.townname === o.townname}
-                                onChange={(e) => {
-                                  onChange(o.townname);
-                                  if (e.target.checked) {
-                                    setOpenTownDropDown(false);
-                                    setSelectTown(o.townname);
-                                  }
-                                }}
-                              />
-                              <CheckedFormCheckLabel htmlFor={`${o.townname}`}>{o.townname}</CheckedFormCheckLabel>
-                            </FormCheck>
-                          </React.Fragment>
-                        ))
-                      }
+                      render={({ field: { onChange, ...props } }) => (
+                        <React.Fragment>
+                          {info.townOptions.map((o: townType, oIndex: number) => (
+                            <React.Fragment key={`${o.townname}${oIndex}`}>
+                              <FormCheck style={{ padding: '8px 0px', width: 'auto' }}>
+                                <CheckedFormCheckInput
+                                  type="radio"
+                                  id={`${o.townname}`}
+                                  key={`${o.townname}${oIndex}`}
+                                  name={info.key}
+                                  value-={o.townname}
+                                  defaultChecked={getAddr.townname === o.townname}
+                                  onChange={(e) => {
+                                    onChange(o.townname);
+                                    if (e.target.checked) {
+                                      setOpenTownDropDown(false);
+                                      setSelectTown(o.townname);
+                                    }
+                                  }}
+                                />
+                                <CheckedFormCheckLabel htmlFor={`${o.townname}`}>{o.townname}</CheckedFormCheckLabel>
+                              </FormCheck>
+                            </React.Fragment>
+                          ))}
+                        </React.Fragment>
+                      )}
                     />
                   </DropDownMenuWrapper>
                 </React.Fragment>
@@ -338,10 +347,11 @@ function ListingAddr({ setClickTab }: { setClickTab: React.Dispatch<React.SetSta
                 <FormControl
                   id={info.key}
                   {...register(info.key, {
-                    required: info.required && info.required,
-                    maxLength: info.maxLength && info.maxLength,
-                    min: info.min && info.min,
-                    max: info.max && info.max,
+                    required: info.required,
+                    maxLength: info.maxLength,
+                    min: info.min,
+                    max: info.max,
+                    pattern: info.pattern,
                   })}
                   onKeyDown={(e) => {
                     if (e.key == ' ') {

@@ -292,15 +292,15 @@ function Search({
       ...allTowns[`townItem${selectCounty.countyCode}` as keyof typeof allTowns],
     ],
   };
-  type townOptionType = {
+  interface townOptionType {
     towncode: number;
     towncode01: string;
     townname: string;
-  };
-  type labelType = {
+  }
+  interface labelType {
     label: string;
     key: string;
-  };
+  }
   const rentGroup = {
     label: '租金',
     key: 'rent',
@@ -426,7 +426,6 @@ function Search({
       let isFetching = false;
 
       if (entries[0].intersectionRatio <= 0) return;
-      if (isFetching) return;
       if (noData) return;
       isFetching = true;
 
@@ -441,6 +440,8 @@ function Search({
     },
     [lastDocData, selectCounty, selectTown, selectRent, loadFirstPage, noData]
   );
+  // const intersectionObserver = new IntersectionObserver(handleObserver);
+
   useEffect(() => {
     const intersectionObserver = new IntersectionObserver(handleObserver);
     intersectionObserver.observe(scrollRef!.current);

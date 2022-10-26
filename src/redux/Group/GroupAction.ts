@@ -1,10 +1,10 @@
-import { groupsType, userInfoType } from "./GroupType";
-import userType from "../GetAuth/GetAuthType";
+import { groupsType, userInfoType } from './GroupType';
+import userType from '../GetAuth/GetAuthType';
 enum groupAction {
-  REMOVE_GROUP = "REMOVE_GROUP",
-  ADD_GROUP = "ADD_GROUP",
-  ADD_USER_TO_GROUP = "ADD_USER_TO_GROUP",
-  ADD_GROUP_FROM_FIREBASE = "ADD_GROUP_FROM_FIREBASE",
+  REMOVE_GROUP = 'REMOVE_GROUP',
+  ADD_GROUP = 'ADD_GROUP',
+  ADD_USER_TO_GROUP = 'ADD_USER_TO_GROUP',
+  ADD_GROUP_FROM_FIREBASE = 'ADD_GROUP_FROM_FIREBASE',
 }
 
 interface removeGroup {
@@ -23,10 +23,6 @@ interface getGroupFrmFirebase {
   payload: { groups: groupsType };
 }
 
-type groupActionType =
-  | removeGroup
-  | addGroup
-  | addUserToGroup
-  | getGroupFrmFirebase;
+type groupActionType = removeGroup | addGroup | addUserToGroup | getGroupFrmFirebase;
 
 export { groupAction, groupActionType };

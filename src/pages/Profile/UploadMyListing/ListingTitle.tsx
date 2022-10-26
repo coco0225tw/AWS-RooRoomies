@@ -155,6 +155,10 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     {
       label: '描述(最多100字)',
       key: 'environmentDescription',
+      maxLength: {
+        value: 100,
+        message: '※不可超過100個字元',
+      },
     },
     {
       label: '連絡電話(手機)',
@@ -172,7 +176,9 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
     },
   ];
   const [selectedDate, setSelectedDate] = useState<Date>(titleInfo.moveInDate && titleInfo.moveInDate);
-  type tileDisabledType = { date: Date };
+  interface tileDisabledType {
+    date: Date;
+  }
   const tileDisabled = ({ date }: tileDisabledType) => {
     return (
       date > new Date(new Date().getFullYear(), new Date().getMonth() - 1 + 6, new Date().getDate()) ||
@@ -197,7 +203,7 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
   return (
     <Wrapper>
       <StyledForm onSubmit={handleSubmit(onSubmit)}>
-        {hookFormGroup.map((info: any) => (
+        {hookFormGroup.map((info) => (
           <FormGroup key={info.key}>
             <LabelArea>
               <FormLabel htmlFor={info.key}>{info.label}</FormLabel>
@@ -231,35 +237,37 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                       control={control}
                       name={info.key}
                       rules={{
-                        required: info.required && info.required,
-                        pattern: info.pattern && info.pattern,
-                        minLength: info.minLength && info.minLength,
-                        maxLength: info.maxLength && info.maxLength,
+                        required: info.required,
+                        pattern: info.pattern,
+                        minLength: info.minLength,
+                        maxLength: info.maxLength,
                       }}
-                      render={({ field: { onChange, ...props } }) =>
-                        info.options.map((o, oIndex) => (
-                          <React.Fragment key={`${o.key}${oIndex}`}>
-                            <FormCheck style={{ padding: '8px 0px' }}>
-                              <CheckedFormCheckInput
-                                type="radio"
-                                id={`${o.key}`}
-                                key={`${o.key}${oIndex}`}
-                                defaultChecked={titleInfo.form === o.label}
-                                name={o.label}
-                                value-={o.label}
-                                onChange={(e) => {
-                                  onChange(o.label);
-                                  if (e.target.checked) {
-                                    setSelectedForm(o.label);
-                                    setOpenDropDown(false);
-                                  }
-                                }}
-                              />
-                              <CheckedFormCheckLabel htmlFor={`${o.key}`}>{o.label}</CheckedFormCheckLabel>
-                            </FormCheck>
-                          </React.Fragment>
-                        ))
-                      }
+                      render={({ field: { onChange, ...props } }) => (
+                        <React.Fragment>
+                          {info.options.map((o, oIndex) => (
+                            <React.Fragment key={`${o.key}${oIndex}`}>
+                              <FormCheck style={{ padding: '8px 0px' }}>
+                                <CheckedFormCheckInput
+                                  type="radio"
+                                  id={`${o.key}`}
+                                  key={`${o.key}${oIndex}`}
+                                  defaultChecked={titleInfo.form === o.label}
+                                  name={o.label}
+                                  value-={o.label}
+                                  onChange={(e) => {
+                                    onChange(o.label);
+                                    if (e.target.checked) {
+                                      setSelectedForm(o.label);
+                                      setOpenDropDown(false);
+                                    }
+                                  }}
+                                />
+                                <CheckedFormCheckLabel htmlFor={`${o.key}`}>{o.label}</CheckedFormCheckLabel>
+                              </FormCheck>
+                            </React.Fragment>
+                          ))}
+                        </React.Fragment>
+                      )}
                     />
                   </DropDownMenuWrapper>
                 </React.Fragment>
@@ -270,8 +278,6 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                   rules={{
                     required: info.required && info.required,
                     pattern: info.pattern && info.pattern,
-                    minLength: info.minLength && info.minLength,
-                    maxLength: info.maxLength && info.maxLength,
                   }}
                   render={({ field }) => (
                     <CalendarContainer style={{ marginLeft: '0' }}>
@@ -291,10 +297,10 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                 <TextArea
                   id={info.key}
                   {...register(info.key, {
-                    required: info.required && info.required,
-                    pattern: info.pattern && info.pattern,
-                    minLength: info.minLength && info.minLength,
-                    maxLength: info.maxLength && info.maxLength,
+                    required: info.required,
+                    pattern: info.pattern,
+                    minLength: info.minLength,
+                    maxLength: info.maxLength,
                   })}
                   aria-invalid={errors[info.key] ? 'true' : 'false'}
                 />
@@ -302,12 +308,12 @@ function ListingTitle({ setClickTab }: { setClickTab: React.Dispatch<React.SetSt
                 <StyledFormControl
                   id={info.key}
                   {...register(info.key, {
-                    required: info.required && info.required,
-                    pattern: info.pattern && info.pattern,
-                    minLength: info.minLength && info.minLength,
-                    maxLength: info.maxLength && info.maxLength,
-                    min: info.min && info.min,
-                    max: info.max && info.max,
+                    required: info.required,
+                    pattern: info.pattern,
+                    minLength: info.minLength,
+                    maxLength: info.maxLength,
+                    min: info.min,
+                    max: info.max,
                   })}
                   onKeyDown={(e) => {
                     if (e.key == ' ') {

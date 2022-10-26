@@ -1,3 +1,3 @@
-import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-type listingDocDataType = QueryDocumentSnapshot<DocumentData>[];
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+interface listingDocDataType extends Array<QueryDocumentSnapshot<DocumentData>> {}
 export default listingDocDataType;

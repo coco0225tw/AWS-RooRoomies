@@ -199,18 +199,14 @@ const roommatesConditionFormGroups = [
 function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React.SetStateAction<string>> }) {
   const dispatch = useDispatch();
   const roommatesConditionsInfo = useSelector((state: RootState) => state.UploadRoommatesConditionReducer);
-  interface optionType {
-    label: string;
-    text: string;
-    value: string;
-  }
+
   const {
     handleSubmit,
     setValue,
     formState: { errors },
     control,
   } = useForm();
-  const onSubmit = (data) => {
+  const onSubmit = (data: roommatesConditionType) => {
     submit(data);
     setClickTab('設施');
   };
@@ -242,27 +238,29 @@ function RoommatesCondition({ setClickTab }: { setClickTab: React.Dispatch<React
                 control={control}
                 name={key}
                 rules={{
-                  required: required && required,
+                  required: required,
                 }}
-                render={({ field: { onChange, ...props } }) =>
-                  (options as any).map((o: optionType, oIndex: number) => (
-                    <FormCheck key={`${key + o.value}}`} style={{ padding: '8px 0px' }}>
-                      <CheckedFormCheckInput
-                        type="radio"
-                        id={`${key + o.value}`}
-                        defaultChecked={roommatesConditionsInfo[key] === o.value}
-                        {...props}
-                        value={key + o.value}
-                        onChange={(e) => {
-                          onChange(o.label);
-                          if (e.target.checked) {
-                          }
-                        }}
-                      />
-                      <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
-                    </FormCheck>
-                  ))
-                }
+                render={({ field: { onChange, ...props } }) => (
+                  <React.Fragment>
+                    {options.map((o, oIndex) => (
+                      <FormCheck key={`${key + o.value}}`} style={{ padding: '8px 0px' }}>
+                        <CheckedFormCheckInput
+                          type="radio"
+                          id={`${key + o.value}`}
+                          defaultChecked={roommatesConditionsInfo[key] === o.value}
+                          {...props}
+                          value={key + o.value}
+                          onChange={(e) => {
+                            onChange(o.label);
+                            if (e.target.checked) {
+                            }
+                          }}
+                        />
+                        <CheckedFormCheckLabel htmlFor={`${key + o.value}`}>{o.text}</CheckedFormCheckLabel>
+                      </FormCheck>
+                    ))}
+                  </React.Fragment>
+                )}
               />
             </FormInputWrapper>
           </FormGroup>
